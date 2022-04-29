@@ -29,7 +29,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/Cy-Enderdot/Material-Requirements-Planning-System">
+  <a href="https://github.com/Nathaniel-Reeves/Material-Requirements-Planning-System">
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
@@ -38,14 +38,14 @@
   <p align="center">
     This is a all in one inventory and manufacturing manager built by the supplements industry for the supplements industry.  This web application was build with federal regulations and good manufacturing practices in mind.
     <br />
-    <a href="https://github.com/Cy-Enderdot/Material-Requirements-Planning-System"><strong>Explore the docs »</strong></a>
+    <a href="https://github.com/Nathaniel-Reeves/Material-Requirements-Planning-System"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/Cy-Enderdot/Material-Requirements-Planning-System">View Demo</a>
+    <a href="https://github.com/Nathaniel-Reeves/Material-Requirements-Planning-System">View Demo</a>
     ·
-    <a href="https://github.com/Cy-Enderdot/Material-Requirements-Planning-System/issues">Report Bug</a>
+    <a href="https://github.com/Nathaniel-Reeves/Material-Requirements-Planning-System/issues">Report Bug</a>
     ·
-    <a href="https://github.com/Cy-Enderdot/Material-Requirements-Planning-System/issues">Request Feature</a>
+    <a href="https://github.com/Nathaniel-Reeves/Material-Requirements-Planning-System/issues">Request Feature</a>
   </p>
 </div>
 
@@ -158,7 +158,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 - [ ] Feature 3
     - [ ] Nested Feature
 
-See the [open issues](https://github.com/Cy-Enderdot/Material-Requirements-Planning-System/issues) for a full list of proposed features (and known issues).
+See the [open issues](https://github.com/Nathaniel-Reeves/Material-Requirements-Planning-System/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -196,7 +196,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
 
-Project Link: [https://github.com/Cy-Enderdot/Material-Requirements-Planning-System](https://github.com/Cy-Enderdot/Material-Requirements-Planning-System)
+Project Link: [https://github.com/Cy-Enderdot/Material-Requirements-Planning-System](https://github.com/Nathaniel-Reeves/Material-Requirements-Planning-System)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -215,16 +215,16 @@ Project Link: [https://github.com/Cy-Enderdot/Material-Requirements-Planning-Sys
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/Cy-Enderdot/Material-Requirements-Planning-System.svg?style=for-the-badge
-[contributors-url]: https://github.com/Cy-Enderdot/Material-Requirements-Planning-System/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/Cy-Enderdot/Material-Requirements-Planning-System.svg?style=for-the-badge
-[forks-url]: https://github.com/Cy-Enderdot/Material-Requirements-Planning-System/network/members
-[stars-shield]: https://img.shields.io/github/stars/Cy-Enderdot/Material-Requirements-Planning-System.svg?style=for-the-badge
-[stars-url]: https://github.com/Cy-Enderdot/Material-Requirements-Planning-System/stargazers
-[issues-shield]: https://img.shields.io/github/issues/Cy-Enderdot/Material-Requirements-Planning-System.svg?style=for-the-badge
-[issues-url]: https://github.com/Cy-Enderdot/Material-Requirements-Planning-System/issues
-[license-shield]: https://img.shields.io/github/license/Cy-Enderdot/Material-Requirements-Planning-System.svg?style=for-the-badge
-[license-url]: https://github.com/Cy-Enderdot/Material-Requirements-Planning-System/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/Nathaniel-Reeves/Material-Requirements-Planning-System.svg?style=for-the-badge
+[contributors-url]: https://github.com/Nathaniel-ReevesMaterial-Requirements-Planning-System/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/Nathaniel-Reeves/Material-Requirements-Planning-System.svg?style=for-the-badge
+[forks-url]: https://github.com/Nathaniel-Reeves/Material-Requirements-Planning-System/network/members
+[stars-shield]: https://img.shields.io/github/stars/Nathaniel-Reeves/Material-Requirements-Planning-System.svg?style=for-the-badge
+[stars-url]: https://github.com/Nathaniel-Reeves/Material-Requirements-Planning-System/stargazers
+[issues-shield]: https://img.shields.io/github/issues/Nathaniel-Reeves/Material-Requirements-Planning-System.svg?style=for-the-badge
+[issues-url]: https://github.com/Nathaniel-Reeves/Material-Requirements-Planning-System/issues
+[license-shield]: https://img.shields.io/github/license/Nathaniel-Reeves/Material-Requirements-Planning-System.svg?style=for-the-badge
+[license-url]: https://github.com/Nathaniel-Reeves/Material-Requirements-Planning-System/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/linkedin_username
 [product-screenshot]: images/screenshot.png
