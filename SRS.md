@@ -1,10 +1,10 @@
 # Software Requirements Specification
-## For <project name>
+## For Material Requirements Planning System
 
 Version 0.1  
-Prepared by <author>  
-<organization>  
-<date created>  
+Prepared by Nathaniel Reeves  
+Prolifix Nutrition
+04-29-2022
 
 Table of Contents
 =================
