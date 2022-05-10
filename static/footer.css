@@ -1,3 +1,9 @@
+@import url("base.css");
+
 footer {
   text-align: center;
+  background-color: var(--text-color);
+  color: var(--secondary-color);
+  text-align: center;
+  padding: 10px;
 }
