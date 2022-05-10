@@ -1,0 +1,25 @@
+@import url("base.css");
+
+/* The navbar container */
+nav {
+  overflow: hidden;
+  text-align: center;
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+}
+
+/* Navbar links */
+nav a {
+  float: left;
+  display: block;
+  color: var(--text-color);
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+/* Links - change color on hover */
+nav a:hover {
+  background-color: var(--text-color);
+  color: var(--secondary-color);
+}

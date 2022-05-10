@@ -1,16 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MRP</title>
     <link rel="stylesheet" href="static/base.css">
+    <link rel="stylesheet" href="static/header.css">
+    <link rel="stylesheet" href="static/nav.css">
     <link rel="stylesheet" href="static/footer.css">
   </head>
 
   <body>
-    <header></header>
+    <div id="wrapper">
+      <header>{% include 'header.html' %}</header>
+      <nav>{% include 'nav.html' %}</nav>
 
-    <main><p> Main Page </p></main>
+      <main><div class="cont"><p> Main Page </p></div></main>
 
-    <footer>{% include 'footer.html' %}</footer>
+      <footer>{% include 'footer.html' %}</footer>
+    </div>
   </body>
 </html>
