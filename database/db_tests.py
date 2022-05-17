@@ -17,54 +17,98 @@ class Test_DB(unittest.TestCase):
         if self.connection.is_connected():
 
             db_Info = self.connection.get_server_info()
-            print("Connected to MySQL Server version ", db_Info)
+            #print("Connected to MySQL Server version ", db_Info)
             self.cursor = self.connection.cursor()
         else:
-            print("Could not connect to database!")
+            #print("Could not connect to database!")
             self.stop()
 
 
         # setup Database
         sql_query_temp = 'CREATE DATABASE store;'
         self.cursor.execute(sql_query_temp)
-        print(self.cursor.statement)
         self.connection.commit()
 
         # setup tables in Database
         sql_query_temp = 'CREATE TABLE %(database)s.%(table)s ( %(columns)s );'
 
         # customers
-        columns = '''customer_id INT AUTO_INCREMENT PRIMARY KEY,
-        first_name VARCHAR(255),
-        last_name VARCHAR(255),
-        age TINYINT(120),
-        '''
+        columns = '''
+                  customer_id INT AUTO_INCREMENT PRIMARY KEY,
+                  first_name VARCHAR(255),
+                  last_name VARCHAR(255),
+                  age TINYINT(120)
+                  '''
         table = {'database':'store','table':'customers','columns':columns}
-        self.cursor.executemany(sql_query_temp, table)
+        #print(sql_query_temp%table)
+        self.cursor.execute(sql_query_temp%table)
         self.connection.commit()
 
         # products
-        columns = '''sku INT PRIMARY KEY VARCHAR(255),
-        product_name VARCHAR(255),
-        brand_name VARCHAR(255),
-        '''
+        columns = '''
+                  sku VARCHAR(255)PRIMARY KEY,
+                  product_name VARCHAR(255),
+                  brand_name VARCHAR(255)
+                  '''
+
         table = {'database':'store','table':'products','columns':columns}
-        self.cursor.executemany(sql_query_temp, table)
+        #print(sql_query_temp%table)
+        self.cursor.execute(sql_query_temp%table)
         self.connection.commit()
 
         # orders
-        columns = '''order_id INT AUTO_INCREMENT PRIMARY KEY,
-        FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
-        FOREIGN KEY (sku) REFERENCES orders(sku),
-        quantity INT(1000000000),
-        '''
+        columns = '''
+                  order_id INT AUTO_INCREMENT PRIMARY KEY,
+                  customer_id INT,
+                  sku VARCHAR(255),
+                  CONSTRAINT fk_sku
+                  FOREIGN KEY (sku) REFERENCES products(sku),
+                  CONSTRAINT fk_customer_id
+                  FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
+                  quantity INT
+                  '''
+
         table = {'database':'store','table':'orders','columns':columns}
-        self.cursor.executemany(sql_query_temp, table)
+        #print(sql_query_temp%table)
+        self.cursor.execute(sql_query_temp%table)
         self.connection.commit()
 
         # setup data in tables
-        #self.cursor.execute(sql_query_temp, data)
-        #self.connection.commit()
+        sql_query_temp = 'INSERT INTO store.products(sku, product_name, brand_name) VALUES ( %s, %s, %s );'
+        data = [
+        ('HBO34523','Toothpaste','NumberOne'),
+        ('NLS2q34345','Milk','MeryGold'),
+        ('134SBE2341','Cake','BabyBens')
+        ]
+
+        self.cursor.executemany(sql_query_temp, data)
+        self.connection.commit()
+
+        sql_query_temp = 'INSERT INTO store.customers(first_name, last_name, age) VALUES ( %s, %s, %s );'
+        data = [
+        ('billy','tanner',22),
+        ('paul','anderson',40),
+        ('jimmy','bawlen',34)
+        ]
+
+        self.cursor.executemany(sql_query_temp, data)
+        self.connection.commit()
+
+        sql_query_temp = 'INSERT INTO store.orders(customer_id, sku, quantity) VALUES ( %s, %s, %s );'
+        data = [
+        (1,'HBO34523',1),
+        (3,'134SBE2341',2),
+        (2,'NLS2q34345',4),
+        (1,'NLS2q34345',1),
+        (2,'134SBE2341',3),
+        (3,'NLS2q34345',4),
+        (1,'HBO34523',1),
+        (2,'HBO34523',1),
+        (3,'NLS2q34345',4),
+        ]
+
+        self.cursor.executemany(sql_query_temp, data)
+        self.connection.commit()
 
         self.cursor.close()
         self.connection.close()
@@ -81,43 +125,100 @@ class Test_DB(unittest.TestCase):
     '''
     TEST DATABASE
     '''
-    @unittest.skip("Test Not Ready")
-    def test_switchDatabase(self):
-        pass
-
-    @unittest.skip("Test Not Ready")
+    #@unittest.skip("Test Not Ready")
     def test_getCurrentDatabase(self):
-        pass
+        db1 = Database()
+        self.assertIsNone(db1.getCurrentDatabase())
+        db2 = Database(database='store')
+        self.assertNotEqual(db2.getCurrentDatabase(),'dogs')
+        self.assertEqual(db2.getCurrentDatabase(),'store')
 
-    @unittest.skip("Test Not Ready")
+    #@unittest.skip("Test Not Ready")
     def test_getDatabases(self):
-        pass
+        db = Database()
+        self.assertEqual(db.getDatabases(),['information_schema','mysql','performance_schema','store','sys'])
 
-    @unittest.skip("Test Not Ready")
+    #@unittest.skip("Test Not Ready")
     def test_databaseExists(self):
-        pass
+        db = Database()
+        self.assertFalse(db.databaseExists())
+        self.assertFalse(db.databaseExists('trololololo'))
+        self.assertTrue(db.databaseExists('store'))
+
+    #@unittest.skip("Test Not Ready")
+    def test_getCurrentDatabase(self):
+        db1 = Database()
+        self.assertIsNone(db1.getCurrentDatabase())
+        db2 = Database(database='store')
+        self.assertEqual(db2.getCurrentDatabase(),'store')
+
+    #@unittest.skip("Test Not Ready")
+    def test_switchDatabase(self):
+        db1 = Database()
+        self.assertFalse(db1.switchDatabase())
+        self.assertIsNone(db1.getCurrentDatabase())
+        self.assertTrue(db1.connection.is_connected())
+        self.assertTrue(db1.switchDatabase(database="store"))
+        self.assertEqual(db1.getCurrentDatabase(),"store")
+
+        db2 = Database(database="store")
+        self.assertIsNotNone(db2.getCurrentDatabase())
+        self.assertEqual(db2.getCurrentDatabase(),"store")
+        self.assertFalse(db2.switchDatabase("Trolololo"))
+        self.assertTrue(db2.switchDatabase("sys"))
+        self.assertEqual(db2.getCurrentDatabase(),"sys")
+        self.assertTrue(db2.switchDatabase("store"))
+        self.assertEqual(db2.getCurrentDatabase(),"store")
 
     '''
     TEST TABLES
     '''
+
+    #@unittest.skip("Test Not Ready")
+    def test_getCurrentTable(self):
+        #print('test_getCurrentTable')
+        db1 = Database()
+        self.assertIsNone(db1.getCurrentTable())
+
+        db2 = Database(database='store', table='orders')
+        self.assertNotEqual(db2.getCurrentTable(),'dogs')
+        self.assertEqual(db2.getCurrentTable(),'orders')
+
+    #@unittest.skip("Test Not Ready")
+    def test_getTables(self):
+        db1 = Database()
+        self.assertIsNone(db1.getTables())
+        self.assertIsNone(db1.getTables('Dogs'))
+        self.assertIsNotNone(db1.getTables('store'))
+        self.assertEqual(db1.getTables('store'), ['customers', 'orders', 'products'])
+
+        db2 = Database(database='store')
+        self.assertIsNotNone(db2.getTables())
+        self.assertIsNone(db2.getTables('Dogs'))
+        self.assertEqual(db2.getTables(), ['customers', 'orders', 'products'])
+
+    #@unittest.skip("Test Not Ready")
+    def test_tableExists(self):
+        db1 = Database(database='store', table='orders')
+        self.assertTrue(db1.tableExists())
+        self.assertFalse(db1.tableExists('Dogs'))
+        self.assertTrue(db1.tableExists(database='store'))
+        self.assertTrue(db1.tableExists(table='orders', database='store'))
+
+        db2 = Database()
+        self.assertFalse(db2.tableExists())
+        self.assertFalse(db2.tableExists(table='Dogs'))
+        self.assertFalse(db2.tableExists(table='Dogs',database='Cats'))
+        self.assertFalse(db2.tableExists(database='store'))
+        self.assertFalse(db2.tableExists(table='orders'))
+        self.assertTrue(db1.tableExists(table='orders', database='store'))
+
     @unittest.skip("Test Not Ready")
     def test_switchTable(self):
-        db = Database("test_database")
+        db = Database(database="store")
         self.assertFalse(db.switchTable(), "Table switched.")
         self.assertFalse(db.switchTable("no_table"), "Table switched.")
         self.assertTrue(db.switchTable("test_table"), "Table did not switch.")
-
-    @unittest.skip("Test Not Ready")
-    def test_getCurrentTable(self):
-        pass
-
-    @unittest.skip("Test Not Ready")
-    def test_getTables(self):
-        pass
-
-    @unittest.skip("Test Not Ready")
-    def test_tableExists(self):
-        pass
 
     '''
     TEST COLUMNS
@@ -189,31 +290,20 @@ class Test_DB(unittest.TestCase):
     '''
     def tearDown(self):
 
+        self.connection = mysql.connector.connect(host=HOST, user=USER, password=PASSWORD)
+        if self.connection.is_connected():
+            db_Info = self.connection.get_server_info()
+            #print("Connected to MySQL Server version ", db_Info)
+            self.cursor = self.connection.cursor()
 
-        print("Deleting Test Database")
-        try:
-            self.connection = mysql.connector.connect(host=self._host, user=self._user, password=self._password)
-            if self.connection.is_connected():
-                db_Info = self.connection.get_server_info()
-                print("Connected to MySQL Server version ", db_Info)
-                self.cursor = self.connection.cursor()
-
-                record = self.cursor.fetchone()
-                print("You're connected to database: ", record[0])
-
-        except Error as e:
-            print("Error while connecting to MySQL", e)
-            self.stop()
-            return
-
+        #print("Deleting Test Database")
         # delete Database
-        sql_query_temp = 'DROP DATABASE %s;'
-        self.cursor.execute(sql_query_temp, 'store')
-        self.connection.commit()
+        sql_query_temp = 'DROP DATABASE store;'
+        self.cursor.execute(sql_query_temp)
 
         # close connections
         self.cursor.close()
         self.connection.close()
 
 if __name__ == '__main__':
-    unittest.main(failfast=True)
+    unittest.main()

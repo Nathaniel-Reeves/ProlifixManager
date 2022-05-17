@@ -29,25 +29,29 @@ class Database:
 
         self.connection = None
         self.cursor = None
-        self.database = database
         self.table = table
+        self.database = database
 
         try:
             self.connection = mysql.connector.connect(host=self._host, user=self._user, password=self._password)
             if self.connection.is_connected():
                 db_Info = self.connection.get_server_info()
-                print("Connected to MySQL Server version ", db_Info)
+                #print("Connected to MySQL Server version ", db_Info)
                 self.cursor = self.connection.cursor()
 
-                if self.database is not None:
-                    self.switchDatabase(self.database)
+                #print("Check Database: ", self.databaseExists(database))
+                if not self.databaseExists():
+                    self.database = None
+                #print("Check Table: ", self.tableExists(table))
+                if not self.tableExists():
+                    self.table = None
 
                 record = self.cursor.fetchone()
-                print("You're connected to database: ", record[0])
+                #print("You're connected to database: ", record[0])
                 return
 
         except Error as e:
-            print("Error while connecting to MySQL", e)
+            #print("Error while connecting to MySQL", e)
             return
 
     '''
@@ -57,32 +61,14 @@ class Database:
     returns:
         None
     '''
-    def switchDatabase(self, database=None, host=None, user=None, password=None):
+    def switchDatabase(self, database=None):
         if database is None:
-            return False
-        if not self.databaseExists(database):
-            return False
-        if host is None:
-            host = self.host
-        if user is None:
-            user = self.user
-        if password is None:
-            password = self.password
-        try:
-            self.connection = mysql.connector.connect(host=self._host, user=self._user, password=self._password)
-            if self.connection.is_connected():
-                db_Info = self.connection.get_server_info()
-                #print("Connected to MySQL Server version ", db_Info)
-                self.cursor = self.connection.cursor()
-                record = self.cursor.fetchone()
-                #print("You're connected to database: ", record[0])
-                self.database = database
-                return True
-            else:
-                return False
-        except Error as e:
-            #print("Error while connecting to MySQL", e)
-            return False
+            database = self.database
+        if self.databaseExists(database):
+            self.database = database
+            return True
+        return False
+
 
     '''
     obj.getCurrentDatabase()
@@ -100,8 +86,11 @@ class Database:
     def getDatabases(self):
         sql_query = "SHOW DATABASES;"
         self.cursor.execute(sql_query)
-        databases = self.cursor.fetchall()
-        return databases[0]
+        database_tuples = self.cursor.fetchall()
+        databases = []
+        for d in database_tuples:
+            databases.append(d[0])
+        return databases
 
     '''
     obj.databaseExists(table_name):
@@ -110,12 +99,12 @@ class Database:
     returns:
         boolian
     '''
-    def databaseExists(self, test=None):
-        if test is None:
-            test = self.database
-        if test is None:
+    def databaseExists(self, database=None):
+        if database is None:
+            database = self.database
+        if database is None:
             return False
-        if test not in self.getDatabases():
+        if database not in self.getDatabases():
             return False
         return True
 
@@ -150,11 +139,17 @@ class Database:
     def getTables(self, database=None):
         if database is None:
             database = self.database
-        sql_query = "SHOW %(database)s.tables;"
+        if database is None:
+            return None
+        sql_query = "SHOW TABLES FROM %(database)s;"
         if self.databaseExists(database):
-            self.cursor.execute(sql_query, {'database':database})
-            tables = self.cursor.fetchall()
-            return tables[0]
+            self.cursor.execute(sql_query % {'database':database})
+            tables_tuples = self.cursor.fetchall()
+            tables = []
+            for t in tables_tuples:
+                tables.append(t[0])
+            #print("tables: ", tables)
+            return tables
         return None
 
     '''
@@ -164,14 +159,17 @@ class Database:
     returns:
         boolian
     '''
-    def tableExists(self, test=None):
-        if not self.databaseExists():
+    def tableExists(self, table=None, database=None):
+        if database is None:
+            database = self.database
+        if not self.databaseExists(database):
             return False
-        if test is None:
-            test = self.table
-        if test is None:
+        if table is None:
+            table = self.table
+        if table is None:
             return False
-        if test not in self.getTables():
+
+        if table not in self.getTables(database=database):
             return False
         return True
 
