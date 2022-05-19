@@ -37,7 +37,8 @@ class Test_DB(unittest.TestCase):
                   customer_id INT AUTO_INCREMENT PRIMARY KEY,
                   first_name VARCHAR(255),
                   last_name VARCHAR(255),
-                  age TINYINT(120)
+                  age TINYINT(120),
+                  is_deleted BOOL NOT NULL DEFAULT 0
                   '''
         table = {'database':'store','table':'customers','columns':columns}
         #print(sql_query_temp%table)
@@ -48,7 +49,8 @@ class Test_DB(unittest.TestCase):
         columns = '''
                   sku VARCHAR(255)PRIMARY KEY,
                   product_name VARCHAR(255),
-                  brand_name VARCHAR(255)
+                  brand_name VARCHAR(255),
+                  is_deleted BOOL NOT NULL DEFAULT 0
                   '''
 
         table = {'database':'store','table':'products','columns':columns}
@@ -65,7 +67,8 @@ class Test_DB(unittest.TestCase):
                   FOREIGN KEY (sku) REFERENCES products(sku),
                   CONSTRAINT fk_customer_id
                   FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
-                  quantity INT
+                  quantity INT,
+                  is_deleted BOOL NOT NULL DEFAULT 0
                   '''
 
         table = {'database':'store','table':'orders','columns':columns}
@@ -187,14 +190,12 @@ class Test_DB(unittest.TestCase):
     #@unittest.skip("Test Not Ready")
     def test_getTables(self):
         db1 = Database()
-        self.assertIsNone(db1.getTables())
-        self.assertIsNone(db1.getTables('Dogs'))
-        self.assertIsNotNone(db1.getTables('store'))
+        self.assertEqual(db1.getTables(),[])
+        self.assertEqual(db1.getTables('Dogs'),[])
         self.assertEqual(db1.getTables('store'), ['customers', 'orders', 'products'])
 
         db2 = Database(database='store')
-        self.assertIsNotNone(db2.getTables())
-        self.assertIsNone(db2.getTables('Dogs'))
+        self.assertEqual(db2.getTables('Dogs'),[])
         self.assertEqual(db2.getTables(), ['customers', 'orders', 'products'])
 
     #@unittest.skip("Test Not Ready")
@@ -213,30 +214,80 @@ class Test_DB(unittest.TestCase):
         self.assertFalse(db2.tableExists(table='orders'))
         self.assertTrue(db1.tableExists(table='orders', database='store'))
 
-    @unittest.skip("Test Not Ready")
+    #@unittest.skip("Test Not Ready")
     def test_switchTable(self):
         db = Database(database="store")
         self.assertFalse(db.switchTable(), "Table switched.")
-        self.assertFalse(db.switchTable("no_table"), "Table switched.")
-        self.assertTrue(db.switchTable("test_table"), "Table did not switch.")
+        self.assertFalse(db.switchTable(table="no_table"), "Table switched.")
+        self.assertTrue(db.switchTable(table="orders"), "Table did not switch.")
 
     '''
     TEST COLUMNS
     '''
-    @unittest.skip("Test Not Ready")
+    #@unittest.skip("Test Not Ready")
     def test_getColumns(self):
-        pass
+        db1 = Database()
+        self.assertEqual(db1.getColumns(),[])
+        self.assertEqual(db1.getColumns(database='store'),[])
+        self.assertEqual(db1.getColumns(table='products'),[])
+        self.assertEqual(db1.getColumns(database='store', table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
 
-    @unittest.skip("Test Not Ready")
+        db2 = Database(database='store')
+        self.assertEqual(db2.getColumns(),[])
+        self.assertEqual(db2.getColumns(database='store'),[])
+        self.assertEqual(db2.getColumns(table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
+        self.assertEqual(db2.getColumns(database='store', table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
+
+        db3 = Database(database='store',table='products')
+        self.assertEqual(db3.getColumns(),['sku', 'product_name', 'brand_name', 'is_deleted'])
+        self.assertEqual(db3.getColumns(database='store'),['sku', 'product_name', 'brand_name', 'is_deleted'])
+        self.assertEqual(db3.getColumns(table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
+        self.assertEqual(db3.getColumns(database='store', table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
+
+
+    #@unittest.skip("Test Not Ready")
     def test_columnExists(self):
-        pass
+        db1 = Database()
+        self.assertFalse(db1.columnExists())
+        self.assertFalse(db1.columnExists(database='store'))
+        self.assertFalse(db1.columnExists(table='products'))
+        self.assertFalse(db1.columnExists(database='store', table='products'))
+        self.assertFalse(db1.columnExists(database='store', table='products', column='noColumn'))
+        self.assertTrue(db1.columnExists(database='store', table='products', column='sku'))
+        self.assertFalse(db1.columnExists(database='store', column='sku'))
+        self.assertFalse(db1.columnExists(table='products', column='sku'))
+
 
     '''
     TEST ITEMS
     '''
+
+    #@unittest.skip("Test Not Ready")
+    def test_getItem(self):
+        db1 = Database()
+        self.assertEqual(db1.getItem(),{})
+
+        db2 = Database(database='store')
+        self.assertEqual(db2.getItem(),{})
+
+        db3 = Database(table='customers')
+        self.assertEqual(db3.getItem(),{})
+
+        db4 = Database(database='store', table='customers')
+        self.assertEqual(db4.getItem(),{})
+        self.assertEqual(db4.getItem(columns=['first_name']),{})
+        self.assertEqual(db4.getItem(item_id = 1),{'customer_id':1, 'first_name':'billy', 'last_name':'tanner', 'age':22, 'is_deleted':0})
+        self.assertEqual(db4.getItem(item_id = 1, columns=['first_name']),{'first_name':'billy'})
+        self.assertEqual(db4.getItem(item_id = 1, columns=['first_name', 'last_name']),{'first_name':'billy', 'last_name':'tanner'})
+
+    @unittest.skip("Test Not Ready")
+    def test_getItems(self):
+        pass
+
     @unittest.skip("Test Not Ready")
     def test_insertItem(self):
-        pass
+        db = Database(database='store', table='customers')
+        self.assertTrue(db.insertItem(({'first_name':'tommy','last_name':'tyson','age':26})))
 
     @unittest.skip("Test Not Ready")
     def test_insertItems(self):
@@ -248,14 +299,6 @@ class Test_DB(unittest.TestCase):
 
     @unittest.skip("Test Not Ready")
     def test_updateItems(self):
-        pass
-
-    @unittest.skip("Test Not Ready")
-    def test_getItem(self):
-        pass
-
-    @unittest.skip("Test Not Ready")
-    def test_getItems(self):
         pass
 
     @unittest.skip("Test Not Ready")

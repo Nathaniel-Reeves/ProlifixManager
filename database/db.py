@@ -62,13 +62,12 @@ class Database:
         None
     '''
     def switchDatabase(self, database=None):
-        if database is None:
+        if database is None and self.database is not None:
             database = self.database
         if self.databaseExists(database):
             self.database = database
             return True
         return False
-
 
     '''
     obj.getCurrentDatabase()
@@ -100,13 +99,12 @@ class Database:
         boolian
     '''
     def databaseExists(self, database=None):
-        if database is None:
+        if database is None and self.database is not None:
             database = self.database
-        if database is None:
-            return False
-        if database not in self.getDatabases():
-            return False
-        return True
+
+        if database in self.getDatabases():
+            return True
+        return False
 
     '''
     obj.switchTable(table_name)
@@ -115,13 +113,19 @@ class Database:
     returns:
         None
     '''
-    def switchTable(self, table=None):
-        if table is None:
+    def switchTable(self, table=None, database=None):
+        if database is None and self.database is not None:
+            database = self.database
+        else:
+            if not self.databaseExists(database):
+                return False
+
+        if table is None and self.table is None:
             return False
-        if self.tableExists(table):
-            self.table = table
-            return True
-        return False
+        else:
+            if self.tableExists(table=table, database=database):
+                self.table = table
+                return True
 
     '''
     obj.getCurrentTable()
@@ -137,20 +141,22 @@ class Database:
         a list of all tables in the database
     '''
     def getTables(self, database=None):
-        if database is None:
+        if database is None and self.database is not None:
             database = self.database
-        if database is None:
-            return None
+        else:
+            if not self.databaseExists(database):
+                return []
+
         sql_query = "SHOW TABLES FROM %(database)s;"
-        if self.databaseExists(database):
-            self.cursor.execute(sql_query % {'database':database})
-            tables_tuples = self.cursor.fetchall()
-            tables = []
-            for t in tables_tuples:
-                tables.append(t[0])
-            #print("tables: ", tables)
-            return tables
-        return None
+
+        self.cursor.execute(sql_query % {'database':database})
+        tables_tuples = self.cursor.fetchall()
+        tables = []
+        for t in tables_tuples:
+            tables.append(t[0])
+        #print("tables: ", tables)
+        return tables
+
 
     '''
     obj.tableExists(table_name):
@@ -160,14 +166,16 @@ class Database:
         boolian
     '''
     def tableExists(self, table=None, database=None):
-        if database is None:
+        if database is None and self.database is not None:
             database = self.database
-        if not self.databaseExists(database):
-            return False
-        if table is None:
+        else:
+            if not self.databaseExists(database):
+                return False
+        if table is None and self.table is not None:
             table = self.table
-        if table is None:
-            return False
+        else:
+            if table is None:
+                return False
 
         if table not in self.getTables(database=database):
             return False
@@ -183,29 +191,31 @@ class Database:
         column feild names in a list or None if table_name
         doesn't exist
     '''
-    def getColumns(self, *pram):
-        # valid option list
-        options = ['a','all']
-        # check and get table_name if any
-        if len(pram) == 0:
+    def getColumns(self, table=None, database=None, all=False):
+        # check the database
+        if database is None and self.database is not None:
+            database = self.database
+        else:
+            if not self.databaseExists(database):
+                return []
+
+        # check the table
+        if table is None and self.table is not None:
             table = self.table
         else:
-            if pram[0] in options:
-                table = self.table
-            else:
-                table = pram[0]
+            if not self.tableExists(database=database, table=table):
+                return []
+
         # get column data
-        if self.tableExists(table):
-            sql_query_temp = "SHOW COLUMNS FROM {}.{};"
-            sql_query = sql_query_temp.format(self.database, table)
-            self.cursor.execute(sql_query)
-            columns = self.cursor.fetchall()
-        else:
-            return None
+        sql_query_temp = "SHOW COLUMNS FROM {}.{};"
+        sql_query = sql_query_temp.format(database, table)
+        self.cursor.execute(sql_query)
+        columns = self.cursor.fetchall()
+
         # return all column info
-        if len(pram) >= 1:
-            if "all" in pram or "a" in pram:
-                return columns
+        if all is True:
+            return columns
+
         # return column field info only
         fields = []
         for column in columns:
@@ -221,9 +231,13 @@ class Database:
     returns:
         bool
     '''
-    # TODO:
-    def columntExists(self, database=None, table=None, column=None):
-        pass
+    def columnExists(self, database=None, table=None, column=None):
+        if column is None:
+            return False
+        columns = self.getColumns(database=database, table=table)
+        if column not in columns:
+            return False
+        return True
 
     '''
     Obj.insertItem(data)
@@ -232,10 +246,9 @@ class Database:
     return:
         boolians
     '''
-    def insertItem(self, data):
+    def insertItem(self, data={}):
 
-        if data is None:
-            print("No Data")
+        if self.database is None or self.table is None:
             return False
 
         # Generate SQL Query
@@ -294,42 +307,119 @@ class Database:
     def updateItems(self):
         pass
 
-    def getItem(self):
-        pass
+    '''
+    Obj.getItem(item_id, columns)
+    arg:
+        item_id (req) = the id of the item in a string, int, or float
+        columns (opt) = a list of column headers of data you specifically want
+    returns:
+        - a dictionary of each value paired with the column header as a key
+        - an empy dictionary
+    '''
+    def getItem(self, item_id=None, columns=["*"]):
+        if item_id is None:
+            return {}
+        # check database and table
+        if self.database is None or self.table is None:
+            return {}
+
+        table_columns = self.getColumns(database=self.database, table=self.table)
+        # check columns
+
+        custom_col = False
+        if columns == ["*"]:
+            col_string = '*'
+        else:
+            custom_col = True
+            col_string = ""
+            for col in columns:
+                if col not in table_columns:
+                    return {}
+                col_string += col + ", "
+            col_string = col_string[:-2] + " "
+
+
+        condition = table_columns[0] + " = " + str(item_id)
+        sql_query_temp = "SELECT %(columns)s FROM %(database)s.%(table)s WHERE %(condition)s;"
+        inputs = {'columns':col_string, 'database':self.database, 'table':self.table, 'condition':condition}
+
+
+        sql_query = sql_query_temp % inputs
+        data = {}
+
+        try:
+            self.cursor.execute(sql_query)
+            data = self.cursor.fetchone()
+            #print("Query Successful")
+            if custom_col:
+                return self._tupletodic(data, columns)
+            else:
+                return self._tupletodic(data, table_columns)
+        except Error as err:
+            print(f"Error: '{err}'")
+            return {}
 
     '''
-    Obj.getItems(table, query, columns)
+    Obj._tubletodic(data, keys)
+    arg:
+        data (req) = list containing data
+        keys (req) = list conaining keys
+    returns
+        dictionary
+    '''
+    def _tupletodic(self, data, keys):
+        dic = {}
+        if len(data) == len(keys):
+            for i in range(len(keys)):
+                dic[keys[i]] = data[i]
+        return dic
+
+    '''
+    Obj.getItems(table, columns, condition)
     arg:
         table (Opt) = default is object.table, pass in a different
                       table from the database.
-        query (Req) = a mysql query string.
+        condition (Opt) = a mysql query string.
         columns (Opt) = specific columns for the query string.
     return:
-        requested Items, None if failed
+        requested Items, empty dict if query failed
     '''
-    def getItems(self, table=None, sql_query='', columns='*'):
+    def getItems(self, columns=["*"], condition=""):
+        # check database and table
+        if self.database is None or self.table is None:
+            return []
 
-        # Check and get table_name if any
-        if table is None:
-            table = self.table
+        # check columns
+        table_columns = self.getColumns(database=self.database, table=self.table)
+        if columns != ["*"]:
+            col_string = "("
+            for col in columns:
+                if col not in table_columns:
+                    return []
+                col_string += col + ", "
+            col_string = col_string[:-2] + ")"
+        else:
+            col_string = '*'
 
-        if not(self.tableExists(table)):
-            print(self.table + " doesn't exist in " + self.database)
-            return None
+        if condition:
+            sql_query_temp = "SELECT %(columns)s FROM %(database)s.%(table)s WHERE %(condition)s;"
+            inputs = {'columns':col_string, 'database':self.database, 'table':self.table, 'condition':condition}
+        else:
+            sql_query_temp = "SELECT %(columns)s FROM %(database)s.%(table)s;"
+            inputs = {'columns':col_string, 'database':self.database, 'table':self.table}
 
-        data = None
-        sql_query_temp = "SELECT %(columns)s FROM %(db)s.%(table)s %(query)s;"
-        temp_dict = {'db':self.database,'table':self.table, 'col':columns, 'query':sql_query}
-        sql_query = sql_query_temp % temp_dict
-        # Return data
+        sql_query = sql_query_temp % inputs
+        data = []
+        print(sql_query)
+
         try:
             self.cursor.execute(sql_query)
             data = self.cursor.fetchall()
-            print("Query Successful")
+            #print("Query Successful")
             return data
         except Error as err:
-            print(f"Error: '{err}'")
-            return None
+            #print(f"Error: '{err}'")
+            return data
 
     def getItemPK(self):
         pass
