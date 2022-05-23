@@ -239,6 +239,12 @@ class Database:
             return False
         return True
 
+    def getPKcolumn(self, table=None, database=None, all=True):
+        columns = self.getColumns(database, table, column)
+
+    def getFKcolumns(self, table=None, database=None, all=True):
+        columns = self.getColumns(database, table, column)
+
     '''
     Obj.insertItem(data)
     arg:
@@ -375,57 +381,52 @@ class Database:
         return dic
 
     '''
-    Obj.getItems(table, columns, condition)
+    Obj.getItemsByFK(FK, FK_col, condition, showDeleted)
     arg:
-        table (Opt) = default is object.table, pass in a different
-                      table from the database.
-        condition (Opt) = a mysql query string.
-        columns (Opt) = specific columns for the query string.
+        FK (req) = string of the forign key to search by
+        FK_col (req) = string of the column name of the forign key to search by
+        condition (opt) = string of additional conditions to select items by
+        showDeleted (opt) = boolian, gather deleted items as well as current
+                            items default is to leave out deleted items
     return:
-        requested Items, empty dict if query failed
+        requested Items in dict of dicts, empty dict if query failed
     '''
-    def getItems(self, columns=["*"], condition=""):
+    def getItemsByFK(self, FK="", FK_col="", condition="", showDeleted=False):
         # check database and table
         if self.database is None or self.table is None:
-            return []
+            return {}
 
-        # check columns
+        # get table columns
         table_columns = self.getColumns(database=self.database, table=self.table)
-        if columns != ["*"]:
-            col_string = "("
-            for col in columns:
-                if col not in table_columns:
-                    return []
-                col_string += col + ", "
-            col_string = col_string[:-2] + ")"
-        else:
-            col_string = '*'
+
+        sql_query_temp = "SELECT * FROM %(database)s.%(table)s WHERE %(FK_col)s='%(FK)s'"
+        inputs = {'database':self.database, 'table':self.table, 'FK_col':FK_col, 'FK':FK}
 
         if condition:
-            sql_query_temp = "SELECT %(columns)s FROM %(database)s.%(table)s WHERE %(condition)s;"
-            inputs = {'columns':col_string, 'database':self.database, 'table':self.table, 'condition':condition}
-        else:
-            sql_query_temp = "SELECT %(columns)s FROM %(database)s.%(table)s;"
-            inputs = {'columns':col_string, 'database':self.database, 'table':self.table}
+            sql_query_temp += " AND %(condition)s"
+            inputs['condition'] = condition
+
+        if not showDeleted:
+            sql_query_temp += " AND is_deleted=0"
+
+        sql_query_temp += ";"
 
         sql_query = sql_query_temp % inputs
-        data = []
-        print(sql_query)
+        data = {}
 
         try:
             self.cursor.execute(sql_query)
             data = self.cursor.fetchall()
             #print("Query Successful")
-            return data
         except Error as err:
             #print(f"Error: '{err}'")
-            return data
+            return {}
 
-    def getItemPK(self):
-        pass
-
-    def getItemFK(self):
-        pass
+        table = {}
+        for i in data:
+            row = self._tupletodic(i, table_columns)
+            table[row[table_columns[0]]] = row
+        return table
 
     def deleteItem(self):
         pass

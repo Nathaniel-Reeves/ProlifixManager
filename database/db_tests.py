@@ -7,6 +7,7 @@ from db import USER
 from db import PASSWORD
 
 class Test_DB(unittest.TestCase):
+    maxDiff = None
 
     '''
     SETUP
@@ -80,7 +81,7 @@ class Test_DB(unittest.TestCase):
         sql_query_temp = 'INSERT INTO store.products(sku, product_name, brand_name) VALUES ( %s, %s, %s );'
         data = [
         ('HBO34523','Toothpaste','NumberOne'),
-        ('NLS2q34345','Milk','MeryGold'),
+        ('NLS2q34345','Milk','MerryGold'),
         ('134SBE2341','Cake','BabyBens')
         ]
 
@@ -91,6 +92,7 @@ class Test_DB(unittest.TestCase):
         data = [
         ('billy','tanner',22),
         ('paul','anderson',40),
+        ('tom','victor',35),
         ('jimmy','bawlen',34)
         ]
 
@@ -244,7 +246,6 @@ class Test_DB(unittest.TestCase):
         self.assertEqual(db3.getColumns(table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
         self.assertEqual(db3.getColumns(database='store', table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
 
-
     #@unittest.skip("Test Not Ready")
     def test_columnExists(self):
         db1 = Database()
@@ -257,6 +258,45 @@ class Test_DB(unittest.TestCase):
         self.assertFalse(db1.columnExists(database='store', column='sku'))
         self.assertFalse(db1.columnExists(table='products', column='sku'))
 
+    #@unittest.skip("Test Not Ready")
+    def test_getPKcolumn(self):
+        db1 = Database()
+        self.assertEqual(db1.getPKcolumn(),[])
+        self.assertEqual(db1.getPKcolumn(database='store'),[])
+        self.assertEqual(db1.getPKcolumn(table='products'),[])
+        self.assertEqual(db1.getPKcolumn(database='store', table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
+
+        db2 = Database(database='store')
+        self.assertEqual(db2.getPKcolumn(),[])
+        self.assertEqual(db2.getPKcolumn(database='store'),[])
+        self.assertEqual(db2.getPKcolumn(table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
+        self.assertEqual(db2.getPKcolumn(database='store', table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
+
+        db3 = Database(database='store',table='products')
+        self.assertEqual(db3.getPKcolumn(),['sku', 'product_name', 'brand_name', 'is_deleted'])
+        self.assertEqual(db3.getPKcolumn(database='store'),['sku', 'product_name', 'brand_name', 'is_deleted'])
+        self.assertEqual(db3.getPKcolumn(table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
+        self.assertEqual(db3.getPKcolumn(database='store', table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
+
+    #@unittest.skip("Test Not Ready")
+    def test_getFKcolumns(self):
+        db1 = Database()
+        self.assertEqual(db1.getColumns(),[])
+        self.assertEqual(db1.getColumns(database='store'),[])
+        self.assertEqual(db1.getColumns(table='products'),[])
+        self.assertEqual(db1.getColumns(database='store', table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
+
+        db2 = Database(database='store')
+        self.assertEqual(db2.getColumns(),[])
+        self.assertEqual(db2.getColumns(database='store'),[])
+        self.assertEqual(db2.getColumns(table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
+        self.assertEqual(db2.getColumns(database='store', table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
+
+        db3 = Database(database='store',table='products')
+        self.assertEqual(db3.getColumns(),['sku', 'product_name', 'brand_name', 'is_deleted'])
+        self.assertEqual(db3.getColumns(database='store'),['sku', 'product_name', 'brand_name', 'is_deleted'])
+        self.assertEqual(db3.getColumns(table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
+        self.assertEqual(db3.getColumns(database='store', table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
 
     '''
     TEST ITEMS
@@ -280,9 +320,27 @@ class Test_DB(unittest.TestCase):
         self.assertEqual(db4.getItem(item_id = 1, columns=['first_name']),{'first_name':'billy'})
         self.assertEqual(db4.getItem(item_id = 1, columns=['first_name', 'last_name']),{'first_name':'billy', 'last_name':'tanner'})
 
-    @unittest.skip("Test Not Ready")
-    def test_getItems(self):
-        pass
+    #@unittest.skip("Test Not Ready")
+    def test_getItemsByFK(self):
+        db1 = Database()
+        self.assertEqual(db1.getItemsByFK(FK='1', FK_col='customer_id'),{})
+
+        db2 = Database(database='store')
+        self.assertEqual(db2.getItemsByFK(FK='1', FK_col='customer_id'),{})
+
+        db3 = Database(table='orders')
+        self.assertEqual(db3.getItemsByFK(FK='1', FK_col='customer_id'),{})
+
+        db4 = Database(database='store', table='orders')
+        self.assertEqual(db4.getItemsByFK(FK='2', FK_col='customer_id'),{3: {'order_id': 3, 'customer_id': 2, 'sku': 'NLS2q34345', 'quantity': 4, 'is_deleted': 0}, 5: {'order_id': 5, 'customer_id': 2, 'sku': '134SBE2341', 'quantity': 3, 'is_deleted': 0}, 8: {'order_id': 8, 'customer_id': 2, 'sku': 'HBO34523', 'quantity': 1, 'is_deleted': 0}})
+        self.assertEqual(db4.getItemsByFK(FK='HBO34523', FK_col='sku', condition="customer_id=2"),{8: {'order_id': 8, 'customer_id': 2, 'sku': 'HBO34523', 'quantity': 1, 'is_deleted': 0}})
+        self.assertEqual(db4.getItemsByFK(FK='3', FK_col='customer_id', condition="sku='HBO34523'"),{})
+        self.assertEqual(db4.getItemsByFK(FK='4', FK_col='customer_id', condition="sku='HBO34523'"),{})
+        self.assertEqual(db4.getItemsByFK(FK='4', FK_col='customer_id', condition="sku='HBO34523'", showDeleted=True),{})
+        self.assertEqual(db4.getItemsByFK(FK='1', FK_col='customer_id', showDeleted=True),{1: {'customer_id': 1,'is_deleted': 0,'order_id': 1,'quantity': 1,'sku': 'HBO34523'},4: {'customer_id': 1,'is_deleted': 0,'order_id': 4,'quantity': 1,'sku': 'NLS2q34345'},7: {'customer_id': 1,'is_deleted': 0,'order_id': 7,'quantity': 1,'sku': 'HBO34523'}})
+        self.assertEqual(db4.getItemsByFK(FK='4', FK_col='not_a_column'),{})
+        self.assertEqual(db4.getItemsByFK(FK='4'),{})
+        self.assertEqual(db4.getItemsByFK(FK_col='customer_id'),{})
 
     @unittest.skip("Test Not Ready")
     def test_insertItem(self):
