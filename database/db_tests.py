@@ -229,14 +229,14 @@ class Test_DB(unittest.TestCase):
     #@unittest.skip("Test Not Ready")
     def test_getColumns(self):
         db1 = Database()
-        self.assertEqual(db1.getColumns(),[])
-        self.assertEqual(db1.getColumns(database='store'),[])
-        self.assertEqual(db1.getColumns(table='products'),[])
+        self.assertIsNone(db1.getColumns())
+        self.assertIsNone(db1.getColumns(database='store'))
+        self.assertIsNone(db1.getColumns(table='products'))
         self.assertEqual(db1.getColumns(database='store', table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
 
         db2 = Database(database='store')
-        self.assertEqual(db2.getColumns(),[])
-        self.assertEqual(db2.getColumns(database='store'),[])
+        self.assertIsNone(db2.getColumns())
+        self.assertIsNone(db2.getColumns(database='store'))
         self.assertEqual(db2.getColumns(table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
         self.assertEqual(db2.getColumns(database='store', table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
 
@@ -261,42 +261,27 @@ class Test_DB(unittest.TestCase):
     #@unittest.skip("Test Not Ready")
     def test_getPKcolumn(self):
         db1 = Database()
-        self.assertEqual(db1.getPKcolumn(),[])
-        self.assertEqual(db1.getPKcolumn(database='store'),[])
-        self.assertEqual(db1.getPKcolumn(table='products'),[])
-        self.assertEqual(db1.getPKcolumn(database='store', table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
-
-        db2 = Database(database='store')
-        self.assertEqual(db2.getPKcolumn(),[])
-        self.assertEqual(db2.getPKcolumn(database='store'),[])
-        self.assertEqual(db2.getPKcolumn(table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
-        self.assertEqual(db2.getPKcolumn(database='store', table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
-
-        db3 = Database(database='store',table='products')
-        self.assertEqual(db3.getPKcolumn(),['sku', 'product_name', 'brand_name', 'is_deleted'])
-        self.assertEqual(db3.getPKcolumn(database='store'),['sku', 'product_name', 'brand_name', 'is_deleted'])
-        self.assertEqual(db3.getPKcolumn(table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
-        self.assertEqual(db3.getPKcolumn(database='store', table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
+        self.assertIsNone(db1.getPKcolumn())
+        self.assertIsNone(db1.getPKcolumn(database='store'))
+        self.assertIsNone(db1.getPKcolumn(table='products'))
+        self.assertEqual(db1.getPKcolumn(database='store', table='products', all=True),{'Field': 'sku', 'Type': b'varchar(255)', 'Null': 'NO', 'Key': 'PRI', 'Default': None, 'Extra': ''})
+        self.assertEqual(db1.getPKcolumn(database='store', table='products'), 'sku')
 
     #@unittest.skip("Test Not Ready")
     def test_getFKcolumns(self):
         db1 = Database()
-        self.assertEqual(db1.getColumns(),[])
-        self.assertEqual(db1.getColumns(database='store'),[])
-        self.assertEqual(db1.getColumns(table='products'),[])
-        self.assertEqual(db1.getColumns(database='store', table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
+        self.assertIsNone(db1.getFKcolumns())
+        self.assertIsNone(db1.getFKcolumns(database='store'))
+        self.assertIsNone(db1.getFKcolumns(table='orders'))
+        self.assertEqual(db1.getFKcolumns(database='store', table='orders', all=True),[{'Field': 'customer_id', 'Type': b'int', 'Null': 'YES', 'Key': 'MUL', 'Default': None, 'Extra': ''}, {'Field': 'sku', 'Type': b'varchar(255)', 'Null': 'YES', 'Key': 'MUL', 'Default': None, 'Extra': ''}])
+        self.assertEqual(db1.getFKcolumns(database='store', table='orders'), ['customer_id', 'sku'])
 
-        db2 = Database(database='store')
-        self.assertEqual(db2.getColumns(),[])
-        self.assertEqual(db2.getColumns(database='store'),[])
-        self.assertEqual(db2.getColumns(table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
-        self.assertEqual(db2.getColumns(database='store', table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
-
-        db3 = Database(database='store',table='products')
-        self.assertEqual(db3.getColumns(),['sku', 'product_name', 'brand_name', 'is_deleted'])
-        self.assertEqual(db3.getColumns(database='store'),['sku', 'product_name', 'brand_name', 'is_deleted'])
-        self.assertEqual(db3.getColumns(table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
-        self.assertEqual(db3.getColumns(database='store', table='products'),['sku', 'product_name', 'brand_name', 'is_deleted'])
+    #@unittest.skip("Test Not Ready")
+    def test_getFKParentTable(self):
+        db1 = Database()
+        self.assertIsNone(db1.getFKParentTable())
+        self.assertEqual(db1.getFKParentTable('sku'), {'REFERENCED_TABLE_SCHEMA': 'store', 'REFERENCED_TABLE_NAME': 'products', 'REFERENCED_COLUMN_NAME': 'sku'})
+        self.assertIsNone(db1.getFKParentTable('not a column'))
 
     '''
     TEST ITEMS

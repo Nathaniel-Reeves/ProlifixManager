@@ -54,6 +54,10 @@ class Database:
             #print("Error while connecting to MySQL", e)
             return
 
+# ------------------------------------------------------------------------------
+# ------------------------ Database Functions ----------------------------------
+# ------------------------------------------------------------------------------
+
     '''
     obj.switchDatabase(database_name)
     arg:
@@ -106,6 +110,10 @@ class Database:
             return True
         return False
 
+# ------------------------------------------------------------------------------
+# ------------------------ Table Functions -------------------------------------
+# ------------------------------------------------------------------------------
+
     '''
     obj.switchTable(table_name)
     arg:
@@ -157,7 +165,6 @@ class Database:
         #print("tables: ", tables)
         return tables
 
-
     '''
     obj.tableExists(table_name):
     arg:
@@ -181,15 +188,19 @@ class Database:
             return False
         return True
 
+# ------------------------------------------------------------------------------
+# ------------------------ Column Functions ------------------------------------
+# ------------------------------------------------------------------------------
+
     '''
-    obj.getColumns(table_name, options)
+    obj.getColumns(table_name, all)
     arg:
-        table_name (opt) = name of a table in the database
-        options (opt)
-        -a, -all = return all column info in a list of tuples
-    returns (default):
-        column feild names in a list or None if table_name
-        doesn't exist
+        table_name (opt) = name of a table in the database (str)
+        all (opt) = true to get all information for each column (bool)
+    returns:
+        default -> column field names in a list or None if table_name
+                   doesn't exist
+        all = True -> all column information in a list of dict
     '''
     def getColumns(self, table=None, database=None, all=False):
         # check the database
@@ -197,24 +208,29 @@ class Database:
             database = self.database
         else:
             if not self.databaseExists(database):
-                return []
+                return None
 
         # check the table
         if table is None and self.table is not None:
             table = self.table
         else:
             if not self.tableExists(database=database, table=table):
-                return []
+                return None
 
         # get column data
-        sql_query_temp = "SHOW COLUMNS FROM {}.{};"
-        sql_query = sql_query_temp.format(database, table)
+        sql_query_temp = "SHOW COLUMNS FROM %(database)s.%(table)s;"
+        temp_dict = {'database':database, 'table':table}
+        sql_query = sql_query_temp % temp_dict
         self.cursor.execute(sql_query)
         columns = self.cursor.fetchall()
+        field_names = [i[0] for i in self.cursor.description]
+        data = []
+        for i in range(len(columns)):
+            data.append(self._tupletodic(columns[i], field_names))
 
         # return all column info
         if all is True:
-            return columns
+            return data
 
         # return column field info only
         fields = []
@@ -229,21 +245,94 @@ class Database:
         table (Opt) = table name
         column (Req) = column name
     returns:
-        bool
+        bool -> true if exists, false if not
     '''
     def columnExists(self, database=None, table=None, column=None):
         if column is None:
             return False
         columns = self.getColumns(database=database, table=table)
+        if not columns:
+            return False
         if column not in columns:
             return False
         return True
 
-    def getPKcolumn(self, table=None, database=None, all=True):
-        columns = self.getColumns(database, table, column)
+    '''
+    Obj.getPKcolumn(table, database, all)
+    arg:
+        table (opt) = name of the working table (string)
+        database (opt) = name of the working database (string)
+        all (opt) = boolian option to get all column information
+    returns:
+        default -> string of the name of the primary key
+        all=True -> dictionary of all primary key column info
+    '''
+    def getPKcolumn(self, table=None, database=None, all=False):
+        columns = self.getColumns(table, database, True)
+        if not columns:
+            return None
+        PK_col = {}
+        for i in range(len(columns)):
+            if 'PRI' in columns[i]['Key']:
+                PK_col = columns[i]
+                break
+        if all is True:
+            return PK_col
+        else:
+            return PK_col['Field']
 
-    def getFKcolumns(self, table=None, database=None, all=True):
-        columns = self.getColumns(database, table, column)
+    '''
+    Obj.getFKcolumns(table, database, all)
+    arg:
+        table (opt) = name of working table (str)
+        database (opt) = name of working database (str)
+        all (opt) = boolian option to get all column information
+    returns:
+        default -> list of strings for each FK column header
+        all=True -> list of dict for each FK column containing detailed info
+    '''
+    def getFKcolumns(self, table=None, database=None, all=False):
+        columns = self.getColumns(table, database, True)
+        if not columns:
+            return None
+        FK_col = []
+        FK_col_Fields = []
+        for i in range(len(columns)):
+            if 'MUL' in columns[i]['Key']:
+                FK_col.append(columns[i])
+                FK_col_Fields.append(columns[i]['Field'])
+        if not FK_col:
+            return None
+        if all is True:
+            return FK_col
+        else:
+            return FK_col_Fields
+
+    '''
+    Obj.getFKParentTable(column)
+    arg:
+        column (req) = string of the FK column name
+    returns:
+        dict containing the FK reference info for the selected column
+    '''
+    def getFKParentTable(self, column=''):
+        if not column:
+            return None
+        # get column data
+        sql_query_temp = "SELECT REFERENCED_TABLE_SCHEMA, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE COLUMN_NAME = '%(column)s' AND CONSTRAINT_NAME LIKE 'fk_%%';"
+        temp_dict = {'column':column}
+        sql_query = sql_query_temp % temp_dict
+        self.cursor.execute(sql_query)
+        columns = self.cursor.fetchone()
+        if not columns:
+            return None
+        field_names = [i[0] for i in self.cursor.description]
+        data = self._tupletodic(columns, field_names)
+        return data
+
+# ------------------------------------------------------------------------------
+# ------------------------ Items Functions -------------------------------------
+# ------------------------------------------------------------------------------
 
     '''
     Obj.insertItem(data)
@@ -289,7 +378,7 @@ class Database:
         sql_query_temp = "INSERT INTO %(db)s.%(table)s ( %(col)s ) VALUES ( %(p)s );"
         temp_dict = {'db':self.database,'table':self.table, 'col':columns, 'p':placeholders}
         sql_query = sql_query_temp % temp_dict
-        print(sql_query)
+        #print(sql_query)
         # Execute Query
 
         try:
