@@ -354,35 +354,69 @@ class Database:
         try:
             self.cursor.execute(sql_query_temp, list(data.values()))
             self.connection.commit()
-            print("Query Successful")
+            #print("Query Successful")
             return True
         except Error as err:
-            print(f"Error: '{err}'")
+            #print(f"Error: '{err}'")
             return False
+
+    '''
+    Obj.convertDicttoTuples(data):
+    arg:
+        data (req) = list of dicts, keys are column headers.  All dicts must
+                     contain the same headers in the same order.
+    returns:
+        correct case -> a tuple of a tuple and list of tuples.  The first
+                        tuple contains the columns in order, the list contains
+                        the data in tuples.
+                        i.e.((column, column),[(data, data), (data, data)])
+
+    Note:
+        this function is a child/helper function to Obj.insertItems()
+    '''
+    def convertDictstoTuples(self, data=None):
+        if len(data) <= 0:
+            return None
+        if data is None:
+            return None
+
+        columns = tuple(data[0])
+        tupleData = []
+        for i in range(len(data)):
+            # check columns against the first set
+            if columns == tuple(data[i]):
+                tupleData.append(tuple(data[i].values()))
+            else:
+                return None
+
+        return (columns, tupleData)
 
     '''
     Obj.insertManyItems(columns, data)
     arg:
-        columns (req) = Tuple of each column data is going into
-        data (req) = list of tuples containing
-                     data for each column
+        data (req) = list containing dicts with key values as columns.
     return:
-        boolians
+        boolians -> true if the data was entered, false if not
     '''
-    def insertItems(self, columns, data):
+    def insertItems(self, data):
+        if self.database is None or self.table is None:
+            return False
+
+        output = self.convertDictstoTuples(data)
+        if not output:
+            return False
 
         # Generate SQL Query
-        placeholders = ', '.join(['%s'] * (len(columns)))
-        columns = ', '.join(columns)
+        placeholders = ', '.join(['%s'] * len(output[0]))
+        columns = ', '.join(output[0])
+        sql_query_temp = "INSERT INTO %(db)s.%(table)s ( %(col)s ) VALUES (%(p)s);"
 
-        sql_query_temp = "INSERT INTO %(db)s.%(table)s ( %(col)s ) VALUES ( %(p)s );"
         temp_dict = {'db':self.database,'table':self.table, 'col':columns, 'p':placeholders}
         sql_query = sql_query_temp % temp_dict
-        #print(sql_query)
-        # Execute Query
 
+        # Execute Query
         try:
-            self.cursor.executemany(sql_query, data)
+            self.cursor.executemany(sql_query, output[1])
             #print(self.cursor.statement)
             self.connection.commit()
             #print("Query successful")
@@ -390,17 +424,6 @@ class Database:
         except Error as err:
             #print(f"Error: '{err}'")
             return False
-
-    '''
-    Obj.updateItem()
-
-    '''
-    # TODO:
-    def updateItem(self):
-        pass
-
-    def updateItems(self):
-        pass
 
     '''
     Obj.getItem(item_id, columns)
@@ -411,7 +434,7 @@ class Database:
         - a dictionary of each value paired with the column header as a key
         - an empy dictionary
     '''
-    def getItem(self, item_id=None, columns=["*"]):
+    def getItem(self, item_id=None, columns=["*"], showDeleted=False):
         if item_id is None:
             return {}
         # check database and table
@@ -435,6 +458,8 @@ class Database:
 
 
         condition = table_columns[0] + " = " + str(item_id)
+        if not showDeleted:
+            condition += " AND is_deleted=0"
         sql_query_temp = "SELECT %(columns)s FROM %(database)s.%(table)s WHERE %(condition)s;"
         inputs = {'columns':col_string, 'database':self.database, 'table':self.table, 'condition':condition}
 
@@ -446,6 +471,8 @@ class Database:
             self.cursor.execute(sql_query)
             data = self.cursor.fetchone()
             #print("Query Successful")
+            if not data:
+                return None
             if custom_col:
                 return self._tupletodic(data, columns)
             else:
@@ -517,10 +544,139 @@ class Database:
             table[row[table_columns[0]]] = row
         return table
 
-    def deleteItem(self):
+    '''
+    Obj.getLastInsertId()
+    arg: None
+    Returns:
+        the last id/PK of a record that was inserted recently.
+    '''
+    def getLastInsertId(self):
+        # Generate SQL Query
+        sql_query = "SELECT LAST_INSERT_ID();"
+
+        # Execute Query
+        try:
+            self.cursor.execute(sql_query)
+            #print(self.cursor.statement)
+            #self.connection.commit()
+            #print("Query successful")
+            id = self.cursor.fetchone()
+            return id
+        except Error as err:
+            #print(f"Error: '{err}'")
+            return None
+
+    '''
+    Obj.getItemIds(condition)
+    arg:
+        condition (req) = a query string to sort out items in a db
+    returns:
+        a list containing keys that match the specific conditions,
+        if no conditions match or no database and or table is
+        selected/invalid, returns None
+    '''
+    def getItemPKs(self, condition, showDeleted=False):
+        # check database and table
+        if self.database is None or self.table is None:
+            return None
+
+        PK_col = self.getPKcolumn(self.table, self.database)
+        if not PK_col:
+            return None
+
+        if not showDeleted:
+            condition += " AND is_deleted=0"
+
+        sql_query_temp = "SELECT %(columns)s FROM %(database)s.%(table)s WHERE %(condition)s;"
+        inputs = {'columns':PK_col, 'database':self.database, 'table':self.table, 'condition':condition}
+        sql_query = sql_query_temp % inputs
+
+        # Execute Query
+        try:
+            self.cursor.execute(sql_query)
+            #print(self.cursor.statement)
+            #self.connection.commit()
+            #print("Query successful")
+            ids = self.cursor.fetchall()
+            if not ids:
+                return None
+            return_list = []
+            for id in ids:
+                return_list.append(id[0])
+            return return_list
+        except Error as err:
+            #print(f"Error: '{err}'")
+            return None
+
+    '''
+    Obj.getItemFks(id)
+    arg:
+        id (req) = the PK/id of a record
+        showDeleted (opt) = sorts out deleted records
+    returns:
+        a dict with the keys being the FK column headers
+    '''
+    def getItemFKs(self, id='', showDeleted=False):
+        # check database and table
+        if self.database is None or self.table is None:
+            return None
+
+        # get FK column headers
+        FK_cols = self.getFKcolumns(table=self.table, database=self.database)
+        if not FK_cols:
+            return None
+        columns = ', '.join(FK_cols)
+
+        # create conditional statement
+        PK_col = self.getPKcolumn(table=self.table, database=self.database)
+        condition_temp = PK_col + " = '%s'"
+        condition = condition_temp % str(id)
+
+        if not showDeleted:
+            condition += " AND is_deleted=0"
+
+        # create SQL Query
+        sql_query_temp = "SELECT %(columns)s FROM %(database)s.%(table)s WHERE %(condition)s;"
+        inputs = {'columns':columns, 'database':self.database, 'table':self.table, 'condition':condition}
+        sql_query = sql_query_temp % inputs
+
+        # Execute Query
+        try:
+            self.cursor.execute(sql_query)
+            #print(self.cursor.statement)
+            #self.connection.commit()
+            #print("Query successful")
+            ids = self.cursor.fetchall()
+            #print(ids)
+            #print(FK_cols)
+            if not ids:
+                return None
+            return self._tupletodic(ids[0], FK_cols)
+
+        except Error as err:
+            #print(f"Error: '{err}'")
+            return None
+
+    '''
+    Obj.deleteItem(id, condition)
+    '''
+    def deleteItem(self, id, condition):
         pass
 
-    def deleteItems(self):
+    '''
+    Obj.deleteItems(ids, condition)
+    '''
+    def deleteItems(self, ids, condition):
+        pass
+
+    '''
+    Obj.updateItem()
+
+    '''
+    def updateItem(self):
+        pass
+
+    def updateItems(self):
         pass
 
     def customChangeQuery(self):

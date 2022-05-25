@@ -36,8 +36,8 @@ class Test_DB(unittest.TestCase):
         # customers
         columns = '''
                   customer_id INT AUTO_INCREMENT PRIMARY KEY,
-                  first_name VARCHAR(255),
-                  last_name VARCHAR(255),
+                  first_name VARCHAR(255) NOT NULL,
+                  last_name VARCHAR(255) NOT NULL,
                   age TINYINT(120),
                   is_deleted BOOL NOT NULL DEFAULT 0
                   '''
@@ -88,28 +88,29 @@ class Test_DB(unittest.TestCase):
         self.cursor.executemany(sql_query_temp, data)
         self.connection.commit()
 
-        sql_query_temp = 'INSERT INTO store.customers(first_name, last_name, age) VALUES ( %s, %s, %s );'
+        sql_query_temp = 'INSERT INTO store.customers(first_name, last_name, age, is_deleted) VALUES ( %s, %s, %s, %s );'
         data = [
-        ('billy','tanner',22),
-        ('paul','anderson',40),
-        ('tom','victor',35),
-        ('jimmy','bawlen',34)
+        ('billy','tanner',22, 0),
+        ('paul','anderson',40, 0),
+        ('tom','victor',35, 0),
+        ('paul','joe',40, 1),
+        ('jimmy','bawlen',34, 0)
         ]
 
         self.cursor.executemany(sql_query_temp, data)
         self.connection.commit()
 
-        sql_query_temp = 'INSERT INTO store.orders(customer_id, sku, quantity) VALUES ( %s, %s, %s );'
+        sql_query_temp = 'INSERT INTO store.orders(customer_id, sku, quantity, is_deleted) VALUES ( %s, %s, %s, %s );'
         data = [
-        (1,'HBO34523',1),
-        (3,'134SBE2341',2),
-        (2,'NLS2q34345',4),
-        (1,'NLS2q34345',1),
-        (2,'134SBE2341',3),
-        (3,'NLS2q34345',4),
-        (1,'HBO34523',1),
-        (2,'HBO34523',1),
-        (3,'NLS2q34345',4),
+        (1,'HBO34523',1,0),
+        (3,'134SBE2341',2,0),
+        (2,'NLS2q34345',4,1),
+        (1,'NLS2q34345',1,0),
+        (2,'134SBE2341',3,0),
+        (3,'NLS2q34345',4,1),
+        (1,'HBO34523',1,0),
+        (2,'HBO34523',1,0),
+        (3,'NLS2q34345',4,0),
         ]
 
         self.cursor.executemany(sql_query_temp, data)
@@ -305,6 +306,34 @@ class Test_DB(unittest.TestCase):
         self.assertEqual(db4.getItem(item_id = 1, columns=['first_name']),{'first_name':'billy'})
         self.assertEqual(db4.getItem(item_id = 1, columns=['first_name', 'last_name']),{'first_name':'billy', 'last_name':'tanner'})
 
+        db5 = Database(database='store', table='orders')
+        self.assertIsNone(db5.getItem(item_id = 3))
+        self.assertEqual(db5.getItem(item_id = 3, showDeleted=True),{'order_id':3, 'customer_id':2, 'sku':'NLS2q34345', 'quantity':4, 'is_deleted':1})
+        self.assertEqual(db5.getItem(item_id = 1),{'order_id':1, 'customer_id':1, 'sku':'HBO34523', 'quantity':1, 'is_deleted':0})
+        self.assertEqual(db5.getItem(item_id = 1, showDeleted=True),{'order_id':1, 'customer_id':1, 'sku':'HBO34523', 'quantity':1, 'is_deleted':0})
+
+    #@unittest.skip("Test Not Ready")
+    def test_getItemPKs(self):
+        db1 = Database(database='store', table='orders')
+        self.assertIsNone(db1.getItemPKs("sku = '2'"))
+        self.assertIsNone(db1.getItemPKs(""))
+        self.assertIsNone(db1.getItemPKs("this shouldn't make sense"))
+        self.assertEqual(db1.getItemPKs("sku = 'HBO34523'"),[1, 7, 8])
+        self.assertEqual(db1.getItemPKs("customer_id = '2'", showDeleted=True),[3, 5, 8])
+        self.assertEqual(db1.getItemPKs("customer_id = '2'"),[5, 8])
+        self.assertEqual(db1.getItemPKs("customer_id = '2' AND sku = 'HBO34523'"),[8])
+
+    #@unittest.skip("Test Not Ready")
+    def test_getItemFKs(self):
+        db1 = Database(database='store', table='orders')
+        self.assertIsNone(db1.getItemFKs("sku = '2'"))
+        self.assertIsNone(db1.getItemFKs(""))
+        self.assertIsNone(db1.getItemFKs("this is not a key"))
+        self.assertEqual(db1.getItemFKs("2"),{'customer_id': 3, 'sku': '134SBE2341'})
+        self.assertEqual(db1.getItemFKs("1"),{'customer_id': 1, 'sku': 'HBO34523'})
+        self.assertIsNone(db1.getItemFKs(3))
+        self.assertEqual(db1.getItemFKs(3, showDeleted=True),{'customer_id': 2, 'sku': 'NLS2q34345'})
+
     #@unittest.skip("Test Not Ready")
     def test_getItemsByFK(self):
         db1 = Database()
@@ -317,7 +346,8 @@ class Test_DB(unittest.TestCase):
         self.assertEqual(db3.getItemsByFK(FK='1', FK_col='customer_id'),{})
 
         db4 = Database(database='store', table='orders')
-        self.assertEqual(db4.getItemsByFK(FK='2', FK_col='customer_id'),{3: {'order_id': 3, 'customer_id': 2, 'sku': 'NLS2q34345', 'quantity': 4, 'is_deleted': 0}, 5: {'order_id': 5, 'customer_id': 2, 'sku': '134SBE2341', 'quantity': 3, 'is_deleted': 0}, 8: {'order_id': 8, 'customer_id': 2, 'sku': 'HBO34523', 'quantity': 1, 'is_deleted': 0}})
+        self.assertEqual(db4.getItemsByFK(FK='2', FK_col='customer_id', showDeleted=True),{3: {'order_id': 3, 'customer_id': 2, 'sku': 'NLS2q34345', 'quantity': 4, 'is_deleted': 1}, 5: {'order_id': 5, 'customer_id': 2, 'sku': '134SBE2341', 'quantity': 3, 'is_deleted': 0}, 8: {'order_id': 8, 'customer_id': 2, 'sku': 'HBO34523', 'quantity': 1, 'is_deleted': 0}})
+        self.assertEqual(db4.getItemsByFK(FK='2', FK_col='customer_id'),{5: {'order_id': 5, 'customer_id': 2, 'sku': '134SBE2341', 'quantity': 3, 'is_deleted': 0}, 8: {'order_id': 8, 'customer_id': 2, 'sku': 'HBO34523', 'quantity': 1, 'is_deleted': 0}})
         self.assertEqual(db4.getItemsByFK(FK='HBO34523', FK_col='sku', condition="customer_id=2"),{8: {'order_id': 8, 'customer_id': 2, 'sku': 'HBO34523', 'quantity': 1, 'is_deleted': 0}})
         self.assertEqual(db4.getItemsByFK(FK='3', FK_col='customer_id', condition="sku='HBO34523'"),{})
         self.assertEqual(db4.getItemsByFK(FK='4', FK_col='customer_id', condition="sku='HBO34523'"),{})
@@ -327,14 +357,34 @@ class Test_DB(unittest.TestCase):
         self.assertEqual(db4.getItemsByFK(FK='4'),{})
         self.assertEqual(db4.getItemsByFK(FK_col='customer_id'),{})
 
-    @unittest.skip("Test Not Ready")
+    #@unittest.skip("Test Not Ready")
     def test_insertItem(self):
         db = Database(database='store', table='customers')
+        self.assertFalse(db.insertItem())
+        self.assertFalse(db.insertItem(({'first_name':'tommy'})))
+        self.assertFalse(db.insertItem(({'first_name':'tommy','last_name':'tyson','age':26, 'extra_column':'not_data'})))
         self.assertTrue(db.insertItem(({'first_name':'tommy','last_name':'tyson','age':26})))
+        #print(db.getLastInsertId())
 
-    @unittest.skip("Test Not Ready")
+    #@unittest.skip("Test Not Ready")
     def test_insertItems(self):
-        pass
+        db = Database(database='store', table='products')
+        self.assertFalse(db.convertDictstoTuples([]))
+        self.assertFalse(db.convertDictstoTuples([{"brand": "Ford", "type": "Mustang", "date": 1964},{"brand": "Ford","year": 1964}]))
+        self.assertFalse(db.convertDictstoTuples([{"brand": "Ford", "model": "Mustang", "year": 1964},{"brand": "Ford","year": 1964}]))
+        self.assertFalse(db.convertDictstoTuples([{"brand": "Ford", "model": "Mustang", "year": 1964},{"brand": "Ford","year": 1964,"model": "Mustang"}]))
+        self.assertTrue(db.insertItems([{'sku': 'new_product1', 'product_name': 'new_product1', 'brand_name': 'new_product1'},{'sku': 'new_product2', 'product_name': 'new_product2', 'brand_name': 'new_product2'},{'sku': 'new_product3', 'product_name': 'new_product3', 'brand_name': 'new_product3'}]))
+        self.assertTrue(db.insertItems([{'sku': 'new_product4', 'product_name': 'new_product4', 'brand_name': 'new_product4'}]))
+
+    #@unittest.skip("Test Not Ready")
+    def test_convertDictstoTuples(self):
+        db = Database()
+        self.assertIsNone(db.convertDictstoTuples([]))
+        self.assertIsNone(db.convertDictstoTuples([{"brand": "Ford", "type": "Mustang", "date": 1964},{"brand": "Ford","year": 1964}]))
+        self.assertIsNone(db.convertDictstoTuples([{"brand": "Ford", "model": "Mustang", "year": 1964},{"brand": "Ford","year": 1964}]))
+        self.assertIsNone(db.convertDictstoTuples([{"brand": "Ford", "model": "Mustang", "year": 1964},{"brand": "Ford","year": 1964,"model": "Mustang"}]))
+        self.assertEqual(db.convertDictstoTuples([{"brand": "Ford", "model": "Mustang", "year": 1964},{"brand": "chevy", "model": "catelack", "year": 1970}]),(('brand', 'model', 'year'), [("Ford", "Mustang", 1964),("chevy", "catelack", 1970)]))
+        self.assertEqual(db.convertDictstoTuples([{"brand": "Ford", "model": "Mustang", "year": 1964}]),(('brand', 'model', 'year'), [("Ford", "Mustang", 1964)]))
 
     @unittest.skip("Test Not Ready")
     def test_updateItem(self):
@@ -342,14 +392,6 @@ class Test_DB(unittest.TestCase):
 
     @unittest.skip("Test Not Ready")
     def test_updateItems(self):
-        pass
-
-    @unittest.skip("Test Not Ready")
-    def getItemPK(self):
-        pass
-
-    @unittest.skip("Test Not Ready")
-    def getItemFK(self):
         pass
 
     @unittest.skip("Test Not Ready")
