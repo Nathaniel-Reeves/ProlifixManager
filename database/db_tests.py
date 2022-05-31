@@ -386,31 +386,63 @@ class Test_DB(unittest.TestCase):
         self.assertEqual(db.convertDictstoTuples([{"brand": "Ford", "model": "Mustang", "year": 1964},{"brand": "chevy", "model": "catelack", "year": 1970}]),(('brand', 'model', 'year'), [("Ford", "Mustang", 1964),("chevy", "catelack", 1970)]))
         self.assertEqual(db.convertDictstoTuples([{"brand": "Ford", "model": "Mustang", "year": 1964}]),(('brand', 'model', 'year'), [("Ford", "Mustang", 1964)]))
 
-    @unittest.skip("Test Not Ready")
+    #@unittest.skip("Test Not Ready")
     def test_updateItem(self):
-        pass
+        db1 = Database()
+        self.assertFalse(db1.updateItem(3, {'last_name':'george'}))
+        self.assertFalse(db1.updateItem(1, {'first_name':'billy', 'age':2}))
+        self.assertFalse(db1.updateItem(2, {}))
+        self.assertFalse(db1.updateItem(9, {'last_name':'george','age':46}))
 
-    @unittest.skip("Test Not Ready")
+        db2 = Database(database='store', table='customers')
+        self.assertTrue(db2.updateItem(3, {'last_name':'george'}))
+        self.assertTrue(db2.updateItem(1, {'first_name':'billy', 'age':2}))
+        self.assertFalse(db2.updateItem(2, {}))
+        self.assertFalse(db2.updateItem(50, {'last_name':'george','age':46}))
+
+    #@unittest.skip("Test Not Ready")
     def test_updateItems(self):
-        pass
+        db1 = Database()
+        self.assertFalse(db1.updateItems("age > '34'", {'last_name':'george'}))
+        self.assertFalse(db1.updateItems("age > '34'", {'first_name':'billy', 'age':2}))
+        self.assertFalse(db1.updateItems("age > '34'", {}))
+        self.assertFalse(db1.updateItems("This doesn't make sense", {'last_name':'george','age':46}))
 
-    @unittest.skip("Test Not Ready")
-    def deleteItem(self):
-        pass
+        db2 = Database(database='store', table='customers')
+        self.assertTrue(db2.updateItems("age > '34'", {'last_name':'george'}))
+        self.assertTrue(db2.updateItems("age > '34'", {'first_name':'billy', 'age':2}))
+        self.assertFalse(db2.updateItems("age > '34'", {}))
+        self.assertFalse(db2.updateItems("This doesn't make sense", {'last_name':'george','age':46}))
 
-    @unittest.skip("Test Not Ready")
-    def deleteItems(self):
-        pass
+    #@unittest.skip("Test Not Ready")
+    def test_deleteItem(self):
+        db1 = Database()
+        self.assertFalse(db1.deleteItem(3))
+        self.assertFalse(db1.deleteItem(50))
+
+        db2 = Database(database='store', table='customers')
+        self.assertTrue(db2.deleteItem(1))
+        self.assertFalse(db2.deleteItem(50))
+
+    #@unittest.skip("Test Not Ready")
+    def test_deleteItems(self):
+        db1 = Database()
+        self.assertFalse(db1.deleteItems("age > '34'"))
+        self.assertFalse(db1.deleteItems("This doesn't make sense"))
+
+        db2 = Database(database='store', table='customers')
+        self.assertTrue(db2.deleteItems("age > '34'"))
+        self.assertFalse(db2.deleteItems("This doesn't make sense"))
 
     '''
     CUSTOM
     '''
     @unittest.skip("Test Not Ready")
-    def customChangeQuery(self):
+    def test_customChangeQuery(self):
         pass
 
     @unittest.skip("Test Not Ready")
-    def customInsertQuery(self):
+    def test_customInsertQuery(self):
         pass
 
     '''

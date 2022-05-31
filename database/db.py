@@ -1,5 +1,6 @@
 import mysql.connector
 from mysql.connector import Error
+import logging
 
 #print(cursor.statement)
 # SAFE EXAMPLES. DO THIS!
@@ -9,11 +10,21 @@ HOST = 'localHost'
 USER = 'client'
 PASSWORD = 'clientPassword5!'
 
+logging.basicConfig(filename='logs/database_logs.log', level=logging.ERROR, format='%(asctime)s |$| %(levelname)s |$| File:%(filename)s |$| Line:%(lineno)d |$| %(message)s')
+
+# logging.debug('debug message')
+# logging.info('info message')
+# logging.warning('warn message')
+# logging.error('error message')
+# logging.critical('critical message')
 
 class Database:
 
-    '''
-    database(database, table)
+# ------------------------------------------------------------------------------
+# ------------------------ Server Functions ------------------------------------
+# ------------------------------------------------------------------------------
+
+    '''Database(database, table)
     arg:
         host (req) = hostname/ip address of mysql server
         user (req) = username of connection account
@@ -22,7 +33,7 @@ class Database:
         table (opt) = name of table to connect to
     Initializes a connection to a database.
     '''
-    def __init__(self, host=HOST, user=USER, password=PASSWORD, database=None, table=None):
+    def __init__(self, host=HOST, user=USER, password=PASSWORD, database=None, table=None, autoCommit=True):
         self._host = host
         self._user = user
         self._password = password
@@ -32,34 +43,64 @@ class Database:
         self.table = table
         self.database = database
 
+        self.autoCommit = autoCommit
+
         try:
             self.connection = mysql.connector.connect(host=self._host, user=self._user, password=self._password)
             if self.connection.is_connected():
                 db_Info = self.connection.get_server_info()
-                #print("Connected to MySQL Server version ", db_Info)
+                logging.info("Connected to MySQL Server version "+db_Info)
                 self.cursor = self.connection.cursor()
 
-                #print("Check Database: ", self.databaseExists(database))
+                logging.info("Check Database: "+ str(self.databaseExists(database)))
                 if not self.databaseExists():
                     self.database = None
-                #print("Check Table: ", self.tableExists(table))
+                logging.info("Check Table: "+ str(self.tableExists(table)))
                 if not self.tableExists():
                     self.table = None
-
-                record = self.cursor.fetchone()
-                #print("You're connected to database: ", record[0])
                 return
 
         except Error as e:
-            #print("Error while connecting to MySQL", e)
+            logging.critical("Error while connecting to MySQL Server")
             return
+
+    def getRowCount(self):
+        return self.cursor.rowcount
+
+    def commit(self):
+        self.connection.commit()
+
+    def rollback(self):
+        self.connection.rollback()
+
+    def autoCommit(self, bool):
+        self.autoCommit = bool
+        return bool
+
+    '''del Operator Over-ride
+    close connections to database,
+    if auto commit is on, the del
+    function will commit before
+    closing the connection, otherwise
+    it will rollback to the last commit.
+    '''
+    def __del__(self):
+        if (self.connection is not None and self.connection.is_connected()):
+            if self.autoCommit:
+                logging.info("Actions Commited")
+                self.connection.commit()
+            else:
+                self.connection.rollback()
+                logging.warning("Actions Rollback")
+            self.cursor.close()
+            self.connection.close()
+            logging.info("Connection Closed")
 
 # ------------------------------------------------------------------------------
 # ------------------------ Database Functions ----------------------------------
 # ------------------------------------------------------------------------------
 
-    '''
-    obj.switchDatabase(database_name)
+    '''Obj.switchDatabase(database_name)
     arg:
         database_name (req) = name of database to switch to
     returns:
@@ -70,33 +111,38 @@ class Database:
             database = self.database
         if self.databaseExists(database):
             self.database = database
+            logging.info("Working Database Switched to: "+database)
             return True
+        logging.warning("Working Database was not switched")
         return False
 
-    '''
-    obj.getCurrentDatabase()
+    '''Obj.getCurrentDatabase()
     returns:
         current Database's name
     '''
     def getCurrentDatabase(self):
         return self.database
 
-    '''
-    obj.getDatabases()
+    '''Obj.getDatabases()
     returns:
         a list of all Databases in the server
     '''
     def getDatabases(self):
         sql_query = "SHOW DATABASES;"
-        self.cursor.execute(sql_query)
-        database_tuples = self.cursor.fetchall()
-        databases = []
-        for d in database_tuples:
-            databases.append(d[0])
-        return databases
+        try:
+            self.cursor.execute(sql_query)
+            logging.info("Query Executed - "+self.cursor.statement)
+            database_tuples = self.cursor.fetchall()
+        except Error as err:
+            logging.error(f"Error: '{err}'")
+            return None
+        else:
+            databases = []
+            for d in database_tuples:
+                databases.append(d[0])
+            return databases
 
-    '''
-    obj.databaseExists(table_name):
+    '''Obj.databaseExists(table_name):
     arg:
         database_name (opt)
     returns:
@@ -107,15 +153,16 @@ class Database:
             database = self.database
 
         if database in self.getDatabases():
+            logging.info(f"Database Exists {self.database}")
             return True
+        logging.warning("Database Doesn't Exist")
         return False
 
 # ------------------------------------------------------------------------------
 # ------------------------ Table Functions -------------------------------------
 # ------------------------------------------------------------------------------
 
-    '''
-    obj.switchTable(table_name)
+    '''Obj.switchTable(table_name)
     arg:
         table_name (req) = name of table to switch to
     returns:
@@ -126,25 +173,26 @@ class Database:
             database = self.database
         else:
             if not self.databaseExists(database):
+                logging.warning("Working Table was not Switched")
                 return False
 
         if table is None and self.table is None:
+            logging.warning("Working Table was not Switched")
             return False
         else:
             if self.tableExists(table=table, database=database):
                 self.table = table
+                logging.info("Working Table Switched to: "+table)
                 return True
 
-    '''
-    obj.getCurrentTable()
+    '''Obj.getCurrentTable()
     returns:
         current table's name
     '''
     def getCurrentTable(self):
         return self.table
 
-    '''
-    obj.getTables()
+    '''Obj.getTables()
     returns:
         a list of all tables in the database
     '''
@@ -153,20 +201,26 @@ class Database:
             database = self.database
         else:
             if not self.databaseExists(database):
+                logging.warning("Database Doesn't Exist")
                 return []
 
         sql_query = "SHOW TABLES FROM %(database)s;"
 
-        self.cursor.execute(sql_query % {'database':database})
-        tables_tuples = self.cursor.fetchall()
-        tables = []
-        for t in tables_tuples:
-            tables.append(t[0])
-        #print("tables: ", tables)
-        return tables
+        try:
+            self.cursor.execute(sql_query % {'database':database})
+            tables_tuples = self.cursor.fetchall()
+            logging.info("Query Executed - "+self.cursor.statement)
+        except Error as err:
+            logging.error(f"Error: '{err}'")
+            return None
+        else:
+            tables = []
+            for t in tables_tuples:
+                tables.append(t[0])
+            #print("tables: ", tables)
+            return tables
 
-    '''
-    obj.tableExists(table_name):
+    '''Obj.tableExists(table_name):
     arg:
         table_name (opt)
     returns:
@@ -182,18 +236,20 @@ class Database:
             table = self.table
         else:
             if table is None:
+                logging.warning("Table doesn't Exist")
                 return False
 
         if table not in self.getTables(database=database):
+            logging.warning("Table doesn't Exist")
             return False
+        logging.info(f"Table Exists - {self.database}.{table}")
         return True
 
 # ------------------------------------------------------------------------------
 # ------------------------ Column Functions ------------------------------------
 # ------------------------------------------------------------------------------
 
-    '''
-    obj.getColumns(table_name, all)
+    '''Obj.getColumns(table_name, all)
     arg:
         table_name (opt) = name of a table in the database (str)
         all (opt) = true to get all information for each column (bool)
@@ -217,29 +273,35 @@ class Database:
             if not self.tableExists(database=database, table=table):
                 return None
 
-        # get column data
+        # generate query
         sql_query_temp = "SHOW COLUMNS FROM %(database)s.%(table)s;"
         temp_dict = {'database':database, 'table':table}
         sql_query = sql_query_temp % temp_dict
-        self.cursor.execute(sql_query)
-        columns = self.cursor.fetchall()
-        field_names = [i[0] for i in self.cursor.description]
-        data = []
-        for i in range(len(columns)):
-            data.append(self._tupletodic(columns[i], field_names))
 
-        # return all column info
-        if all is True:
-            return data
+        try:
+            self.cursor.execute(sql_query)
+            logging.info("Query Executed - "+self.cursor.statement)
+            columns = self.cursor.fetchall()
+        except Error as err:
+            print(f"Error: '{err}'")
+            return None
+        else:
+            field_names = [i[0] for i in self.cursor.description]
+            data = []
+            for i in range(len(columns)):
+                data.append(self._tupletodic(columns[i], field_names))
 
-        # return column field info only
-        fields = []
-        for column in columns:
-            fields.append(column[0])
-        return fields
+            # return all column info
+            if all is True:
+                return data
 
-    '''
-    Obj.columnExists(database, table, column)
+            # return column field info only
+            fields = []
+            for column in columns:
+                fields.append(column[0])
+            return fields
+
+    '''Obj.columnExists(database, table, column)
     arg:
         database (Opt) = database name
         table (Opt) = table name
@@ -249,16 +311,19 @@ class Database:
     '''
     def columnExists(self, database=None, table=None, column=None):
         if column is None:
+            logging.warning("No Column was Inputted/Selected")
             return False
         columns = self.getColumns(database=database, table=table)
         if not columns:
+            logging.warning("Get Columns Returned Empty")
             return False
         if column not in columns:
+            logging.warning("Column Doesn't Exist")
             return False
+        logging.info(f"Column Exists - {self.database}.{self.table} col = {column}")
         return True
 
-    '''
-    Obj.getPKcolumn(table, database, all)
+    '''Obj.getPKcolumn(table, database, all)
     arg:
         table (opt) = name of the working table (string)
         database (opt) = name of the working database (string)
@@ -281,8 +346,7 @@ class Database:
         else:
             return PK_col['Field']
 
-    '''
-    Obj.getFKcolumns(table, database, all)
+    '''Obj.getFKcolumns(table, database, all)
     arg:
         table (opt) = name of working table (str)
         database (opt) = name of working database (str)
@@ -308,8 +372,7 @@ class Database:
         else:
             return FK_col_Fields
 
-    '''
-    Obj.getFKParentTable(column)
+    '''Obj.getFKParentTable(column)
     arg:
         column (req) = string of the FK column name
     returns:
@@ -318,24 +381,31 @@ class Database:
     def getFKParentTable(self, column=''):
         if not column:
             return None
-        # get column data
+
+        # generate query
         sql_query_temp = "SELECT REFERENCED_TABLE_SCHEMA, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE COLUMN_NAME = '%(column)s' AND CONSTRAINT_NAME LIKE 'fk_%%';"
         temp_dict = {'column':column}
         sql_query = sql_query_temp % temp_dict
-        self.cursor.execute(sql_query)
-        columns = self.cursor.fetchone()
-        if not columns:
+
+        try:
+            self.cursor.execute(sql_query)
+            logging.info("Query Executed - "+self.cursor.statement)
+            columns = self.cursor.fetchone()
+        except Error as err:
+            logging.error(f"Error: '{err}'")
             return None
-        field_names = [i[0] for i in self.cursor.description]
-        data = self._tupletodic(columns, field_names)
-        return data
+        else:
+            if not columns:
+                return None
+            field_names = [i[0] for i in self.cursor.description]
+            data = self._tupletodic(columns, field_names)
+            return data
 
 # ------------------------------------------------------------------------------
 # ------------------------ Items Functions -------------------------------------
 # ------------------------------------------------------------------------------
 
-    '''
-    Obj.insertItem(data)
+    '''Obj.insertItem(data)
     arg:
         Data = Dictionary of columns and data
     return:
@@ -353,15 +423,15 @@ class Database:
 
         try:
             self.cursor.execute(sql_query_temp, list(data.values()))
+            logging.info("Query Executed - "+self.cursor.statement)
             self.connection.commit()
-            #print("Query Successful")
-            return True
         except Error as err:
-            #print(f"Error: '{err}'")
+            logging.error(f"Error: '{err}'")
             return False
+        else:
+            return True
 
-    '''
-    Obj.convertDicttoTuples(data):
+    '''Obj.convertDicttoTuples(data):
     arg:
         data (req) = list of dicts, keys are column headers.  All dicts must
                      contain the same headers in the same order.
@@ -391,14 +461,13 @@ class Database:
 
         return (columns, tupleData)
 
-    '''
-    Obj.insertManyItems(columns, data)
+    '''Obj.insertManyItems(columns, data)
     arg:
         data (req) = list containing dicts with key values as columns.
     return:
         boolians -> true if the data was entered, false if not
     '''
-    def insertItems(self, data):
+    def insertItems(self, data=[]):
         if self.database is None or self.table is None:
             return False
 
@@ -417,16 +486,15 @@ class Database:
         # Execute Query
         try:
             self.cursor.executemany(sql_query, output[1])
-            #print(self.cursor.statement)
+            logging.info("Query Executed - "+self.cursor.statement)
             self.connection.commit()
-            #print("Query successful")
-            return True
         except Error as err:
-            #print(f"Error: '{err}'")
+            logging.error(f"Error: '{err}'")
             return False
+        else:
+            return True
 
-    '''
-    Obj.getItem(item_id, columns)
+    '''Obj.getItem(item_id, columns)
     arg:
         item_id (req) = the id of the item in a string, int, or float
         columns (opt) = a list of column headers of data you specifically want
@@ -469,20 +537,20 @@ class Database:
 
         try:
             self.cursor.execute(sql_query)
+            logging.info("Query Executed - "+self.cursor.statement)
             data = self.cursor.fetchone()
-            #print("Query Successful")
+        except Error as err:
+            logging.error(f"Error: '{err}'")
+            return {}
+        else:
             if not data:
                 return None
             if custom_col:
                 return self._tupletodic(data, columns)
             else:
                 return self._tupletodic(data, table_columns)
-        except Error as err:
-            print(f"Error: '{err}'")
-            return {}
 
-    '''
-    Obj._tubletodic(data, keys)
+    '''Obj._tubletodic(data, keys)
     arg:
         data (req) = list containing data
         keys (req) = list conaining keys
@@ -496,8 +564,7 @@ class Database:
                 dic[keys[i]] = data[i]
         return dic
 
-    '''
-    Obj.getItemsByFK(FK, FK_col, condition, showDeleted)
+    '''Obj.getItemsByFK(FK, FK_col, condition, showDeleted)
     arg:
         FK (req) = string of the forign key to search by
         FK_col (req) = string of the column name of the forign key to search by
@@ -515,6 +582,7 @@ class Database:
         # get table columns
         table_columns = self.getColumns(database=self.database, table=self.table)
 
+        # generate query
         sql_query_temp = "SELECT * FROM %(database)s.%(table)s WHERE %(FK_col)s='%(FK)s'"
         inputs = {'database':self.database, 'table':self.table, 'FK_col':FK_col, 'FK':FK}
 
@@ -532,20 +600,19 @@ class Database:
 
         try:
             self.cursor.execute(sql_query)
+            logging.info("Query Executed - "+self.cursor.statement)
             data = self.cursor.fetchall()
-            #print("Query Successful")
         except Error as err:
-            #print(f"Error: '{err}'")
+            logging.error(f"Error: '{err}'")
             return {}
+        else:
+            table = {}
+            for i in data:
+                row = self._tupletodic(i, table_columns)
+                table[row[table_columns[0]]] = row
+            return table
 
-        table = {}
-        for i in data:
-            row = self._tupletodic(i, table_columns)
-            table[row[table_columns[0]]] = row
-        return table
-
-    '''
-    Obj.getLastInsertId()
+    '''Obj.getLastInsertId()
     arg: None
     Returns:
         the last id/PK of a record that was inserted recently.
@@ -557,17 +624,15 @@ class Database:
         # Execute Query
         try:
             self.cursor.execute(sql_query)
-            #print(self.cursor.statement)
-            #self.connection.commit()
-            #print("Query successful")
+            logging.info("Query Executed - "+self.cursor.statement)
             id = self.cursor.fetchone()
-            return id
         except Error as err:
-            #print(f"Error: '{err}'")
+            logging.error(f"Error: '{err}'")
             return None
+        else:
+            return id
 
-    '''
-    Obj.getItemIds(condition)
+    '''Obj.getItemIds(condition)
     arg:
         condition (req) = a query string to sort out items in a db
     returns:
@@ -587,6 +652,7 @@ class Database:
         if not showDeleted:
             condition += " AND is_deleted=0"
 
+        # generate query
         sql_query_temp = "SELECT %(columns)s FROM %(database)s.%(table)s WHERE %(condition)s;"
         inputs = {'columns':PK_col, 'database':self.database, 'table':self.table, 'condition':condition}
         sql_query = sql_query_temp % inputs
@@ -594,22 +660,20 @@ class Database:
         # Execute Query
         try:
             self.cursor.execute(sql_query)
-            #print(self.cursor.statement)
-            #self.connection.commit()
-            #print("Query successful")
+            logging.info("Query Executed - "+self.cursor.statement)
             ids = self.cursor.fetchall()
+        except Error as err:
+            logging.error(f"Error: '{err}'")
+            return None
+        else:
             if not ids:
                 return None
             return_list = []
             for id in ids:
                 return_list.append(id[0])
             return return_list
-        except Error as err:
-            #print(f"Error: '{err}'")
-            return None
 
-    '''
-    Obj.getItemFks(id)
+    '''Obj.getItemFks(id)
     arg:
         id (req) = the PK/id of a record
         showDeleted (opt) = sorts out deleted records
@@ -635,7 +699,7 @@ class Database:
         if not showDeleted:
             condition += " AND is_deleted=0"
 
-        # create SQL Query
+        # Generate Query
         sql_query_temp = "SELECT %(columns)s FROM %(database)s.%(table)s WHERE %(condition)s;"
         inputs = {'columns':columns, 'database':self.database, 'table':self.table, 'condition':condition}
         sql_query = sql_query_temp % inputs
@@ -643,54 +707,140 @@ class Database:
         # Execute Query
         try:
             self.cursor.execute(sql_query)
-            #print(self.cursor.statement)
-            #self.connection.commit()
-            #print("Query successful")
+            logging.info("Query Executed - "+self.cursor.statement)
             ids = self.cursor.fetchall()
-            #print(ids)
-            #print(FK_cols)
+        except Error as err:
+            logging.error(f"Error: '{err}'")
+            return None
+        else:
             if not ids:
                 return None
             return self._tupletodic(ids[0], FK_cols)
 
+    '''Obj.deleteItem(id)
+    arg:
+        id (req) = id to be deleted
+    returns:
+        bool
+    Note: this is a soft delete.
+    '''
+    def deleteItem(self, id):
+        return self.updateItem(id, {'is_deleted':'1'})
+
+    '''Obj.deleteItems(condition)
+    arg:
+        condition (req) = sql condition to delete a group of items
+    returns:
+        bool
+    Note: this is a soft delete
+    '''
+    def deleteItems(self, condition):
+        return self.updateItems(condition, {'is_deleted':'1'})
+
+    '''Obj.updateItem(item_id, dict)
+    arg:
+        item_id (req) = the id of the item to be updated
+        dict (req) = a dictionary containing column headers as keys and the
+                     the values is the data to be updated
+    returns:
+        bool
+    '''
+    def updateItem(self, item_id, dict):
+        if item_id is None:
+            return False
+
+        # check database and table
+        if self.database is None or self.table is None:
+            return False
+
+        table_columns = self.getColumns(database=self.database, table=self.table)
+
+        # Test if the Id exists
+        sql_query_temp = "SELECT EXISTS(SELECT * from %(database)s.%(table)s WHERE %(column)s=%(id)s);"
+        inputs = {'database':self.database, 'table':self.table, 'column':table_columns[0], 'id': item_id}
+        sql_query = sql_query_temp % inputs
+        try:
+            self.cursor.execute(sql_query)
+            logging.info("Query Executed - "+self.cursor.statement)
+            id_exists = self.cursor.fetchone()
         except Error as err:
-            #print(f"Error: '{err}'")
-            return None
+            logging.error(f"Error: '{err}'")
+            return False
+        else:
+            if id_exists[0] == 0:
+                return False
 
-    '''
-    Obj.deleteItem(id, condition)
-    '''
-    def deleteItem(self, id, condition):
-        pass
+            # check columns
+            update_columns = tuple(dict.keys())
+            data_temp = "%s = '%s', "
+            data = ''
+            for col in update_columns:
+                if col not in table_columns:
+                    return False
+                data += data_temp % (col, dict[col])
 
-    '''
-    Obj.deleteItems(ids, condition)
-    '''
-    def deleteItems(self, ids, condition):
-        pass
+            data = data[:-2]
 
-    '''
-    Obj.updateItem()
+            condition = table_columns[0] + " = " + str(item_id)
+            sql_query_temp = "UPDATE %(database)s.%(table)s SET %(data)s WHERE %(condition)s;"
+            inputs = {'database':self.database, 'table':self.table, 'condition':condition, 'data': data}
+            sql_query = sql_query_temp % inputs
 
-    '''
-    def updateItem(self):
-        pass
+            try:
+                self.cursor.execute(sql_query)
+                logging.info("Query Executed - "+self.cursor.statement)
+                data = self.cursor.fetchone()
+            except Error as err:
+                logging.error(f"Error: '{err}'")
+                return False
+            else:
+                return True
 
-    def updateItems(self):
-        pass
+    '''Obj.updateItems(condition, dict)
+    arg:
+        condition (req) = the condition to select which items are updated.
+        dict (req) = a dictionary containing column headers as keys and the
+                     the values is the data to be updated
+    returns:
+        bool
+    '''
+    def updateItems(self, condition, dict):
+        if not condition:
+            return False
+
+        # check database and table
+        if self.database is None or self.table is None:
+            return False
+
+        table_columns = self.getColumns(database=self.database, table=self.table)
+
+        # check columns
+        update_columns = tuple(dict.keys())
+        data_temp = "%s = '%s', "
+        data = ''
+        for col in update_columns:
+            if col not in table_columns:
+                return False
+            data += data_temp % (col, dict[col])
+
+        data = data[:-2]
+
+        sql_query_temp = "UPDATE %(database)s.%(table)s SET %(data)s WHERE %(condition)s;"
+        inputs = {'database':self.database, 'table':self.table, 'condition':condition, 'data': data}
+        sql_query = sql_query_temp % inputs
+
+        try:
+            self.cursor.execute(sql_query)
+            data = self.cursor.fetchone()
+            #print("Query Successful")
+        except Error as err:
+            logging.error(f"Error: '{err}'")
+            return False
+        else:
+            return True
 
     def customChangeQuery(self):
         pass
 
     def customInsertQuery(self):
         pass
-
-    '''
-    del Operator Over-ride
-    close connections to database
-    '''
-    def __del__(self):
-        if (self.connection is not None and self.connection.is_connected()):
-            self.cursor.close()
-            self.connection.close()
-            #print("Connection Closed")
