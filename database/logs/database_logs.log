@@ -1,1 +1,5 @@
-
+2022-06-01 15:46:20,347 |$| ERROR |$| File:db.py |$| Line:563 |$| Error: '1054 (42S22): Unknown column 'NLS2q34345' in 'where clause''
+2022-06-01 15:46:55,530 |$| ERROR |$| File:db.py |$| Line:563 |$| Error: '1054 (42S22): Unknown column 'NLS2q34345' in 'where clause''
+2022-06-01 15:51:53,320 |$| ERROR |$| File:db.py |$| Line:564 |$| Error: '1054 (42S22): Unknown column 'NLS2q34345' in 'where clause''
+2022-06-01 15:52:08,875 |$| ERROR |$| File:db.py |$| Line:564 |$| Error: '1054 (42S22): Unknown column 'NLS2q34345' in 'where clause''
+2022-06-01 15:52:45,292 |$| ERROR |$| File:db.py |$| Line:564 |$| Error: '1054 (42S22): Unknown column 'NLS2q34345' in 'where clause''
