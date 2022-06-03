@@ -168,19 +168,22 @@ class Database:
 		if database is None and self.database is not None:
 			database = self.database
 
-		if not self.databaseExists(database):
-			logging.warning("Working Table was not Switched")
-			return False
-
+		else:
+			if not self.databaseExists(database):
+				logging.warning("Working Table was not Switched, Invalid Database")
+				return False
 
 		if table is None and self.table is None:
-			logging.warning("Working Table was not Switched")
+			logging.warning("Working Table was not Switched, Invalid Table")
 			return False
-		else:
-			if self.tableExists(table=table, database=database):
-				self.table = table
-				logging.info("Working Table Switched to: "+table)
-				return True
+
+		if self.tableExists(table=table, database=database):
+			self.table = table
+			logging.info("Working Table Switched to: "+table)
+			return True
+		logging.warning("Working Table was not Switched, Table doesn't exist")
+		return False
+
 
 	'''Obj.getCurrentTable()
 	returns:
@@ -515,20 +518,29 @@ class Database:
 		else:
 			return True
 
-	'''Obj.getItem(item_id, columns)
+	'''Obj.getItem(item_id, columns, showDeleted, returnDicts)
 	arg:
 		item_id (req) = the id of the item in a string, int, or float
-		columns (opt) = a list of column headers of data you specifically want
+		columns (opt) = default is "*", list to specify which data colums
+		 				to return
+		showDeleted (opt) = Default is false.  When true, returns with
+							deleted items included
+		returnDicts (opt) = Defalt is false. When True, returns a list
+							of dictionaries of each value paired with
+							the column header as a keys
 	returns:
-		- a dictionary of each value paired with the column header as a key
+		- (Default) a list of tuples
 		- an empy dictionary
 	'''
-	def getItem(self, item_id=None, columns=["*"], showDeleted=False):
+	def getItem(self, item_id=None, columns=["*"], showDeleted=False, returnDicts=False):
+		errorReturn = []
+		if returnDicts:
+			errorReturn = {}
 		if item_id is None:
-			return {}
+			return errorReturn
 		# check database and table
 		if self.database is None or self.table is None:
-			return {}
+			return errorReturn
 
 		table_columns = self.getColumns(database=self.database, table=self.table)
 		# check columns
@@ -541,12 +553,13 @@ class Database:
 			col_string = ""
 			for col in columns:
 				if col not in table_columns:
-					return {}
+					return errorReturn
 				col_string += col + ", "
 			col_string = col_string[:-2] + " "
 
 
-		condition = table_columns[0] + " = " + str(item_id)
+		condition = "%s = '%s'" % (table_columns[0], str(item_id))
+
 		if not showDeleted:
 			condition += " AND is_deleted=0"
 		sql_query_temp = "SELECT %(columns)s FROM %(database)s.%(table)s WHERE %(condition)s;"
@@ -562,14 +575,83 @@ class Database:
 			data = self.cursor.fetchone()
 		except Error as err:
 			logging.error(f"Error: '{err}'")
-			return {}
+			return errorReturn
 		else:
 			if not data:
-				return None
-			if custom_col:
-				return self._tupletodic(data, columns)
+				return errorReturn
+			if returnDicts:
+				if custom_col:
+					return self._tupletodic(data, columns)
+				else:
+					return self._tupletodic(data, table_columns)
 			else:
-				return self._tupletodic(data, table_columns)
+				return data
+
+
+	'''Obj.getItems(columns, condition, showDeleted, returnDicts)
+	arg:
+		columns (opt) = (list of strings) column headers of data to be returned
+		condition (opt) = (string) set a condition to return a specific set
+		showDeleted (opt) = (bool) toggle to include deleted records
+		returnDicts (opt) = Defalt is false. When True, returns a list
+							of dictionaries of each value paired with
+							the column header as a keys
+	returns:
+		- a dictionary of each value paired with the column header as a key
+		- an empy dictionary
+	'''
+	def getItems(self, columns=["*"], condition='', showDeleted=False, returnDicts=False):
+		errorReturn = []
+		if returnDicts:
+			errorReturn = {}
+
+		# check database and table
+		if self.database is None or self.table is None:
+			return errorReturn
+
+		table_columns = self.getColumns(database=self.database, table=self.table)
+
+		# check columns
+		custom_col = False
+		if columns == ["*"]:
+			col_string = '*'
+		else:
+			custom_col = True
+			col_string = ""
+			for col in columns:
+				if col not in table_columns:
+					return errorReturn
+				col_string += col + ", "
+			col_string = col_string[:-2] + " "
+
+		if showDeleted:
+			if condition:
+				condition += " AND is_deleted='0'"
+			else:
+				condition = "WHERE is_deleted='0'"
+
+		sql_query_temp = "SELECT %(columns)s FROM %(database)s.%(table)s %(condition)s;"
+		inputs = {'columns':col_string, 'database':self.database, 'table':self.table, 'condition':condition}
+
+		sql_query = sql_query_temp % inputs
+		data = {}
+
+		try:
+			self.cursor.execute(sql_query)
+			logging.info("Query Executed - "+self.cursor.statement)
+			data = self.cursor.fetchall()
+		except Error as err:
+			logging.error(f"Error: '{err}'")
+			return errorReturn
+		else:
+			if not data:
+				return errorReturn
+			if returnDicts:
+				output = []
+				list_of_dict = [dict(zip(self.cursor.column_names, values)) for values in data]
+				return list_of_dict
+			else:
+				return data
 
 	'''Obj._tubletodic(data, keys)
 	arg:
@@ -589,26 +671,42 @@ class Database:
 	arg:
 		FK (req) = string of the forign key to search by
 		FK_col (req) = string of the column name of the forign key to search by
-		condition (opt) = string of additional conditions to select items by
 		showDeleted (opt) = boolian, gather deleted items as well as current
 							items default is to leave out deleted items
 	return:
 		requested Items in dict of dicts, empty dict if query failed
 	'''
-	def getItemsByFK(self, FK="", FK_col="", condition="", showDeleted=False):
+	def getItemsByFK(self, FK="", FK_col="", columns=["*"], condition='', showDeleted=False, returnDicts=False):
+		errorReturn = []
+		if returnDicts:
+			errorReturn = {}
+
 		# check database and table
 		if self.database is None or self.table is None:
-			return {}
+			return errorReturn
 
 		# get table columns
 		table_columns = self.getColumns(database=self.database, table=self.table)
 
+		# check columns
+		custom_col = False
+		if columns == ["*"]:
+			col_string = '*'
+		else:
+			custom_col = True
+			col_string = ""
+			for col in columns:
+				if col not in table_columns:
+					return errorReturn
+				col_string += col + ", "
+			col_string = col_string[:-2] + " "
+
 		# generate query
-		sql_query_temp = "SELECT * FROM %(database)s.%(table)s WHERE %(FK_col)s='%(FK)s'"
-		inputs = {'database':self.database, 'table':self.table, 'FK_col':FK_col, 'FK':FK}
+		sql_query_temp = "SELECT %(col)s FROM %(database)s.%(table)s WHERE %(FK_col)s='%(FK)s'"
+		inputs = {'database':self.database, 'table':self.table, 'FK_col':FK_col, 'FK':FK, 'col':col_string}
 
 		if condition:
-			sql_query_temp += " AND %(condition)s"
+			sql_query_temp += " %(condition)s"
 			inputs['condition'] = condition
 
 		if not showDeleted:
@@ -625,13 +723,16 @@ class Database:
 			data = self.cursor.fetchall()
 		except Error as err:
 			logging.error(f"Error: '{err}'")
-			return {}
+			return errorReturn
 		else:
-			table = {}
-			for i in data:
-				row = self._tupletodic(i, table_columns)
-				table[row[table_columns[0]]] = row
-			return table
+			if not data:
+				return errorReturn
+			if returnDicts:
+				output = []
+				list_of_dict = [dict(zip(self.cursor.column_names, values)) for values in data]
+				return list_of_dict
+			else:
+				return data
 
 	'''Obj.getLastInsertId()
 	arg: None
@@ -661,7 +762,7 @@ class Database:
 		if no conditions match or no database and or table is
 		selected/invalid, returns None
 	'''
-	def getItemPKs(self, condition, showDeleted=False):
+	def getItemPKs(self, condition='', showDeleted=False):
 		# check database and table
 		if self.database is None or self.table is None:
 			return None
@@ -671,10 +772,13 @@ class Database:
 			return None
 
 		if not showDeleted:
-			condition += " AND is_deleted=0"
+			if not condition:
+				condition = " WHERE is_deleted='0'"
+			else:
+				condition += " AND is_deleted='0'"
 
 		# generate query
-		sql_query_temp = "SELECT %(columns)s FROM %(database)s.%(table)s WHERE %(condition)s;"
+		sql_query_temp = "SELECT %(columns)s FROM %(database)s.%(table)s %(condition)s;"
 		inputs = {'columns':PK_col, 'database':self.database, 'table':self.table, 'condition':condition}
 		sql_query = sql_query_temp % inputs
 
@@ -704,12 +808,12 @@ class Database:
 	def getItemFKs(self, id='', showDeleted=False):
 		# check database and table
 		if self.database is None or self.table is None:
-			return None
+			return []
 
 		# get FK column headers
 		FK_cols = self.getFKcolumns(table=self.table, database=self.database)
 		if not FK_cols:
-			return None
+			return []
 		columns = ', '.join(FK_cols)
 
 		# create conditional statement
@@ -732,10 +836,10 @@ class Database:
 			ids = self.cursor.fetchall()
 		except Error as err:
 			logging.error(f"Error: '{err}'")
-			return None
+			return []
 		else:
 			if not ids:
-				return None
+				return []
 			return self._tupletodic(ids[0], FK_cols)
 
 	'''Obj.deleteItem(id)
@@ -825,7 +929,7 @@ class Database:
 	returns:
 		bool
 	'''
-	def updateItems(self, condition, dict):
+	def updateItems(self, condition='', dict={}):
 		if not condition:
 			return False
 
@@ -846,7 +950,7 @@ class Database:
 
 		data = data[:-2]
 
-		sql_query_temp = "UPDATE %(database)s.%(table)s SET %(data)s WHERE %(condition)s;"
+		sql_query_temp = "UPDATE %(database)s.%(table)s SET %(data)s %(condition)s;"
 		inputs = {'database':self.database, 'table':self.table, 'condition':condition, 'data': data}
 		sql_query = sql_query_temp % inputs
 
