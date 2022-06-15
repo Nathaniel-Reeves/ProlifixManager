@@ -1,2 +1,0 @@
-2022-06-14 08:36:05,099 |$| ERROR |$| File:db.py |$| Line:453 |$| Error: '1364 (HY000): Field 'first_name' doesn't have a default value'
-2022-06-14 08:36:05,100 |$| ERROR |$| File:db.py |$| Line:453 |$| Error: '1054 (42S22): Unknown column 'NOT_A_COLUMN' in 'field list''
