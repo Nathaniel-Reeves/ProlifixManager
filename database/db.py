@@ -6,7 +6,7 @@ import logging
 # SAFE EXAMPLES. DO THIS!
 #cursor.execute("SELECT admin FROM users WHERE username = %s'", (username, ));
 #cursor.execute("SELECT admin FROM users WHERE username = %(username)s", {'username': username});
-HOST = 'localHost'
+HOST = '192.168.1.42'
 USER = 'client'
 PASSWORD = 'clientPassword5!'
 
