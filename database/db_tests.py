@@ -515,8 +515,7 @@ class Test_DB(unittest.TestCase):
 
 		# PART ONE (Uncommitted Changes)
 		# Initialize Connection to not auto commit
-		db_1a = Database(database='store')
-		db_1a.autoCommit = False
+		db_1a = Database(database='store', autoCommit=False)
 		# Test first set of Get Queries
 		self.assertEqual(db_1a.getItem(),[])
 		self.assertFalse(db_1a.switchTable('Fake_table'))
@@ -526,6 +525,7 @@ class Test_DB(unittest.TestCase):
 		self.assertEqual(db_1a.getItemPKs(),[1, 2, 3, 5])
 		self.assertEqual(db_1a.getItemFKs(id=3),[])
 		self.assertEqual(db_1a.getItems(),[(1, 'billy', 'tanner', 22, 0), (2, 'paul', 'anderson', 40, 0), (3, 'tom', 'victor', 35, 0), (4, 'paul', 'joe', 40, 1), (5, 'jimmy', 'bawlen', 34, 0)])
+		self.assertEqual(db_1a.getRowCount(),5)
 		self.assertTrue(db_1a.switchTable('products'))
 		self.assertEqual(db_1a.getItem(item_id='NLS2q34345', columns=['product_name', 'brand_name']),('Milk', 'MerryGold'))
 		self.assertEqual(db_1a.getItemPKs(),['134SBE2341', 'HBO34523', 'NLS2q34345'])
@@ -534,17 +534,24 @@ class Test_DB(unittest.TestCase):
 		self.assertEqual(db_1a.getItem(item_id=1, columns=['customer_id']),(1,))
 		self.assertEqual(db_1a.getItemPKs(condition='ORDER BY order_id', showDeleted=True),[1, 2, 3, 4, 5, 6, 7, 8, 9])
 		self.assertEqual(db_1a.getItemFKs(id=2, showDeleted=True),{'customer_id': 3, 'sku': '134SBE2341'})
+		self.assertEqual(db_1a.getRowCount(),1)
 		self.assertEqual(db_1a.getItemsByFK(FK=2,FK_col='customer_id', columns=['sku','customer_id'],showDeleted=True, returnDicts=True),[{'sku': 'NLS2q34345', 'customer_id': 2}, {'sku': '134SBE2341', 'customer_id': 2}, {'sku': 'HBO34523', 'customer_id': 2}])
 		self.assertEqual(db_1a.getItemsByFK(FK=2,FK_col='customer_id',columns=['sku','customer_id'], showDeleted=True),[('NLS2q34345', 2), ('134SBE2341', 2), ('HBO34523', 2)])
 		# Test Insert Queries
+		self.assertTrue(db_1a.switchTable('customers'))
+		self.assertFalse(db_1a.insertItem({}))
+		self.assertFalse(db_1a.insertItem({'first_name':'kevin','NOT_A_COLUMN':'fake data'}))
+		self.assertIsNone(db_1a.getLastInsertId())
+		self.assertTrue(db_1a.insertItem({'age':52,'first_name':'kevin','last_name':'bernard'}))
+		self.assertEqual(db_1a.getLastInsertId(),6)
 		# Test Update Queries
 		# Test Delete Queries
 		# Test second set of Get Queries
 		self.assertTrue(db_1a.switchTable('customers'))
 		self.assertEqual(db_1a.getItem(item_id=1, columns=['first_name', 'last_name']),('billy', 'tanner'))
-		self.assertEqual(db_1a.getItemPKs(),[1, 2, 3, 5])
+		self.assertEqual(db_1a.getItemPKs(),[1, 2, 3, 5, 6])
 		self.assertEqual(db_1a.getItemFKs(id=3),[])
-		self.assertEqual(db_1a.getItems(),[(1, 'billy', 'tanner', 22, 0), (2, 'paul', 'anderson', 40, 0), (3, 'tom', 'victor', 35, 0), (4, 'paul', 'joe', 40, 1), (5, 'jimmy', 'bawlen', 34, 0)])
+		self.assertEqual(db_1a.getItems(),[(1, 'billy', 'tanner', 22, 0), (2, 'paul', 'anderson', 40, 0), (3, 'tom', 'victor', 35, 0), (4, 'paul', 'joe', 40, 1), (5, 'jimmy', 'bawlen', 34, 0), (6, 'kevin', 'bernard', 52, 0)])
 		self.assertTrue(db_1a.switchTable('products'))
 		self.assertEqual(db_1a.getItem(item_id='NLS2q34345', columns=['product_name', 'brand_name']),('Milk', 'MerryGold'))
 		self.assertEqual(db_1a.getItemPKs(),['134SBE2341', 'HBO34523', 'NLS2q34345'])
@@ -553,8 +560,9 @@ class Test_DB(unittest.TestCase):
 		self.assertEqual(db_1a.getItem(item_id=1, columns=['customer_id']),(1,))
 		self.assertEqual(db_1a.getItemPKs(condition='ORDER BY order_id', showDeleted=True),[1, 2, 3, 4, 5, 6, 7, 8, 9])
 		self.assertEqual(db_1a.getItemFKs(id=2, showDeleted=True),{'customer_id': 3, 'sku': '134SBE2341'})
-		self.assertEqual(db_1a.getItemsByFK(FK=2,FK_col='customer_id', columns=['sku','customer_id'],showDeleted=True, returnDicts=True),[{'sku': 'NLS2q34345', 'customer_id': 2}, {'sku': '134SBE2341', 'customer_id': 2}, {'sku': 'HBO34523', 'customer_id': 2}])
-		self.assertEqual(db_1a.getItemsByFK(FK=2,FK_col='customer_id',columns=['sku','customer_id'], showDeleted=True),[('NLS2q34345', 2), ('134SBE2341', 2), ('HBO34523', 2)])
+		self.assertEqual(db_1a.getItemsByFK(FK=2, FK_col='customer_id', columns=['sku','customer_id'], showDeleted=True, returnDicts=True),[{'sku': 'NLS2q34345', 'customer_id': 2}, {'sku': '134SBE2341', 'customer_id': 2}, {'sku': 'HBO34523', 'customer_id': 2}])
+		self.assertEqual(db_1a.getItemsByFK(FK=2, FK_col='customer_id', columns=['sku','customer_id'], showDeleted=True),[('NLS2q34345', 2), ('134SBE2341', 2), ('HBO34523', 2)])
+		db_1a.rollback()
 		# Test Insert Queries
 		# Close Connection
 		del db_1a

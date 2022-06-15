@@ -1,5 +1,2 @@
-2022-06-02 10:10:39,532 |$| ERROR |$| File:db.py |$| Line:624 |$| Error: '1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'AND is_deleted=0' at line 1'
-2022-06-02 10:11:05,555 |$| ERROR |$| File:db.py |$| Line:624 |$| Error: '1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'is+deleted=0' at line 1'
-2022-06-03 09:30:30,142 |$| ERROR |$| File:db.py |$| Line:811 |$| Error: '1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '2'' AND is_deleted=0' at line 1'
-2022-06-03 10:04:57,345 |$| ERROR |$| File:db.py |$| Line:725 |$| Error: '1054 (42S22): Unknown column 'not_a_column' in 'where clause''
-2022-06-03 10:04:57,353 |$| ERROR |$| File:db.py |$| Line:725 |$| Error: '1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '='4' AND is_deleted=0' at line 1'
+2022-06-14 08:36:05,099 |$| ERROR |$| File:db.py |$| Line:453 |$| Error: '1364 (HY000): Field 'first_name' doesn't have a default value'
+2022-06-14 08:36:05,100 |$| ERROR |$| File:db.py |$| Line:453 |$| Error: '1054 (42S22): Unknown column 'NOT_A_COLUMN' in 'field list''

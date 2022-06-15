@@ -58,6 +58,7 @@ class Database:
 				logging.info("Check Table: "+ str(self.tableExists(table)))
 				if not self.tableExists():
 					self.table = None
+
 				return
 
 		except Error as e:
@@ -83,10 +84,10 @@ class Database:
 	def __del__(self):
 		if (self.connection is not None and self.connection.is_connected()):
 			if self.autoCommit:
+				self.commit()
 				logging.info("Actions Commited")
-				self.connection.commit()
 			else:
-				self.connection.rollback()
+				self.rollback()
 				logging.warning("Actions Rollback")
 			self.cursor.close()
 			self.connection.close()
@@ -448,7 +449,6 @@ class Database:
 		try:
 			self.cursor.execute(sql_query_temp, list(data.values()))
 			logging.info("Query Executed - "+self.cursor.statement)
-			self.connection.commit()
 		except Error as err:
 			logging.error(f"Error: '{err}'")
 			return False
@@ -511,7 +511,6 @@ class Database:
 		try:
 			self.cursor.executemany(sql_query, output[1])
 			logging.info("Query Executed - "+self.cursor.statement)
-			self.connection.commit()
 		except Error as err:
 			logging.error(f"Error: '{err}'")
 			return False
@@ -752,7 +751,9 @@ class Database:
 			logging.error(f"Error: '{err}'")
 			return None
 		else:
-			return id
+			if id[0] == 0:
+				return None
+			return id[0]
 
 	'''Obj.getItemIds(condition)
 	arg:
