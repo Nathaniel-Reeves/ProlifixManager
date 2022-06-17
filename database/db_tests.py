@@ -142,7 +142,8 @@ class Test_DB(unittest.TestCase):
 	@unittest.skip("Test Passes")
 	def test_getDatabases(self):
 		db = Database()
-		self.assertEqual(db.getDatabases(),['information_schema','mysql','performance_schema','store','sys'])
+		list = db.getDatabases()
+		self.assertIn('store',list)
 
 	@unittest.skip("Test Passes")
 	def test_databaseExists(self):
@@ -179,10 +180,8 @@ class Test_DB(unittest.TestCase):
 	'''
 	TEST TABLES
 	'''
-
 	@unittest.skip("Test Passes")
 	def test_getCurrentTable(self):
-		print('test_getCurrentTable')
 		db1 = Database()
 		self.assertIsNone(db1.getCurrentTable())
 
@@ -298,11 +297,9 @@ class Test_DB(unittest.TestCase):
 		db4 = Database(table='customers', database='store')
 		self.assertEqual(db4.getBottomRowPK(),5)
 
-
 	'''
 	TEST ITEMS
 	'''
-
 	@unittest.skip("Test Passes")
 	def test_getItem(self):
 		db1 = Database()
@@ -326,7 +323,7 @@ class Test_DB(unittest.TestCase):
 		self.assertEqual(db4.getItem(item_id = 1, columns=['first_name', 'last_name'], returnDicts=True),{'first_name':'billy', 'last_name':'tanner'})
 
 		db5 = Database(database='store', table='orders')
-		self.assertIsNone(db5.getItem(item_id = 3))
+		self.assertEqual(db5.getItem(item_id = 3),[])
 		self.assertEqual(db5.getItem(item_id = 3, showDeleted=True, returnDicts=True),{'order_id':3, 'customer_id':2, 'sku':'NLS2q34345', 'quantity':4, 'is_deleted':1})
 		self.assertEqual(db5.getItem(item_id = 1, returnDicts=True),{'order_id':1, 'customer_id':1, 'sku':'HBO34523', 'quantity':1, 'is_deleted':0})
 		self.assertEqual(db5.getItem(item_id = 1, showDeleted=True, returnDicts=True),{'order_id':1, 'customer_id':1, 'sku':'HBO34523', 'quantity':1, 'is_deleted':0})
@@ -502,8 +499,8 @@ class Test_DB(unittest.TestCase):
 	'''
 	ACTUAL USE TEST CASES
 	'''
-	#@unittest.skip("Test Not Ready")
-	def test_useCase(self):
+	@unittest.skip("Test Passes")
+	def test_useCase1(self):
 		# Prolouge (Database Functions)
 		# Initialize Connection
 		db_i = Database()
@@ -513,6 +510,8 @@ class Test_DB(unittest.TestCase):
 		self.assertTrue(db_i.getCurrentDatabase(),'store')
 		del db_i
 
+	#@unittest.skip("TODO:")
+	def test_useCase2(self):
 		# PART ONE (Uncommitted Changes)
 		# Initialize Connection to not auto commit
 		db_1a = Database(database='store', autoCommit=False)
@@ -587,6 +586,8 @@ class Test_DB(unittest.TestCase):
 		self.assertEqual(db_1b.getItemsByFK(FK=2,FK_col='customer_id', columns=['sku','customer_id'],showDeleted=True, returnDicts=True),[{'sku': 'NLS2q34345', 'customer_id': 2}, {'sku': '134SBE2341', 'customer_id': 2}, {'sku': 'HBO34523', 'customer_id': 2}])
 		self.assertEqual(db_1b.getItemsByFK(FK=2,FK_col='customer_id',columns=['sku','customer_id'], showDeleted=True),[('NLS2q34345', 2), ('134SBE2341', 2), ('HBO34523', 2)])
 
+	@unittest.skip("Test Not Ready")
+	def test_useCase3(self):
 		# PART TWO (Auto-Commited Changes)
 		# Initialize Connection to auto commit
 		db_2a = Database(database='store')
@@ -651,11 +652,14 @@ class Test_DB(unittest.TestCase):
 		self.assertEqual(db_2b.getItemsByFK(FK=2,FK_col='customer_id', columns=['sku','customer_id'],showDeleted=True, returnDicts=True),[{'sku': 'NLS2q34345', 'customer_id': 2}, {'sku': '134SBE2341', 'customer_id': 2}, {'sku': 'HBO34523', 'customer_id': 2}])
 		self.assertEqual(db_2b.getItemsByFK(FK=2,FK_col='customer_id',columns=['sku','customer_id'], showDeleted=True),[('NLS2q34345', 2), ('134SBE2341', 2), ('HBO34523', 2)])
 
+	@unittest.skip("Test Not Ready")
+	def test_useCase4(self):
 		# PART THREE (Changes Maunally Commited)
 		# Initialize Connection to not auto commit
 		# Create a New User
 		# Add New Items in Store
 		# Place Order
+		pass
 
 	'''
 	TEAR DOWN
@@ -678,4 +682,4 @@ class Test_DB(unittest.TestCase):
 		self.connection.close()
 
 if __name__ == '__main__':
-	unittest.main()
+	unittest.main(failfast=True)

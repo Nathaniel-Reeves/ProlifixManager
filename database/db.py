@@ -586,7 +586,6 @@ class Database:
 			else:
 				return data
 
-
 	'''Obj.getItems(columns, condition, showDeleted, returnDicts)
 	arg:
 		columns (opt) = (list of strings) column headers of data to be returned
