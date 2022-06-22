@@ -290,3 +290,5 @@
 2022-06-17 15:39:34,057 |$| ERROR |$| File:db.py |$| Line:453 |$| Error: '1054 (42S22): Unknown column 'NOT_A_COLUMN' in 'field list''
 2022-06-17 15:41:00,812 |$| ERROR |$| File:db.py |$| Line:453 |$| Error: '1364 (HY000): Field 'first_name' doesn't have a default value'
 2022-06-17 15:41:00,813 |$| ERROR |$| File:db.py |$| Line:453 |$| Error: '1054 (42S22): Unknown column 'NOT_A_COLUMN' in 'field list''
+2022-06-20 12:28:47,776 |$| ERROR |$| File:db.py |$| Line:453 |$| Error: '1364 (HY000): Field 'first_name' doesn't have a default value'
+2022-06-20 12:28:47,779 |$| ERROR |$| File:db.py |$| Line:453 |$| Error: '1054 (42S22): Unknown column 'NOT_A_COLUMN' in 'field list''
