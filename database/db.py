@@ -2,6 +2,10 @@ import mysql.connector
 from mysql.connector import Error
 import logging
 
+import time
+from datetime import date
+import datetime
+
 #print(cursor.statement)
 # SAFE EXAMPLES. DO THIS!
 #cursor.execute("SELECT admin FROM users WHERE username = %s'", (username, ));
@@ -10,7 +14,7 @@ HOST = '192.168.1.42'
 USER = 'client'
 PASSWORD = 'clientPassword5!'
 
-logging.basicConfig(filename='logs/database_logs.log', level=logging.ERROR, format='%(asctime)s |$| %(levelname)s |$| File:%(filename)s |$| Line:%(lineno)d |$| %(message)s')
+logging.basicConfig(filename='logs/database_logs.log', level=logging.INFO, format='%(asctime)s |$| %(levelname)s |$| File:%(filename)s |$| Line:%(lineno)d |$| %(message)s')
 
 # logging.debug('debug message')
 # logging.info('info message')
