@@ -1,0 +1,31 @@
+:root {
+  --background-color: #D4EAC8;
+  --main-color: #56A3A6;
+  --secondary-color: #CAD49D;
+  --text-color: #484538;
+}
+
+* {
+ display: block;
+ padding: 0px;
+ margin: 0px;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+head {
+  display: none
+}
+
+#wrapper {
+  padding: 0px;
+  margin: 0px;
+}
+
+.cont {
+  padding: 8px;
+  text-align: center;
+}
