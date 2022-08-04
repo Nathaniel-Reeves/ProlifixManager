@@ -4,4 +4,4 @@ api = Blueprint('api', __name__, url_prefix='/api')
 
 @api.route('/getdata')
 def getdata():
-    return {'key':'value'}
+    return {'key':'value','key2':'value2', 'key3':'value3'}
