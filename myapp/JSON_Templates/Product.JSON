@@ -1,73 +1,75 @@
 {
     "productID":"",
     "clientID": "",
-    "formulaSpecs":{
+    "formulas":{
         "defaultFormulaVersion":"",
-        "V1": {
-            "formulaID":"",
-            "validFormula":"",
-            "specIssueDate": "",
-            "specRevicedDate": "",
-            "clientFormulaSheetPointer": "",
-            "formula":{
-                "1":{
-                    "ingredientID":"",
-                    "percent":"",
-                    "mgPerCap":"",
-                    "gramPerJar":"",
-                    "volumePerBottle":""
-                },
-                "2":{
-                    "ingredientID": "",
-                    "percent": "",
-                    "mgPerCap": "",
-                    "gramPerJar": "",
-                    "volumePerBottle": ""
-                },
-                "3":{
-                    "ingredientID": "",
-                    "percent": "",
-                    "mgPerCap": "",
-                    "gramPerJar": "",
-                    "volumePerBottle": ""
-                }
-            }
-        },
-        "V2": {
-            "formulaID": "",
-            "validFormula": "",
-            "specIssueDate": "",
-            "specRevicedDate": "",
-            "clientFormulaSheetPointer":"",
-            "formula": {
-                "1": {
-                    "ingredientID": "",
-                    "percent": "",
-                    "mgPerCap": "",
-                    "gramPerJar": "",
-                    "volumePerBottle": ""
-                },
-                "2": {
-                    "ingredientID": "",
-                    "percent": "",
-                    "mgPerCap": "",
-                    "gramPerJar": "",
-                    "volumePerBottle": ""
-                },
-                "3": {
-                    "ingredientID": "",
-                    "percent": "",
-                    "mgPerCap": "",
-                    "gramPerJar": "",
-                    "volumePerBottle": ""
-                }
+        "formulaSpecs":{
+            "1": {
+                "formulaID":"",
+                "validFormula":"",
+                "specIssueDate": "",
+                "specRevicedDate": "",
+                "filePointer": "",
+                "ingredientRatio":[
+                    {
+                        "ingredientID":"",
+                        "percent":"",
+                        "mgPerCap":"",
+                        "gramPerJar":"",
+                        "volumePerBottle":""
+                    },
+                    {
+                        "ingredientID": "",
+                        "percent": "",
+                        "mgPerCap": "",
+                        "gramPerJar": "",
+                        "volumePerBottle": ""
+                    },
+                    {
+                        "ingredientID": "",
+                        "percent": "",
+                        "mgPerCap": "",
+                        "gramPerJar": "",
+                        "volumePerBottle": ""
+                    }
+                ]
+            },
+            "2": {
+                "formulaID": "",
+                "validFormula": "",
+                "specIssueDate": "",
+                "specRevicedDate": "",
+                "filePointer":"",
+                "ingredientRatio": [
+                    {
+                        "ingredientID": "",
+                        "percent": "",
+                        "mgPerCap": "",
+                        "gramPerJar": "",
+                        "volumePerBottle": ""
+                    },
+                    {
+                        "ingredientID": "",
+                        "percent": "",
+                        "mgPerCap": "",
+                        "gramPerJar": "",
+                        "volumePerBottle": ""
+                    },
+                    {
+                        "ingredientID": "",
+                        "percent": "",
+                        "mgPerCap": "",
+                        "gramPerJar": "",
+                        "volumePerBottle": ""
+                    }
+                ]
             }
         }
     },
-    "componentSpecs":{
+    "componentSpec":{
         "componentsListID": "",
         "specIssueDate": "",
-        "specRevicedDate": "",
+        "specRevisedDate": "",
         "components": {
             "1": {
                 "componentsID": "",
@@ -92,7 +94,7 @@
             "specIssueDate": "",
             "specRevicedDate": "",
             "standardSampleLot":"",
-            "resultsFilePointer": "",
+            "filePointer": "",
             "visual":"",
             "odor":"",
             "tasteDry":"",
@@ -105,62 +107,64 @@
             "specIssueDate":"",
             "specRevicedDate":"",
             "standardSampleLot": "",
-            "resultsFilePointer": "",
-            "totalPlateCount":{
-                "requiredSpec": "",
-                "method":"",
-                "count":"",
-                "units":"",
-                "lessThan":""
-            },
-            "coliformCount":{
-                "requiredSpec": "",
-                "method": "",
-                "count": "",
-                "units": "",
-                "lessThan": ""
-            },
-            "escherichiaColiCount":{
-                "requiredSpec": "",
-                "method": "",
-                "count": "",
-                "units": "",
-                "lessThan": ""
-            },
-            "staphylococcusCount":{
-                "requiredSpec": "",
-                "method": "",
-                "count": "",
-                "units": "",
-                "lessThan": ""
-            },
-            "salmonellaCount":{
-                "requiredSpec": "",
-                "method": "",
-                "count": "",
-                "units": "",
-                "lessThan": ""
-            },
-            "yeastCount":{
-                "requiredSpec": "",
-                "method": "",
-                "count": "",
-                "units": "",
-                "lessThan": ""
+            "filePointer": "",
+            "tests":{
+                "totalPlateCount":{
+                    "requiredSpec": "",
+                    "method":"",
+                    "count":"",
+                    "units":"",
+                    "lessThan":""
                 },
-            "moldCount":{
-                "requiredSpec": "",
-                "method": "",
-                "count": "",
-                "units": "",
-                "lessThan": ""
-            },
-            "moisture":{
-                "requiredSpec": "",
-                "method": "",
-                "count": "",
-                "units": "",
-                "lessThan": ""
+                "coliformCount":{
+                    "requiredSpec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "lessThan": ""
+                },
+                "escherichiaColiCount":{
+                    "requiredSpec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "lessThan": ""
+                },
+                "staphylococcusCount":{
+                    "requiredSpec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "lessThan": ""
+                },
+                "salmonellaCount":{
+                    "requiredSpec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "lessThan": ""
+                },
+                "yeastCount":{
+                    "requiredSpec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "lessThan": ""
+                    },
+                "moldCount":{
+                    "requiredSpec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "lessThan": ""
+                },
+                "moisture":{
+                    "requiredSpec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "lessThan": ""
+                }
             }
         },
         "heavyMetals":{
@@ -168,41 +172,43 @@
             "specIssueDate": "",
             "specRevicedDate": "",
             "standardSampleLot": "",
-            "resultsFilePointer": "",
-            "totalHeavyMetals":{
-                "requiredSpec": "",
-                "method": "",
-                "count": "",
-                "units": "",
-                "lessThan": ""
-            },
-            "arsenic":{
-                "requiredSpec": "",
-                "method": "",
-                "count": "",
-                "units": "",
-                "lessThan": ""
-            },
-            "cadmium":{
-                "requiredSpec": "",
-                "method": "",
-                "count": "",
-                "units": "",
-                "lessThan": ""
-            },
-            "lead":{
-                "requiredSpec": "",
-                "method": "",
-                "count": "",
-                "units": "",
-                "lessThan": ""
-            },
-            "mercury":{
-                "requiredSpec": "",
-                "method": "",
-                "count": "",
-                "units": "",
-                "lessThan": ""
+            "filePointer": "",
+            "tests":{
+                "totalHeavyMetals":{
+                    "requiredSpec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "lessThan": ""
+                },
+                "arsenic":{
+                    "requiredSpec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "lessThan": ""
+                },
+                "cadmium":{
+                    "requiredSpec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "lessThan": ""
+                },
+                "lead":{
+                    "requiredSpec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "lessThan": ""
+                },
+                "mercury":{
+                    "requiredSpec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "lessThan": ""
+                }
             }
         },
         "FTIR":{
@@ -210,7 +216,7 @@
             "specIssueDate": "",
             "specRevicedDate": "",
             "standardSampleLot": "",
-            "resultsFilePointer": "",
+            "filePointer": "",
             "percentMatchStandard":"",
             "method":"",
             "rfValue":""
@@ -220,7 +226,7 @@
             "specIssueDate": "",
             "specRevicedDate": "",
             "standardSampleLot": "",
-            "resultsFilePointer": "",
+            "filePointer": "",
             "imageFilePointer":"",
             "description":"",
             "magnification":"",
@@ -231,7 +237,7 @@
             "specIssueDate": "",
             "specRevicedDate": "",
             "standardSampleLot": "",
-            "resultsFilePointer": "",
+            "filePointer": "",
             "method":"",
             "description":""
         },
@@ -240,163 +246,165 @@
             "specIssueDate": "",
             "specRevicedDate": "",
             "standardSampleLot": "",
-            "resultsFilePointer": "",
+            "filePointer": "",
             "servingSize":"",
             "servingUnits":"",
-            "calories":{
-                "ammountPerServing":"",
-                "units":"",
-                "source":""
-            },
-            "totalFat":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "saturatedFat":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "transFat":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "cholesterol":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "totalCarbohydrate":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "dietaryFiber":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "totalSugars":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "addedSugars":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "protein":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "sodium":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "potassium":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "calcium":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "zinc":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "iron":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "copper":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "magnesium":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "selenium":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "manganese":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "biotin":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "vitaminA":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "vitaminB1":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "vitaminB2": {
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "vitaminB3": {
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "vitaminB5": {
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "vitaminB6": {
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "vitaminB12": {
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "vitaminC":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "vitaminD3":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "vitaminE":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
-            },
-            "vitaminK2":{
-                "ammountPerServing": "",
-                "units": "",
-                "source": ""
+            "tests":{
+                "calories":{
+                    "ammountPerServing":"",
+                    "units":"",
+                    "source":""
+                },
+                "totalFat":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "saturatedFat":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "transFat":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "cholesterol":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "totalCarbohydrate":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "dietaryFiber":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "totalSugars":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "addedSugars":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "protein":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "sodium":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "potassium":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "calcium":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "zinc":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "iron":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "copper":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "magnesium":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "selenium":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "manganese":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "biotin":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitaminA":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitaminB1":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitaminB2": {
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitaminB3": {
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitaminB5": {
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitaminB6": {
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitaminB12": {
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitaminC":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitaminD3":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitaminE":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitaminK2":{
+                    "ammountPerServing": "",
+                    "units": "",
+                    "source": ""
+                }
             }
         },
         "pesticides": {
@@ -404,14 +412,14 @@
             "specIssueDate": "",
             "specRevicedDate": "",
             "standardSampleLot": "",
-            "resultsFilePointer": ""
+            "filePointer": ""
         },
-        "forgeinMatter":{
+        "foreignMatter":{
             "requiredSpec": "",
             "specIssueDate": "",
             "specRevicedDate": "",
             "standardSampleLot": "",
-            "resultsFilePointer": ""
+            "filePointer": ""
         }
     },
     "liquidProductSpecs":{
@@ -441,7 +449,185 @@
         "specRevicedDate": "",
         "specialInsructions":"",
         "processes":{
-            "process":
+            "[process]":{},
+            "batching":{
+                "scaleErr":"", 
+                "lossCoefficient":"",
+                "specialInstrucitons":"",
+                "equipment": [
+                    "[equipmentID]"
+                ],
+                "jobs":[
+                    "[jobPosition]"
+                ]
+            },
+            "screening": {
+                "lossCoefficient": "",
+                "specialInstrucitons": "",
+                "equipment": [
+                    "[equipmentID]"
+                ],
+                "jobs": [
+                    "[jobPosition]"
+                ]
+            },
+            "blending":{
+                "lossCoefficient": "",
+                "specialInstrucitons": "",
+                "equipment": [
+                    "[equipmentID]"
+                ],
+                "jobs": [
+                    "[jobPosition]"
+                ]
+            },
+            "encapsulation":{
+                "lossCoefficient": "",
+                "specialInstrucitons": "",
+                "equipment": [
+                    "[equipmentID]"
+                ],
+                "jobs": [
+                    "[jobPosition]"
+                ]
+            },
+            "grinding":{
+                "lossCoefficient": "",
+                "specialInstrucitons": "",
+                "equipment": [
+                    "[equipmentID]"
+                ],
+                "jobs": [
+                    "[jobPosition]"
+                ]
+            },
+            "polishing":{
+                "lossCoefficient": "",
+                "specialInstrucitons": "",
+                "equipment": [
+                    "[equipmentID]"
+                ],
+                "jobs": [
+                    "[jobPosition]"
+                ]
+            },
+            "powderFill":{
+                "lossCoefficient": "",
+                "specialInstrucitons": "",
+                "equipment": [
+                    "[equipmentID]"
+                ],
+                "jobs": [
+                    "[jobPosition]"
+                ]
+            },
+            "capsuleFill":{
+                "lossCoefficient": "",
+                "specialInstrucitons": "",
+                "equipment": [
+                    "[equipmentID]"
+                ],
+                "jobs": [
+                    "[jobPosition]"
+                ]
+            },
+            "liquidFill":{
+                "lossCoefficient": "",
+                "specialInstrucitons": "",
+                "equipment": [
+                    "[equipmentID]"
+                ],
+                "jobs": [
+                    "[jobPosition]"
+                ]
+            },
+            "inserts":{
+                "lossCoefficient": "",
+                "specialInstrucitons": "",
+                "equipment": [
+                    "[equipmentID]"
+                ],
+                "jobs": [
+                    "[jobPosition]"
+                ]
+            },
+            "lidSeal":{
+                "lossCoefficient": "",
+                "specialInstrucitons": "",
+                "equipment": [
+                    "[equipmentID]"
+                ],
+                "jobs": [
+                    "[jobPosition]"
+                ]
+
+            },
+            "bagSeal":{
+                "lossCoefficient": "",
+                "specialInstrucitons": "",
+                "equipment": [
+                    "[equipmentID]"
+                ],
+                "jobs": [
+                    "[jobPosition]"
+                ]
+
+            },
+            "shrinkband":{
+                "lossCoefficient": "",
+                "specialInstrucitons": "",
+                "equipment": [
+                    "[equipmentID]"
+                ],
+                "jobs": [
+                    "[jobPosition]"
+                ]
+
+            },
+            "label":{
+                "lossCoefficient": "",
+                "specialInstrucitons": "",
+                "equipment": [
+                    "[equipmentID]"
+                ],
+                "jobs": [
+                    "[jobPosition]"
+                ]
+
+            },
+            "specialPackaging":{
+                "lossCoefficient": "",
+                "specialInstrucitons": "",
+                "equipment": [
+                    "[equipmentID]"
+                ],
+                "jobs": [
+                    "[jobPosition]"
+                ]
+
+            },
+            "boxAndPallet":{
+                "lossCoefficient": "",
+                "specialInstrucitons": "",
+                "equipment": [
+                    "[equipmentID]"
+                ],
+                "jobs": [
+                    "[jobPosition]"
+                ]
+
+            },
+            "packLabel":{
+                "lossCoefficient": "",
+                "specialInstrucitons": "",
+                "equipment": [
+                    "[equipmentID]"
+                ],
+                "jobs": [
+                    "[jobPosition]"
+                ]
+
+            }
         }
     }
 }
