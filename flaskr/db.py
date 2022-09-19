@@ -1,19 +1,47 @@
-import sqlite3
+import mysqlx
 
 import click
 from flask import current_app, g
 from flask.cli import with_appcontext
 
+HOST = '192.168.1.42'
+PORT = 33060
+USER = 'client'
+PASSWORD = 'clientPassword5!'
 
-def get_db():
-    if 'db' not in g:
-        g.db = sqlite3.connect(
-            current_app.config['DATABASE'],
-            detect_types=sqlite3.PARSE_DECLTYPES
-        )
-        g.db.row_factory = sqlite3.Row
+class DatabaseConnection():
 
-    return g.db
+    '''Database(database, table)
+	arg:
+		host (req) = hostname/ip address of mysql server
+		user (req) = username of connection account
+		password (req) = password of connection account
+		database (opt) = name of database to connect to
+		table (opt) = name of table to connect to
+	Initializes a connection to a database.
+	'''
+    def __init__(self, host=HOST, port=PORT, user=USER, password=PASSWORD):
+        self._host = host
+        self._port = port
+        self._user = user
+        self._password = password
+        
+        # Connect to server on localhost
+        self.session = mysqlx.get_session( {'host': self._host, 'port': self._port,'user': self._user, 'password': self._password } )
+        
+        return
+
+    def get_session(self):
+        return self.session
+
+    def get_schema(self, schema):
+        return self.session.get_schema(schema)
+
+    def sql(self, sql):
+        return self.session.sql(sql)
+
+    def __del__(self):
+        self.session.close()
 
 
 def close_db(e=None):
