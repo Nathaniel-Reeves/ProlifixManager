@@ -36,7 +36,7 @@ def create_app(test_config=None):
     app.register_blueprint(handlers.auth.bp)
 
 
-    app.register_blueprint(handlers.blog.bp)
+    app.register_blueprint(handlers.home.bp)
     app.add_url_rule('/', endpoint='index')
 
     return app

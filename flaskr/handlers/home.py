@@ -6,7 +6,7 @@ from werkzeug.exceptions import abort
 from .auth import login_required
 from ..db import DatabaseConnection
 
-bp = Blueprint('blog', __name__)
+bp = Blueprint('home', __name__)
 
 
 @bp.route('/')
@@ -18,7 +18,7 @@ def index():
         FROM `test`.`post` p JOIN `test`.`user` u ON p.`author_id` = u.`id`        ORDER BY created DESC;"""
     ).execute()
     posts = posts.fetch_all()
-    return render_template('blog/index.html', posts=posts)
+    return render_template('home/index.html', posts=posts)
 
 
 @bp.route('/create', methods=('GET', 'POST'))
@@ -42,9 +42,9 @@ def create():
                 VALUES (?, ?, ?)'''
             ).bind((title, body, g.user['id'])).execute()
             session.commit()
-            return redirect(url_for('blog.index'))
+            return redirect(url_for('home.index'))
 
-    return render_template('blog/create.html')
+    return render_template('home/create.html')
 
 
 def get_post(id, check_author=True):
@@ -88,9 +88,9 @@ def update(id):
                 WHERE `id` = ?"""
             ).bind((title, body, id)).execute()
             session.commit()
-            return redirect(url_for('blog.index'))
+            return redirect(url_for('home.index'))
 
-    return render_template('blog/update.html', post=post)
+    return render_template('home/update.html', post=post)
 
 
 @bp.route('/<int:id>/delete', methods=('POST',))
@@ -102,4 +102,4 @@ def delete(id):
     session = db.get_session()
     session.sql('DELETE FROM `test`.`post` WHERE `id` = ?').bind((id,)).execute()
     session.commit()
-    return redirect(url_for('blog.index'))
+    return redirect(url_for('home.index'))

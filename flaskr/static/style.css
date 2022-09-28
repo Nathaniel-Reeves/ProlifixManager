@@ -1,6 +1,6 @@
 html {
     font-family: sans-serif;
-    background: #eee;
+    background: #a1aa74;
     padding: 1rem;
 }
 
@@ -12,12 +12,12 @@ body {
 
 h1 {
     font-family: serif;
-    color: #377ba8;
+    color: #775635;
     margin: 1rem 0;
 }
 
 a {
-    color: #377ba8;
+    color: #775635;
 }
 
 hr {
@@ -25,16 +25,49 @@ hr {
     border-top: 1px solid lightgray;
 }
 
+.grid-item-header {
+    grid-area: header;
+}
+
+.grid-item-content {
+    grid-area: content;
+}
+
+.grid-item-tree {
+    grid-area: tree;
+}
+
+.grid-item-footer {
+    grid-area: footer;
+}
+
+.grid-container {
+    display: grid;
+    gap: 1rem;
+    background-color: #a1aa74;
+    grid-template-columns: 200px auto;
+    grid-template-areas:
+        'header header'
+        'tree content'
+        'footer footer'
+}
+
 nav {
-    background: lightgray;
+    background: white;
     display: flex;
     align-items: center;
-    padding: 0 0.5rem;
+    justify-content: space-between;
+    padding: 1rem 1rem;
 }
 
 nav h1 {
     flex: auto;
     margin: 0;
+}
+
+#logo {
+   width: 30%;
+   height: auto; 
 }
 
 nav h1 a {
@@ -43,6 +76,7 @@ nav h1 a {
 }
 
 nav ul {
+    gap: 1em;
     display: flex;
     list-style: none;
     margin: 0;
@@ -56,17 +90,19 @@ header .action {
     padding: 0.5rem;
 }
 
-.content {
-    padding: 0 1rem 1rem;
+.card {
+    padding: 1rem;
+    background-color: white;
 }
 
-.content>header {
+
+.card>header {
     border-bottom: 1px solid lightgray;
     display: flex;
     align-items: flex-end;
 }
 
-.content>header h1 {
+.card>header h1 {
     flex: auto;
     margin: 1rem 0 0.25rem 0;
 }
@@ -102,27 +138,27 @@ header .action {
     white-space: pre-line;
 }
 
-.content:last-child {
+.card:last-child {
     margin-bottom: 0;
 }
 
-.content form {
+.card form {
     margin: 1em 0;
     display: flex;
     flex-direction: column;
 }
 
-.content label {
+.card label {
     font-weight: bold;
     margin-bottom: 0.5em;
 }
 
-.content input,
-.content textarea {
+.card input,
+.card textarea {
     margin-bottom: 1em;
 }
 
-.content textarea {
+.card textarea {
     min-height: 12em;
     resize: vertical;
 }

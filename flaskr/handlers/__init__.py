@@ -1,3 +1,3 @@
 from .auth import *
-from .blog import *
+from .home import *
 from .hello import *
