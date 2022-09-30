@@ -1,13 +1,11 @@
 html {
     font-family: sans-serif;
     background: #a1aa74;
-    padding: 1rem;
 }
 
 body {
-    max-width: 960px;
-    margin: 0 auto;
-    background: white;
+    margin: 0rem 4rem 0rem 4rem;
+    align-content: center;
 }
 
 h1 {
@@ -25,8 +23,14 @@ hr {
     border-top: 1px solid lightgray;
 }
 
+.card {
+    background-color: white;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.45);
+}
+
 .grid-item-header {
     grid-area: header;
+    max-height: fit-content;
 }
 
 .grid-item-content {
@@ -45,11 +49,13 @@ hr {
     display: grid;
     gap: 1rem;
     background-color: #a1aa74;
-    grid-template-columns: 200px auto;
+    margin-right:1rem;
+    grid-template-columns: minmax(auto, 350px) auto;
     grid-template-areas:
         'header header'
         'tree content'
         'footer footer'
+    ;
 }
 
 nav {
@@ -57,7 +63,6 @@ nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem 1rem;
 }
 
 nav h1 {
@@ -66,7 +71,8 @@ nav h1 {
 }
 
 #logo {
-   width: 30%;
+   width: 25%;
+   min-width: 220px;
    height: auto; 
 }
 
@@ -93,6 +99,7 @@ header .action {
 .card {
     padding: 1rem;
     background-color: white;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.45);
 }
 
 
@@ -170,4 +177,36 @@ input.danger {
 input[type=submit] {
     align-self: start;
     min-width: 10em;
+}
+
+@media only screen and (max-width: 1200px) {
+    .grid-container {
+        display: grid;
+        gap: 0.5rem;
+        background-color: #a1aa74;
+        margin-right: 0.5rem;
+        grid-template-columns: 100%;
+        grid-template-areas:
+            'header'
+            'tree'
+            'content'
+            'footer'
+        ;
+    }
+    .card {
+        padding: 1rem;
+        background-color: white;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 1px 4px 0 rgba(0, 0, 0, 0.45);
+    }
+}
+
+@media only screen and (max-width: 650px) {
+    body {
+        margin: 0rem;
+        align-content: center;
+    }
+
+    .grid-container {
+        margin-right: 0rem;
+    }
 }

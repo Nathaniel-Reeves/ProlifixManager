@@ -5,7 +5,9 @@
     <section class="grid-item-header">
         <div class="card">
             <nav class="navbar">
-                <img id="logo" src="{{ url_for('static', filename='media/logos/Logo_ultra-wide.jpg') }}"></img>
+                <a href="{{ url_for('home.index') }}">
+                    <img id="logo" src="{{ url_for('static', filename='media/logos/Logo_ultra-wide.jpg') }}"></img>
+                </a>
                 <ul>
                     {% if g.user %}
                     <li><span>{{ g.user['username'] }}</span>
