@@ -1,22 +1,28 @@
 <!doctype html>
 <title>{% block title %}{% endblock %} - Flaskr</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="{{ url_for('static', filename='javascript/dropdown.js') }}"></script>
 <div class="grid-container">
     <section class="grid-item-header">
         <div class="card">
             <nav class="navbar">
-                <a href="{{ url_for('home.index') }}">
-                    <img id="logo" src="{{ url_for('static', filename='media/logos/Logo_ultra-wide.jpg') }}"></img>
-                </a>
-                <ul>
-                    {% if g.user %}
-                    <li><span>{{ g.user['username'] }}</span>
-                    <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
-                        {% else %}
-                    <li><a href="{{ url_for('auth.register') }}">Register</a>
-                    <li><a href="{{ url_for('auth.login') }}">Log In</a>
-                        {% endif %}
-                </ul>
+                <div>
+                    <a href="{{ url_for('home.index') }}">
+                        <img id="logo" src="{{ url_for('static', filename='media/logos/Logo_ultra-wide.jpg') }}"></img>
+                    </a>
+                </div>
+                <div class="dropdown">
+                    <input type="image" onclick="myFunction()" class="smallicon dropbtn" src="{{ url_for('static', filename='media/icons/user.png') }}"></input>
+                    <div id="myDropdown" class="dropdown-content">
+                        {% if g.user %}
+                        <p>{{ g.user['username'] }}</p>
+                        <a href="{{ url_for('auth.logout') }}">Log Out</a>
+                            {% else %}
+                        <a href="{{ url_for('auth.register') }}">Register</a>
+                        <a href="{{ url_for('auth.login') }}">Log In</a>
+                            {% endif %}
+                    </div>
+                </div>
             </nav>
         </div>
     </section>
