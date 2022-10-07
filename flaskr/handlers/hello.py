@@ -1,8 +1,9 @@
-from flask import Flask
+from flask import (
+    Blueprint, render_template
+)
+bp = Blueprint('hello', __name__)
 
-app = Flask(__name__)
 
-
-@app.route('/')
-def hello():
-    return 'Hello, World!'
+@bp.route('/')
+def index():
+    return render_template('hello/index.html')
