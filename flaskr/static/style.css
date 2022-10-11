@@ -157,6 +157,27 @@ nav ul li a {
     text-decoration: none;
 }
 
+.item_opitions {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.item_opitions li {
+    list-style: none;
+    width: 5rem;
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+    margin-right: 2rem;
+    text-align: center;
+    border-radius: 0.2rem;
+}
+
+.item_opitions li:hover {
+    background-color: #DDDDDD;
+}
+
 .card {
     padding: 1rem;
     background-color: white;
