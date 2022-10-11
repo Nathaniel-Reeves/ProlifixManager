@@ -28,7 +28,7 @@ def register():
         if error is None:
             try:
                 session.sql(
-                    "INSERT INTO `test`.`user` (`username`, `password`) VALUES (?, ?)",
+                    "INSERT INTO `Organizations`.`User` (`Username`, `Encrypted_Password`, `Manger_Privileges`, `Admin_Privileges`, `Recovery_Email`) VALUES (?, ?, 0, 0, \"TEST EMAIL\")",
                 ).bind((username, generate_password_hash(password)),).execute()
             except Exception as err:
                 if err.args[0] == 1062:
@@ -50,34 +50,34 @@ def login():
         db = DatabaseConnection()
         error = None
         user = db.sql(
-            'SELECT * FROM `test`.`user` WHERE `username` = ?'
+            'SELECT * FROM `Organizations`.`User` WHERE `Username` = ?'
         ).bind((username,)).execute().fetch_one()
 
         if user is None:
             error = 'Incorrect username.'
-        elif not check_password_hash(user['password'], password):
+        elif not check_password_hash(user['Encrypted_Password'], password):
             error = 'Incorrect password.'
 
         if error is None:
             session.clear()
-            session['user_id'] = user['id']
+            session['User_ID'] = user['User_ID']
             return redirect(url_for('home.index'))
 
         flash(error)
 
+    print("SUCCESFUL LOGIN")
     return render_template('auth/login.html')
-
 
 @bp.before_app_request
 def load_logged_in_user():
-    user_id = session.get('user_id')
+    user_id = session.get('User_ID')
 
     if user_id is None:
         g.user = None
     else:
         db = DatabaseConnection()
         g.user = db.sql(
-            'SELECT * FROM `test`.`user` WHERE `id` = ?'
+            'SELECT * FROM `Organizations`.`User` WHERE `User_ID` = ?'
         ).bind((user_id,)).execute().fetch_one()
 
 

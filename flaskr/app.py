@@ -32,6 +32,7 @@ def create_app(test_config=None):
     app.register_blueprint(handlers.blog.bp)
     app.register_blueprint(handlers.home.bp)
     app.register_blueprint(handlers.hello.bp)
+    app.register_blueprint(handlers.organizations.bp)
 
 
     return app

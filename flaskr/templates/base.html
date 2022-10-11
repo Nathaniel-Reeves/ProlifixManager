@@ -19,11 +19,11 @@
 
                     <div id="myDropdown" class="dropdown-content">
                         {% if g.user %}
-                        <p>{{ g.user['username'] }}</p>
-                        <a href="{{ url_for('auth.logout') }}">Log Out</a>
+                            <p>{{ g.user['Username'] }}</p>
+                            <a href="{{ url_for('auth.logout') }}">Log Out</a>
                             {% else %}
-                        <a href="{{ url_for('auth.register') }}">Register</a>
-                        <a href="{{ url_for('auth.login') }}">Log In</a>
+                            <a href="{{ url_for('auth.register') }}">Register</a>
+                            <a href="{{ url_for('auth.login') }}">Log In</a>
                             {% endif %}
                     </div>
 
@@ -51,6 +51,8 @@
                 <ul>
                     <a href="{{ url_for('home.index') }}"><li>Home</li></a>
                     <a href="{{ url_for('blog.index') }}"><li>Blog</li></a>
+                    <a href="{{ url_for('organizations.clients') }}"><li>Clients</li></a>
+                    <a href="{{ url_for('organizations.suppliers') }}"><li>Suppliers</li></a>
                 </ul>
             </nav>
             <hr>

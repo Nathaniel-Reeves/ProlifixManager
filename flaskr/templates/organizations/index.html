@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h1>{% block title %}
+    {% if g.header == "Clients" %}
+        Clients
+    {% elif g.header == "Suppliers" %}
+        Suppliers
+    {% else %}
+        ERR
+    {% endif %}
+    {% endblock %}</h1>
+
+
+    {% if g.user %}
+    <a class="action">New</a>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+{% for org in organizations %}
+<article class="post" id="{{ org['Organization_ID'] }}">
+    <header>
+        <div>
+            <h1>{{ org['Organization_Name'] }}</h1>
+            <div class="about">
+                Initial: {{ org['Organization_Initial'] }} | Website: {{ org['Website'] }}
+            </div>
+        </div>
+        <ul class="item_opitions">
+            <li><a class="action">Edit</a></li>
+            <li><a class="action">View</a></li>
+        </ul>
+    </header>
+</article>
+{% if not loop.last %}
+<hr>
+{% endif %}
+{% endfor %}
+{% endblock %}
