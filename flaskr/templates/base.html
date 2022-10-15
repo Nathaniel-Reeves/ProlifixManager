@@ -1,7 +1,9 @@
 <!doctype html>
+<head>
 <title>{% block title %}{% endblock %} - Flaskr</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <script src="{{ url_for('static', filename='javascript/dropdown.js') }}"></script>
+</head>
 <div class="grid-container">
     <section class="grid-item-header">
         <div class="card">
@@ -21,10 +23,10 @@
                         {% if g.user %}
                             <p>{{ g.user['Username'] }}</p>
                             <a href="{{ url_for('auth.logout') }}">Log Out</a>
-                            {% else %}
+                        {% else %}
                             <a href="{{ url_for('auth.register') }}">Register</a>
                             <a href="{{ url_for('auth.login') }}">Log In</a>
-                            {% endif %}
+                        {% endif %}
                     </div>
 
                 </div>
@@ -40,6 +42,10 @@
             <div class="flash">{{ message }}</div>
             {% endfor %}
             {% block content %}{% endblock %}
+            {% for message in get_flashed_messages() %}
+            <div class="flash">{{ message }}</div>
+            {% endfor %}
+            <hr>
         </div>
     </section>
     <section class="grid-item-tree">

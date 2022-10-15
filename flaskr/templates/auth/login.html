@@ -5,11 +5,18 @@
 {% endblock %}
 
 {% block content %}
-<form method="post">
-    <label for="username">Username</label>
-    <input name="username" id="username" required>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" required>
-    <input type="submit" value="Log In">
+<form method="POST">
+    <div class="form-section">
+        <div class="form-item">
+            <label for="username">Username</label>
+            <input name="username" id="username" required>
+        </div>
+
+        <div class="form-item">
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password" required>
+        </div>
+    </div>
+    <input class="inline_button" type="submit" value="Log In">
 </form>
 {% endblock %}

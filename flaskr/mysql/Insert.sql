@@ -18,8 +18,8 @@ INSERT INTO `Organizations`.`Organizations` (`Organization_Name`, `Organization_
 INSERT INTO `Organizations`.`People` (`Organization_ID`, `First_Name`, `Last_Name`, `Job_Title`, `Phone_Number`, `Email_Address`, `Is_Employee`, `Wage`, `Contract_Date`) VALUES 
 	(1, "Nathaniel", "Reeves", "Developer", "8013801953", "nathaniel.jacob.reeves@gmail.com", true, 18.50, '2020-6-16');
 
--- Insert Nathaniel Reeves User Info  (Password = testpassword)
-INSERT INTO `Organizations`.`User` (`Person_ID`, `Username`, `Encrypted_Password`, `Access_Privileges`) VALUES (1, "nreeves", "pbkdf2:sha256:260000$xwmRNkYGEsbVxWQk$598deee9e52133d7d3a96eeb060c81f90b06d3ea17fb705b1e834855f5234df6", "Dev");
+-- Insert Nathaniel Reeves User Info  (Password = Newspaper5)
+INSERT INTO `Organizations`.`User` (`Person_ID`, `Username`, `Encrypted_Password`, `Access_Privileges`) VALUES (1, "nathanielr", "pbkdf2:sha256:150000$sOQU7umo$0bfe5482ab1c01c17fbd0296dc9372e8d949eaea60a45264463da86005a036d0", "Dev");
 
 -- Insert Kathy Jensen Person Info
 INSERT INTO `Organizations`.`People` (`Organization_ID`, `First_Name`, `Last_Name`, `Job_Title`, `Phone_Number`, `Email_Address`, `Is_Employee`, `Wage`, `Contract_Date`) VALUES 
@@ -28,4 +28,12 @@ INSERT INTO `Organizations`.`People` (`Organization_ID`, `First_Name`, `Last_Nam
 -- Insert Kathy Jensen User Info  (Password = password)
 INSERT INTO `Organizations`.`User` (`Person_ID`, `Username`, `Encrypted_Password`, `Access_Privileges`) VALUES (2, "kathyj", "pbkdf2:sha256:260000$D8qPhRKS15pNXdWb$7bd4d1a2603d4365d0711b7342a1a59f67fad6354b8424e574d0654cf276ec5c", "Owner");
 
+-- Insert Ian Bull Person Info
+INSERT INTO `Organizations`.`People` (`Organization_ID`, `First_Name`, `Last_Name`, `Job_Title`, `Phone_Number`, `Email_Address`, `Is_Employee`, `Wage`, `Contract_Date`) VALUES 
+	(1, "Ian", "Bull", "Manager", "9285645378", "ianbullpn@gmail.com", true, 0, '2017-11-01');
 
+-- Insert Ian Bull User Info  (Password = password)
+INSERT INTO `Organizations`.`User` (`Person_ID`, `Username`, `Encrypted_Password`, `Access_Privileges`) VALUES (3, "Ianb", "pbkdf2:sha256:260000$D8qPhRKS15pNXdWb$7bd4d1a2603d4365d0711b7342a1a59f67fad6354b8424e574d0654cf276ec5c", "Manager");
+
+
+SELECT * FROM `Organizations`.`People`;

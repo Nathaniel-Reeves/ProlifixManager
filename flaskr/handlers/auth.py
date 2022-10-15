@@ -45,7 +45,9 @@ def register():
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
     if request.method == 'POST':
+        print("TEST")
         username = request.form['username']
+        print("USERNAME = ", username)
         password = request.form['password']
         db = DatabaseConnection()
         error = None
@@ -57,7 +59,7 @@ def login():
             error = 'Incorrect username.'
         elif not check_password_hash(user['Encrypted_Password'], password):
             error = 'Incorrect password.'
-
+        print("ERROR = ", error)
         if error is None:
             session.clear()
             session['User_ID'] = user['User_ID']
@@ -65,7 +67,6 @@ def login():
 
         flash(error)
 
-    print("SUCCESFUL LOGIN")
     return render_template('auth/login.html')
 
 @bp.before_app_request

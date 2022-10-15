@@ -13,13 +13,21 @@
 
 
     {% if g.user %}
-    <a class="action">New</a>
+    <ul class="inline_button">
+        {% if g.header == "Clients" %}
+            <li><a class="action" href="{{ url_for('organizations.create_client') }}" >New Client</a></li>
+        {% elif g.header == "Suppliers" %}
+            <li><a class="action" href="{{ url_for('organizations.create_supplier') }}">New Supplier</a></li>
+        {% else %}
+            ERR
+        {% endif %}
+    </ul>
     {% endif %}
 {% endblock %}
 
 {% block content %}
 {% for org in organizations %}
-<article class="post" id="{{ org['Organization_ID'] }}">
+<article class="card-content" id="{{ org['Organization_ID'] }}">
     <header>
         <div>
             <h1>{{ org['Organization_Name'] }}</h1>
@@ -27,7 +35,7 @@
                 Initial: {{ org['Organization_Initial'] }} | Website: {{ org['Website'] }}
             </div>
         </div>
-        <ul class="item_opitions">
+        <ul class="inline_button">
             <li><a class="action">Edit</a></li>
             <li><a class="action">View</a></li>
         </ul>
