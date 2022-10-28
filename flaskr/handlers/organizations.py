@@ -38,14 +38,15 @@ def suppliers():
     return render_template('organizations/index.html', organizations=suppliers)
 
 
-@bp.route('/create/supplier', methods=('GET', 'POST'))
+@bp.route('/create/supplier', methods=('GET', 'POST', 'PUT'))
 @login_required
 def create_supplier():
     if request.method == 'POST':
 
-        # Sort Data
+       # Sort Data
         Organization_Name = request.form['Organization_Name']
         Organization_Initial = request.form['Organization_Initial']
+        data = dict(request.form)
 
         # Check Errors
         error = None
@@ -58,11 +59,11 @@ def create_supplier():
         else:
             create(data)
             g.header = "Suppliers"
-            return redirect(url_for('organizations.index'))
+            suppliers()
     return render_template('organizations/create_supplier.html')
 
 
-@bp.route('/create/client', methods=('GET', 'POST'))
+@bp.route('/create/client', methods=('GET', 'POST', 'PUT'))
 @login_required
 def create_client():
     if request.method == 'POST':
@@ -70,6 +71,9 @@ def create_client():
        # Sort Data
         Organization_Name = request.form['Organization_Name']
         Organization_Initial = request.form['Organization_Initial']
+        data = dict(request.form)
+        #files = dict(request.files)
+        
 
         # Check Errors
         error = None
@@ -82,21 +86,41 @@ def create_client():
         else:
             create(data)
             g.header = "Clients"
-            return redirect(url_for('organizations.index'))
+            clients()
+            # return redirect(url_for('organizations.index'))
     return render_template('organizations/create_client.html')
 
 
 def create(data):
+    print(data)
+
+    time_frame_units = data.pop('Ship_Time_Unit')
+    time_frame_amount = int(data.pop('Ship_Time'))
+    Ship_Time_In_Days = 0
+    if time_frame_units == "Day/s":
+        Ship_Time_In_Days = time_frame_amount
+    elif time_frame_units == "Week/s":
+        Ship_Time_In_Days = time_frame_amount * 7
+    elif time_frame_units == "Month/s":
+        Ship_Time_In_Days = time_frame_amount * 30
+
+    data['Ship_Time_In_Days'] = Ship_Time_In_Days
+
+
+    columns = tuple(data.keys())
+    values = tuple(data.values())
+
+
+    print(columns)
+    print(values)
+
     db = DatabaseConnection()
     session = db.get_session()
-    session.sql(
-        '''INSERT INTO `Organizations`.`Organizations` (`Organization_Name`, `Organization_Initial`, `Website`, `HQ_Street_Address`, `HQ_Unit-Apt`, 
-        `HQ_City`, `HQ_Region`, `HQ_Country`, `HQ_Zip_Code`, `Country_Origin`, `Ship_Time_In_Days`, `Roll`) 
-        
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-        '''
-    ).bind(data).execute()
+    org_schema = session.get_schema('Organizations')
+    org_table = org_schema.get_table('Organizations')
+    org_table.insert(columns).values(values).execute()
     session.commit()
+
     return True
 
 

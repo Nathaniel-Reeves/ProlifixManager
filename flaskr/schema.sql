@@ -28,7 +28,7 @@ CREATE TABLE `Organizations`.`Organizations` (
   `Date_Vetted` DATE,
   `Risk_Level` INT,
   `HQ_Street_Address` VARCHAR(500),
-  `HQ_Unit-Apt` VARCHAR(20),
+  `HQ_Unit_Apt` VARCHAR(20),
   `HQ_City` VARCHAR(300),
   `HQ_Region` VARCHAR(300),
   `HQ_Country` VARCHAR(300),

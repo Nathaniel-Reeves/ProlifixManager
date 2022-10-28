@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
     <div class="form-section">
 
         <div class="form-item">
@@ -35,8 +35,8 @@
         </div>
 
         <div class="form-item">
-            <label for="HQ_Unit-Apt">Apartment/Suite Number</label>
-            <input name="HQ_Unit-Apt" id="HQ_Unit-Apt">
+            <label for="HQ_Unit_Apt">Apartment/Suite Number</label>
+            <input name="HQ_Unit_Apt" id="HQ_Unit_Apt">
         </div>
 
         <div class="form-item">
@@ -72,14 +72,14 @@
 
         <div class="form-item">
             <p></p>
-            <div>
-                <input type="radio" id="Day/s" name="Ship_Time" value="Day/s">
+            <fieldset>
+                <input type="radio" id="Day/s" name="Ship_Time_Unit" value="Day/s">
                 <label for="Day/s">Day/s</label><br>
-                <input type="radio" id="Week/s" name="Ship_Time" value="Week/s">
+                <input type="radio" id="Week/s" name="Ship_Time_Unit" value="Week/s">
                 <label for="Week/s">Week/s</label><br>
-                <input type="radio" id="Month/s" name="Ship_Time" value="Month/s">
+                <input type="radio" id="Month/s" name="Ship_Time_Unit" value="Month/s">
                 <label for="Month/s">Month/s</label>
-            </div>
+            </fieldset>
         </div>
 
         <div class="form-item">
@@ -106,14 +106,15 @@
                 </div>
             </div>
         </div>
-        <div class="form-section">
-            <input name="saveButton" class="inline_button" type="submit" value="Save">
-        </div>
 </form>
+
+<div class="form-section">
+    <input class="inline_button" type="submit" value="Save">
+</div>
 
 <div class="list-item" id="template" style="display: none;">
     <div class="list-left">
-        <div class="file-upload">
+        <div class="file-upload" multiple name="uploads">
             <input type="file">
         </div>
     </div>
@@ -134,6 +135,7 @@
 
         button.id = idnum;
         input.id = idnum;
+        input.name = "FileUpload_" + idnum;
         clone.removeAttribute("id");
         clone.id = idnum;
         clone.removeAttribute("style");

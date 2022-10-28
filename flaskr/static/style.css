@@ -208,6 +208,10 @@ input[type="submit" i] {
     align-self:center;
 }
 
+fieldset {
+    border: 0px;
+}
+
 
 button, input[type="button"] {
     display: inline;
