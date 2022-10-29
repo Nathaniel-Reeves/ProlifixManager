@@ -413,6 +413,24 @@ input.danger {
         background-color: white;
         box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 1px 4px 0 rgba(0, 0, 0, 0.45);
     }
+
+    nav {
+        justify-content: space-evenly;
+    }
+
+    nav ul {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+        width: 100%;
+    }
+
+    nav ul a li {
+        text-align: center;
+        padding: 4px 8px;
+        width: 100%;
+    }
+
     .smallicon {
         max-width: 35px;
         height: auto;
