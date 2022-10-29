@@ -30,8 +30,8 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    from . import db
-    db.init_app(app)
+    from . import db_conf
+    db_conf.init_app(app)
 
     from . import handlers
     app.register_blueprint(handlers.auth.bp)

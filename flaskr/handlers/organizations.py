@@ -2,6 +2,8 @@
 import functools
 import os
 from datetime import date, datetime, timedelta
+import json
+import mysqlx
 
 
 from flask import (
@@ -11,7 +13,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 
 from .auth import login_required
-from ..db import DatabaseConnection
+from flaskr.db_conf import *
+
 
 bp = Blueprint('organizations', __name__, url_prefix='/organizations')
 
@@ -19,8 +22,7 @@ bp = Blueprint('organizations', __name__, url_prefix='/organizations')
 @bp.route('/clients', methods=('GET',))
 @login_required
 def clients():
-    db = DatabaseConnection()
-    session = db.get_session()
+    session = mysqlx.get_session( {'host': HOST, 'port': PORT,'user': USER, 'password': PASSWORD } )
     clients = session.sql(
         """SELECT * FROM `Organizations`.`Organizations` WHERE Roll = 'Client' ORDER BY `Organization_Name` DESC;"""
     ).execute()
@@ -32,8 +34,7 @@ def clients():
 @bp.route('/suppliers', methods=('GET',))
 @login_required
 def suppliers():
-    db = DatabaseConnection()
-    session = db.get_session()
+    session = mysqlx.get_session( {'host': HOST, 'port': PORT,'user': USER, 'password': PASSWORD } )
     suppliers = session.sql(
         """SELECT * FROM `Organizations`.`Organizations` WHERE Roll = 'Supplier' ORDER BY `Organization_Name` DESC;"""
     ).execute()
@@ -45,23 +46,6 @@ def suppliers():
 @login_required
 def create_supplier():
     if request.method == 'POST':
-        print(os.getcwd())
-        os.chdir("/mnt/s")
-        print(os.getcwd())
-
-        if len(request.files) != 0:
-            files = list(request.files.to_dict().values())
-            uploadFolder = os.path.join(os.getcwd(), "uploads/organizations/suppliers/")
-            allowed_extensions = {'pdf', 'png', 'jpg', 'jpeg'}
-            for file in files:
-                # If the user does not select a file, the browser submits an
-                # empty file without a filename.
-                if file and allowed_file(file.filename, allowed_extensions):
-                    filename = secure_filename(file.filename)
-                    if os.path.exists(uploadFolder):
-                        file.save(os.path.join(uploadFolder, filename))
-                    else:
-                        print("Invalid File Path")
 
        # Sort Data
         Organization_Name = request.form['Organization_Name']
@@ -88,13 +72,48 @@ def create_supplier():
         if checkVettedExpired(Date_Vetted, Risk_Level):
             data['Vetted'] = 0
 
+        collection = {}
+
+        if len(request.files) != 0:
+            # Sort out files into a python list
+            files = list(request.files.to_dict().values())
+
+            # Folder Config Settings
+            os.chdir("/mnt/s")
+            uploadFolder = os.path.join(os.getcwd(), "uploads/organizations/suppliers/", Organization_Name)
+            allowed_extensions = {'pdf', 'png', 'jpg', 'jpeg'}
+
+            # create a file space in organization collections
+            collection.update({"files":[]})
+
+            for file in files:
+                # If the user does not select a file, the browser submits an
+                # empty file without a filename.
+
+                if file and allowed_file(file.filename, allowed_extensions):
+
+                    # Compile file tree/path
+                    filename = secure_filename(file.filename)
+                    path = os.path.join(uploadFolder, filename)
+
+                    # Create file tree/path if it doesn't exist already
+                    if not os.path.exists(uploadFolder):
+                        os.makedirs(uploadFolder)
+
+                    # Save File
+                    file.save(path)
+
+                    # create file link in organization collection
+                    collection["files"].append({"date":str(datetime.today()),"path":path})
+
         # Flash Erros if any, else send data to db
         if error is not None:
             flash(error)
         else:
-            create(data)
+            create(data, json.dumps(collection))
             g.header = "Suppliers"
             suppliers()
+
     return render_template('organizations/create_supplier.html')
 
 @bp.route('/create/client', methods=('GET', 'POST', 'PUT'))
@@ -125,7 +144,7 @@ def create_client():
     return render_template('organizations/create_client.html')
 
 
-def create(data):
+def create(data, collection):
 
     time_frame_units = data.pop('Ship_Time_Unit')
     time_frame_amount = int(data.pop('Ship_Time'))
@@ -139,17 +158,16 @@ def create(data):
 
     data['Ship_Time_In_Days'] = Ship_Time_In_Days
 
-    #print(data)
-
-
     columns = tuple(data.keys())
     values = tuple(data.values())
 
-    db = DatabaseConnection()
-    session = db.get_session()
+    session = mysqlx.get_session( {'host': HOST, 'port': PORT,'user': USER, 'password': PASSWORD } )
     org_schema = session.get_schema('Organizations')
     org_table = org_schema.get_table('Organizations')
     org_table.insert(columns).values(values).execute()
+
+    org_coll = org_schema.create_collection('OrganizationDocs', True)
+    org_coll.add(collection).execute()
 
     return True
 

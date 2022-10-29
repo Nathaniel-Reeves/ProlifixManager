@@ -1,12 +1,14 @@
 
 import functools
+import mysqlx
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from ..db import DatabaseConnection
+from flaskr.db_conf import *
+
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -16,8 +18,7 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        db = DatabaseConnection()
-        session = db.get_session()
+        session = mysqlx.get_session( {'host': HOST, 'port': PORT,'user': USER, 'password': PASSWORD } )
         error = None
 
         if not username:
@@ -49,9 +50,9 @@ def login():
         username = request.form['username']
         print("USERNAME = ", username)
         password = request.form['password']
-        db = DatabaseConnection()
+        session = mysqlx.get_session( {'host': HOST, 'port': PORT,'user': USER, 'password': PASSWORD } )
         error = None
-        user = db.sql(
+        user = session.sql(
             'SELECT * FROM `Organizations`.`User` WHERE `Username` = ?'
         ).bind((username,)).execute().fetch_one()
 
@@ -76,8 +77,8 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        db = DatabaseConnection()
-        g.user = db.sql(
+        sqlsession = mysqlx.get_session( {'host': HOST, 'port': PORT,'user': USER, 'password': PASSWORD } )
+        g.user = sqlsession.sql(
             'SELECT * FROM `Organizations`.`User` WHERE `User_ID` = ?'
         ).bind((user_id,)).execute().fetch_one()
 

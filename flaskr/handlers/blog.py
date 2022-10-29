@@ -1,10 +1,12 @@
+import mysqlx
+
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for
 )
 from werkzeug.exceptions import abort
 
 from .auth import login_required
-from ..db import DatabaseConnection
+from flaskr.db_conf import *
 
 bp = Blueprint('blog', __name__, url_prefix='/blog')
 
@@ -12,7 +14,7 @@ bp = Blueprint('blog', __name__, url_prefix='/blog')
 @bp.route('/')
 def index():
     db = DatabaseConnection()
-    session = db.get_session()
+    session = mysqlx.get_session( {'host': HOST, 'port': PORT,'user': USER, 'password': PASSWORD } )
     posts = session.sql(
         """SELECT p.`id`, `title`, `body`, `created`, `author_id`, `username`
         FROM `test`.`post` p JOIN `test`.`user` u ON p.`author_id` = u.`id`        ORDER BY created DESC;"""
@@ -36,7 +38,7 @@ def create():
             flash(error)
         else:
             db = DatabaseConnection()
-            session = db.get_session()
+            session = mysqlx.get_session( {'host': HOST, 'port': PORT,'user': USER, 'password': PASSWORD } )
             session.sql(
                 '''INSERT INTO `test`.`post` (`title`, `body`, `author_id`)
                 VALUES (?, ?, ?)'''
@@ -48,7 +50,7 @@ def create():
 
 def get_post(id, check_author=True):
     db = DatabaseConnection()
-    session = db.get_session()
+    session = mysqlx.get_session( {'host': HOST, 'port': PORT,'user': USER, 'password': PASSWORD } )
     post = session.sql(
         """SELECT p.`id`, `title`, `body`, `created`, `author_id`, `username`
         FROM `test`.`post` p JOIN `test`.`user` u ON p.`author_id` = u.`id`
@@ -80,8 +82,7 @@ def update(id):
         if error is not None:
             flash(error)
         else:
-            db = DatabaseConnection()
-            session = db.get_session()
+            session = mysqlx.get_session( {'host': HOST, 'port': PORT,'user': USER, 'password': PASSWORD } )
             post = session.sql(
                 """UPDATE `test`.`post` SET `title` = ?, `body` = ?
                 WHERE `id` = ?"""
@@ -97,8 +98,7 @@ def update(id):
 def delete(id):
     get_post(id)
 
-    db = DatabaseConnection()
-    session = db.get_session()
+    session = mysqlx.get_session( {'host': HOST, 'port': PORT,'user': USER, 'password': PASSWORD } )
     session.sql('DELETE FROM `test`.`post` WHERE `id` = ?').bind((id,)).execute()
     session.commit()
     return redirect(url_for('blog.index'))
