@@ -83,6 +83,25 @@
         </div>
 
         <div class="form-item">
+            <p>Risk Level</p>
+            <fieldset>
+                <input type="radio" id="No Risk" name="Risk_Level" value="No Risk">
+                <label for="No Risk">No Risk</label><br>
+                <input type="radio" id="Low Risk" name="Risk_Level" value="Low Risk">
+                <label for="Low Risk">Low Risk</label><br>
+                <input type="radio" id="Medium Risk" name="Risk_Level" value="Medium Risk">
+                <label for="Medium Risk">Medium Risk</label><br>
+                <input type="radio" id="High Risk" name="Risk_Level" value="High Risk">
+                <label for="High Risk">High Risk</label><br>
+            </fieldset>
+        </div>
+
+        <div class="form-item">
+            <label for="Date_Vetted">Date Last Vetted</label>
+            <input type="date" name="Date_Vetted" id="Date_Vetted">
+        </div>
+
+        <div class="form-item">
             <label for="Notes">Notes</label>
         </div>
         <textarea name="Notes" id="Notes"></textarea>
@@ -102,7 +121,9 @@
             <div class="list-item">
                 <div class="list-right"></div>
                 <div class="list-left">
-                    <input name="addFile" type="button" class="inline_button" onclick="addFileInput()" value="Add File">
+                    <button name="addFile" type="button" class="iconbutton" onclick="addFileInput()" value="Add File">
+                        <i class="fa fa-plus"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -119,7 +140,9 @@
         </div>
     </div>
     <div class="list-right">
-        <button type="button" name="removeFile" onclick="removeFileInput(this.id);">Remove File</button>
+        <button type="button" name="removeFile" class="iconbutton" onclick="removeFileInput(this.id);">
+            <i class="fa fa-minus"></i>
+        </button>
     </div>
 </div>
 

@@ -1,6 +1,7 @@
 import os
 
-from flask import Flask
+from flask import Flask, flash, request, redirect, url_for
+from werkzeug.utils import secure_filename
 
 
 def create_app(test_config=None):
@@ -10,6 +11,11 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'flaskr.schema'),
     )
+
+    UPLOAD_FOLDER = '/mnt/s/GitHub/Material-Requirements-Planning-System/uploads'
+    ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
+
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -36,3 +42,6 @@ def create_app(test_config=None):
 
 
     return app
+
+if __name__ == "__main__":
+    app.run(debug=True)

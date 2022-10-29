@@ -102,7 +102,9 @@
             <div class="list-item">
                 <div class="list-right"></div>
                 <div class="list-left">
-                    <input name="addFile" type="button" class="inline_button" onclick="addFileInput()" value="Add File">
+                    <button name="addFile" type="button" class="iconbutton" onclick="addFileInput()" value="Add File">
+                        <i class="fa fa-plus"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -120,7 +122,9 @@
         </div>
     </div>
     <div class="list-right">
-        <button type="button"  name="removeFile" onclick="removeFileInput(this.id);">Remove File</button>
+        <button type="button" name="removeFile" class="iconbutton" onclick="removeFileInput(this.id);">
+            <i class="fa fa-minus"></i>
+        </button>
     </div>
 </div>
 

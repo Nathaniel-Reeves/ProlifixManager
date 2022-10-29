@@ -3,6 +3,9 @@
 <title>{% block title %}{% endblock %} - Flaskr</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <script src="{{ url_for('static', filename='javascript/dropdown.js') }}"></script>
+<script src="{{ url_for('static', filename='javascript/viewContent.js') }}"></script>
+<script src="{{ url_for('static', filename='javascript/searchbar.js') }}"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <div class="grid-container">
     <section class="grid-item-header">
@@ -33,7 +36,7 @@
             </nav>
         </div>
     </section>
-    <section class="grid-item-content">
+    <section class="grid-item-content" id="grid-item-content">
         <div class="card">
             <header>
                 {% block header %}{% endblock %}
@@ -45,7 +48,6 @@
             {% for message in get_flashed_messages() %}
             <div class="flash">{{ message }}</div>
             {% endfor %}
-            <hr>
         </div>
     </section>
     <section class="grid-item-tree">
@@ -56,7 +58,6 @@
             <nav>
                 <ul>
                     <a href="{{ url_for('home.index') }}"><li>Home</li></a>
-                    <a href="{{ url_for('blog.index') }}"><li>Blog</li></a>
                     <a href="{{ url_for('organizations.clients') }}"><li>Clients</li></a>
                     <a href="{{ url_for('organizations.suppliers') }}"><li>Suppliers</li></a>
                 </ul>

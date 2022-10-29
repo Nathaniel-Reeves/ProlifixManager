@@ -15,9 +15,21 @@
     {% if g.user %}
     <ul class="inline_button">
         {% if g.header == "Clients" %}
-            <li><a class="action" href="{{ url_for('organizations.create_client') }}" >New Client</a></li>
+            <li class="action"><a href="{{ url_for('organizations.create_client') }}" >New Client</a></li>
+            <li class="searchbar">
+                <div>
+                    <input name="search" id="searchbar" type="text" placeholder="Search Clients..." onkeyup="search()"></input>
+                    <button class="iconbutton" type="submit"><i class="fa fa-search"></i></button>
+                </div>
+            </li>
         {% elif g.header == "Suppliers" %}
-            <li><a class="action" href="{{ url_for('organizations.create_supplier') }}">New Supplier</a></li>
+            <li class="action"><a href="{{ url_for('organizations.create_supplier') }}">New Supplier</a></li>
+            <li class="searchbar">
+                <div>
+                    <input name="search" id="searchbar" type="text" placeholder="Search Suppliers..." onkeyup="search()"></input>
+                    <button class="iconbutton" type="submit"><i class="fa fa-search"></i></button>
+                </div>
+            </li>
         {% else %}
             ERR
         {% endif %}
@@ -27,22 +39,46 @@
 
 {% block content %}
 {% for org in organizations %}
-<article class="card-content" id="{{ org['Organization_ID'] }}">
+<article class="card-content" id="{{ org['Organization_ID'] }}" name="{{ org['Organization_Name'] }}">
     <header>
         <div>
             <h1>{{ org['Organization_Name'] }}</h1>
             <div class="about">
                 Initial: {{ org['Organization_Initial'] }} | Website: {{ org['Website'] }}
             </div>
+
+            <div class="view_content" id="{{ org['Organization_ID'] }}" style="display:none;">
+                <div class="view_content_box">
+                    <h2>Address</h2>
+                    <p>{{ org['HQ_Street_Address'] }}<br>
+                    {{ org['HQ_Unit_Apt'] }}</p>
+                </div>
+                <div class="view_content_box">
+                    <h2>Personel</h2>
+                    <p>{{ org['HQ_Street_Address'] }}<br>
+                        {{ org['HQ_Unit_Apt'] }}</p>
+                </div>
+                <div class="view_content_box">
+                    <h2>Additional Info</h2>
+                    <p>{{ org['HQ_Street_Address'] }}<br>
+                        {{ org['HQ_Unit_Apt'] }}</p>
+                </div>
+                <div class="view_content_box">
+                    <h2>Documents</h2>
+                    <p>{{ org['HQ_Street_Address'] }}<br>
+                        {{ org['HQ_Unit_Apt'] }}</p>
+                </div>
+            </div>
+
         </div>
         <ul class="inline_button">
-            <li><a class="action">Edit</a></li>
-            <li><a class="action">View</a></li>
+            <li  class="action"><a class="edit_button" id="{{ org['Organization_ID'] }}">Edit</a></li>
+            <li class="view_button action" id="{{ org['Organization_ID'] }}" onclick="viewContent(this.id)"><a>View</a></li>
         </ul>
     </header>
+    <hr>
 </article>
 {% if not loop.last %}
-<hr>
 {% endif %}
 {% endfor %}
 {% endblock %}

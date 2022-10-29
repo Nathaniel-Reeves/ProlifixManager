@@ -137,6 +137,10 @@ nav ul {
     background-color: #ffffff;
 }
 
+.list-item {
+    list-style: none;
+}
+
 nav ul li {
     padding-top: 3px;
     padding-bottom: 3px;
@@ -146,6 +150,7 @@ nav ul li {
     color: #775635;
     display: block;
     text-decoration: none;
+    transition-duration: .2s;
 }
 
 a {
@@ -157,28 +162,33 @@ nav ul li a {
     text-decoration: none;
 }
 
+p {
+    font-size: medium;
+}
+
 .inline_button {
     display: flex;
     flex-wrap: nowrap;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-evenly;
     margin: 0;
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.8rem;
 }
 
 .inline_button li {
     list-style: none;
-    width: fit-content;
-    margin-right: 2rem;
+    height: 18px;
+    padding: 8px 12px;
+    text-decoration:none;
+    margin: 5px;
+    margin-top: 10px;
     text-align: center;
     border-radius: 0.1rem;
+    background-color: #eee;
 }
 
-.inline_button li,
-button,
 input,
-.form-item textarea,
-button {
+.form-item textarea {
     color: black;
     background-color: white;
     font-size: medium;
@@ -188,14 +198,14 @@ button {
     border-radius: 0.1rem;
     border-color: black;
     border-width: 1px;
+    transition-duration: .2s;
 }
 
+input:hover,  
+.form-item textarea:hover, 
+nav ul li:hover,
 .inline_button li:hover,
-input:hover, 
-nav ul li:hover, 
-button:hover,
-textarea:hover,
-button:hover {
+.searchbar:hover {
     background-color: #DDDDDD;
 }
 
@@ -212,18 +222,64 @@ fieldset {
     border: 0px;
 }
 
-
 button, input[type="button"] {
     display: inline;
     text-align: center;
     box-sizing: border-box;
-    min-width: 8rem !important;
 }
 
 input[type="radio" i] {
     min-width: 1rem;
     box-sizing: border-box;
     margin: 3px 3px 0px 12px;
+}
+
+.searchbar {
+    overflow: hidden;
+    padding: 2px !important;
+    height:30px !important;
+    margin: 0 !important;
+    margin-top: 5px !important;
+}
+
+.searchbar a {
+    float: left;
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+.searchbar a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+.searchbar .search-container {
+    float: right;
+}
+
+.searchbar input[type=text] {
+    padding: 6px;
+    font-size: medium;
+    border: none;
+    background: #eeeeee;
+}
+
+.searchbar .iconbutton {
+    float: right;
+    max-width: 30px;
+    padding: 5px 8px;
+    background: #eeeeee;
+    font-size: 17px;
+    border: none;
+    cursor: pointer;
+}
+
+.searchbar button:hover {
+    background: #dddddd;
 }
 
 .list-item {
@@ -294,6 +350,25 @@ input.danger {
     display: flex;
     align-items: flex-end;
     font-size: 0.85em;
+}
+
+.card-content>header>div>.view_content {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    font-size: 0.85em;
+}
+
+.card-content>header>div>.view_content>.view_content_box {
+    padding: 1rem;
+    min-width: 40%;
+    max-width:fit-content;
+    height: auto;
+}
+
+.card-content>header>div>.view_content>.view_content_box * {
+    box-sizing: border-box;
 }
 
 .card-content>header>div:first-of-type {

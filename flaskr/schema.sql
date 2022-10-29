@@ -26,7 +26,7 @@ CREATE TABLE `Organizations`.`Organizations` (
   `Website` VARCHAR(200),
   `Vetted` BOOL,
   `Date_Vetted` DATE,
-  `Risk_Level` INT,
+  `Risk_Level` VARCHAR(20),
   `HQ_Street_Address` VARCHAR(500),
   `HQ_Unit_Apt` VARCHAR(20),
   `HQ_City` VARCHAR(300),
@@ -37,6 +37,7 @@ CREATE TABLE `Organizations`.`Organizations` (
   `Ship_Time_In_Days` INT,
   `Roll` ENUM('Prolifix', 'Client', 'Supplier'),
   `Documents` JSON,
+  `Notes` VARCHAR(2500),
   PRIMARY KEY (`Organization_ID`)
 );
 
@@ -267,7 +268,7 @@ CREATE TABLE `Manufacturing`.`Equipment` (
 -- Create Owner and Dev Accounts
 
 -- Insert Prolifix Nutrition Information
-INSERT INTO `Organizations`.`Organizations` (`Organization_Name`, `Organization_Initial`, `Website`, `HQ_Street_Address`, `HQ_Unit-Apt`, 
+INSERT INTO `Organizations`.`Organizations` (`Organization_Name`, `Organization_Initial`, `Website`, `HQ_Street_Address`, `HQ_Unit_Apt`, 
 	`HQ_City`, `HQ_Region`, `HQ_Country`, `HQ_Zip_Code`, `Country_Origin`, `Ship_Time_In_Days`, `Roll`) VALUES (
     "Prolifix Nutrition", "PLX", "https://www.prolifixnutrition.com/", "696 South 5300 W", "#1", "Hurricane", "Utah", "United States", "84737", "United States", 0, "Prolifix");
 

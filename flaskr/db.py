@@ -4,7 +4,7 @@ import click
 from flask import current_app, g
 from flask.cli import with_appcontext
 
-HOST = '192.168.1.42'
+HOST = 'localhost'
 PORT = 33060
 USER = 'client'
 PASSWORD = 'clientPassword5!'

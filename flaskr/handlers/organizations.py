@@ -1,10 +1,14 @@
 
 import functools
+import os
+from datetime import date, datetime, timedelta
+
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
 
 from .auth import login_required
 from ..db import DatabaseConnection
@@ -37,21 +41,52 @@ def suppliers():
     suppliers = suppliers.fetch_all()
     return render_template('organizations/index.html', organizations=suppliers)
 
-
 @bp.route('/create/supplier', methods=('GET', 'POST', 'PUT'))
 @login_required
 def create_supplier():
     if request.method == 'POST':
+        print(os.getcwd())
+        os.chdir("/mnt/s")
+        print(os.getcwd())
+
+        if len(request.files) != 0:
+            files = list(request.files.to_dict().values())
+            uploadFolder = os.path.join(os.getcwd(), "uploads/organizations/suppliers/")
+            allowed_extensions = {'pdf', 'png', 'jpg', 'jpeg'}
+            for file in files:
+                # If the user does not select a file, the browser submits an
+                # empty file without a filename.
+                if file and allowed_file(file.filename, allowed_extensions):
+                    filename = secure_filename(file.filename)
+                    if os.path.exists(uploadFolder):
+                        file.save(os.path.join(uploadFolder, filename))
+                    else:
+                        print("Invalid File Path")
 
        # Sort Data
         Organization_Name = request.form['Organization_Name']
         Organization_Initial = request.form['Organization_Initial']
+        Date_Vetted = datetime.strptime(request.form['Date_Vetted'],"%Y-%m-%d").date()
+        Risk_Level = request.form['Risk_Level']
+
         data = dict(request.form)
+        data['Vetted'] = 0
+        data['Roll'] = 3
+
+        for k in data:
+            if data[k] == "":
+                data[k] = None
 
         # Check Errors
         error = None
         if not Organization_Name:
-            error = 'Title is required.'
+            error = 'Company Name is required.'
+        if not Organization_Initial:
+            error = 'Company Initials are required.'
+
+        # Check Vetted
+        if checkVettedExpired(Date_Vetted, Risk_Level):
+            data['Vetted'] = 0
 
         # Flash Erros if any, else send data to db
         if error is not None:
@@ -61,7 +96,6 @@ def create_supplier():
             g.header = "Suppliers"
             suppliers()
     return render_template('organizations/create_supplier.html')
-
 
 @bp.route('/create/client', methods=('GET', 'POST', 'PUT'))
 @login_required
@@ -92,7 +126,6 @@ def create_client():
 
 
 def create(data):
-    print(data)
 
     time_frame_units = data.pop('Ship_Time_Unit')
     time_frame_amount = int(data.pop('Ship_Time'))
@@ -106,21 +139,38 @@ def create(data):
 
     data['Ship_Time_In_Days'] = Ship_Time_In_Days
 
+    #print(data)
+
 
     columns = tuple(data.keys())
     values = tuple(data.values())
-
-
-    print(columns)
-    print(values)
 
     db = DatabaseConnection()
     session = db.get_session()
     org_schema = session.get_schema('Organizations')
     org_table = org_schema.get_table('Organizations')
     org_table.insert(columns).values(values).execute()
-    session.commit()
 
     return True
 
+def allowed_file(filename, allowed_extensions):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
+def checkVettedExpired(date, riskLevel):
+    today = date.today()
+    if riskLevel == "No Risk":
+        return True
+    elif riskLevel == "Low Risk":
+        # check/vet every five years
+        years_ago = today - timedelta(days = 1825)
+    elif riskLevel == "Medium Risk":
+        # check/vet every three years
+        years_ago = today - timedelta(days = 1095)
+    elif riskLevel == "High Risk":
+        # check/vet every year
+        years_ago = today - timedelta(days = 365)
+
+    if date > today:
+        return True 
+    return False
