@@ -7,7 +7,7 @@ from flask import (
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from flaskr.db_conf import *
+from ..db import db_conf as db
 
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -18,7 +18,8 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        session = mysqlx.get_session( {'host': HOST, 'port': PORT,'user': USER, 'password': PASSWORD } )
+        session = mysqlx.get_session(
+            {'host': db.HOST, 'port': db.PORT, 'user': db.USER, 'password': db.PASSWORD})
         error = None
 
         if not username:
@@ -50,9 +51,10 @@ def login():
         username = request.form['username']
         print("USERNAME = ", username)
         password = request.form['password']
-        session = mysqlx.get_session( {'host': HOST, 'port': PORT,'user': USER, 'password': PASSWORD } )
+        sqlsession = mysqlx.get_session(
+            {'host': db.HOST, 'port': db.PORT, 'user': db.USER, 'password': db.PASSWORD})
         error = None
-        user = session.sql(
+        user = sqlsession.sql(
             'SELECT * FROM `Organizations`.`User` WHERE `Username` = ?'
         ).bind((username,)).execute().fetch_one()
 
@@ -77,7 +79,8 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        sqlsession = mysqlx.get_session( {'host': HOST, 'port': PORT,'user': USER, 'password': PASSWORD } )
+        sqlsession = mysqlx.get_session(
+            {'host': db.HOST, 'port': db.PORT, 'user': db.USER, 'password': db.PASSWORD})
         g.user = sqlsession.sql(
             'SELECT * FROM `Organizations`.`User` WHERE `User_ID` = ?'
         ).bind((user_id,)).execute().fetch_one()

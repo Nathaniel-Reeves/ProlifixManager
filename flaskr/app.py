@@ -2,6 +2,7 @@ import os
 
 from flask import Flask, flash, request, redirect, url_for
 from werkzeug.utils import secure_filename
+from . import db
 
 
 def create_app(test_config=None):
@@ -12,10 +13,7 @@ def create_app(test_config=None):
         DATABASE=os.path.join(app.instance_path, 'flaskr.schema'),
     )
 
-    UPLOAD_FOLDER = '/mnt/s/GitHub/Material-Requirements-Planning-System/uploads'
-    ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
-
-    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    app.config['UPLOAD_FOLDER'] = db.UPLOAD_FOLDER
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -29,9 +27,6 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-
-    from . import db_conf
-    db_conf.init_app(app)
 
     from . import handlers
     app.register_blueprint(handlers.auth.bp)

@@ -10,6 +10,7 @@ DROP DATABASE IF EXISTS `Orders`;
 DROP DATABASE IF EXISTS `Products`;
 DROP DATABASE IF EXISTS `Manufacturing`;
 DROP DATABASE IF EXISTS `Organizations`;
+DROP DATABASE IF EXISTS `OrganizationDocs`;
 
 
 CREATE DATABASE `Organizations`;
