@@ -354,7 +354,7 @@ input.danger {
 
 .card-content>header>div>.view_content {
     display: flex;
-    align-items: flex-end;
+    align-items: flex-start;
     flex-wrap: wrap;
     justify-content: flex-start;
     font-size: 0.85em;
