@@ -1,12 +1,12 @@
 
 
-#HOST = '192.168.1.42'
-HOST = 'localhost'
+HOST = '192.168.1.42'
+#HOST = 'localhost'
 PORT = 33060
 USER = 'client'
 PASSWORD = 'clientPassword5!'
-#UPLOAD_FOLDER = '/mnt/c/Users/Nathaniel Reeves/Documents/uploads'
-UPLOAD_FOLDER = '/mnt/s/uploads'
+UPLOAD_FOLDER = '/mnt/c/Users/Nathaniel Reeves/Documents/uploads'
+#UPLOAD_FOLDER = '/mnt/s/uploads'
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
 
 
