@@ -14,7 +14,6 @@ from ..db import db_conf as db
 
 bp = Blueprint('organizations', __name__, url_prefix='/organizations')
 
-
 class Organization:
     def __init__(self):
         self.errors = []
@@ -41,15 +40,40 @@ class Organization:
             'Notes': None
             }
 
+    def getRoll(self):
+        return self._properties['Roll']
+
     def getErrors(self):
         return self.errors
 
     def clearErrors(self):
         self.errors = []
 
-    def queryOrg(self, id):
-        pass
+    def queryOrg(self, OrgID):
 
+        # Connection and Query
+        session = mysqlx.get_session(
+            {'host': db.HOST, 'port': db.PORT, 'user': db.USER, 'password': db.PASSWORD})
+        org_schema = session.get_schema('Organizations')
+        org_table = org_schema.get_table('Organizations')
+        result = org_table.select().where(("Organization_ID = '%s'") % str(OrgID)).execute()
+        
+        # Get and Order Columns
+        column_names = []
+        columns = result.get_columns()
+        for col in columns:
+            column_names.append(col.get_column_name())
+
+        # Get data from db and save in object
+        saved_data = result.fetch_one()
+        for col in column_names:
+            if col == 'Date_Entered':
+                self._properties[col] = datetime.strptime(saved_data.get_string(col), db.DATE_FORMAT)
+            else:
+                self._properties[col] = saved_data.get_string(col)
+
+        return True
+    
     def newOrg(self, request_obj, roll):
         formData = dict(request_obj.form)
         # set roll
@@ -61,6 +85,29 @@ class Organization:
         # set Documents
         #TODO: 
         print(request_obj['Documents'])
+
+        # set data from form
+        form_data = dict(formData)
+        form_data_keys = list(form_data.keys())
+        for key in form_data_keys:
+            if key in self._properties:
+                self._properties[key] = form_data[key]
+            else:
+                self.errors.append("Unknown Key: " + key + "\n")
+
+        # Checks
+        self.setShipTime()
+        self.checkVettedExpired()
+        self.updateVetted()
+
+        # Save Organization in database
+        self._saveOrg()
+    
+    def updateOrg(self, request_obj):
+        formData = dict(request_obj.form)
+
+        # update Documents
+        #TODO:
 
         # set data from form
         form_data = dict(formData)
@@ -153,7 +200,7 @@ class Organization:
                 # If the user does not select a file, the browser submits an
                 # empty file without a filename.
 
-                if file and allowed_file(file.filename):
+                if file and db.allowed_file(file.filename):
 
                     # Compile file tree/path
                     filename = secure_filename(file.filename)
@@ -240,7 +287,7 @@ def suppliers():
     suppliers = suppliers.fetch_all()
     return render_template('organizations/index.html', organizations=suppliers)
 
-@bp.route('/create/supplier', methods=('GET', 'POST', 'PUT'))
+@bp.route('/create/supplier', methods=('GET', 'POST'))
 @login_required
 def create_supplier():
     if request.method == 'POST':
@@ -258,7 +305,7 @@ def create_supplier():
 
     return render_template('organizations/create_supplier.html')
 
-@bp.route('/create/client', methods=('GET', 'POST', 'PUT'))
+@bp.route('/create/client', methods=('GET', 'POST'))
 @login_required
 def create_client():
     if request.method == 'POST':
@@ -276,7 +323,48 @@ def create_client():
             # return redirect(url_for('organizations.index'))
     return render_template('organizations/create_client.html')
 
-def allowed_file(filename, allowed_extensions=db.ALLOWED_EXTENSIONS):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in allowed_extensions
+@bp.route('/edit/<int:OrgID>', methods=('GET', 'PUT'))
+@login_required
+def update(OrgID):
+
+    Org = Organization()
+    Org.queryOrg(OrgID)
+    Roll = str(Org.getRoll())
+    print(Roll)
+
+    if request.method == 'GET':
+        if Roll == 'Client':
+            print("Update Client")
+            return render_template('organizations/update_client.html')
+        elif Roll == 'Supplier':
+            print("Update Supplier")
+            return render_template('organizations/update_supplier.html')
+        else:
+            return render_template('home/index.html')
+
+    if request.method == 'PUT':
+        Org.updateOrg(request)
+        errors = Org.getErrors()
+
+        # Flash Errors if any, else send data to db
+        if errors != []:
+            for error in errors:
+                flash(error)
+        else:
+            if Org.getRoll() == b"Supplier":
+                g.header = "Suppliers"
+                suppliers()
+                # return redirect(url_for('organizations.index'))
+            elif Org.getRoll() == b"Client":
+                g.header = "Clients"
+                clients()
+                # return redirect(url_for('organizations.index'))
+
+    if Roll == 'Client':
+        clients()
+    elif Roll == 'Supplier':
+        suppliers()
+    else:
+        return render_template('home/index.html')
+
 

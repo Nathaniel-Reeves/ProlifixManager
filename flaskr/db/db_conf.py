@@ -8,12 +8,18 @@ PASSWORD = 'clientPassword5!'
 UPLOAD_FOLDER = '/mnt/c/Users/Nathaniel Reeves/Documents/uploads'
 #UPLOAD_FOLDER = '/mnt/s/uploads'
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
+DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 import click
 from flask import current_app, g
 from flask.cli import with_appcontext
 import mysqlx
+
+
+def allowed_file(filename, allowed_extensions=ALLOWED_EXTENSIONS):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
 def close_db(e=None):
     db = g.pop('db', None)
