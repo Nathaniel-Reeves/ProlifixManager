@@ -9,6 +9,7 @@ UPLOAD_FOLDER = '/mnt/c/Users/Nathaniel Reeves/Documents/uploads'
 #UPLOAD_FOLDER = '/mnt/s/uploads'
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
 import click

@@ -2,8 +2,6 @@
 import os
 from datetime import date, datetime
 import mysqlx
-
-
 from flask import (
     Blueprint, flash, g, render_template, request
 )
@@ -32,9 +30,9 @@ class Organization:
             'HQ_Region': None, 
             'HQ_Country': None, 
             'HQ_Zip_Code': None, 
-            'Ship_Time': None,          # Not in db, used to find Ship_Time_In_Days
-            'Ship_Time_Units': None,     # Not in db, used to find Ship_Time_In_Days
-            'Ship_Time_In_Days': None,
+            'Ship_Time': 0,          # Not in db, used to find Ship_Time_In_Days
+            'Ship_Time_Unit': None,     # Not in db, used to find Ship_Time_In_Days
+            'Ship_Time_In_Days': 0,
             'Roll': None,
             'Documents': [],
             'Notes': None
@@ -42,6 +40,12 @@ class Organization:
 
     def getRoll(self):
         return self._properties['Roll']
+
+    def getOrgData(self):
+        self.setShipTimeUnits()
+        print(self._properties)
+        self._properties['Date_Vetted'] = self._properties['Date_Vetted'].strftime("%d/%m/%y")
+        return self._properties
 
     def getErrors(self):
         return self.errors
@@ -69,6 +73,13 @@ class Organization:
         for col in column_names:
             if col == 'Date_Entered':
                 self._properties[col] = datetime.strptime(saved_data.get_string(col), db.DATE_FORMAT)
+            if col == 'Date_Vetted':
+                self._properties[col] = datetime.strptime(saved_data.get_string(col), db.DATE_FORMAT)
+            if col == 'Ship_Time_In_Days':
+                if saved_data.get_string(col) == 'None':
+                    self._properties[col] = 0
+                else:
+                    self._properties[col] = int(saved_data.get_string(col))
             else:
                 self._properties[col] = saved_data.get_string(col)
 
@@ -84,7 +95,7 @@ class Organization:
 
         # set Documents
         #TODO: 
-        print(request_obj['Documents'])
+        #print(request_obj['Documents'])
 
         # set data from form
         form_data = dict(formData)
@@ -251,7 +262,7 @@ class Organization:
         self._properties['Vetted'] = True
 
     def setShipTime(self):
-        time_frame_units = self._properties['Ship_Time_Units']
+        time_frame_units = self._properties['Ship_Time_Unit']
         time_frame_amount = self._properties['Ship_Time']
         Ship_Time_In_Days = None
         if time_frame_units == "Day/s":
@@ -262,7 +273,20 @@ class Organization:
             Ship_Time_In_Days = time_frame_amount * 30
         self._properties['Ship_Time_In_Days'] = Ship_Time_In_Days
         return
-    
+
+    def setShipTimeUnits(self):
+        self._properties["Ship_Time_Unit"] = "Day/s"
+        self._properties["Ship_Time"] = self._properties["Ship_Time_In_Days"]
+        if self._properties['Ship_Time_In_Days'] > 30:
+            self._properties["Ship_Time_Unit"] = "Month/s"
+            self._properties["Ship_Time"] = self._properties["Ship_Time_In_Days"] // 30
+            return
+        if self._properties['Ship_Time_In_Days'] > 14:
+            self._properties["Ship_Time_Unit"] = "Weeks/s"
+            self._properties["Ship_Time"] = self._properties["Ship_Time_In_Days"] // 7
+            return
+        return
+
 @bp.route('/clients', methods=('GET',))
 @login_required
 def clients():
@@ -329,16 +353,15 @@ def update(OrgID):
 
     Org = Organization()
     Org.queryOrg(OrgID)
-    Roll = str(Org.getRoll())
-    print(Roll)
+    Roll = Org.getRoll()
 
     if request.method == 'GET':
-        if Roll == 'Client':
+        if Roll == "b'Client'":
             print("Update Client")
-            return render_template('organizations/update_client.html')
-        elif Roll == 'Supplier':
+            return render_template('organizations/update_client.html',  organizations=Org.getOrgData())
+        elif Roll == "b'Supplier'":
             print("Update Supplier")
-            return render_template('organizations/update_supplier.html')
+            return render_template('organizations/update_supplier.html',  organizations=Org.getOrgData())
         else:
             return render_template('home/index.html')
 
@@ -351,18 +374,18 @@ def update(OrgID):
             for error in errors:
                 flash(error)
         else:
-            if Org.getRoll() == b"Supplier":
+            if Org.getRoll() == "b'Supplier'":
                 g.header = "Suppliers"
                 suppliers()
                 # return redirect(url_for('organizations.index'))
-            elif Org.getRoll() == b"Client":
+            elif Org.getRoll() == "b'Client'":
                 g.header = "Clients"
                 clients()
                 # return redirect(url_for('organizations.index'))
 
-    if Roll == 'Client':
+    if Roll == "b'Client'":
         clients()
-    elif Roll == 'Supplier':
+    elif Roll == "b'Supplier'":
         suppliers()
     else:
         return render_template('home/index.html')

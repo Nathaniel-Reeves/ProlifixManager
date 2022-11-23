@@ -72,8 +72,9 @@
 
         </div>
         <ul class="inline_button">
-            <li  class="action"><a class="edit_button" id="{{ org['Organization_ID'] }}" href="{{ url_for('organizations.update', OrgID=org['Organization_ID']) }}">Edit</a></li>
-            <li class="view_button action" id="{{ org['Organization_ID'] }}" onclick="viewContent(this.id)"><a>View</a></li>
+            <a class="edit_button" id="{{ org['Organization_ID'] }}"
+                href="{{ url_for('organizations.update', OrgID=org['Organization_ID']) }}"><li  class="action">Edit</li></a>
+            <a><li class="view_button action" id="{{ org['Organization_ID'] }}" onclick="viewContent(this.id)">View</li></a>
         </ul>
     </header>
     <hr>

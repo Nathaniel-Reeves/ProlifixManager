@@ -27,15 +27,15 @@ CREATE TABLE `Organizations`.`Organizations` (
   `Website` VARCHAR(200),
   `Vetted` BOOL,
   `Date_Vetted` DATE,
-  `Risk_Level` VARCHAR(20),
+  `Risk_Level` ENUM("UNKNOWN", "No Risk", "Low Risk", "Medium Risd", "High Risk"),
   `HQ_Street_Address` VARCHAR(500),
   `HQ_Unit_Apt` VARCHAR(20),
   `HQ_City` VARCHAR(300),
   `HQ_Region` VARCHAR(300),
   `HQ_Country` VARCHAR(300),
   `HQ_Zip_Code` VARCHAR(20),
-  `Country_Origin` VARCHAR(300),
-  `Ship_Time_In_Days` INT,
+  `Ship_Time` INT,
+  `Ship_Time_Unit` ENUM( "Day/s", "Week/s", "Month/s"),
   `Roll` ENUM('Prolifix', 'Client', 'Supplier'),
   `Documents` JSON,
   `Notes` VARCHAR(2500),
@@ -270,8 +270,8 @@ CREATE TABLE `Manufacturing`.`Equipment` (
 
 -- Insert Prolifix Nutrition Information
 INSERT INTO `Organizations`.`Organizations` (`Organization_Name`, `Organization_Initial`, `Website`, `HQ_Street_Address`, `HQ_Unit_Apt`, 
-	`HQ_City`, `HQ_Region`, `HQ_Country`, `HQ_Zip_Code`, `Country_Origin`, `Ship_Time_In_Days`, `Roll`) VALUES (
-    "Prolifix Nutrition", "PLX", "https://www.prolifixnutrition.com/", "696 South 5300 W", "#1", "Hurricane", "Utah", "United States", "84737", "United States", 0, "Prolifix");
+	`HQ_City`, `HQ_Region`, `HQ_Country`, `HQ_Zip_Code`, `Ship_Time`, `Ship_Time_Unit`, `Roll`, `Risk_Level`) VALUES (
+    "Prolifix Nutrition", "PLX", "https://www.prolifixnutrition.com/", "696 South 5300 W", "#1", "Hurricane", "Utah", "United States", "84737", 0, "Day/s", "Prolifix", "No Risk" );
 
 -- Some Client Information
 INSERT INTO `Organizations`.`Organizations` (`Organization_Name`, `Organization_Initial`, `Roll`) VALUES ("Markus", "MK", 'Client');
