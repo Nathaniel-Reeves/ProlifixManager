@@ -9,8 +9,8 @@ DROP DATABASE IF EXISTS `Inventory`;
 DROP DATABASE IF EXISTS `Orders`;
 DROP DATABASE IF EXISTS `Products`;
 DROP DATABASE IF EXISTS `Manufacturing`;
-DROP DATABASE IF EXISTS `Organizations`;
 DROP DATABASE IF EXISTS `OrganizationDocs`;
+DROP DATABASE IF EXISTS `Organizations`;
 
 
 CREATE DATABASE `Organizations`;
@@ -18,6 +18,14 @@ CREATE DATABASE `Inventory`;
 CREATE DATABASE `Products`;
 CREATE DATABASE `Manufacturing`;
 CREATE DATABASE `Orders`;
+
+CREATE TABLE `Organizations`.`OrganizationDocs` (
+  `doc` json DEFAULT NULL,
+  `Documents_id` varbinary(32) GENERATED ALWAYS AS (json_unquote(json_extract(`doc`,_utf8mb4'$.Documents_id'))) STORED NOT NULL,
+  `_json_schema` json GENERATED ALWAYS AS (_utf8mb4'{"type":"object"}') VIRTUAL,
+  PRIMARY KEY (`Documents_id`),
+  CONSTRAINT `$val_strict_DA1CFDBA874440CA86770045F7DAC652361A4DBD` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `Organizations`.`Organizations` (
   `Organization_ID` INT AUTO_INCREMENT,
@@ -35,9 +43,11 @@ CREATE TABLE `Organizations`.`Organizations` (
   `HQ_Country` VARCHAR(300),
   `HQ_Zip_Code` VARCHAR(20),
   `Ship_Time` INT,
-  `Ship_Time_Unit` ENUM( "Day/s", "Week/s", "Month/s"),
-  `Roll` ENUM('Prolifix', 'Client', 'Supplier'),
-  `Documents` JSON,
+  `Ship_Time_Unit` ENUM( "Unknown","Day/s", "Week/s", "Month/s"),
+  `Ship_Time_In_Days` INT,
+  `Prolifix` BOOL DEFAULT false,
+  `Supplier` BOOL DEFAULT false,
+  `Client` BOOL DEFAULT false,
   `Notes` VARCHAR(2500),
   PRIMARY KEY (`Organization_ID`)
 );
@@ -270,18 +280,18 @@ CREATE TABLE `Manufacturing`.`Equipment` (
 
 -- Insert Prolifix Nutrition Information
 INSERT INTO `Organizations`.`Organizations` (`Organization_Name`, `Organization_Initial`, `Website`, `HQ_Street_Address`, `HQ_Unit_Apt`, 
-	`HQ_City`, `HQ_Region`, `HQ_Country`, `HQ_Zip_Code`, `Ship_Time`, `Ship_Time_Unit`, `Roll`, `Risk_Level`) VALUES (
-    "Prolifix Nutrition", "PLX", "https://www.prolifixnutrition.com/", "696 South 5300 W", "#1", "Hurricane", "Utah", "United States", "84737", 0, "Day/s", "Prolifix", "No Risk" );
+	`HQ_City`, `HQ_Region`, `HQ_Country`, `HQ_Zip_Code`, `Ship_Time`, `Ship_Time_Unit`, `Prolifix`, `Risk_Level`) VALUES (
+    "Prolifix Nutrition", "PLX", "https://www.prolifixnutrition.com/", "696 South 5300 W", "#1", "Hurricane", "Utah", "United States", "84737", 0, "Day/s", True, "No Risk" );
 
 -- Some Client Information
-INSERT INTO `Organizations`.`Organizations` (`Organization_Name`, `Organization_Initial`, `Roll`) VALUES ("Markus", "MK", 'Client');
-INSERT INTO `Organizations`.`Organizations` (`Organization_Name`, `Organization_Initial`, `Roll`) VALUES ("Maju", "MJ", 'Client');
-INSERT INTO `Organizations`.`Organizations` (`Organization_Name`, `Organization_Initial`, `Roll`) VALUES ("Herbally Grounded", "MG", 'Client');
+INSERT INTO `Organizations`.`Organizations` (`Organization_Name`, `Organization_Initial`, `Client`) VALUES ("Markus", "MK", True);
+INSERT INTO `Organizations`.`Organizations` (`Organization_Name`, `Organization_Initial`, `Client`) VALUES ("Maju", "MJ", True);
+INSERT INTO `Organizations`.`Organizations` (`Organization_Name`, `Organization_Initial`, `Client`) VALUES ("Herbally Grounded", "MG", True);
 
 -- Some Supplier Information
-INSERT INTO `Organizations`.`Organizations` (`Organization_Name`, `Organization_Initial`, `Roll`) VALUES ("Equadorian Rainforest", "ER", 'Supplier');
-INSERT INTO `Organizations`.`Organizations` (`Organization_Name`, `Organization_Initial`, `Roll`) VALUES ("Stryka", "SK", 'Supplier');
-INSERT INTO `Organizations`.`Organizations` (`Organization_Name`, `Organization_Initial`, `Roll`) VALUES ("Ingredients Online", "IO", 'Supplier');
+INSERT INTO `Organizations`.`Organizations` (`Organization_Name`, `Organization_Initial`, `Supplier`) VALUES ("Equadorian Rainforest", "ER", true);
+INSERT INTO `Organizations`.`Organizations` (`Organization_Name`, `Organization_Initial`, `Supplier`) VALUES ("Stryka", "SK", true);
+INSERT INTO `Organizations`.`Organizations` (`Organization_Name`, `Organization_Initial`, `Supplier`) VALUES ("Ingredients Online", "IO", true);
 
 -- Insert Nathaniel Reeves Person Info
 INSERT INTO `Organizations`.`People` (`Organization_ID`, `First_Name`, `Last_Name`, `Job_Title`, `Phone_Number`, `Email_Address`, `Is_Employee`, `Wage`, `Contract_Date`) VALUES 

@@ -67,17 +67,19 @@
 
         <div class="form-item">
             <label for="Ship_Time">Average Shipment Time</label>
-            <input type="number" name="Ship_Time" id="Ship_Time">
+            <input type="number" name="Ship_Time" id="Ship_Time" value="0">
         </div>
 
         <div class="form-item">
             <p></p>
             <fieldset>
-                <input type="radio" id="Day/s" name="Ship_Time_Unit" value="Day/s">
+                <input type="radio" id="Unknown" name="Ship_Time_Unit" value="0" checked>
+                <label for="Unknown">Unknown</label><br>
+                <input type="radio" id="Day/s" name="Ship_Time_Unit" value="2" >
                 <label for="Day/s">Day/s</label><br>
-                <input type="radio" id="Week/s" name="Ship_Time_Unit" value="Week/s">
+                <input type="radio" id="Week/s" name="Ship_Time_Unit" value="3">
                 <label for="Week/s">Week/s</label><br>
-                <input type="radio" id="Month/s" name="Ship_Time_Unit" value="Month/s">
+                <input type="radio" id="Month/s" name="Ship_Time_Unit" value="4">
                 <label for="Month/s">Month/s</label>
             </fieldset>
         </div>
@@ -113,13 +115,12 @@
         <header class="card-content">
             <h1>Upload Files</h1>
         </header>
-
+    
         <div>
-            <hr>
             <div id="container">
-
+    
             </div>
-
+    
             <div class="list-item">
                 <div class="list-right"></div>
                 <div class="list-left">
@@ -129,23 +130,29 @@
                 </div>
             </div>
         </div>
+    </div>
+
+
+    <div class="form-section">
+        <input class="inline_button" type="submit" value="Save">
+    </div>
+
 </form>
 
-<div class="form-section">
-    <input class="inline_button" type="submit" value="Save">
-</div>
-
-<div class="list-item" id="template" style="display: none;">
-    <div class="list-left">
-        <div class="file-upload" multiple name="uploads">
-            <input type="file">
+<div id="template" style="display: none;">
+    <div class="list-item">
+        <div class="list-left">
+            <div class="file-upload" multiple name="uploads">
+                <input type="file">
+            </div>
+        </div>
+        <div class="list-right">
+            <button type="button" name="removeFile" class="iconbutton" onclick="removeFileInput(this.id);">
+                <i class="fa fa-minus"></i>
+            </button>
         </div>
     </div>
-    <div class="list-right">
-        <button type="button" name="removeFile" class="iconbutton" onclick="removeFileInput(this.id);">
-            <i class="fa fa-minus"></i>
-        </button>
-    </div>
 </div>
+
 
 {% endblock %}

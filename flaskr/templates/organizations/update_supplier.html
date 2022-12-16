@@ -73,11 +73,11 @@
         <div class="form-item">
             <p></p>
             <fieldset>
-                <input type="radio" id="Day/s" name="Ship_Time_Unit" value="Day/s" {% if organizations['Ship_Time_Unit'] == 'Day/s' %}checked{% endif %}>
+                <input type="radio" id="Day/s" name="Ship_Time_Unit" value="Day/s" {% if organizations['Ship_Time_Unit'] == 1 %}checked{% endif %}>
                 <label for="Day/s">Day/s</label><br>
-                <input type="radio" id="Week/s" name="Ship_Time_Unit" value="Week/s"  {% if organizations['Ship_Time_Unit'] == 'Week/s' %}checked{% endif %}>
+                <input type="radio" id="Week/s" name="Ship_Time_Unit" value="Week/s"  {% if organizations['Ship_Time_Unit'] == 2 %}checked{% endif %}>
                 <label for="Week/s">Week/s</label><br>
-                <input type="radio" id="Month/s" name="Ship_Time_Unit" value="Month/s"  {% if organizations['Ship_Time_Unit'] == 'Month/s' %}checked{% endif %}>
+                <input type="radio" id="Month/s" name="Ship_Time_Unit" value="Month/s"  {% if organizations['Ship_Time_Unit'] == 3 %}checked{% endif %}>
                 <label for="Month/s">Month/s</label>
             </fieldset>
         </div>
