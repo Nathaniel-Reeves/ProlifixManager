@@ -13,9 +13,9 @@
 
 
     {% if g.user %}
-    <ul class="inline_button">
+    <ul class="button-list searchaction">
         {% if g.header == "Clients" %}
-            <li class="action"><a href="{{ url_for('organizations.create_client') }}" >New Client</a></li>
+            <li class="searchaction"><a href="{{ url_for('organizations.create_client') }}" >New Client</a></li>
             <li class="searchbar">
                 <div>
                     <input name="search" id="searchbar" type="text" placeholder="Search Clients..." onkeyup="search()"></input>
@@ -42,41 +42,45 @@
 <article class="card-content" id="{{ org['Organization_ID'] }}" name="{{ org['Organization_Name'] }}">
     <header>
         <div>
-            <h1>{{ org['Organization_Name'] }}</h1>
+            <h2>{{ org['Organization_Name'] }}</h2>
             <div class="about">
                 Initial: {{ org['Organization_Initial'] }} | Website: {{ org['Website'] }}
             </div>
-
-            <div class="view_content" id="{{ org['Organization_ID'] }}" style="display:none;">
-                <div class="view_content_box">
-                    <h2>Address</h2>
-                    <p>{{ org['HQ_Street_Address'] }}<br>
-                    {{ org['HQ_Unit_Apt'] }}</p>
-                </div>
-                <div class="view_content_box">
-                    <h2>Personel</h2>
-                    <p>{{ org['HQ_Street_Address'] }}<br>
-                        {{ org['HQ_Unit_Apt'] }}</p>
-                </div>
-                <div class="view_content_box">
-                    <h2>Additional Info</h2>
-                    <p>{{ org['HQ_Street_Address'] }}<br>
-                        {{ org['HQ_Unit_Apt'] }}</p>
-                </div>
-                <div class="view_content_box">
-                    <h2>Documents</h2>
-                    <p>{{ org['HQ_Street_Address'] }}<br>
-                        {{ org['HQ_Unit_Apt'] }}</p>
-                </div>
-            </div>
-
         </div>
-        <ul class="inline_button">
+        <ul class="button-list justify-bottom">
             <a class="edit_button" id="{{ org['Organization_ID'] }}"
-                href="{{ url_for('organizations.update', OrgID=org['Organization_ID']) }}"><li  class="action">Edit</li></a>
-            <a><li class="view_button action" id="{{ org['Organization_ID'] }}" onclick="viewContent(this.id)">View</li></a>
+                href="{{ url_for('organizations.update', OrgID=org['Organization_ID']) }}">
+                <li>Edit</li>
+            </a>
+            <a>
+                <li class="view_button" id="{{ org['Organization_ID'] }}" onclick="viewContent(this.id)">View</li>
+            </a>
         </ul>
     </header>
+
+    <div class="view_content" id="{{ org['Organization_ID'] }}" style="display:none;">
+        <div class="view_content_box">
+            <h3>Address</h3>
+            <p>{{ org['HQ_Street_Address'] }}<br>
+            {{ org['HQ_Unit_Apt'] }}</p>
+        </div>
+        <div class="view_content_box">
+            <h3>Personel</h3>
+            <p>{{ org['HQ_Street_Address'] }}<br>
+                {{ org['HQ_Unit_Apt'] }}</p>
+        </div>
+        <div class="view_content_box">
+            <h3>Additional Info</h3>
+            <p>{{ org['HQ_Street_Address'] }}<br>
+                {{ org['HQ_Unit_Apt'] }}</p>
+        </div>
+        <div class="view_content_box">
+            <h3>Documents</h3>
+            <p>{{ org['HQ_Street_Address'] }}<br>
+                {{ org['HQ_Unit_Apt'] }}</p>
+        </div>
+    </div>
+
     <hr>
 </article>
 {% if not loop.last %}

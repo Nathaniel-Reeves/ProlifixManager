@@ -1,0 +1,129 @@
+
+html {
+    font-family: sans-serif;
+    background: var(--main-background-color);
+}
+
+body {
+    margin: 0rem 2rem 0rem 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+#logo {
+    width: 290px;
+}
+
+h1, h2, h3 {
+    font-family: serif;
+    color: var(--h1-color);
+    margin: 1rem 0;
+}
+
+h1 {
+    font-size: var(--h1-font-size);
+}
+
+h2 {
+    font-size: var(--h2-font-size);
+}
+
+h3 {
+    font-size: var(--h3-font-size);
+}
+
+hr {
+    border: none;
+    border-top: 1px solid var(--line-color);
+}
+
+.grid-item-header {
+    grid-area: header;
+    max-height: fit-content;
+    top: 0;
+    z-index: 1;
+}
+
+.grid-item-content {
+    grid-area: content;
+}
+
+.grid-item-tree {
+    grid-area: tree;
+}
+
+.grid-item-footer {
+    grid-area: footer;
+}
+
+.grid-container {
+    width: max-content;
+    min-width: 75%;
+    display: grid;
+    gap: 1rem;
+    background-color: var(--main-background-color);
+    grid-template-columns: minmax(auto, 200px) auto;
+    grid-template-areas:
+        'header header'
+        'tree content'
+        'footer footer'
+    ;
+}
+
+.headerbar {
+    background-color: var(--card-background-color);
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.list-item {
+    list-style: none;
+}
+
+p {
+    font-size: medium;
+}
+
+.list-item {
+    display: flex;
+    justify-content:space-between;
+    border-top: 1px solid var(--line-color);
+    padding-block-start: 0.5em;
+    padding-block-end: 0.5em;
+    margin-inline-start: auto;
+    margin-inline-end: auto;
+}
+
+
+
+@media only screen and (max-width: 1200px) {
+    .grid-container {
+        gap: 0.5rem;
+        min-width: 90%;
+        grid-template-columns: 100%;
+        grid-template-areas:
+            'header'
+            'tree'
+            'content'
+            'footer'
+        ;
+    }
+
+}
+
+@media only screen and (max-width: 750px) {
+    .grid-container {
+        margin: 0rem;
+        width: 100%;
+    }
+
+    body {
+        margin: 0;
+    }
+
+    .grid-container {
+        margin-right: 0rem;
+    }
+}

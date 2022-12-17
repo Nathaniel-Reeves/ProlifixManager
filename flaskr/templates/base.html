@@ -1,74 +1,83 @@
 <!doctype html>
 <head>
 <title>{% block title %}{% endblock %} - Flaskr</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-<script src="{{ url_for('static', filename='javascript/dropdown.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='variables.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='popup.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='card.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='nav.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='form_and_buttons.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='view-content.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='searchbar.css') }}">
+<script src="{{ url_for('static', filename='javascript/popup.js') }}"></script>
 <script src="{{ url_for('static', filename='javascript/viewContent.js') }}"></script>
 <script src="{{ url_for('static', filename='javascript/searchbar.js') }}"></script>
 <script src="{{ url_for('static', filename='javascript/multipleFilesInput.js') }}"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-<div class="grid-container">
-    <section class="grid-item-header">
-        <div class="card">
-            <nav class="headerbar">
+<body>
+    <div class="grid-container">
+        <section class="grid-item-header">
+            <div class="card">
+                <nav class="headerbar">
 
-                <div>
-                    <a href="{{ url_for('home.index') }}">
-                        <img id="logo" src="{{ url_for('static', filename='media/logos/Logo_ultra-wide.jpg') }}"></img>
-                    </a>
-                </div>
-
-                <div class="dropdown">
-
-                    <input type="image" onclick="dropdownFunction()" class="smallicon dropbtn" src="{{ url_for('static', filename='media/icons/user.png') }}"></input>
-
-                    <div id="myDropdown" class="dropdown-content">
-                        {% if g.user %}
-                            <p>{{ g.user['Username'] }}</p>
-                            <a href="{{ url_for('auth.logout') }}">Log Out</a>
-                        {% else %}
-                            <a href="{{ url_for('auth.register') }}">Register</a>
-                            <a href="{{ url_for('auth.login') }}">Log In</a>
-                        {% endif %}
+                    <div>
+                        <a href="{{ url_for('home.index') }}">
+                            <img id="logo" src="{{ url_for('static', filename='media/logos/Logo_ultra-wide.jpg') }}"></img>
+                        </a>
                     </div>
 
-                </div>
-            </nav>
-        </div>
-    </section>
-    <section class="grid-item-content" id="grid-item-content">
-        <div class="card">
-            <header>
-                {% block header %}{% endblock %}
-            </header>
-            {% for message in get_flashed_messages() %}
-            <div class="flash">{{ message }}</div>
-            {% endfor %}
-            {% block content %}{% endblock %}
-            {% for message in get_flashed_messages() %}
-            <div class="flash">{{ message }}</div>
-            {% endfor %}
-        </div>
-    </section>
-    <section class="grid-item-tree">
-        <div class="card">
-            <header>
-                <h1>Tree</h1>
-            </header>
-            <nav>
-                <ul>
-                    <a href="{{ url_for('home.index') }}"><li>Home</li></a>
-                    <a href="{{ url_for('organizations.clients') }}"><li>Clients</li></a>
-                    <a href="{{ url_for('organizations.suppliers') }}"><li>Suppliers</li></a>
-                </ul>
-            </nav>
-            <hr>
-        </div>
-    </section>
-    <section class="grid-item-footer">
-        <div class="card">
-            <h1>Footer</h1>
-        </div>
-    </section>
-</div>
+                    <div class="popup">
+
+                        <input type="image" onclick="popupFunction()" class="account-icon popup" src="{{ url_for('static', filename='media/icons/user.png') }}"></input>
+
+                        <div id="popup_menu" class="popup-content">
+                            {% if g.user %}
+                                <p>{{ g.user['Username'] }}</p>
+                                <a href="{{ url_for('auth.logout') }}">Log Out</a>
+                            {% else %}
+                                <a href="{{ url_for('auth.register') }}">Register</a>
+                                <a href="{{ url_for('auth.login') }}">Log In</a>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                </nav>
+            </div>
+        </section>
+        <section class="grid-item-content" id="grid-item-content">
+            <div class="card">
+                <header>
+                    {% block header %}{% endblock %}
+                </header>
+                {% for message in get_flashed_messages() %}
+                <div class="flash">{{ message }}</div>
+                {% endfor %}
+                {% block content %}{% endblock %}
+                {% for message in get_flashed_messages() %}
+                <div class="flash">{{ message }}</div>
+                {% endfor %}
+            </div>
+        </section>
+        <section class="grid-item-tree">
+            <div class="card">
+                <header>
+                    <h1>Tree</h1>
+                </header>
+                <nav>
+                    <ul>
+                        <a href="{{ url_for('home.index') }}"><li>Home</li></a>
+                        <a href="{{ url_for('organizations.clients') }}"><li>Clients</li></a>
+                        <a href="{{ url_for('organizations.suppliers') }}"><li>Suppliers</li></a>
+                    </ul>
+                </nav>
+                <hr>
+            </div>
+        </section>
+        <section class="grid-item-footer">
+            <div class="card">
+                <h1>Footer</h1>
+            </div>
+        </section>
+    </div>
+</body>

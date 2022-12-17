@@ -103,6 +103,7 @@ class Organization:
             self.Documents = []
             return False
         print(documents)
+        print("RUNNING")
 
     def __str__(self):
         return_str = "<"

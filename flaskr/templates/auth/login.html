@@ -11,12 +11,16 @@
             <label for="username">Username</label>
             <input name="username" id="username" required>
         </div>
-
         <div class="form-item">
             <label for="password">Password</label>
             <input type="password" name="password" id="password" required>
         </div>
+        <div class="form-item" style="display:flex; justify-content:center; flex-direction: row;">
+            <a href="{{ url_for('auth.register') }}">
+                <input class="button" type="button" value="Register">
+            </a>
+            <input class="button" type="submit" value="Log In">
+        </div>
     </div>
-    <input class="inline_button" type="submit" value="Log In">
 </form>
 {% endblock %}

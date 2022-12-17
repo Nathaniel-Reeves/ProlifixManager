@@ -1,0 +1,30 @@
+.view_content {
+    display:flex;
+    justify-content:flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    contain:content;
+}
+
+.view_content_box {
+    margin: 1em;
+    padding: 1em;
+    width:fit-content;
+    min-width: 10em;
+    height:auto;
+    border: 1px solid var(--line-color);
+}
+
+@media only screen and (max-width: 750px) {
+    .view_content {
+        justify-content: space-evenly;
+        flex-direction: column;
+    }
+
+    .view_content_box {
+        margin: 0.5em;
+        padding: 1em;
+        width: 25em;
+        height: auto;
+    }
+}

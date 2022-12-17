@@ -21,7 +21,7 @@
 
     <div class="form-section">
         <header class="card-content">
-            <h1>Website & Mailing Info</h1>
+            <h2>Website & Mailing Info</h2>
         </header>
 
         <div class="form-item">
@@ -62,7 +62,7 @@
 
     <div class="form-section">
         <header class="card-content">
-            <h1>Additional Info</h1>
+            <h2>Additional Info</h2>
         </header>
 
         <div class="form-item">
@@ -71,26 +71,31 @@
         </div>
         
         <div class="form-item">
-            <p></p>
-            <div>
-                <input type="radio" id="Day/s" name="Ship_Time_Unit" value="Day/s">
-                <label for="Day/s">Day/s</label><br>
-                <input type="radio" id="Week/s" name="Ship_Time_Unit" value="Week/s">
-                <label for="Week/s">Week/s</label><br>
-                <input type="radio" id="Month/s" name="Ship_Time_Unit" value="Month/s">
-                <label for="Month/s">Month/s</label>
-            </div>
+            <fieldset class="radio-container">
+                <div class="radio-item">
+                    <input type="radio" id="Day/s" name="Ship_Time_Unit" value="Day/s">
+                    <label for="Day/s">Day/s</label>
+                </div>
+                <div class="radio-item">
+                    <input type="radio" id="Week/s" name="Ship_Time_Unit" value="Week/s">
+                    <label for="Week/s">Week/s</label>
+                </div>
+                <div class="radio-item">
+                    <input type="radio" id="Month/s" name="Ship_Time_Unit" value="Month/s">
+                    <label for="Month/s">Month/s</label>
+                </div>
+            </fieldset>
         </div>
 
         <div class="form-item">
             <label for="Notes">Notes</label>
+            <textarea name="Notes" id="Notes"></textarea>
         </div>
-        <textarea name="Notes" id="Notes"></textarea>
     </div>
 
     <div class="form-section">
         <header class="card-content">
-            <h1>Upload Files</h1>
+            <h2>Upload Files</h2>
         </header>
     
         <div>
@@ -109,7 +114,7 @@
         </div>
     </div>
     <div class="form-section">
-        <input class="inline_button" type="submit" value="Save">
+        <input class="button" type="submit" value="Save">
     </div>
 
 </form>

@@ -21,7 +21,7 @@
 
     <div class="form-section">
         <header class="card-content">
-            <h1>Website & Mailing Info</h1>
+            <h2>Website & Mailing Info</h2>
         </header>
 
         <div class="form-item">
@@ -62,7 +62,7 @@
 
     <div class="form-section">
         <header class="card-content">
-            <h1>Additional Info</h1>
+            <h2>Additional Info</h2>
         </header>
 
         <div class="form-item">
@@ -72,31 +72,48 @@
 
         <div class="form-item">
             <p></p>
-            <fieldset>
-                <input type="radio" id="Unknown" name="Ship_Time_Unit" value="0" checked>
-                <label for="Unknown">Unknown</label><br>
-                <input type="radio" id="Day/s" name="Ship_Time_Unit" value="2" >
-                <label for="Day/s">Day/s</label><br>
-                <input type="radio" id="Week/s" name="Ship_Time_Unit" value="3">
-                <label for="Week/s">Week/s</label><br>
-                <input type="radio" id="Month/s" name="Ship_Time_Unit" value="4">
-                <label for="Month/s">Month/s</label>
+            <fieldset class="radio-container">
+                <div class="radio-item">
+                    <input type="radio" id="Unknown" name="Ship_Time_Unit" value="0" checked>
+                    <label for="Unknown">Unknown</label>
+                </div>
+                <div class="radio-item">
+                    <input type="radio" id="Day/s" name="Ship_Time_Unit" value="2" >
+                    <label for="Day/s">Day/s</label>
+                </div>
+                <div class="radio-item">
+                    <input type="radio" id="Week/s" name="Ship_Time_Unit" value="3">
+                    <label for="Week/s">Week/s</label>
+                </div>
+                <div class="radio-item">
+                    <input type="radio" id="Month/s" name="Ship_Time_Unit" value="4">
+                    <label for="Month/s">Month/s</label>
+                </div>
             </fieldset>
         </div>
 
         <div class="form-item">
-            <p>Risk Level</p>
-            <fieldset>
-                <input type="radio" id="No Risk" name="Risk_Level" value="UNKNOWN" checked>
-                <label for="No Risk">Unknown Risk</label><br>
-                <input type="radio" id="No Risk" name="Risk_Level" value="No Risk">
-                <label for="No Risk">No Risk</label><br>
-                <input type="radio" id="Low Risk" name="Risk_Level" value="Low Risk">
-                <label for="Low Risk">Low Risk</label><br>
-                <input type="radio" id="Medium Risk" name="Risk_Level" value="Medium Risk">
-                <label for="Medium Risk">Medium Risk</label><br>
-                <input type="radio" id="High Risk" name="Risk_Level" value="High Risk">
-                <label for="High Risk">High Risk</label><br>
+            <fieldset class="radio-container">
+                <div class="radio-item">
+                    <input type="radio" id="No Risk" name="Risk_Level" value="UNKNOWN" checked>
+                    <label for="No Risk">Unknown Risk</label>
+                </div>
+                <div class="radio-item">
+                    <input type="radio" id="No Risk" name="Risk_Level" value="No Risk">
+                    <label for="No Risk">No Risk</label>
+                </div>
+                <div class="radio-item">
+                    <input type="radio" id="Low Risk" name="Risk_Level" value="Low Risk">
+                    <label for="Low Risk">Low Risk</label>
+                </div>
+                <div class="radio-item">
+                    <input type="radio" id="Medium Risk" name="Risk_Level" value="Medium Risk">
+                    <label for="Medium Risk">Medium Risk</label>
+                </div>
+                <div class="radio-item">
+                    <input type="radio" id="High Risk" name="Risk_Level" value="High Risk">
+                    <label for="High Risk">High Risk</label>
+                </div>
             </fieldset>
         </div>
 
@@ -107,8 +124,8 @@
 
         <div class="form-item">
             <label for="Notes">Notes</label>
+            <textarea name="Notes" id="Notes"></textarea>
         </div>
-        <textarea name="Notes" id="Notes"></textarea>
     </div>
 
     <div class="form-section">
@@ -134,7 +151,7 @@
 
 
     <div class="form-section">
-        <input class="inline_button" type="submit" value="Save">
+        <input class="button" type="submit" value="Save">
     </div>
 
 </form>

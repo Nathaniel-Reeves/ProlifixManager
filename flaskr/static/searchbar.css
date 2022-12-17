@@ -1,0 +1,48 @@
+
+.searchbar {
+    overflow: hidden;
+    padding: 2px !important;
+    height:30px !important;
+    margin: 0 !important;
+    align-items: center !important;
+}
+
+.searchbar a {
+    float: left;
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+.searchbar a:hover {
+    background-color: var(--hover-search-bar-background-color);
+    color: var(--text-color);
+}
+
+.searchbar .search-container {
+    float: right;
+}
+
+.searchbar input[type=text] {
+    padding: 6px;
+    font-size: medium;
+    border: none;
+    background: var(--hover-search-bar-background-color);
+}
+
+.searchbar .iconbutton {
+    float: right;
+    max-width: 30px;
+    padding: 5px 8px;
+    background: var(--input-hover-background-color);
+    font-size: 17px;
+    border: none;
+    cursor: pointer;
+}
+
+.searchbar button:hover {
+    background: var(--hover-dropdown-card-background-color);
+}
