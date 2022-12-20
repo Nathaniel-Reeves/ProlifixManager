@@ -140,16 +140,9 @@ class Organization:
         return_dict["Notes"] = self.Notes
         return return_dict
 
-    def newOrg(self, request_obj, rolls):
+    def newOrg(self, request_obj):
 
         # set Data
-        if "Prolifix" in rolls:
-            self.Prolifix = True
-        if "Client" in rolls:
-            self.Client = True
-        if "Supplier" in rolls:
-            self.Supplier = True
-
         request_data = request_obj.form
         self.Date_Entered = str(date.today())
         self.Organization_Name = request_data["Organization_Name"]
@@ -165,6 +158,11 @@ class Organization:
         self.HQ_Zip_Code = request_data["HQ_Zip_Code"]
         self.Ship_Time = request_data["Ship_Time"]
         self.Ship_Time_Unit = request_data["Ship_Time_Unit"]
+
+        self.Prolifix = request_data["Prolifix"]
+        self.Supplier = request_data["Supplier"]
+        self.Client = request_data["Client"]
+
         self.Notes = request_data["Notes"]
 
         # set Documents
@@ -318,6 +316,7 @@ class Organization:
             self.Ship_Time_In_Days = self.Ship_Time
         return
 
+
 @bp.route('/clients', methods=('GET',))
 @login_required
 def clients():
@@ -326,9 +325,9 @@ def clients():
     clients = session.sql(
         """SELECT * FROM `Organizations`.`Organizations` WHERE `Client` = true ORDER BY `Organization_Name` DESC;"""
     ).execute()
+    g.orgtype = "client"
     clients = clients.fetch_all()
-    g.header = "Clients"
-    return render_template('organizations/index.html', organizations=clients)
+    return render_template('organizations/read-org.html', organizations=clients)
 
 @bp.route('/suppliers', methods=('GET',))
 @login_required
@@ -338,87 +337,66 @@ def suppliers():
     suppliers = session.sql(
         """SELECT * FROM `Organizations`.`Organizations` WHERE `Supplier` = true ORDER BY `Organization_Name` DESC;"""
     ).execute()
-    g.header = "Suppliers"
+    g.orgtype = "supplier"
     suppliers = suppliers.fetch_all()
-    return render_template('organizations/index.html', organizations=suppliers)
+    return render_template('organizations/read-org.html', organizations=suppliers)
 
-@bp.route('/create/supplier', methods=('GET', 'POST'))
+
+@bp.route('/create/<string:org_type>', methods=('GET', 'POST'))
 @login_required
-def create_supplier():
+def create_org(org_type):
+
+    # Stop new entry for Prolifix
+    if org_type == "Prolifix":
+        return render_template('organizations/create-org.html')
+
+    g.orgtype = org_type
+
     if request.method == 'POST':
-        supplier = Organization()
-        # 3 = 'Supplier'
-        supplier.newOrg(request,rolls=["Supplier"])
-        errors = supplier.getErrors()
-
-        # Flash Erros if any, else send data to db
-        if errors != []:
-            for error in errors:
-                flash(error)
-        else:
-            g.header = "Suppliers"
-            suppliers()
-
-    return render_template('organizations/create_supplier.html')
-
-@bp.route('/create/client', methods=('GET', 'POST'))
-@login_required
-def create_client():
-    if request.method == 'POST':
-        client = Organization()
-        client.newOrg(request, rolls=["Client"])
-        errors = client.getErrors()
+        org = Organization()
+        org.newOrg(request)
+        errors = org.getErrors()
         
         # Flash Erros if any, else send data to db
         if errors != []:
             for error in errors:
                 flash(error)
         else:
-            g.header = "Clients"
-            clients()
-            # return redirect(url_for('organizations.index'))
-    return render_template('organizations/create_client.html')
+            if org_type == "client":
+                clients()
+            else:
+                suppliers()
 
-@bp.route('/edit/<int:OrgID>', methods=('GET', 'PUT'))
+    return render_template('organizations/create-org.html')
+
+@bp.route('/update/<int:OrgID>', methods=('GET', 'PUT'))
 @login_required
-def update(OrgID):
+def update_org(OrgID):
 
-    Org = Organization()
-    Org.queryOrg(OrgID)
+    org = Organization()
+    org.queryOrg(OrgID)
 
-    print(Org.Client)
+    # Prevent prolifix entry from being edited.
+    if org.Organization_Name == "Prolifix Nutrition":
+        return render_template('home/index.html')
 
     if request.method == 'GET':
-        if Org.Supplier:
+        if org.Supplier:
             print("Update Client")
-            return render_template('organizations/update_client.html',  organizations=Org.obj_to_dict())
-        elif Org.Supplier:
-            print("Update Supplier")
-            return render_template('organizations/update_supplier.html',  organizations=Org.obj_to_dict())
-        else:
-            return render_template('home/index.html')
+            return render_template('organizations/update-org.html',  organizations=Org.obj_to_dict())
 
     if request.method == 'PUT':
-        Org.updateOrg(request)
-        errors = Org.getErrors()
+        org.updateOrg(request)
+        errors = org.getErrors()
 
         # Flash Errors if any, else send data to db
         if errors != []:
             for error in errors:
                 flash(error)
-        else:
-            if Org.Supplier:
-                g.header = "Suppliers"
-                suppliers()
-                # return redirect(url_for('organizations.index'))
-            elif Org.Client:
-                g.header = "Clients"
-                clients()
-                # return redirect(url_for('organizations.index'))
 
-    if Org.Supplier:
+    if org.Supplier:
         suppliers()
-    elif Org.Client:
+    elif org.Client:
         clients()
     else:
         return render_template('home/index.html')

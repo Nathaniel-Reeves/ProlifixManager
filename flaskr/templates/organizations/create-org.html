@@ -1,20 +1,37 @@
 {% extends 'base.html' %}
 
 {% block header %}
-<h1>Create a New Client</h1>
+<h1>New Organization</h1>
 {% endblock %}
 
 {% block content %}
 <form method="POST" enctype="multipart/form-data">
+        <div class="form-item">
+            <p>What rolls will this organization hold?</p>
+            <fieldset class="checkbox-container">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="client" name="Client">
+                    <label for="Client" {% if g.orgtype == "client" %}checked{% endif %}>Client</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="supplier" name="supplier">
+                    <label for="Supplier" {% if g.orgtype == "supplier" %}checked{% endif %}>Supplier</label>
+                </div>
+            </fieldset>
+        </div>
+
     <div class="form-section">
+        <header class="card-content">
+            <h2>Organization Name/s</h2>
+        </header>
 
         <div class="form-item">
-            <label for="Organization_Name">*Company Name</label>
+            <label for="Organization_Name">*Primary Organization Name</label>
             <input name="Organization_Name" id="Organization_Name" required>
         </div>
 
         <div class="form-item">
-            <label for="Organization_Initial">*Company Initials</label>
+            <label for="Organization_Initial">*Primary Organization Initials</label>
             <input name="Organization_Initial" id="Organization_Initial" maxlength="10" required>
         </div>
     </div>
@@ -64,28 +81,68 @@
         <header class="card-content">
             <h2>Additional Info</h2>
         </header>
-
+    
         <div class="form-item">
             <label for="Ship_Time">Average Shipment Time</label>
-            <input type="number" name="Ship_Time" id="Ship_Time">
+            <input type="number" name="Ship_Time" id="Ship_Time" value="0">
         </div>
-        
+    
         <div class="form-item">
+            <p></p>
             <fieldset class="radio-container">
                 <div class="radio-item">
-                    <input type="radio" id="Day/s" name="Ship_Time_Unit" value="Day/s">
+                    <input type="radio" id="Unknown" name="Ship_Time_Unit" value="0" checked>
+                    <label for="Unknown">Unknown</label>
+                </div>
+                <div class="radio-item">
+                    <input type="radio" id="Day/s" name="Ship_Time_Unit" value="2">
                     <label for="Day/s">Day/s</label>
                 </div>
                 <div class="radio-item">
-                    <input type="radio" id="Week/s" name="Ship_Time_Unit" value="Week/s">
+                    <input type="radio" id="Week/s" name="Ship_Time_Unit" value="3">
                     <label for="Week/s">Week/s</label>
                 </div>
                 <div class="radio-item">
-                    <input type="radio" id="Month/s" name="Ship_Time_Unit" value="Month/s">
+                    <input type="radio" id="Month/s" name="Ship_Time_Unit" value="4">
                     <label for="Month/s">Month/s</label>
                 </div>
             </fieldset>
         </div>
+    
+        <!-- BEGIN BLOCK For suppliers only -->
+
+        <div class="form-item">
+            <p>For more details on risk assesment, please see this link.</p>
+            <fieldset class="radio-container">
+                <div class="radio-item">
+                    <input type="radio" id="No Risk" name="Risk_Level" value="UNKNOWN" checked>
+                    <label for="No Risk">Unknown Risk</label>
+                </div>
+                <div class="radio-item">
+                    <input type="radio" id="No Risk" name="Risk_Level" value="No Risk">
+                    <label for="No Risk">No Risk</label>
+                </div>
+                <div class="radio-item">
+                    <input type="radio" id="Low Risk" name="Risk_Level" value="Low Risk">
+                    <label for="Low Risk">Low Risk</label>
+                </div>
+                <div class="radio-item">
+                    <input type="radio" id="Medium Risk" name="Risk_Level" value="Medium Risk">
+                    <label for="Medium Risk">Medium Risk</label>
+                </div>
+                <div class="radio-item">
+                    <input type="radio" id="High Risk" name="Risk_Level" value="High Risk">
+                    <label for="High Risk">High Risk</label>
+                </div>
+            </fieldset>
+        </div>
+    
+        <div class="form-item">
+            <label for="Date_Vetted">Date Last Vetted</label>
+            <input type="date" name="Date_Vetted" id="Date_Vetted">
+        </div>
+
+        <!-- END BLOCK -->
 
         <div class="form-item">
             <label for="Notes">Notes</label>
