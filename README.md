@@ -181,6 +181,17 @@ Don't forget to give the project a star! Thanks again!
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
+### Formatting & Styling
+
+#### Python
+
+Styling and formatting is checked with yapf on default settings and pylint using the pylint_conf/settings_conf.txt file.  Use the following commands to check styling:
+
+```
+pylint --rcfile="pylint_conf/settings_conf.txt" <filepath>
+
+yapf <filepath>
+```
 
 
 <!-- LICENSE -->

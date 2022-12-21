@@ -1,10 +1,12 @@
+"""
+Handling api requests related to Organization objects.  Defines organization
+objects.
+"""
 
 import os
 from datetime import date, datetime
 import mysqlx
-from flask import (
-    Blueprint, flash, g, render_template, request
-)
+from flask import (Blueprint, flash, g, render_template, request)
 from werkzeug.utils import secure_filename
 
 from .auth import login_required
@@ -12,7 +14,14 @@ from ..db import db_conf as db
 
 bp = Blueprint('organizations', __name__, url_prefix='/organizations')
 
+
 class Organization:
+    """
+    Class representing a organization or company.  Contains company name and 
+    initials, address, website, and other information relevent to the needs
+    of this MRP system.
+    """
+
     def __init__(self, Organization_ID=None):
         self.errors = []
 
@@ -49,22 +58,29 @@ class Organization:
 
         # If Organization_ID query db
         if self.Organization_ID:
-            self.queryOrg(self.Organization_ID)
+            self.query_org(self.Organization_ID)
 
-    def getErrors(self):
+    def get_errors(self):
+        """Returns error list."""
         return self.errors
 
-    def clearErrors(self):
+    def clear_errors(self):
+        "Clears error list."
         self.errors = []
 
-    def queryOrg(self, OrgID):
+    def query_org(self, OrgID):
 
         # Connection and Query
-        session = mysqlx.get_session(
-            {'host': db.HOST, 'port': db.PORT, 'user': db.USER, 'password': db.PASSWORD})
+        session = mysqlx.get_session({
+            'host': db.HOST,
+            'port': db.PORT,
+            'user': db.USER,
+            'password': db.PASSWORD
+        })
         org_schema = session.get_schema('Organizations')
         org_table = org_schema.get_table('Organizations')
-        result = org_table.select().where(("Organization_ID = '%s'") % str(OrgID)).execute()
+        result = org_table.select().where(
+            ("Organization_ID = '%s'") % str(OrgID)).execute()
 
         # Get data from db and save in object
         self.Organization_ID = result.index_of("Organization_ID")
@@ -88,14 +104,17 @@ class Organization:
         self.Client = result.index_of("Client")
         self.Notes = result.index_of("Notes")
 
-
         self._get_Org_Docs(OrgID)
 
         return True
 
     def _get_Org_Docs(self, OrgID):
-        session = mysqlx.get_session(
-            {'host': db.HOST, 'port': db.PORT, 'user': db.USER, 'password': db.PASSWORD})
+        session = mysqlx.get_session({
+            'host': db.HOST,
+            'port': db.PORT,
+            'user': db.USER,
+            'password': db.PASSWORD
+        })
         org_schema = session.get_schema('Organizations')
         org_coll = org_schema.get_collection('OrganizationDocs')
         documents = org_coll.get_one(OrgID)
@@ -115,7 +134,7 @@ class Organization:
 
     def __dict__(self):
         return self.obj_to_dict()
-    
+
     def obj_to_dict(self):
         return_dict = {}
         return_dict["Organization_ID"] = self.Organization_ID
@@ -140,7 +159,7 @@ class Organization:
         return_dict["Notes"] = self.Notes
         return return_dict
 
-    def newOrg(self, request_obj):
+    def new_org(self, request_obj):
 
         # set Data
         request_data = request_obj.form
@@ -170,14 +189,14 @@ class Organization:
             self.rawFiles = request_obj.files.values()
 
         # Validation Checks
-        self._setShipTime()
-        self.checkVettedExpired()
-        self.updateVetted()
+        self._set_ship_time()
+        self.check_vetted_expired()
+        self.update_vetted()
 
         # Save Organization in database
-        self._saveOrg()
-    
-    def updateOrg(self, request_obj):
+        self._save_org()
+
+    def update_org(self, request_obj):
         formData = dict(request_obj.form)
 
         # update Documents
@@ -194,16 +213,20 @@ class Organization:
 
         # Checks
         self.setShipTime()
-        self.checkVettedExpired()
-        self.updateVetted()
+        self.check_vetted_expired()
+        self.update_vetted()
 
         # Save Organization in database
-        self._saveOrg()
+        self._save_org()
 
-    def _saveOrg(self):
+    def _save_org(self):
         # Start session and transaction
-        session = mysqlx.get_session(
-            {'host': db.HOST, 'port': db.PORT, 'user': db.USER, 'password': db.PASSWORD})
+        session = mysqlx.get_session({
+            'host': db.HOST,
+            'port': db.PORT,
+            'user': db.USER,
+            'password': db.PASSWORD
+        })
         session.start_transaction()
 
         # Get Schema and table
@@ -239,8 +262,9 @@ class Organization:
 
             # Folder Config Settings
             os.chdir(db.UPLOAD_FOLDER)
-            uploadFolder = os.path.join(
-                os.getcwd(), "organizations/suppliers/", self.Organization_Name)
+            uploadFolder = os.path.join(os.getcwd(),
+                                        "organizations/suppliers/",
+                                        self.Organization_Name)
 
             # create a file space in organization collections
             collection = {}
@@ -264,19 +288,23 @@ class Organization:
                     self.Documents.append(path)
 
                     # create file link in organization collection
-                    collection["files"].append(
-                        {"date": str(datetime.today()), "path": path})
+                    collection["files"].append({
+                        "date": str(datetime.today()),
+                        "path": path
+                    })
 
             # Create Collection if none exists
             #org_coll = org_schema.create_collection('OrganizationDocs', True)
 
             # Get Collection
-            org_coll = org_schema.get_collection(
-                'OrganizationDocs', check_existence=True)
+            org_coll = org_schema.get_collection('OrganizationDocs',
+                                                 check_existence=True)
 
             # Save file paths
-            result = org_coll.add(
-                {'Documents_id': int(row_id), 'doc': collection}).execute()
+            result = org_coll.add({
+                'Documents_id': int(row_id),
+                'doc': collection
+            }).execute()
 
             # IF Err, Report and Rollback
             if warnings != [] and rows_effected != 1:
@@ -292,20 +320,19 @@ class Organization:
                 # Save File
                 file.save(path)
 
-
         # Commit and close session
         session.commit()
         session.close()
         return True
 
-    def updateVetted(self):
+    def update_vetted(self):
         self.Date_Vetted = str(date.today())
 
-    def checkVettedExpired(self):
+    def check_vetted_expired(self):
         #TODO:
         self.Vetted = True
 
-    def _setShipTime(self):
+    def _set_ship_time(self):
         if self.Ship_Time_Unit == "Day/s":
             self.Ship_Time_In_Days = self.Ship_Time
         elif self.Ship_Time_Unit == "Week/s":
@@ -317,34 +344,45 @@ class Organization:
         return
 
 
-@bp.route('/clients', methods=('GET',))
+@bp.route('/clients', methods=('GET', ))
 @login_required
 def clients():
-    session = mysqlx.get_session(
-        {'host': db.HOST, 'port': db.PORT, 'user': db.USER, 'password': db.PASSWORD})
+    session = mysqlx.get_session({
+        'host': db.HOST,
+        'port': db.PORT,
+        'user': db.USER,
+        'password': db.PASSWORD
+    })
     clients = session.sql(
         """SELECT * FROM `Organizations`.`Organizations` WHERE `Client` = true ORDER BY `Organization_Name` DESC;"""
     ).execute()
     g.orgtype = "client"
     clients = clients.fetch_all()
-    return render_template('organizations/read-org.html', organizations=clients)
+    return render_template('organizations/read-org.html',
+                           organizations=clients)
 
-@bp.route('/suppliers', methods=('GET',))
+
+@bp.route('/suppliers', methods=('GET', ))
 @login_required
 def suppliers():
-    session = mysqlx.get_session(
-        {'host': db.HOST, 'port': db.PORT, 'user': db.USER, 'password': db.PASSWORD})
+    session = mysqlx.get_session({
+        'host': db.HOST,
+        'port': db.PORT,
+        'user': db.USER,
+        'password': db.PASSWORD
+    })
     suppliers = session.sql(
         """SELECT * FROM `Organizations`.`Organizations` WHERE `Supplier` = true ORDER BY `Organization_Name` DESC;"""
     ).execute()
     g.orgtype = "supplier"
     suppliers = suppliers.fetch_all()
-    return render_template('organizations/read-org.html', organizations=suppliers)
+    return render_template('organizations/read-org.html',
+                           organizations=suppliers)
 
 
 @bp.route('/create/<string:org_type>', methods=('GET', 'POST'))
 @login_required
-def create_org(org_type):
+def create(org_type):
 
     # Stop new entry for Prolifix
     if org_type == "Prolifix":
@@ -354,9 +392,9 @@ def create_org(org_type):
 
     if request.method == 'POST':
         org = Organization()
-        org.newOrg(request)
-        errors = org.getErrors()
-        
+        org.new_org(request)
+        errors = org.get_errors()
+
         # Flash Erros if any, else send data to db
         if errors != []:
             for error in errors:
@@ -369,12 +407,13 @@ def create_org(org_type):
 
     return render_template('organizations/create-org.html')
 
+
 @bp.route('/update/<int:OrgID>', methods=('GET', 'PUT'))
 @login_required
-def update_org(OrgID):
+def update(OrgID):
 
     org = Organization()
-    org.queryOrg(OrgID)
+    org.query_org(OrgID)
 
     # Prevent prolifix entry from being edited.
     if org.Organization_Name == "Prolifix Nutrition":
@@ -383,11 +422,12 @@ def update_org(OrgID):
     if request.method == 'GET':
         if org.Supplier:
             print("Update Client")
-            return render_template('organizations/update-org.html',  organizations=Org.obj_to_dict())
+            return render_template('organizations/update-org.html',
+                                   organizations=Org.obj_to_dict())
 
     if request.method == 'PUT':
-        org.updateOrg(request)
-        errors = org.getErrors()
+        org.update_org(request)
+        errors = org.get_errors()
 
         # Flash Errors if any, else send data to db
         if errors != []:
@@ -400,4 +440,3 @@ def update_org(OrgID):
         clients()
     else:
         return render_template('home/index.html')
-

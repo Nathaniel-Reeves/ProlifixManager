@@ -15,7 +15,7 @@
     {% if g.user %}
     <ul class="button-list searchaction">
         {% if g.orgtype == "client" %}
-            <a href="{{ url_for('organizations.create_org', org_type=g.orgtype) }}"><li class="searchaction">New Client</li></a>
+            <a href="{{ url_for('organizations.create', org_type=g.orgtype) }}"><li class="searchaction">New Client</li></a>
             <li class="searchbar">
                 <div>
                     <input name="search" id="searchbar" type="text" placeholder="Search Clients..." onkeyup="search()"></input>
@@ -23,7 +23,7 @@
                 </div>
             </li>
         {% elif g.orgtype == "supplier" %}
-            <a href="{{ url_for('organizations.create_org', org_type=g.orgtype) }}"><li class="action">New Supplier</li></a>
+            <a href="{{ url_for('organizations.create', org_type=g.orgtype) }}"><li class="action">New Supplier</li></a>
             <li class="searchbar">
                 <div>
                     <input name="search" id="searchbar" type="text" placeholder="Search Suppliers..." onkeyup="search()"></input>
@@ -49,7 +49,7 @@
         </div>
         <ul class="button-list justify-bottom">
             <a class="edit_button" id="{{ org['Organization_ID'] }}"
-                href="{{ url_for('organizations.update_org', OrgID=org['Organization_ID']) }}">
+                href="{{ url_for('organizations.update', OrgID=org['Organization_ID']) }}">
                 <li>Edit</li>
             </a>
             <a>
