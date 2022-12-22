@@ -16,49 +16,48 @@ bp = Blueprint('organizations', __name__, url_prefix='/organizations')
 
 
 class Organization:
-    """
-    Class representing a organization or company.  Contains company name and 
-    initials, address, website, and other information relevent to the needs
-    of this MRP system.
+    """Represents an organization or company.
+
+    Contains company name and initials, address, website, and other
+    information relevent to the needs of this MRP system.
+
+    Attributes:
+        likes_spam: A boolean indicating if we like SPAM or not.
+        eggs: An integer count of the eggs we have laid.
     """
 
-    def __init__(self, Organization_ID=None):
+    def __init__(self, organization_id=None):
         self.errors = []
 
         # Organization Attributes
-        self.Organization_ID = Organization_ID
-        self.Organization_Name = ""
-        self.Organization_Initial = ""
-        self.Date_Entered = None
-        self.Website = ""
-        self.Vetted = False
-        self.Date_Vetted = None
-        self.Risk_Level = "UNKNOWN"
-        self.HQ_Street_Address = ""
-        self.HQ_Unit_Apt = ""
-        self.HQ_City = ""
-        self.HQ_Region = ""
-        self.HQ_Country = ""
-        self.HQ_Zip_Code = ""
-        self.Ship_Time = 0
-        self.Ship_Time_Unit = 1
-        self.Ship_Time_In_Days = 0
-        self.Prolifix = False
-        self.Supplier = False
-        self.Client = False
-        self.Documents = []
-        self.Notes = ""
+        self.organization_id = organization_id
+        self.organization_name = ""
+        self.organization_initial = ""
+        self.date_entered = None
+        self.website = ""
+        self.vetted = False
+        self.date_vetted = None
+        self.risk_level = "UNKNOWN"
+        self.hq_street_address = ""
+        self.hq_unit_apt = ""
+        self.hq_city = ""
+        self.hq_region = ""
+        self.hq_country = ""
+        self.hq_zip_code = ""
+        self.ship_time = 0
+        self.ship_time_unit = 1
+        self.ship_time_in_days = 0
+        self.prolifix = False
+        self.supplier = False
+        self.client = False
+        self.documents = []
+        self.notes = ""
 
-        self.rawFiles = {}
+        self.raw_files = {}
 
-        # Child Attributes
-        self.People = []
-        self.Prooducts = []
-        self.Purchase_Orders = []
-
-        # If Organization_ID query db
-        if self.Organization_ID:
-            self.query_org(self.Organization_ID)
+        # If organization_id query db
+        if self.organization_id:
+            self.query_org(self.organization_id)
 
     def get_errors(self):
         """Returns error list."""
@@ -68,7 +67,7 @@ class Organization:
         "Clears error list."
         self.errors = []
 
-    def query_org(self, OrgID):
+    def query_org(self, org_id):
 
         # Connection and Query
         session = mysqlx.get_session({
@@ -80,35 +79,35 @@ class Organization:
         org_schema = session.get_schema('Organizations')
         org_table = org_schema.get_table('Organizations')
         result = org_table.select().where(
-            ("Organization_ID = '%s'") % str(OrgID)).execute()
+            (f"Organization_ID = '%s'") % str(org_id)).execute()
 
         # Get data from db and save in object
-        self.Organization_ID = result.index_of("Organization_ID")
-        self.Organization_Name = result.index_of("Organization_Name")
-        self.Organization_Initial = result.index_of("Organization_Initial")
-        self.Date_Entered = result.index_of("Date_Entered")
-        self.Website = result.index_of("Website")
-        self.Vetted = result.index_of("Vetted")
-        self.Date_Vetted = result.index_of("Date_Vetted")
-        self.HQ_Street_Address = result.index_of("HQ_Street_Address")
-        self.HQ_Unit_Apt = result.index_of("HQ_Unit_Apt")
-        self.HQ_City = result.index_of("HQ_City")
-        self.HQ_Region = result.index_of("HQ_Region")
-        self.HQ_Country = result.index_of("HQ_Country")
-        self.HQ_Zip_Code = result.index_of("HQ_Zip_Code")
-        self.Ship_Time = result.index_of("Ship_Time")
-        self.Ship_Time_Unit = result.index_of("Ship_Time_Unit")
-        self.Ship_Time_In_Days = result.index_of("Ship_Time_In_Days")
-        self.Prolifix = result.index_of("Prolifix")
-        self.Supplier = result.index_of("Supplier")
-        self.Client = result.index_of("Client")
-        self.Notes = result.index_of("Notes")
+        self.organization_id = result.index_of("organization_id")
+        self.organization_name = result.index_of("Organization_Name")
+        self.organization_initial = result.index_of("Organization_Initial")
+        self.date_entered = result.index_of("Date_Entered")
+        self.website = result.index_of("Website")
+        self.vetted = result.index_of("Vetted")
+        self.date_vetted = result.index_of("Date_Vetted")
+        self.hq_street_address = result.index_of("HQ_Street_Address")
+        self.hq_unit_apt = result.index_of("HQ_Unit_Apt")
+        self.hq_city = result.index_of("HQ_City")
+        self.hq_region = result.index_of("HQ_Region")
+        self.hq_country = result.index_of("HQ_Country")
+        self.hq_zip_code = result.index_of("HQ_Zip_Code")
+        self.ship_time = result.index_of("Ship_Time")
+        self.ship_time_unit = result.index_of("Ship_Time_Unit")
+        self.ship_time_in_days = result.index_of("Ship_Time_In_Days")
+        self.prolifix = result.index_of("Prolifix")
+        self.supplier = result.index_of("Supplier")
+        self.client = result.index_of("Client")
+        self.notes = result.index_of("Notes")
 
-        self._get_Org_Docs(OrgID)
+        self._get_org_docs(org_id)
 
         return True
 
-    def _get_Org_Docs(self, OrgID):
+    def _get_org_docs(self, org_id):
         session = mysqlx.get_session({
             'host': db.HOST,
             'port': db.PORT,
@@ -117,18 +116,19 @@ class Organization:
         })
         org_schema = session.get_schema('Organizations')
         org_coll = org_schema.get_collection('OrganizationDocs')
-        documents = org_coll.get_one(OrgID)
+        documents = org_coll.get_one(org_id)
         if not documents:
-            self.Documents = []
+            self.documents = []
             return False
         print(documents)
         print("RUNNING")
+        return True
 
     def __str__(self):
         return_str = "<"
-        return_str += "Org_ID = " + str(self.Organization_ID) + " | "
-        return_str += "Org_Name = " + str(self.Organization_Name) + " | "
-        return_str += "Org_Initial = " + str(self.Organization_Initial)
+        return_str += "Org_ID = " + str(self.organization_id) + " | "
+        return_str += "Org_Name = " + str(self.organization_name) + " | "
+        return_str += "Org_Initial = " + str(self.organization_initial)
         return_str += ">"
         return return_str
 
@@ -137,56 +137,56 @@ class Organization:
 
     def obj_to_dict(self):
         return_dict = {}
-        return_dict["Organization_ID"] = self.Organization_ID
-        return_dict["Organization_Name"] = self.Organization_Name
-        return_dict["Organization_Initial"] = self.Organization_Initial
-        return_dict["Date_Entered"] = self.Date_Entered
-        return_dict["Website"] = self.Website
-        return_dict["Vetted"] = self.Vetted
-        return_dict["Date_Vetted"] = self.Date_Vetted
-        return_dict["HQ_Street_Address"] = self.HQ_Street_Address
-        return_dict["HQ_Unit_Apt"] = self.HQ_Unit_Apt
-        return_dict["HQ_City"] = self.HQ_City
-        return_dict["HQ_Region"] = self.HQ_Region
-        return_dict["HQ_Country"] = self.HQ_Country
-        return_dict["HQ_Zip_Code"] = self.HQ_Zip_Code
-        return_dict["Ship_Time"] = self.Ship_Time
-        return_dict["Ship_Time_Unit"] = self.Ship_Time_Unit
-        return_dict["Ship_Time_In_Days"] = self.Ship_Time_In_Days
-        return_dict["Prolifix"] = self.Prolifix
-        return_dict["Supplier"] = self.Supplier
-        return_dict["Client"] = self.Client
-        return_dict["Notes"] = self.Notes
+        return_dict["Organization_ID"] = self.organization_id
+        return_dict["Organization_Name"] = self.organization_name
+        return_dict["Organization_Initial"] = self.organization_initial
+        return_dict["Date_Entered"] = self.date_entered
+        return_dict["Website"] = self.website
+        return_dict["Vetted"] = self.vetted
+        return_dict["Date_Vetted"] = self.date_vetted
+        return_dict["HQ_Street_Address"] = self.hq_street_address
+        return_dict["HQ_Unit_Apt"] = self.hq_unit_apt
+        return_dict["HQ_City"] = self.hq_city
+        return_dict["HQ_Region"] = self.hq_region
+        return_dict["HQ_Country"] = self.hq_country
+        return_dict["HQ_Zip_Code"] = self.hq_zip_code
+        return_dict["Ship_Time"] = self.ship_time
+        return_dict["Ship_Time_Unit"] = self.ship_time_unit
+        return_dict["Ship_Time_In_Days"] = self.ship_time_in_days
+        return_dict["Prolifix"] = self.prolifix
+        return_dict["Supplier"] = self.supplier
+        return_dict["Client"] = self.client
+        return_dict["Notes"] = self.notes
         return return_dict
 
     def new_org(self, request_obj):
 
         # set Data
         request_data = request_obj.form
-        self.Date_Entered = str(date.today())
-        self.Organization_Name = request_data["Organization_Name"]
-        self.Organization_Initial = request_data["Organization_Initial"]
-        self.Website = request_data["Website"]
-        self.Date_Vetted = request_data["Date_Vetted"]
-        self.Risk_Level = request_data["Risk_Level"]
-        self.HQ_Street_Address = request_data["HQ_Street_Address"]
-        self.HQ_Unit_Apt = request_data["HQ_Unit_Apt"]
-        self.HQ_City = request_data["HQ_City"]
-        self.HQ_Region = request_data["HQ_Region"]
-        self.HQ_Country = request_data["HQ_Country"]
-        self.HQ_Zip_Code = request_data["HQ_Zip_Code"]
-        self.Ship_Time = request_data["Ship_Time"]
-        self.Ship_Time_Unit = request_data["Ship_Time_Unit"]
+        self.date_entered = str(date.today())
+        self.organization_name = request_data["Organization_Name"]
+        self.organization_initial = request_data["Organization_Initial"]
+        self.website = request_data["Website"]
+        self.date_vetted = request_data["Date_Vetted"]
+        self.risk_level = request_data["Risk_Level"]
+        self.hq_street_address = request_data["HQ_Street_Address"]
+        self.hq_unit_apt = request_data["HQ_Unit_Apt"]
+        self.hq_city = request_data["HQ_City"]
+        self.hq_region = request_data["HQ_Region"]
+        self.hq_country = request_data["HQ_Country"]
+        self.hq_zip_code = request_data["HQ_Zip_Code"]
+        self.ship_time = request_data["Ship_Time"]
+        self.ship_time_unit = request_data["Ship_Time_Unit"]
 
-        self.Prolifix = request_data["Prolifix"]
-        self.Supplier = request_data["Supplier"]
-        self.Client = request_data["Client"]
+        self.prolifix = request_data["Prolifix"]
+        self.supplier = request_data["Supplier"]
+        self.client = request_data["Client"]
 
-        self.Notes = request_data["Notes"]
+        self.notes = request_data["Notes"]
 
         # set Documents
         if request_obj.files:
-            self.rawFiles = request_obj.files.values()
+            self.raw_files = request_obj.files.values()
 
         # Validation Checks
         self._set_ship_time()
@@ -197,22 +197,16 @@ class Organization:
         self._save_org()
 
     def update_org(self, request_obj):
-        formData = dict(request_obj.form)
+        form_data = dict(request_obj.form)
 
         # update Documents
         #TODO:
 
         # set data from form
-        form_data = dict(formData)
-        form_data_keys = list(form_data.keys())
-        for key in form_data_keys:
-            if key in self._properties:
-                self._properties[key] = form_data[key]
-            else:
-                self.errors.append("Unknown Key: " + key + "\n")
+        #TODO:
 
         # Checks
-        self.setShipTime()
+        self._set_ship_time()
         self.check_vetted_expired()
         self.update_vetted()
 
@@ -258,19 +252,19 @@ class Organization:
             return False
 
         # Save Uploaded Files
-        if self.rawFiles:
+        if self.raw_files:
 
             # Folder Config Settings
             os.chdir(db.UPLOAD_FOLDER)
-            uploadFolder = os.path.join(os.getcwd(),
+            upload_folder = os.path.join(os.getcwd(),
                                         "organizations/suppliers/",
-                                        self.Organization_Name)
+                                        self.organization_name)
 
             # create a file space in organization collections
             collection = {}
             collection.update({"files": []})
 
-            for file in self.rawFiles:
+            for file in self.raw_files:
                 # If the user does not select a file, the browser submits an
                 # empty file without a filename.
 
@@ -278,14 +272,14 @@ class Organization:
 
                     # Compile file tree/path
                     filename = secure_filename(file.filename)
-                    path = os.path.join(uploadFolder, filename)
+                    path = os.path.join(upload_folder, filename)
 
                     # Create file tree/path if it doesn't exist already
-                    if not os.path.exists(uploadFolder):
-                        os.makedirs(uploadFolder)
+                    if not os.path.exists(upload_folder):
+                        os.makedirs(upload_folder)
 
                     # save Path to Documents
-                    self.Documents.append(path)
+                    self.documents.append(path)
 
                     # create file link in organization collection
                     collection["files"].append({
@@ -316,9 +310,9 @@ class Organization:
                 self.errors.append(error)
                 return False
 
-            for path in self.Documents:
+            for file in self.raw_files:
                 # Save File
-                file.save(path)
+                file.save()
 
         # Commit and close session
         session.commit()
@@ -326,41 +320,69 @@ class Organization:
         return True
 
     def update_vetted(self):
-        self.Date_Vetted = str(date.today())
+        self.date_vetted = str(date.today())
 
     def check_vetted_expired(self):
         #TODO:
-        self.Vetted = True
+        self.vetted = True
 
     def _set_ship_time(self):
-        if self.Ship_Time_Unit == "Day/s":
-            self.Ship_Time_In_Days = self.Ship_Time
-        elif self.Ship_Time_Unit == "Week/s":
-            self.Ship_Time_In_Days = self.Ship_Time * 7
-        elif self.Ship_Time_Unit == "Month/s":
-            self.Ship_Time_In_Days = self.Ship_Time * 30
+        if self.ship_time_unit == "Day/s":
+            self.ship_time_in_days = self.ship_time
+        elif self.ship_time_unit == "Week/s":
+            self.ship_time_in_days = self.ship_time * 7
+        elif self.ship_time_unit == "Month/s":
+            self.ship_time_in_days = self.ship_time * 30
         else:
-            self.Ship_Time_In_Days = self.Ship_Time
-        return
+            self.ship_time_in_days = self.ship_time
 
 
 @bp.route('/clients', methods=('GET', ))
 @login_required
 def clients():
+    """Fetches rows from a Bigtable.
+
+    Retrieves rows pertaining to the given keys from the Table instance
+    represented by big_table.  Silly things may happen if
+    other_silly_variable is not None.
+
+    Args:
+        big_table: An open Bigtable Table instance.
+        keys: A sequence of strings representing the key of each table row
+            to fetch.
+        other_silly_variable: Another optional variable, that has a much
+            longer name than the other args, and which does nothing.
+
+    Returns:
+        A dict mapping keys to the corresponding table row data
+        fetched. Each row is represented as a tuple of strings. For
+        example:
+
+        {'Serak': ('Rigel VII', 'Preparer'),
+        'Zim': ('Irk', 'Invader'),
+        'Lrrr': ('Omicron Persei 8', 'Emperor')}
+
+        If a key from the keys argument is missing from the dictionary,
+        then that row was not found in the table.
+
+    Raises:
+        IOError: An error occurred accessing the bigtable.Table object.
+    """
     session = mysqlx.get_session({
         'host': db.HOST,
         'port': db.PORT,
         'user': db.USER,
         'password': db.PASSWORD
     })
-    clients = session.sql(
-        """SELECT * FROM `Organizations`.`Organizations` WHERE `Client` = true ORDER BY `Organization_Name` DESC;"""
+    result = session.sql(
+        """SELECT * FROM `Organizations`.`Organizations`
+        WHERE `Client` = true
+        ORDER BY `Organization_Name` DESC;"""
     ).execute()
     g.orgtype = "client"
-    clients = clients.fetch_all()
+    clients_data = result.fetch_all()
     return render_template('organizations/read-org.html',
-                           organizations=clients)
-
+                           organizations=clients_data)
 
 @bp.route('/suppliers', methods=('GET', ))
 @login_required
@@ -371,13 +393,15 @@ def suppliers():
         'user': db.USER,
         'password': db.PASSWORD
     })
-    suppliers = session.sql(
-        """SELECT * FROM `Organizations`.`Organizations` WHERE `Supplier` = true ORDER BY `Organization_Name` DESC;"""
+    result = session.sql(
+        """SELECT * FROM `Organizations`.`Organizations`
+        WHERE `Supplier` = true
+        ORDER BY `Organization_Name` DESC;"""
     ).execute()
     g.orgtype = "supplier"
-    suppliers = suppliers.fetch_all()
+    suppliers_data = result.fetch_all()
     return render_template('organizations/read-org.html',
-                           organizations=suppliers)
+                           organizations=suppliers_data)
 
 
 @bp.route('/create/<string:org_type>', methods=('GET', 'POST'))
@@ -396,7 +420,7 @@ def create(org_type):
         errors = org.get_errors()
 
         # Flash Erros if any, else send data to db
-        if errors != []:
+        if errors:
             for error in errors:
                 flash(error)
         else:
@@ -408,35 +432,35 @@ def create(org_type):
     return render_template('organizations/create-org.html')
 
 
-@bp.route('/update/<int:OrgID>', methods=('GET', 'PUT'))
+@bp.route('/update/<int:org_id>', methods=('GET', 'PUT'))
 @login_required
-def update(OrgID):
+def update(org_id):
 
     org = Organization()
-    org.query_org(OrgID)
+    org.query_org(org_id)
 
     # Prevent prolifix entry from being edited.
-    if org.Organization_Name == "Prolifix Nutrition":
+    if org.organization_name == "Prolifix Nutrition":
         return render_template('home/index.html')
 
     if request.method == 'GET':
-        if org.Supplier:
+        if org.supplier:
             print("Update Client")
             return render_template('organizations/update-org.html',
-                                   organizations=Org.obj_to_dict())
+                                   organizations=org.obj_to_dict())
 
     if request.method == 'PUT':
         org.update_org(request)
         errors = org.get_errors()
 
         # Flash Errors if any, else send data to db
-        if errors != []:
+        if errors:
             for error in errors:
                 flash(error)
 
-    if org.Supplier:
+    if org.supplier:
         suppliers()
-    elif org.Client:
+    elif org.client:
         clients()
     else:
         return render_template('home/index.html')
