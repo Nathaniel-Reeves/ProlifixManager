@@ -30,7 +30,7 @@ def register():
         if error is None:
             try:
                 session.sql(
-                    "INSERT INTO `Organizations`.`User` (`Username`, `Encrypted_Password`, `Manger_Privileges`, `Admin_Privileges`, `Recovery_Email`) VALUES (?, ?, 0, 0, \"TEST EMAIL\")",
+                    "INSERT INTO `Organizations`.`User` (`person_id`, `username`, `encrypted_password`, `access_privileges`) VALUES (?, ?, ?, ?)",
                 ).bind((username, generate_password_hash(password)),).execute()
             except Exception as err:
                 if err.args[0] == 1062:
@@ -55,17 +55,17 @@ def login():
             {'host': db.HOST, 'port': db.PORT, 'user': db.USER, 'password': db.PASSWORD})
         error = None
         user = sqlsession.sql(
-            'SELECT * FROM `Organizations`.`User` WHERE `Username` = ?'
+            'SELECT * FROM `Organizations`.`User` WHERE `username` = ?'
         ).bind((username,)).execute().fetch_one()
 
         if user is None:
             error = 'Incorrect username.'
-        elif not check_password_hash(user['Encrypted_Password'], password):
+        elif not check_password_hash(user['encrypted_password'], password):
             error = 'Incorrect password.'
         print("ERROR = ", error)
         if error is None:
             session.clear()
-            session['User_ID'] = user['User_ID']
+            session['user_id'] = user['user_id']
             return redirect(url_for('home.index'))
 
         flash(error)
@@ -74,14 +74,14 @@ def login():
 
 @bp.before_app_request
 def load_logged_in_user():
-    user_id = session.get('User_ID')
+    user_id = session.get('user_id')
     if user_id is None:
         g.user = None
     else:
         sqlsession = mysqlx.get_session(
             {'host': db.HOST, 'port': db.PORT, 'user': db.USER, 'password': db.PASSWORD})
         g.user = sqlsession.sql(
-            'SELECT * FROM `Organizations`.`User` WHERE `User_ID` = ?'
+            'SELECT * FROM `Organizations`.`User` WHERE `user_id` = ?'
         ).bind((user_id,)).execute().fetch_one()
 
 

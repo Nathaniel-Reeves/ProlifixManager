@@ -10,12 +10,12 @@
             <p>What rolls will this organization hold?</p>
             <fieldset class="checkbox-container">
                 <div class="checkbox-item">
-                    <input type="checkbox" id="client" name="Client">
-                    <label for="Client" {% if g.orgtype == "client" %}checked{% endif %}>Client</label>
+                    <input type="checkbox" id="client" name="client" class="onerequired" {% if g.org_type == "client" %}checked{% endif %} value="1">
+                    <label for="client">Client</label>
                 </div>
                 <div class="checkbox-item">
-                    <input type="checkbox" id="supplier" name="supplier">
-                    <label for="Supplier" {% if g.orgtype == "supplier" %}checked{% endif %}>Supplier</label>
+                    <input type="checkbox" id="supplier" name="supplier" class="onerequired" {% if g.org_type == "supplier" %}checked{% endif %} value="1">
+                    <label for="supplier">Supplier</label>
                 </div>
             </fieldset>
         </div>
@@ -26,13 +26,13 @@
         </header>
 
         <div class="form-item">
-            <label for="Organization_Name">*Primary Organization Name</label>
-            <input name="Organization_Name" id="Organization_Name" required>
+            <label for="organization_name">*Primary Organization Name</label>
+            <input name="organization_name" id="organization_name" required>
         </div>
 
         <div class="form-item">
-            <label for="Organization_Initial">*Primary Organization Initials</label>
-            <input name="Organization_Initial" id="Organization_Initial" maxlength="10" required>
+            <label for="organization_initial">*Primary Organization Initials</label>
+            <input name="organization_initial" id="organization_initial" maxlength="10" required>
         </div>
     </div>
 
@@ -42,38 +42,38 @@
         </header>
 
         <div class="form-item">
-            <label for="Website">Company Website Homepage</label>
-            <input name="Website" id="Website" type="url">
+            <label for="website">Company Website Homepage</label>
+            <input name="website" id="website" type="url">
         </div>
         
         <div class="form-item">
-            <label for="HQ_Street_Address">Street Address</label>
-            <input name="HQ_Street_Address" id="HQ_Street_Address">
+            <label for="hq_street_address">Street Address</label>
+            <input name="hq_street_address" id="hq_street_address">
         </div>
         
         <div class="form-item">
-            <label for="HQ_Unit_Apt">Apartment/Suite Number</label>
-            <input name="HQ_Unit_Apt" id="HQ_Unit_Apt">
+            <label for="hq_unit_apt">Apartment/Suite Number</label>
+            <input name="hq_unit_apt" id="hq_unit_apt">
         </div>
         
         <div class="form-item">
-            <label for="HQ_City">City</label>
-            <input name="HQ_City" id="HQ_City">
+            <label for="hq_city">City</label>
+            <input name="hq_city" id="hq_city">
         </div>
         
         <div class="form-item">
-            <label for="HQ_Region">State, Province, or Region</label>
-            <input name="HQ_Region" id="HQ_Region">
+            <label for="hq_region">State, Province, or Region</label>
+            <input name="hq_region" id="hq_region">
         </div>
         
         <div class="form-item">
-            <label for="HQ_Country">Country</label>
-            <input name="HQ_Country" id="HQ_Country">
+            <label for="hq_country">Country</label>
+            <input name="hq_country" id="hq_country">
         </div>
         
         <div class="form-item"> 
-            <label for="HQ_Zip_Code">Mailing or Zip Code</label>
-            <input name="HQ_Zip_Code" id="HQ_Zip_Code">
+            <label for="hq_zip_code">Mailing or Zip Code</label>
+            <input name="hq_zip_code" id="hq_zip_code">
         </div>
     </div>
 
@@ -83,27 +83,27 @@
         </header>
     
         <div class="form-item">
-            <label for="Ship_Time">Average Shipment Time</label>
-            <input type="number" name="Ship_Time" id="Ship_Time" value="0">
+            <label for="ship_time">Average Shipment Time</label>
+            <input type="number" name="ship_time" id="ship_time" value="0">
         </div>
     
         <div class="form-item">
             <p></p>
             <fieldset class="radio-container">
                 <div class="radio-item">
-                    <input type="radio" id="Unknown" name="Ship_Time_Unit" value="0" checked>
+                    <input type="radio" id="Unknown" name="ship_time_unit" value="0" checked>
                     <label for="Unknown">Unknown</label>
                 </div>
                 <div class="radio-item">
-                    <input type="radio" id="Day/s" name="Ship_Time_Unit" value="2">
+                    <input type="radio" id="Day/s" name="ship_time_unit" value="2">
                     <label for="Day/s">Day/s</label>
                 </div>
                 <div class="radio-item">
-                    <input type="radio" id="Week/s" name="Ship_Time_Unit" value="3">
+                    <input type="radio" id="Week/s" name="ship_time_unit" value="3">
                     <label for="Week/s">Week/s</label>
                 </div>
                 <div class="radio-item">
-                    <input type="radio" id="Month/s" name="Ship_Time_Unit" value="4">
+                    <input type="radio" id="Month/s" name="ship_time_unit" value="4">
                     <label for="Month/s">Month/s</label>
                 </div>
             </fieldset>
@@ -115,38 +115,38 @@
             <p>For more details on risk assesment, please see this link.</p>
             <fieldset class="radio-container">
                 <div class="radio-item">
-                    <input type="radio" id="No Risk" name="Risk_Level" value="UNKNOWN" checked>
+                    <input type="radio" id="No Risk" name="risk_level" value="UNKNOWN" checked>
                     <label for="No Risk">Unknown Risk</label>
                 </div>
                 <div class="radio-item">
-                    <input type="radio" id="No Risk" name="Risk_Level" value="No Risk">
+                    <input type="radio" id="No Risk" name="risk_level" value="No Risk">
                     <label for="No Risk">No Risk</label>
                 </div>
                 <div class="radio-item">
-                    <input type="radio" id="Low Risk" name="Risk_Level" value="Low Risk">
+                    <input type="radio" id="Low Risk" name="risk_level" value="Low Risk">
                     <label for="Low Risk">Low Risk</label>
                 </div>
                 <div class="radio-item">
-                    <input type="radio" id="Medium Risk" name="Risk_Level" value="Medium Risk">
+                    <input type="radio" id="Medium Risk" name="risk_level" value="Medium Risk">
                     <label for="Medium Risk">Medium Risk</label>
                 </div>
                 <div class="radio-item">
-                    <input type="radio" id="High Risk" name="Risk_Level" value="High Risk">
+                    <input type="radio" id="High Risk" name="risk_level" value="High Risk">
                     <label for="High Risk">High Risk</label>
                 </div>
             </fieldset>
         </div>
     
         <div class="form-item">
-            <label for="Date_Vetted">Date Last Vetted</label>
-            <input type="date" name="Date_Vetted" id="Date_Vetted">
+            <label for="date_vetted">Date Last Vetted</label>
+            <input type="date" name="date_vetted" id="date_vetted">
         </div>
 
         <!-- END BLOCK -->
 
         <div class="form-item">
-            <label for="Notes">Notes</label>
-            <textarea name="Notes" id="Notes"></textarea>
+            <label for="notes">Notes</label>
+            <textarea name="notes" id="notes"></textarea>
         </div>
     </div>
 
@@ -190,5 +190,22 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    function valthis() {
+        var checkBoxes = document.getElementsByClassName('onerequired');
+        var isChecked = false;
+        for (var i = 0; i < checkBoxes.length; i++) {
+            if (checkBoxes[i].checked) {
+                isChecked = true;
+            };
+        };
+        if (isChecked) {
+            alert('At least one checkbox checked!');
+        } else {
+            alert('Please, check at least one checkbox!');
+        }
+    }
+</script>
 
 {% endblock %}

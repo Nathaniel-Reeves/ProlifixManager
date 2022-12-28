@@ -26,7 +26,7 @@ class Organization:
         organization_name (str): Name of the organization.
         organization_initial (str): Initials of the organization.
         date_entered (datetime): Date when the organization was entered.
-        website (str): Website for the organization.
+        website (str): website for the organization.
         vetted (bool): True if the organization is vetted.
         date_vetted (datetime): Date when the organization was vetted.
         risk_level (int): Risk level of the organization.
@@ -41,7 +41,7 @@ class Organization:
         supplier (bool): True if the organization is a supplier.
         client (bool): True if the organization is a client.
         documents (list): List of documents associated with the organization.
-        notes (list): Notes associated with the organization.
+        notes (list): notes associated with the organization.
         TODO: files
     """
 
@@ -179,29 +179,29 @@ class Organization:
         org_schema = session.get_schema('Organizations')
         org_table = org_schema.get_table('Organizations')
         result = org_table.select().where(
-            (f"Organization_ID = '%s'") % str(org_id)).execute()
+            (f"organization_id = '%s'") % str(org_id)).execute()
 
         # Get data from db and save in object
         self.organization_id = result.index_of("organization_id")
-        self.organization_name = result.index_of("Organization_Name")
-        self.organization_initial = result.index_of("Organization_Initial")
-        self.date_entered = result.index_of("Date_Entered")
-        self.website = result.index_of("Website")
-        self.vetted = result.index_of("Vetted")
-        self.date_vetted = result.index_of("Date_Vetted")
-        self.hq_street_address = result.index_of("HQ_Street_Address")
-        self.hq_unit_apt = result.index_of("HQ_Unit_Apt")
-        self.hq_city = result.index_of("HQ_City")
-        self.hq_region = result.index_of("HQ_Region")
-        self.hq_country = result.index_of("HQ_Country")
-        self.hq_zip_code = result.index_of("HQ_Zip_Code")
-        self.ship_time = result.index_of("Ship_Time")
-        self.ship_time_unit = result.index_of("Ship_Time_Unit")
-        self.ship_time_in_days = result.index_of("Ship_Time_In_Days")
-        self.prolifix = result.index_of("Prolifix")
-        self.supplier = result.index_of("Supplier")
-        self.client = result.index_of("Client")
-        self.notes = result.index_of("Notes")
+        self.organization_name = result.index_of("organization_name")
+        self.organization_initial = result.index_of("organization_initial")
+        self.date_entered = result.index_of("date_entered")
+        self.website = result.index_of("website")
+        self.vetted = result.index_of("vetted")
+        self.date_vetted = result.index_of("date_vetted")
+        self.hq_street_address = result.index_of("hq_street_address")
+        self.hq_unit_apt = result.index_of("hq_unit_apt")
+        self.hq_city = result.index_of("hq_city")
+        self.hq_region = result.index_of("hq_region")
+        self.hq_country = result.index_of("hq_country")
+        self.hq_zip_code = result.index_of("hq_zip_code")
+        self.ship_time = result.index_of("ship_time")
+        self.ship_time_unit = result.index_of("ship_time_unit")
+        self.ship_time_in_days = result.index_of("ship_time_in_days")
+        self.prolifix = result.index_of("prolifix")
+        self.supplier = result.index_of("supplier")
+        self.client = result.index_of("client")
+        self.notes = result.index_of("notes")
 
         self._get_org_docs(org_id)
 
@@ -245,7 +245,7 @@ class Organization:
         read what this organization is representing.  Here is an example
         of what the output string might look like:
 
-        <Org_ID = 1 | Org_Name = Prolifix Nutrition | Org_Inicial = PLX>
+        <org_id = 1 | org_name = prolifix Nutrition | org_initial = PLX>
 
         Args:
             None
@@ -257,9 +257,9 @@ class Organization:
             TODO:
         """
         return_str = "<"
-        return_str += "Org_ID = " + str(self.organization_id) + " | "
-        return_str += "Org_Name = " + str(self.organization_name) + " | "
-        return_str += "Org_Initial = " + str(self.organization_initial)
+        return_str += "org_id = " + str(self.organization_id) + " | "
+        return_str += "org_name = " + str(self.organization_name) + " | "
+        return_str += "org_initial = " + str(self.organization_initial)
         return_str += ">"
         return return_str
 
@@ -311,26 +311,26 @@ class Organization:
             TODO: 
         """
         return_dict = {}
-        return_dict["Organization_ID"] = self.organization_id
-        return_dict["Organization_Name"] = self.organization_name
-        return_dict["Organization_Initial"] = self.organization_initial
-        return_dict["Date_Entered"] = self.date_entered
-        return_dict["Website"] = self.website
-        return_dict["Vetted"] = self.vetted
-        return_dict["Date_Vetted"] = self.date_vetted
-        return_dict["HQ_Street_Address"] = self.hq_street_address
-        return_dict["HQ_Unit_Apt"] = self.hq_unit_apt
-        return_dict["HQ_City"] = self.hq_city
-        return_dict["HQ_Region"] = self.hq_region
-        return_dict["HQ_Country"] = self.hq_country
-        return_dict["HQ_Zip_Code"] = self.hq_zip_code
-        return_dict["Ship_Time"] = self.ship_time
-        return_dict["Ship_Time_Unit"] = self.ship_time_unit
-        return_dict["Ship_Time_In_Days"] = self.ship_time_in_days
-        return_dict["Prolifix"] = self.prolifix
-        return_dict["Supplier"] = self.supplier
-        return_dict["Client"] = self.client
-        return_dict["Notes"] = self.notes
+        return_dict["organization_id"] = self.organization_id
+        return_dict["organization_name"] = self.organization_name
+        return_dict["organization_initial"] = self.organization_initial
+        return_dict["date_entered"] = self.date_entered
+        return_dict["website"] = self.website
+        return_dict["vetted"] = self.vetted
+        return_dict["date_vetted"] = self.date_vetted
+        return_dict["hq_street_address"] = self.hq_street_address
+        return_dict["hq_unit_apt"] = self.hq_unit_apt
+        return_dict["hq_city"] = self.hq_city
+        return_dict["hq_region"] = self.hq_region
+        return_dict["hq_country"] = self.hq_country
+        return_dict["hq_zip_code"] = self.hq_zip_code
+        return_dict["ship_time"] = self.ship_time
+        return_dict["ship_time_unit"] = self.ship_time_unit
+        return_dict["ship_time_in_days"] = self.ship_time_in_days
+        return_dict["prolifix"] = self.prolifix
+        return_dict["supplier"] = self.supplier
+        return_dict["client"] = self.client
+        return_dict["notes"] = self.notes
         return return_dict
 
     def new_org(self, request_obj):
@@ -362,28 +362,41 @@ class Organization:
         Raises:
             IOError: An error occurred accessing the bigtable.Table object.
         """
-        # set Data
+
         request_data = request_obj.form
+        flag_type = True
+        if "prolifix" in request_data:
+            self.prolifix = request_data["prolifix"]
+            flag_type = False
+
+        if "supplier" in request_data:
+            self.supplier = request_data["supplier"]
+            flag_type = False
+
+        if "client" in request_data:
+            self.client = request_data["client"]
+            flag_type = False
+
+        if flag_type:
+            return False
+
+        # set Data
         self.date_entered = str(date.today())
-        self.organization_name = request_data["Organization_Name"]
-        self.organization_initial = request_data["Organization_Initial"]
-        self.website = request_data["Website"]
-        self.date_vetted = request_data["Date_Vetted"]
-        self.risk_level = request_data["Risk_Level"]
-        self.hq_street_address = request_data["HQ_Street_Address"]
-        self.hq_unit_apt = request_data["HQ_Unit_Apt"]
-        self.hq_city = request_data["HQ_City"]
-        self.hq_region = request_data["HQ_Region"]
-        self.hq_country = request_data["HQ_Country"]
-        self.hq_zip_code = request_data["HQ_Zip_Code"]
-        self.ship_time = request_data["Ship_Time"]
-        self.ship_time_unit = request_data["Ship_Time_Unit"]
+        self.organization_name = request_data["organization_name"]
+        self.organization_initial = request_data["organization_initial"]
+        self.website = request_data["website"]
+        self.date_vetted = request_data["date_vetted"]
+        self.risk_level = request_data["risk_level"]
+        self.hq_street_address = request_data["hq_street_address"]
+        self.hq_unit_apt = request_data["hq_unit_apt"]
+        self.hq_city = request_data["hq_city"]
+        self.hq_region = request_data["hq_region"]
+        self.hq_country = request_data["hq_country"]
+        self.hq_zip_code = request_data["hq_zip_code"]
+        self.ship_time = request_data["ship_time"]
+        self.ship_time_unit = request_data["ship_time_unit"]
 
-        self.prolifix = request_data["Prolifix"]
-        self.supplier = request_data["Supplier"]
-        self.client = request_data["Client"]
-
-        self.notes = request_data["Notes"]
+        self.notes = request_data["notes"]
 
         # set Documents
         if request_obj.files:
@@ -395,7 +408,7 @@ class Organization:
         self.update_vetted()
 
         # Save Organization in database
-        self._save_org()
+        return self._save_org()
 
     def update_org(self, request_obj):
         """Fetches rows from a Bigtable.
@@ -553,7 +566,7 @@ class Organization:
 
             # Save file paths
             result = org_coll.add({
-                'Documents_id': int(row_id),
+                'organization_id': int(row_id),
                 'doc': collection
             }).execute()
 
@@ -717,10 +730,10 @@ def clients():
     })
     result = session.sql(
         """SELECT * FROM `Organizations`.`Organizations`
-        WHERE `Client` = true
-        ORDER BY `Organization_Name` DESC;"""
+        WHERE `client` = true
+        ORDER BY `organization_name` DESC;"""
     ).execute()
-    g.orgtype = "client"
+    g.org_type = "client"
     clients_data = result.fetch_all()
     return render_template('organizations/read-org.html',
                            organizations=clients_data)
@@ -764,10 +777,10 @@ def suppliers():
     })
     result = session.sql(
         """SELECT * FROM `Organizations`.`Organizations`
-        WHERE `Supplier` = true
-        ORDER BY `Organization_Name` DESC;"""
+        WHERE `supplier` = true
+        ORDER BY `organization_name` DESC;"""
     ).execute()
-    g.orgtype = "supplier"
+    g.org_type = "supplier"
     suppliers_data = result.fetch_all()
     return render_template('organizations/read-org.html',
                            organizations=suppliers_data)
@@ -805,22 +818,27 @@ def create(org_type):
         IOError: An error occurred accessing the bigtable.Table object.
     """
 
-    # Stop new entry for Prolifix
-    if org_type == "Prolifix":
+    # Stop new entry for prolifix
+    if org_type == "prolifix":
         return render_template('organizations/create-org.html')
 
-    g.orgtype = org_type
+    g.org_type = org_type
 
     if request.method == 'POST':
         org = Organization()
-        org.new_org(request)
+        org_saved = org.new_org(request)
         errors = org.get_errors()
 
+
         # Flash Erros if any, else send data to db
-        if errors:
+        if errors or (not org_saved):
             for error in errors:
                 flash(error)
+            if not org_saved:
+                flash("You must specify if the organization is a supplier, client or both.")
+            flash("Organization was not saved!")
         else:
+            flash("Organization was saved!")
             if org_type == "client":
                 clients()
             else:
@@ -865,12 +883,12 @@ def update(org_id):
     org.query_org(org_id)
 
     # Prevent prolifix entry from being edited.
-    if org.organization_name == "Prolifix Nutrition":
+    if org.organization_name == "prolifix Nutrition":
         return render_template('home/index.html')
 
     if request.method == 'GET':
         if org.supplier:
-            print("Update Client")
+            print("Update client")
             return render_template('organizations/update-org.html',
                                    organizations=org.obj_to_dict())
 

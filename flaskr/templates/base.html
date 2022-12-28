@@ -33,7 +33,7 @@
 
                         <div id="popup_menu" class="popup-content">
                             {% if g.user %}
-                                <p>{{ g.user['Username'] }}</p>
+                                <p>{{ g.user['username'] }}</p>
                                 <a href="{{ url_for('auth.logout') }}">Log Out</a>
                             {% else %}
                                 <a href="{{ url_for('auth.register') }}">Register</a>
@@ -61,9 +61,10 @@
         </section>
         <section class="grid-item-tree">
             <div class="card">
-                <header>
+                <!-- <header>
                     <h1>Tree</h1>
-                </header>
+                </header> -->
+                <hr>
                 <nav>
                     <ul>
                         <a href="{{ url_for('home.index') }}"><li>Home</li></a>
