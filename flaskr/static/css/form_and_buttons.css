@@ -1,4 +1,6 @@
-
+* {
+    cursor: default;
+}
 
 input[type="submit" i],
 input[type="button"] {
@@ -111,6 +113,7 @@ input:hover,
 .button-list li:hover,
 .searchbar:hover {
     background-color: var(--input-hover-background-color);
+    cursor: pointer;
 }
 
 .radio-container, 
@@ -119,28 +122,32 @@ input:hover,
     flex-direction: row;
     justify-content: space-evenly;
     align-items: stretch;
+    margin-left: 0;
+    padding-left: 0;
 }
 
 .radio-item, 
 .checkbox-item {
-    margin: 0.5em;
+    margin: 1em;
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
     align-items: center;
-    margin-left: 1.5em;
 }
 
 .radio-item input,
 .checkbox-item input {
     width: 1.5em;
     height: 1.5em;
+    margin: 0;
+    padding: 0;
 }
 
 .radio-item label,
 .checkbox-item label {
     width: fit-content;
-    margin-left: 0.2em;
+    margin: 0;
+    margin-left: 0.4em;
 }
 
 input.danger {

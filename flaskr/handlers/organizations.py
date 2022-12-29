@@ -56,7 +56,7 @@ class Organization:
         self.website = ""
         self.vetted = False
         self.date_vetted = None
-        self.risk_level = "UNKNOWN"
+        self.risk_level = 1
         self.hq_street_address = ""
         self.hq_unit_apt = ""
         self.hq_city = ""
@@ -169,7 +169,7 @@ class Organization:
         Raises:
             IOError: An error occurred accessing the bigtable.Table object.
         """
-        # Connection and Query
+        # Connect to db and query organization data
         session = mysqlx.get_session({
             'host': db.HOST,
             'port': db.PORT,
@@ -180,29 +180,43 @@ class Organization:
         org_table = org_schema.get_table('Organizations')
         result = org_table.select().where(
             (f"organization_id = '%s'") % str(org_id)).execute()
+        encoded_data = result.fetch_one()
 
-        # Get data from db and save in object
-        self.organization_id = result.index_of("organization_id")
-        self.organization_name = result.index_of("organization_name")
-        self.organization_initial = result.index_of("organization_initial")
-        self.date_entered = result.index_of("date_entered")
-        self.website = result.index_of("website")
-        self.vetted = result.index_of("vetted")
-        self.date_vetted = result.index_of("date_vetted")
-        self.hq_street_address = result.index_of("hq_street_address")
-        self.hq_unit_apt = result.index_of("hq_unit_apt")
-        self.hq_city = result.index_of("hq_city")
-        self.hq_region = result.index_of("hq_region")
-        self.hq_country = result.index_of("hq_country")
-        self.hq_zip_code = result.index_of("hq_zip_code")
-        self.ship_time = result.index_of("ship_time")
-        self.ship_time_unit = result.index_of("ship_time_unit")
-        self.ship_time_in_days = result.index_of("ship_time_in_days")
-        self.prolifix = result.index_of("prolifix")
-        self.supplier = result.index_of("supplier")
-        self.client = result.index_of("client")
-        self.notes = result.index_of("notes")
+        # Decode byte objects to str objects
+        data = []
+        for i in encoded_data:
+            if type(i) == bytes:
+                data.append(i.decode('UTF-8'))
+            elif type(i) == datetime:
+                data.append(i.date())
+            else:
+                data.append(i)
 
+        # Save table data into Object from db
+        self.organization_id = data[result.index_of("organization_id")]
+        self.organization_name = data[result.index_of("organization_name")]
+        self.organization_initial = data[result.index_of("organization_initial")]
+        self.date_entered = data[result.index_of("date_entered")]
+        self.website = data[result.index_of("website")]
+        self.vetted = data[result.index_of("vetted")]
+        self.date_vetted = data[result.index_of("date_vetted")]
+        self.risk_level = data[result.index_of("risk_level")]
+        self.hq_street_address = data[result.index_of("hq_street_address")]
+        self.hq_unit_apt = data[result.index_of("hq_unit_apt")]
+        self.hq_city = data[result.index_of("hq_city")]
+        self.hq_region = data[result.index_of("hq_region")]
+        self.hq_country = data[result.index_of("hq_country")]
+        self.hq_zip_code = data[result.index_of("hq_zip_code")]
+        self.ship_time = data[result.index_of("ship_time")]
+        self.ship_time_unit = data[result.index_of(
+            "ship_time_unit")]
+        self.ship_time_in_days = data[result.index_of("ship_time_in_days")]
+        self.prolifix = data[result.index_of("prolifix")]
+        self.supplier = data[result.index_of("supplier")]
+        self.client = data[result.index_of("client")]
+        self.notes = data[result.index_of("notes")]
+
+        # get organization document data from db
         self._get_org_docs(org_id)
 
         return True
@@ -318,6 +332,7 @@ class Organization:
         return_dict["website"] = self.website
         return_dict["vetted"] = self.vetted
         return_dict["date_vetted"] = self.date_vetted
+        return_dict["risk_level"] = self.risk_level
         return_dict["hq_street_address"] = self.hq_street_address
         return_dict["hq_unit_apt"] = self.hq_unit_apt
         return_dict["hq_city"] = self.hq_city
@@ -331,6 +346,7 @@ class Organization:
         return_dict["supplier"] = self.supplier
         return_dict["client"] = self.client
         return_dict["notes"] = self.notes
+        print(return_dict)
         return return_dict
 
     def new_org(self, request_obj):
@@ -365,9 +381,9 @@ class Organization:
 
         request_data = request_obj.form
         flag_type = True
+        # prolifix record cannot be edited on the client side.
         if "prolifix" in request_data:
-            self.prolifix = request_data["prolifix"]
-            flag_type = False
+            return False
 
         if "supplier" in request_data:
             self.supplier = request_data["supplier"]
@@ -380,7 +396,7 @@ class Organization:
         if flag_type:
             return False
 
-        # set Data
+        # set Data 
         self.date_entered = str(date.today())
         self.organization_name = request_data["organization_name"]
         self.organization_initial = request_data["organization_initial"]
@@ -439,21 +455,52 @@ class Organization:
         Raises:
             IOError: An error occurred accessing the bigtable.Table object.
         """
-        form_data = dict(request_obj.form)
+        request_data = request_obj.form
+        flag_type = True
+        # prolifix record cannot be edited on the client side.
+        if "prolifix" in request_data:
+            return False
 
-        # update Documents
-        #TODO:
+        if "supplier" in request_data:
+            self.supplier = request_data["supplier"]
+            flag_type = False
 
-        # set data from form
-        #TODO:
+        if "client" in request_data:
+            self.client = request_data["client"]
+            flag_type = False
 
-        # Checks
+        if flag_type:
+            return False
+
+        # set Data
+        self.date_entered = str(date.today())
+        self.organization_name = request_data["organization_name"]
+        self.organization_initial = request_data["organization_initial"]
+        self.website = request_data["website"]
+        self.date_vetted = request_data["date_vetted"]
+        self.risk_level = request_data["risk_level"]
+        self.hq_street_address = request_data["hq_street_address"]
+        self.hq_unit_apt = request_data["hq_unit_apt"]
+        self.hq_city = request_data["hq_city"]
+        self.hq_region = request_data["hq_region"]
+        self.hq_country = request_data["hq_country"]
+        self.hq_zip_code = request_data["hq_zip_code"]
+        self.ship_time = request_data["ship_time"]
+        self.ship_time_unit = request_data["ship_time_unit"]
+
+        self.notes = request_data["notes"]
+
+        # set Documents
+        if request_obj.files:
+            self.raw_files = request_obj.files.values()
+
+        # Validation Checks
         self._set_ship_time()
         self.check_vetted_expired()
         self.update_vetted()
 
         # Save Organization in database
-        self._save_org()
+        return self._save_org()
 
     def _save_org(self):
         """Fetches rows from a Bigtable.
@@ -688,8 +735,7 @@ class Organization:
         elif self.ship_time_unit == "Month/s":
             self.ship_time_in_days = self.ship_time * 30
         else:
-            self.ship_time_in_days = self.ship_time
-
+            self.ship_time_in_days = None
 
 @bp.route('/clients', methods=('GET', ))
 @login_required
@@ -785,7 +831,6 @@ def suppliers():
     return render_template('organizations/read-org.html',
                            organizations=suppliers_data)
 
-
 @bp.route('/create/<string:org_type>', methods=('GET', 'POST'))
 @login_required
 def create(org_type):
@@ -846,8 +891,7 @@ def create(org_type):
 
     return render_template('organizations/create-org.html')
 
-
-@bp.route('/update/<int:org_id>', methods=('GET', 'PUT'))
+@bp.route('/update/<int:org_id>', methods=('GET', 'PUT', 'POST'))
 @login_required
 def update(org_id):
     """Fetches rows from a Bigtable.
@@ -883,23 +927,32 @@ def update(org_id):
     org.query_org(org_id)
 
     # Prevent prolifix entry from being edited.
-    if org.organization_name == "prolifix Nutrition":
+    if org.prolifix:
+        flash("See IT Manager to edit Prolifix company Details.")
         return render_template('home/index.html')
 
     if request.method == 'GET':
-        if org.supplier:
-            print("Update client")
-            return render_template('organizations/update-org.html',
-                                   organizations=org.obj_to_dict())
+        return render_template('organizations/update-org.html',
+                                   organization_data=org.obj_to_dict())
 
-    if request.method == 'PUT':
-        org.update_org(request)
+    if request.method == 'POST':
+        org_saved = org.update_org(request)
         errors = org.get_errors()
 
-        # Flash Errors if any, else send data to db
-        if errors:
+        # Flash Erros if any, else send data to db
+        if errors or (not org_saved):
             for error in errors:
                 flash(error)
+            if not org_saved:
+                flash(
+                    "You must specify if the organization is a supplier, client or both.")
+            flash("Organization changes were not saved!")
+            return render_template('organizations/update-org.html',
+                                   organization_data=org.obj_to_dict())
+        else:
+            flash("Organization changes was saved!")
+            return render_template('organizations/update-org.html',
+                                   organization_data=org.obj_to_dict())
 
     if org.supplier:
         suppliers()

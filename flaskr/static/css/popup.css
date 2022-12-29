@@ -1,7 +1,7 @@
 
 
 .popup {
-    background-color: var(--popup-card-background-color);
+    background-color: var(--card-background-color);
     border: none;
     cursor: pointer;
 }
@@ -37,10 +37,6 @@
     padding: 12px 16px;
     text-decoration: none;
     display: block;
-}
-
-.popup a:hover {
-    background-color: var(--hover-popup-card-background-color);
 }
 
 .show {

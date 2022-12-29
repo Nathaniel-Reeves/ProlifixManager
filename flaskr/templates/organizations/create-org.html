@@ -6,19 +6,19 @@
 
 {% block content %}
 <form method="POST" enctype="multipart/form-data">
-        <div class="form-item">
-            <p>What rolls will this organization hold?</p>
-            <fieldset class="checkbox-container">
-                <div class="checkbox-item">
-                    <input type="checkbox" id="client" name="client" class="onerequired" {% if g.org_type == "client" %}checked{% endif %} value="1">
-                    <label for="client">Client</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="supplier" name="supplier" class="onerequired" {% if g.org_type == "supplier" %}checked{% endif %} value="1">
-                    <label for="supplier">Supplier</label>
-                </div>
-            </fieldset>
-        </div>
+    <div class="form-item">
+        <p>What rolls will this organization hold?</p>
+        <fieldset class="checkbox-container">
+            <div class="checkbox-item">
+                <input type="checkbox" id="client" name="client" class="onerequired" {% if g.org_type == "client" %}checked{% endif %} value="1">
+                <label for="client">Client</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="supplier" name="supplier" class="onerequired" {% if g.org_type == "supplier" %}checked{% endif %} value="1">
+                <label for="supplier">Supplier</label>
+            </div>
+        </fieldset>
+    </div>
 
     <div class="form-section">
         <header class="card-content">
@@ -91,7 +91,7 @@
             <p></p>
             <fieldset class="radio-container">
                 <div class="radio-item">
-                    <input type="radio" id="Unknown" name="ship_time_unit" value="0" checked>
+                    <input type="radio" id="Unknown" name="ship_time_unit" value="1" checked>
                     <label for="Unknown">Unknown</label>
                 </div>
                 <div class="radio-item">
@@ -115,23 +115,23 @@
             <p>For more details on risk assesment, please see this link.</p>
             <fieldset class="radio-container">
                 <div class="radio-item">
-                    <input type="radio" id="No Risk" name="risk_level" value="UNKNOWN" checked>
-                    <label for="No Risk">Unknown Risk</label>
+                    <input type="radio" id="UNKNOWN" name="risk_level" value="1" checked>
+                    <label for="UNKNOWN">Unknown Risk</label>
                 </div>
                 <div class="radio-item">
-                    <input type="radio" id="No Risk" name="risk_level" value="No Risk">
+                    <input type="radio" id="No Risk" name="risk_level" value="2">
                     <label for="No Risk">No Risk</label>
                 </div>
                 <div class="radio-item">
-                    <input type="radio" id="Low Risk" name="risk_level" value="Low Risk">
+                    <input type="radio" id="Low Risk" name="risk_level" value="3">
                     <label for="Low Risk">Low Risk</label>
                 </div>
                 <div class="radio-item">
-                    <input type="radio" id="Medium Risk" name="risk_level" value="Medium Risk">
+                    <input type="radio" id="Medium Risk" name="risk_level" value="4">
                     <label for="Medium Risk">Medium Risk</label>
                 </div>
                 <div class="radio-item">
-                    <input type="radio" id="High Risk" name="risk_level" value="High Risk">
+                    <input type="radio" id="High Risk" name="risk_level" value="5">
                     <label for="High Risk">High Risk</label>
                 </div>
             </fieldset>

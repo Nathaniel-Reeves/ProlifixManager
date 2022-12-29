@@ -38,46 +38,46 @@
 {% endblock %}
 
 {% block content %}
-{% for org in organizations %}
-<article class="card-content" id="{{ org['organization_id'] }}" name="{{ org['organization_name'] }}">
+{% for organization_data in organizations %}
+<article class="card-content" id="{{ organization_data['organization_id'] }}" name="{{ organization_data['organization_name'] }}">
     <header>
         <div>
-            <h2>{{ org['organization_name'] }}</h2>
+            <h2>{{ organization_data['organization_name'] }}</h2>
             <div class="about">
-                Initial: {{ org['organization_initial'] }} | Website: {{ org['website'] }}
+                Initial: {{ organization_data['organization_initial'] }} | Website: {{ organization_data['website'] }}
             </div>
         </div>
         <ul class="button-list justify-bottom">
-            <a class="edit_button" id="{{ org['organization_id'] }}"
-                href="{{ url_for('organizations.update', org_id=org['organization_id']) }}">
+            <a class="edit_button" id="{{ organization_data['organization_id'] }}"
+                href="{{ url_for('organizations.update', org_id=organization_data['organization_id']) }}">
                 <li>Edit</li>
             </a>
             <a>
-                <li class="view_button" id="{{ org['organization_id'] }}" onclick="viewContent(this.id)">View</li>
+                <li class="view_button" id="{{ organization_data['organization_id'] }}" onclick="viewContent(this.id)">View</li>
             </a>
         </ul>
     </header>
 
-    <div class="view_content" id="{{ org['organization_id'] }}" style="display:none;">
+    <div class="view_content" id="{{ organization_data['organization_id'] }}" style="display:none;">
         <div class="view_content_box">
             <h3>Address</h3>
-            <p>{{ org['hq_street_address'] }}<br>
-            {{ org['hq_unit_apt'] }}</p>
+            <p>{{ organization_data['hq_street_address'] }}<br>
+            {{ organization_data['hq_unit_apt'] }}</p>
         </div>
         <div class="view_content_box">
             <h3>Personel</h3>
-            <p>{{ org['hq_street_address'] }}<br>
-                {{ org['hq_unit_apt'] }}</p>
+            <p>{{ organization_data['hq_street_address'] }}<br>
+                {{ organization_data['hq_unit_apt'] }}</p>
         </div>
         <div class="view_content_box">
             <h3>Additional Info</h3>
-            <p>{{ org['hq_street_address'] }}<br>
-                {{ org['hq_unit_apt'] }}</p>
+            <p>{{ organization_data['hq_street_address'] }}<br>
+                {{ organization_data['hq_unit_apt'] }}</p>
         </div>
         <div class="view_content_box">
             <h3>Documents</h3>
-            <p>{{ org['hq_street_address'] }}<br>
-                {{ org['hq_unit_apt'] }}</p>
+            <p>{{ organization_data['hq_street_address'] }}<br>
+                {{ organization_data['hq_unit_apt'] }}</p>
         </div>
     </div>
 

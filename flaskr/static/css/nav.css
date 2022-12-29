@@ -29,6 +29,7 @@ nav ul li {
     display: flex;
     text-decoration: none;
     transition-duration: .2s;
+    cursor: pointer;
 }
 
 nav ul li:hover {
