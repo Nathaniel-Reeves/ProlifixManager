@@ -60,7 +60,7 @@
             </div>
         </section>
         <section class="grid-item-tree">
-            <div class="card">
+            <div class="card nav-card">
                 <!-- <header>
                     <h1>Tree</h1>
                 </header> -->
@@ -68,8 +68,8 @@
                 <nav>
                     <ul>
                         <a href="{{ url_for('home.index') }}"><li>Home</li></a>
-                        <a href="{{ url_for('organizations.clients') }}"><li>Clients</li></a>
-                        <a href="{{ url_for('organizations.suppliers') }}"><li>Suppliers</li></a>
+                        <a href="{{ url_for('organizations.get_clients') }}"><li>Clients</li></a>
+                        <a href="{{ url_for('organizations.get_suppliers') }}"><li>Suppliers</li></a>
                     </ul>
                 </nav>
                 <hr>

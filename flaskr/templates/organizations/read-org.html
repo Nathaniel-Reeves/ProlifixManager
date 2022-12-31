@@ -15,7 +15,7 @@
     {% if g.user %}
     <ul class="button-list searchaction">
         {% if g.org_type == "client" %}
-            <a href="{{ url_for('organizations.create', org_type=g.org_type) }}"><li class="searchaction">New Client</li></a>
+            <a href="{{ url_for('organizations.post_organization', org_type=g.org_type) }}"><li class="searchaction">New Client</li></a>
             <li class="searchbar">
                 <div>
                     <input name="search" id="searchbar" type="text" placeholder="Search Clients..." onkeyup="search()"></input>
@@ -23,7 +23,7 @@
                 </div>
             </li>
         {% elif g.org_type == "supplier" %}
-            <a href="{{ url_for('organizations.create', org_type=g.org_type) }}"><li class="action">New Supplier</li></a>
+            <a href="{{ url_for('organizations.post_organization', org_type=g.org_type) }}"><li class="action">New Supplier</li></a>
             <li class="searchbar">
                 <div>
                     <input name="search" id="searchbar" type="text" placeholder="Search Suppliers..." onkeyup="search()"></input>
@@ -31,7 +31,7 @@
                 </div>
             </li>
         {% else %}
-            ERR
+            <p>ERR</p>
         {% endif %}
     </ul>
     {% endif %}
@@ -49,36 +49,17 @@
         </div>
         <ul class="button-list justify-bottom">
             <a class="edit_button" id="{{ organization_data['organization_id'] }}"
-                href="{{ url_for('organizations.update', org_id=organization_data['organization_id']) }}">
+                href="{{ url_for('organizations.put_organization', org_id=organization_data['organization_id']) }}">
                 <li>Edit</li>
             </a>
             <a>
-                <li class="view_button" id="{{ organization_data['organization_id'] }}" onclick="viewContent(this.id)">View</li>
+                <li class="view_button" id="{{ organization_data['organization_id'] }}" href="{{ url_for('organizations.get_organization', org_id=organization_data['organization_id']) }}" onclick="viewContent(this.id)">View</li>
             </a>
         </ul>
     </header>
 
     <div class="view_content" id="{{ organization_data['organization_id'] }}" style="display:none;">
-        <div class="view_content_box">
-            <h3>Address</h3>
-            <p>{{ organization_data['hq_street_address'] }}<br>
-            {{ organization_data['hq_unit_apt'] }}</p>
-        </div>
-        <div class="view_content_box">
-            <h3>Personel</h3>
-            <p>{{ organization_data['hq_street_address'] }}<br>
-                {{ organization_data['hq_unit_apt'] }}</p>
-        </div>
-        <div class="view_content_box">
-            <h3>Additional Info</h3>
-            <p>{{ organization_data['hq_street_address'] }}<br>
-                {{ organization_data['hq_unit_apt'] }}</p>
-        </div>
-        <div class="view_content_box">
-            <h3>Documents</h3>
-            <p>{{ organization_data['hq_street_address'] }}<br>
-                {{ organization_data['hq_unit_apt'] }}</p>
-        </div>
+        {% block quickview %}{% endblock %}
     </div>
 
     <hr>

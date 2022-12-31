@@ -6,7 +6,7 @@ objects.
 import os
 from datetime import date, datetime
 import mysqlx
-from flask import (Blueprint, flash, g, render_template, request)
+from flask import (Blueprint, flash, g, render_template, request,)
 from werkzeug.utils import secure_filename
 
 from .auth import login_required
@@ -72,11 +72,13 @@ class Organization:
         self.documents = []
         self.notes = ""
 
-        self.raw_files = {}
+        self.raw_files = []
 
         # If organization_id query db
         if self.organization_id:
-            self.query_org(self.organization_id)
+            self.get_org(self.organization_id)
+
+    # """Error Handling Functions"""
 
     def get_errors(self):
         """Fetches rows from a Bigtable.
@@ -140,117 +142,13 @@ class Organization:
         """
         self.errors = []
 
-    def query_org(self, org_id):
-        """Fetches rows from a Bigtable.
+    def print_errors(self):
+        """Prints the errors found in the errors list."""
+        for error in self.errors:
+            print(error)
+        self.clear_errors()
 
-        Retrieves rows pertaining to the given keys from the Table instance
-        represented by big_table.  Silly things may happen if
-        other_silly_variable is not None.
-
-        Args:
-            big_table: An open Bigtable Table instance.
-            keys: A sequence of strings representing the key of each table row
-                to fetch.
-            other_silly_variable: Another optional variable, that has a much
-                longer name than the other args, and which does nothing.
-
-        Returns:
-            A dict mapping keys to the corresponding table row data
-            fetched. Each row is represented as a tuple of strings. For
-            example:
-
-            {'Serak': ('Rigel VII', 'Preparer'),
-            'Zim': ('Irk', 'Invader'),
-            'Lrrr': ('Omicron Persei 8', 'Emperor')}
-
-            If a key from the keys argument is missing from the dictionary,
-            then that row was not found in the table.
-
-        Raises:
-            IOError: An error occurred accessing the bigtable.Table object.
-        """
-        # Connect to db and query organization data
-        session = mysqlx.get_session({
-            'host': db.HOST,
-            'port': db.PORT,
-            'user': db.USER,
-            'password': db.PASSWORD
-        })
-        org_schema = session.get_schema('Organizations')
-        org_table = org_schema.get_table('Organizations')
-        result = org_table.select().where(
-            (f"organization_id = '%s'") % str(org_id)).execute()
-        encoded_data = result.fetch_one()
-
-        # Decode byte objects to str objects
-        data = []
-        for i in encoded_data:
-            if type(i) == bytes:
-                data.append(i.decode('UTF-8'))
-            elif type(i) == datetime:
-                data.append(i.date())
-            else:
-                data.append(i)
-
-        # Save table data into Object from db
-        self.organization_id = data[result.index_of("organization_id")]
-        self.organization_name = data[result.index_of("organization_name")]
-        self.organization_initial = data[result.index_of("organization_initial")]
-        self.date_entered = data[result.index_of("date_entered")]
-        self.website = data[result.index_of("website")]
-        self.vetted = data[result.index_of("vetted")]
-        self.date_vetted = data[result.index_of("date_vetted")]
-        self.risk_level = data[result.index_of("risk_level")]
-        self.hq_street_address = data[result.index_of("hq_street_address")]
-        self.hq_unit_apt = data[result.index_of("hq_unit_apt")]
-        self.hq_city = data[result.index_of("hq_city")]
-        self.hq_region = data[result.index_of("hq_region")]
-        self.hq_country = data[result.index_of("hq_country")]
-        self.hq_zip_code = data[result.index_of("hq_zip_code")]
-        self.ship_time = data[result.index_of("ship_time")]
-        self.ship_time_unit = data[result.index_of(
-            "ship_time_unit")]
-        self.ship_time_in_days = data[result.index_of("ship_time_in_days")]
-        self.prolifix = data[result.index_of("prolifix")]
-        self.supplier = data[result.index_of("supplier")]
-        self.client = data[result.index_of("client")]
-        self.notes = data[result.index_of("notes")]
-
-        # get organization document data from db
-        self._get_org_docs(org_id)
-
-        return True
-
-    def _get_org_docs(self, org_id):
-        """Fetches organization documents
-
-        Retrieves organization documents using the references provided 
-        by the database.
-
-        Args:
-            org_id (str): The unique identifier of the organization.
-
-        Returns:
-            bool: True on success, otherwise False.
-
-        Raises:
-            IOError: An error occurred accessing the documents.
-        """
-        session = mysqlx.get_session({
-            'host': db.HOST,
-            'port': db.PORT,
-            'user': db.USER,
-            'password': db.PASSWORD
-        })
-        org_schema = session.get_schema('Organizations')
-        org_coll = org_schema.get_collection('OrganizationDocs')
-        documents = org_coll.get_one(org_id)
-        if not documents:
-            self.documents = []
-            return False
-        print(documents)
-        print("RUNNING")
-        return True
+    # """Object Overide Functions"""
 
     def __str__(self):
         """String overide for printing the organization.
@@ -301,55 +199,9 @@ class Organization:
         """
         return self.obj_to_dict()
 
-    def obj_to_dict(self):
-        """Object Overide for making a dictionary representation of the 
-        organization.
+    # """Restful API Functions"""
 
-        Args:
-            None
-
-        Returns:
-        TODO:
-            A dict mapping keys to the corresponding table row data
-            fetched. Each column is represented as a key value pair. For
-            example:
-
-            {'Serak': ('Rigel VII', 'Preparer'),
-            'Zim': ('Irk', 'Invader'),
-            'Lrrr': ('Omicron Persei 8', 'Emperor')}
-
-            If a key from the keys argument is missing from the dictionary,
-            then that row was not found in the table.
-
-        Raises:
-            TODO: 
-        """
-        return_dict = {}
-        return_dict["organization_id"] = self.organization_id
-        return_dict["organization_name"] = self.organization_name
-        return_dict["organization_initial"] = self.organization_initial
-        return_dict["date_entered"] = self.date_entered
-        return_dict["website"] = self.website
-        return_dict["vetted"] = self.vetted
-        return_dict["date_vetted"] = self.date_vetted
-        return_dict["risk_level"] = self.risk_level
-        return_dict["hq_street_address"] = self.hq_street_address
-        return_dict["hq_unit_apt"] = self.hq_unit_apt
-        return_dict["hq_city"] = self.hq_city
-        return_dict["hq_region"] = self.hq_region
-        return_dict["hq_country"] = self.hq_country
-        return_dict["hq_zip_code"] = self.hq_zip_code
-        return_dict["ship_time"] = self.ship_time
-        return_dict["ship_time_unit"] = self.ship_time_unit
-        return_dict["ship_time_in_days"] = self.ship_time_in_days
-        return_dict["prolifix"] = self.prolifix
-        return_dict["supplier"] = self.supplier
-        return_dict["client"] = self.client
-        return_dict["notes"] = self.notes
-        print(return_dict)
-        return return_dict
-
-    def new_org(self, request_obj):
+    def get_org(self, org_id):
         """Fetches rows from a Bigtable.
 
         Retrieves rows pertaining to the given keys from the Table instance
@@ -378,204 +230,178 @@ class Organization:
         Raises:
             IOError: An error occurred accessing the bigtable.Table object.
         """
+        # Connect to db and query organization data
+        session = self._connect_session()
+        org_table = session.get_schema(
+            'Organizations').get_table('Organizations')
+        result = org_table.select().where(
+            (f"organization_id = '%s'") % str(org_id)).execute()
+        encoded_data = result.fetch_one()
 
-        request_data = request_obj.form
-        flag_type = True
-        # prolifix record cannot be edited on the client side.
-        if "prolifix" in request_data:
-            return False
+        # Decode byte objects to str objects
+        data = []
+        for i in encoded_data:
+            if type(i) == bytes:
+                data.append(i.decode('UTF-8'))
+            elif type(i) == datetime:
+                data.append(i.date())
+            else:
+                data.append(i)
 
-        if "supplier" in request_data:
-            self.supplier = request_data["supplier"]
-            flag_type = False
+        # Save table data into self from db
+        self.organization_id = data[result.index_of("organization_id")]
+        self.organization_name = data[result.index_of("organization_name")]
+        self.organization_initial = data[result.index_of(
+            "organization_initial")]
+        self.date_entered = data[result.index_of("date_entered")]
+        self.website = data[result.index_of("website")]
+        self.vetted = data[result.index_of("vetted")]
+        self.date_vetted = data[result.index_of("date_vetted")]
+        self.risk_level = data[result.index_of("risk_level")]
+        self.hq_street_address = data[result.index_of("hq_street_address")]
+        self.hq_unit_apt = data[result.index_of("hq_unit_apt")]
+        self.hq_city = data[result.index_of("hq_city")]
+        self.hq_region = data[result.index_of("hq_region")]
+        self.hq_country = data[result.index_of("hq_country")]
+        self.hq_zip_code = data[result.index_of("hq_zip_code")]
+        self.ship_time = data[result.index_of("ship_time")]
+        self.ship_time_unit = data[result.index_of(
+            "ship_time_unit")]
+        self.ship_time_in_days = data[result.index_of("ship_time_in_days")]
+        self.prolifix = data[result.index_of("prolifix")]
+        self.supplier = data[result.index_of("supplier")]
+        self.client = data[result.index_of("client")]
+        self.notes = data[result.index_of("notes")]
 
-        if "client" in request_data:
-            self.client = request_data["client"]
-            flag_type = False
+        # get organization document data from db
+        self._get_org_docs(org_id)
 
-        if flag_type:
-            return False
+        return True
 
-        # set Data 
-        self.date_entered = str(date.today())
-        self.organization_name = request_data["organization_name"]
-        self.organization_initial = request_data["organization_initial"]
-        self.website = request_data["website"]
-        self.date_vetted = request_data["date_vetted"]
-        self.risk_level = request_data["risk_level"]
-        self.hq_street_address = request_data["hq_street_address"]
-        self.hq_unit_apt = request_data["hq_unit_apt"]
-        self.hq_city = request_data["hq_city"]
-        self.hq_region = request_data["hq_region"]
-        self.hq_country = request_data["hq_country"]
-        self.hq_zip_code = request_data["hq_zip_code"]
-        self.ship_time = request_data["ship_time"]
-        self.ship_time_unit = request_data["ship_time_unit"]
-
-        self.notes = request_data["notes"]
-
-        # set Documents
-        if request_obj.files:
-            self.raw_files = request_obj.files.values()
-
-        # Validation Checks
-        self._set_ship_time()
-        self.check_vetted_expired()
-        self.update_vetted()
-
-        # Save Organization in database
-        return self._save_org()
-
-    def update_org(self, request_obj):
+    def put_org(self, request_obj):
         """Fetches rows from a Bigtable.
 
-        Retrieves rows pertaining to the given keys from the Table instance
-        represented by big_table.  Silly things may happen if
-        other_silly_variable is not None.
+            Retrieves rows pertaining to the given keys from the Table instance
+            represented by big_table.  Silly things may happen if
+            other_silly_variable is not None.
 
-        Args:
-            big_table: An open Bigtable Table instance.
-            keys: A sequence of strings representing the key of each table row
-                to fetch.
-            other_silly_variable: Another optional variable, that has a much
-                longer name than the other args, and which does nothing.
+            Args:
+                big_table: An open Bigtable Table instance.
+                keys: A sequence of strings representing the key of each table row
+                    to fetch.
+                other_silly_variable: Another optional variable, that has a much
+                    longer name than the other args, and which does nothing.
 
-        Returns:
-            A dict mapping keys to the corresponding table row data
-            fetched. Each row is represented as a tuple of strings. For
-            example:
+            Returns:
+                A dict mapping keys to the corresponding table row data
+                fetched. Each row is represented as a tuple of strings. For
+                example:
 
-            {'Serak': ('Rigel VII', 'Preparer'),
-            'Zim': ('Irk', 'Invader'),
-            'Lrrr': ('Omicron Persei 8', 'Emperor')}
+                {'Serak': ('Rigel VII', 'Preparer'),
+                'Zim': ('Irk', 'Invader'),
+                'Lrrr': ('Omicron Persei 8', 'Emperor')}
 
-            If a key from the keys argument is missing from the dictionary,
-            then that row was not found in the table.
+                If a key from the keys argument is missing from the dictionary,
+                then that row was not found in the table.
 
-        Raises:
-            IOError: An error occurred accessing the bigtable.Table object.
-        """
-        request_data = request_obj.form
-        flag_type = True
-        # prolifix record cannot be edited on the client side.
-        if "prolifix" in request_data:
-            return False
+            Raises:
+                IOError: An error occurred accessing the bigtable.Table object.
+            """
+        self._set_data(request_obj)
 
-        if "supplier" in request_data:
-            self.supplier = request_data["supplier"]
-            flag_type = False
-
-        if "client" in request_data:
-            self.client = request_data["client"]
-            flag_type = False
-
-        if flag_type:
-            return False
-
-        # set Data
-        self.date_entered = str(date.today())
-        self.organization_name = request_data["organization_name"]
-        self.organization_initial = request_data["organization_initial"]
-        self.website = request_data["website"]
-        self.date_vetted = request_data["date_vetted"]
-        self.risk_level = request_data["risk_level"]
-        self.hq_street_address = request_data["hq_street_address"]
-        self.hq_unit_apt = request_data["hq_unit_apt"]
-        self.hq_city = request_data["hq_city"]
-        self.hq_region = request_data["hq_region"]
-        self.hq_country = request_data["hq_country"]
-        self.hq_zip_code = request_data["hq_zip_code"]
-        self.ship_time = request_data["ship_time"]
-        self.ship_time_unit = request_data["ship_time_unit"]
-
-        self.notes = request_data["notes"]
-
-        # set Documents
-        if request_obj.files:
-            self.raw_files = request_obj.files.values()
-
-        # Validation Checks
-        self._set_ship_time()
-        self.check_vetted_expired()
-        self.update_vetted()
-
-        # Save Organization in database
-        return self._save_org()
-
-    def _save_org(self):
-        """Fetches rows from a Bigtable.
-
-        Retrieves rows pertaining to the given keys from the Table instance
-        represented by big_table.  Silly things may happen if
-        other_silly_variable is not None.
-
-        Args:
-            big_table: An open Bigtable Table instance.
-            keys: A sequence of strings representing the key of each table row
-                to fetch.
-            other_silly_variable: Another optional variable, that has a much
-                longer name than the other args, and which does nothing.
-
-        Returns:
-            A dict mapping keys to the corresponding table row data
-            fetched. Each row is represented as a tuple of strings. For
-            example:
-
-            {'Serak': ('Rigel VII', 'Preparer'),
-            'Zim': ('Irk', 'Invader'),
-            'Lrrr': ('Omicron Persei 8', 'Emperor')}
-
-            If a key from the keys argument is missing from the dictionary,
-            then that row was not found in the table.
-
-        Raises:
-            IOError: An error occurred accessing the bigtable.Table object.
-        """
         # Start session and transaction
-        session = mysqlx.get_session({
-            'host': db.HOST,
-            'port': db.PORT,
-            'user': db.USER,
-            'password': db.PASSWORD
-        })
+        session = self._connect_session()
         session.start_transaction()
 
-        # Get Schema and table
+        # Get table
+        org_table = session.get_schema(
+            'Organizations').get_table('Organizations')
+
+        # Prepare update object
+        obj_data = self.obj_to_dict()
+        update_obj = org_table.update()
+        for key in obj_data:
+            update_obj = update_obj.set(key, obj_data[key])
+
+        # Execute update
+        result = update_obj.where("organization_id == %s" %
+                                self.organization_id).limit(1).execute()
+
+        # Handle errors, commit/rollback and close session
+        if self._check_errors(result):
+            session.rollback()
+            session.close()
+            self.print_errors()
+            return False
+        session.commit()
+        session.close()
+        return True
+
+    def post_org(self, request_obj):
+        """Fetches rows from a Bigtable.
+
+        Retrieves rows pertaining to the given keys from the Table instance
+        represented by big_table.  Silly things may happen if
+        other_silly_variable is not None.
+
+        Args:
+            big_table: An open Bigtable Table instance.
+            keys: A sequence of strings representing the key of each table row
+                to fetch.
+            other_silly_variable: Another optional variable, that has a much
+                longer name than the other args, and which does nothing.
+
+        Returns:
+            A dict mapping keys to the corresponding table row data
+            fetched. Each row is represented as a tuple of strings. For
+            example:
+
+            {'Serak': ('Rigel VII', 'Preparer'),
+            'Zim': ('Irk', 'Invader'),
+            'Lrrr': ('Omicron Persei 8', 'Emperor')}
+
+            If a key from the keys argument is missing from the dictionary,
+            then that row was not found in the table.
+
+        Raises:
+            IOError: An error occurred accessing the bigtable.Table object.
+        """
+
+        self._set_data(request_obj)
+
+        # Start session and transaction
+        session = self._connect_session()
+        session.start_transaction()
+
+        # Get schema & table
         org_schema = session.get_schema('Organizations')
         org_table = org_schema.get_table('Organizations')
 
-        # Save Data
+        # Prepare Data
         obj_data = self.obj_to_dict()
         columns = tuple(obj_data.keys())
         values = tuple(obj_data.values())
+
+        # Prepare insert and execute insert
         result = org_table.insert(columns).values(values).execute()
 
-        # Save Statement Results
-        row_id = result.get_autoincrement_value()
-        warnings = result.get_warnings()
-        rows_effected = result.get_affected_items_count()
-
-        # IF Err, Report and Rollback
-        if warnings != [] and rows_effected != 1:
+        # Handle errors, continue/rollback and close session
+        if self._check_errors(result, "INSERT TO TABLE ERR"):
             session.rollback()
             session.close()
-            error = "INSERT ITEM ERROR \n"
-            error += "Warnings: \n"
-            for warning in warnings:
-                error += ("    W:" + warning + "\n")
-            error += "Attempted Rows Effected: " + rows_effected + "\n"
-            error += "Expected Rows Effected: 1 \n"
-            self.errors.append(error)
+            self.print_errors()
             return False
+
+        self.organization_id = result.get_autoincrement_value()
+
+        print(self.raw_files)
 
         # Save Uploaded Files
         if self.raw_files:
 
             # Folder Config Settings
             os.chdir(db.UPLOAD_FOLDER)
-            upload_folder = os.path.join(os.getcwd(),
-                                        "organizations/suppliers/",
-                                        self.organization_name)
+            upload_folder = os.path.join(os.getcwd(), "organizations/",self.organization_name)
 
             # create a file space in organization collections
             collection = {}
@@ -613,28 +439,215 @@ class Organization:
 
             # Save file paths
             result = org_coll.add({
-                'organization_id': int(row_id),
+                'organization_id': int(self.organization_id),
                 'doc': collection
             }).execute()
 
-            # IF Err, Report and Rollback
-            if warnings != [] and rows_effected != 1:
+            # Handle errors, continue/rollback and close session
+            if self._check_errors(result, "INSERT DOCS ERR"):
                 session.rollback()
                 session.close()
-                error = "INSERT DOC ERROR"
-                for warning in warnings:
-                    error += (warning + "\n")
-                self.errors.append(error)
+                self.print_errors()
                 return False
 
             for file in self.raw_files:
+                # Compile file tree/path
+                filename = secure_filename(file.filename)
+                path = os.path.join(upload_folder, filename)
                 # Save File
-                file.save()
+                file.save(path)
+                file.close()
 
         # Commit and close session
         session.commit()
         session.close()
         return True
+
+    # """Helper Functions"""
+    def org_exists(self, request_obj):
+        """
+        Checks if the organization exists in the database.
+
+        Returns:
+            bool: True if the organization exists, False otherwise.
+        """
+        self._set_data(request_obj)
+        session = self._connect_session()
+        result = session.sql("""
+        SELECT EXISTS (SELECT * FROM `Organizations`.`Organizations` WHERE `organization_name` = "%s");""" % self.organization_name).execute()
+        return result.fetch_one()[0]
+
+    def obj_to_dict(self):
+        """Fetches organization documents
+
+        Retrieves organization documents using the references provided 
+        by the database.
+
+        Args:
+            org_id (str): The unique identifier of the organization.
+
+        Returns:
+            bool: True on success, otherwise False.
+
+        Raises:
+            IOError: An error occurred accessing the documents.
+        """
+        return_dict = {}
+        return_dict["organization_id"] = self.organization_id
+        return_dict["organization_name"] = self.organization_name
+        return_dict["organization_initial"] = self.organization_initial
+        #return_dict["date_entered"] = self.date_entered
+        return_dict["website"] = self.website
+        return_dict["vetted"] = self.vetted
+        return_dict["date_vetted"] = self.date_vetted
+        return_dict["risk_level"] = self.risk_level
+        return_dict["hq_street_address"] = self.hq_street_address
+        return_dict["hq_unit_apt"] = self.hq_unit_apt
+        return_dict["hq_city"] = self.hq_city
+        return_dict["hq_region"] = self.hq_region
+        return_dict["hq_country"] = self.hq_country
+        return_dict["hq_zip_code"] = self.hq_zip_code
+        return_dict["ship_time"] = self.ship_time
+        return_dict["ship_time_unit"] = self.ship_time_unit
+        return_dict["ship_time_in_days"] = self.ship_time_in_days
+        return_dict["prolifix"] = self.prolifix
+        return_dict["supplier"] = self.supplier
+        return_dict["client"] = self.client
+        return_dict["notes"] = self.notes
+        return return_dict
+        
+    def _get_org_docs(self, org_id):
+        """Fetches organization documents
+
+        Retrieves organization documents using the references provided 
+        by the database.
+
+        Args:
+            org_id (str): The unique identifier of the organization.
+
+        Returns:
+            bool: True on success, otherwise False.
+
+        Raises:
+            IOError: An error occurred accessing the documents.
+        """
+        session = mysqlx.get_session({
+            'host': db.HOST,
+            'port': db.PORT,
+            'user': db.USER,
+            'password': db.PASSWORD
+        })
+        org_schema = session.get_schema('Organizations')
+        org_coll = org_schema.get_collection('OrganizationDocs')
+        documents = org_coll.get_one(org_id)
+        if not documents:
+            self.documents = []
+            return False
+        print(documents)
+        print("RUNNING")
+        return True
+
+    def _connect_session(self):
+        session = mysqlx.get_session({
+            'host': db.HOST,
+            'port': db.PORT,
+            'user': db.USER,
+            'password': db.PASSWORD
+        })
+        return session
+
+    def _check_errors(self, result_obj, err_message):
+        # Save Statement Results
+        warnings = result_obj.get_warnings()
+        rows_effected = result_obj.get_affected_items_count()
+
+        # IF Err, create report
+        if warnings != [] and rows_effected != 1:
+            error = err_message + " \n"
+            error += "Warnings: \n"
+            for warning in warnings:
+                error += ("    W:" + warning + "\n")
+                error += "Attempted Rows Effected: " + rows_effected + "\n"
+                error += "Expected Rows Effected: 1 \n"
+                self.errors.append(error)
+            return True
+        return False
+
+    def _set_data(self, request_obj):
+        """Fetches rows from a Bigtable.
+
+        Retrieves rows pertaining to the given keys from the Table instance
+        represented by big_table.  Silly things may happen if
+        other_silly_variable is not None.
+
+        Args:
+            big_table: An open Bigtable Table instance.
+            keys: A sequence of strings representing the key of each table row
+                to fetch.
+            other_silly_variable: Another optional variable, that has a much
+                longer name than the other args, and which does nothing.
+
+        Returns:
+            A dict mapping keys to the corresponding table row data
+            fetched. Each row is represented as a tuple of strings. For
+            example:
+
+            {'Serak': ('Rigel VII', 'Preparer'),
+            'Zim': ('Irk', 'Invader'),
+            'Lrrr': ('Omicron Persei 8', 'Emperor')}
+
+            If a key from the keys argument is missing from the dictionary,
+            then that row was not found in the table.
+
+        Raises:
+            IOError: An error occurred accessing the bigtable.Table object.
+        """
+        request_data = request_obj.form
+        flag_type = True
+        # prolifix record cannot be edited on the client side.
+        if "prolifix" in request_data:
+            return False
+
+        if "supplier" in request_data:
+            self.supplier = request_data["supplier"]
+            flag_type = False
+
+        if "client" in request_data:
+            self.client = request_data["client"]
+            flag_type = False
+
+        if flag_type:
+            return False
+
+        if "organization_id" in request_data:
+            self.organization_id = request_data["organization_id"]
+
+        self.date_entered = str(date.today())
+        self.organization_name = request_data["organization_name"]
+        self.organization_initial = request_data["organization_initial"]
+        self.website = request_data["website"]
+        self.date_vetted = request_data["date_vetted"]
+        self.risk_level = request_data["risk_level"]
+        self.hq_street_address = request_data["hq_street_address"]
+        self.hq_unit_apt = request_data["hq_unit_apt"]
+        self.hq_city = request_data["hq_city"]
+        self.hq_region = request_data["hq_region"]
+        self.hq_country = request_data["hq_country"]
+        self.hq_zip_code = request_data["hq_zip_code"]
+        self.ship_time = request_data["ship_time"]
+        self.ship_time_unit = request_data["ship_time_unit"]
+        self.notes = request_data["notes"]
+
+        # set Documents
+        if request_obj.files:
+            self.raw_files = list(request_obj.files.values())
+        else:
+            self.raw_files = []
+
+        # Validation Checks
+        self._set_ship_time()
+        self.check_vetted_expired()
+        self.update_vetted()
 
     def update_vetted(self):
         """Fetches rows from a Bigtable.
@@ -729,17 +742,17 @@ class Organization:
             IOError: An error occurred accessing the bigtable.Table object.
         """
         if self.ship_time_unit == "Day/s":
-            self.ship_time_in_days = self.ship_time
+            self.ship_time_in_days = int(self.ship_time)
         elif self.ship_time_unit == "Week/s":
-            self.ship_time_in_days = self.ship_time * 7
+            self.ship_time_in_days = int(self.ship_time) * 7
         elif self.ship_time_unit == "Month/s":
-            self.ship_time_in_days = self.ship_time * 30
+            self.ship_time_in_days = int(self.ship_time) * 30
         else:
-            self.ship_time_in_days = None
+            self.ship_time_in_days = 0
 
 @bp.route('/clients', methods=('GET', ))
 @login_required
-def clients():
+def get_clients():
     """Fetches rows from a Bigtable.
 
     Retrieves rows pertaining to the given keys from the Table instance
@@ -775,18 +788,19 @@ def clients():
         'password': db.PASSWORD
     })
     result = session.sql(
-        """SELECT * FROM `Organizations`.`Organizations`
+        """SELECT `organization_id`,`organization_name`,`organization_initial`,`website` FROM `Organizations`.`Organizations`
         WHERE `client` = true
         ORDER BY `organization_name` DESC;"""
     ).execute()
     g.org_type = "client"
     clients_data = result.fetch_all()
+    print(clients_data)
     return render_template('organizations/read-org.html',
                            organizations=clients_data)
 
 @bp.route('/suppliers', methods=('GET', ))
 @login_required
-def suppliers():
+def get_suppliers():
     """Fetches rows from a Bigtable.
 
     Retrieves rows pertaining to the given keys from the Table instance
@@ -831,9 +845,16 @@ def suppliers():
     return render_template('organizations/read-org.html',
                            organizations=suppliers_data)
 
-@bp.route('/create/<string:org_type>', methods=('GET', 'POST'))
+@bp.route('/organization/<int:org_id>', methods=('GET', ))
 @login_required
-def create(org_type):
+def get_organization(org_id):
+    print(org_id)
+    return render_template('organizations/read-quick-detail.html',
+                           organization_data=org_id)
+
+@bp.route('/create/<string:org_type>', methods=('GET', 'POST', ))
+@login_required
+def post_organization(org_type):
     """Fetches rows from a Bigtable.
 
     Retrieves rows pertaining to the given keys from the Table instance
@@ -870,30 +891,29 @@ def create(org_type):
     g.org_type = org_type
 
     if request.method == 'POST':
-        org = Organization()
-        org_saved = org.new_org(request)
-        errors = org.get_errors()
-
-
-        # Flash Erros if any, else send data to db
-        if errors or (not org_saved):
-            for error in errors:
-                flash(error)
-            if not org_saved:
-                flash("You must specify if the organization is a supplier, client or both.")
-            flash("Organization was not saved!")
+        new_org = Organization()
+        if new_org.org_exists(request):
+            flash("'%s' already exists in the database." % new_org.organization_name)
+            flash("'%s' was NOT saved!" % new_org.organization_name)
         else:
-            flash("Organization was saved!")
-            if org_type == "client":
-                clients()
+            org_saved = new_org.post_org(request)
+            errors = new_org.get_errors()
+
+            # Flash Erros if any, else send data to db
+            if errors or (not org_saved):
+                for error in errors:
+                    flash(error)
+                if not org_saved:
+                    flash("You must specify if the organization is a supplier, client or both.")
+                flash("'%s' was NOT saved!" % new_org.organization_name)
             else:
-                suppliers()
+                flash("'%s' was saved!" % new_org.organization_name)
 
     return render_template('organizations/create-org.html')
 
-@bp.route('/update/<int:org_id>', methods=('GET', 'PUT', 'POST'))
+@bp.route('/update/<int:org_id>', methods=('GET', 'PUT', 'POST', ))
 @login_required
-def update(org_id):
+def put_organization(org_id):
     """Fetches rows from a Bigtable.
 
     Retrieves rows pertaining to the given keys from the Table instance
@@ -924,7 +944,7 @@ def update(org_id):
     """
 
     org = Organization()
-    org.query_org(org_id)
+    org.get_org(org_id)
 
     # Prevent prolifix entry from being edited.
     if org.prolifix:
@@ -936,7 +956,7 @@ def update(org_id):
                                    organization_data=org.obj_to_dict())
 
     if request.method == 'POST':
-        org_saved = org.update_org(request)
+        org_saved = org.put_org(request)
         errors = org.get_errors()
 
         # Flash Erros if any, else send data to db
@@ -955,8 +975,9 @@ def update(org_id):
                                    organization_data=org.obj_to_dict())
 
     if org.supplier:
-        suppliers()
+        get_suppliers()
     elif org.client:
-        clients()
+        get_clients()
     else:
         return render_template('home/index.html')
+

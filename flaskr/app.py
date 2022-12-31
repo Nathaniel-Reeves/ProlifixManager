@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, flash, request, redirect, url_for
+from flask import Flask, send_from_directory, send_file
 from werkzeug.utils import secure_filename
 from . import db
 
@@ -35,8 +35,18 @@ def create_app(test_config=None):
     app.register_blueprint(handlers.hello.bp)
     app.register_blueprint(handlers.organizations.bp)
 
+    @app.route('/uploads/<path:file_location>', methods=('GET', ))
+    def upload(file_location):
+        file_location_list = os.path.normpath(file_location).split("/")
+        filename = file_location_list.pop()
+        sub_directories = ""
+        for dir in file_location_list:
+            sub_directories += dir + "/"
+        return send_from_directory(os.path.join(db.UPLOAD_FOLDER, sub_directories), filename)
 
     return app
 
+
 if __name__ == "__main__":
+    app = create_app()
     app.run(debug=True)

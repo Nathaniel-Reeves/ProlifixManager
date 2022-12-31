@@ -1,4 +1,9 @@
 
+.nav-card {
+    position:sticky;
+    top: 0;
+}
+
 nav {
     background-color: var(--card-background-color);
     display: flex;

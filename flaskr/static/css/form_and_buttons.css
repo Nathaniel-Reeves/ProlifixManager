@@ -2,6 +2,10 @@
     cursor: default;
 }
 
+a {
+    cursor: pointer;
+}
+
 input[type="submit" i],
 input[type="button"] {
     display: inline;

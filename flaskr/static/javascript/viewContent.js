@@ -1,5 +1,9 @@
 
 function viewContent(id) {
+
+    
+
+
     var parent = document.getElementById(id);
     var viewContent = parent.querySelector(".view_content");
     viewContent.style.display = "flex";
