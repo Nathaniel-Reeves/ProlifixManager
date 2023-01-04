@@ -9,6 +9,8 @@ import mysqlx
 from flask import (Blueprint, flash, g, render_template, request,)
 from werkzeug.utils import secure_filename
 
+import json
+
 from .auth import login_required
 from ..db import db_conf as db
 
@@ -75,7 +77,7 @@ class Organization:
         self.raw_files = []
 
         # If organization_id query db
-        if self.organization_id:
+        if self.organization_id and not self.organization_name:
             self.get_org(self.organization_id)
 
     # """Error Handling Functions"""
@@ -373,16 +375,19 @@ class Organization:
         session = self._connect_session()
         session.start_transaction()
 
+        # Get table
+
         # Get schema & table
         org_schema = session.get_schema('Organizations')
         org_table = org_schema.get_table('Organizations')
+        self.organization_id = org_table.count() + 1
 
         # Prepare Data
         obj_data = self.obj_to_dict()
-        columns = tuple(obj_data.keys())
-        values = tuple(obj_data.values())
+        columns = list(obj_data.keys())
+        values = list(obj_data.values())
 
-        # Prepare insert and execute insert
+        # Prepare insert statement and execute
         result = org_table.insert(columns).values(values).execute()
 
         # Handle errors, continue/rollback and close session
@@ -392,10 +397,6 @@ class Organization:
             self.print_errors()
             return False
 
-        self.organization_id = result.get_autoincrement_value()
-
-        print(self.raw_files)
-
         # Save Uploaded Files
         if self.raw_files:
 
@@ -404,8 +405,7 @@ class Organization:
             upload_folder = os.path.join(os.getcwd(), "organizations/",self.organization_name)
 
             # create a file space in organization collections
-            collection = {}
-            collection.update({"files": []})
+            files = {"_id":self.organization_id,"files":[]}
 
             for file in self.raw_files:
                 # If the user does not select a file, the browser submits an
@@ -425,23 +425,22 @@ class Organization:
                     self.documents.append(path)
 
                     # create file link in organization collection
-                    collection["files"].append({
-                        "date": str(datetime.today()),
-                        "path": path
+                    files["files"].append({
+                        "date_uploaded": str(datetime.today()),
+                        "file_path": path
                     })
 
             # Create Collection if none exists
             #org_coll = org_schema.create_collection('OrganizationDocs', True)
 
             # Get Collection
-            org_coll = org_schema.get_collection('OrganizationDocs',
+            org_coll = org_schema.get_collection('Organizations',
                                                  check_existence=True)
 
+            print(json.dumps(files))
+
             # Save file paths
-            result = org_coll.add({
-                'organization_id': int(self.organization_id),
-                'doc': collection
-            }).execute()
+            result = org_coll.modify('_id = %s' % self.organization_id).patch(files).execute()
 
             # Handle errors, continue/rollback and close session
             if self._check_errors(result, "INSERT DOCS ERR"):
@@ -788,7 +787,7 @@ def get_clients():
         'password': db.PASSWORD
     })
     result = session.sql(
-        """SELECT `organization_id`,`organization_name`,`organization_initial`,`website` FROM `Organizations`.`Organizations`
+        """SELECT * FROM `Organizations`.`Organizations`
         WHERE `client` = true
         ORDER BY `organization_name` DESC;"""
     ).execute()
@@ -842,15 +841,14 @@ def get_suppliers():
     ).execute()
     g.org_type = "supplier"
     suppliers_data = result.fetch_all()
+    columns = result.get_columns()
+    return_data = []
+    for data in suppliers_data:
+        res = {columns[i].get_column_name(): data[i] for i in range(len(list(data)))}
+        return_data.append(res)
+    print(return_data)
     return render_template('organizations/read-org.html',
-                           organizations=suppliers_data)
-
-@bp.route('/organization/<int:org_id>', methods=('GET', ))
-@login_required
-def get_organization(org_id):
-    print(org_id)
-    return render_template('organizations/read-quick-detail.html',
-                           organization_data=org_id)
+                           organizations=return_data)
 
 @bp.route('/create/<string:org_type>', methods=('GET', 'POST', ))
 @login_required

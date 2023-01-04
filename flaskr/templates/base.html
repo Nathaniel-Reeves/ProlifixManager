@@ -9,11 +9,18 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/form_and_buttons.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/view-content.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/searchbar.css') }}">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
+
 <script src="{{ url_for('static', filename='javascript/popup.js') }}"></script>
 <script src="{{ url_for('static', filename='javascript/viewContent.js') }}"></script>
 <script src="{{ url_for('static', filename='javascript/searchbar.js') }}"></script>
 <script src="{{ url_for('static', filename='javascript/multipleFilesInput.js') }}"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css">
+
 </head>
 <body>
     <div class="grid-container">
@@ -78,7 +85,22 @@
         <section class="grid-item-footer">
             <div class="card">
                 <h1>Footer</h1>
+                <div id="test_table"></div>
             </div>
         </section>
     </div>
 </body>
+<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+<script>
+    new gridjs.Grid({
+            columns: ['Name', 'Email'],
+            pagination: true,
+            sort: true,
+            resizable: true,
+            search: true,
+            data: [
+                ['John', 'john@example.com'],
+                ['Mike', 'mike@gmail.com']
+            ]
+        }).render(document.getElementById('test_table'));
+</script>

@@ -53,17 +53,44 @@
                 <li>Edit</li>
             </a>
             <a>
-                <li class="view_button" id="{{ organization_data['organization_id'] }}" href="{{ url_for('organizations.get_organization', org_id=organization_data['organization_id']) }}" onclick="viewContent(this.id)">View</li>
+                <li class="view_button" id="{{ organization_data['organization_id'] }}" onclick="viewContent(this.id)">View</li>
             </a>
         </ul>
     </header>
 
     <div class="view_content" id="{{ organization_data['organization_id'] }}" style="display:none;">
-        {% block quickview %}{% endblock %}
-    </div>
+        <div class="view_content_box">
+            <h3>Address</h3>
+            <div id="org_docs">
 
+            </div>
+        </div>
+        <div class="view_content_box">
+            <h3>Personel</h3>
+            <p></p>
+        </div>
+        <div class="view_content_box">
+            <h3>Additional Info</h3>
+            <p></p>
+        </div>
+        <div class="view_content_box">
+            <h3>Documents</h3>
+            <table>
+                <tr>
+                    <th>File Name</th>
+                    <th>Date Uploaded</th>
+                </tr>
+                <tr>
+                    <a href="{{ url_for('upload', file_location='organizations/Red Rock Ridge /test_doc.pdf') }}"></a><td>test_doc.pdf</td></a>
+                    <td>99/99/2022</td>
+                </tr>
+            </table>
+        </div>
+    </div>
     <hr>
 </article>
+
+
 {% if not loop.last %}
 {% endif %}
 {% endfor %}
