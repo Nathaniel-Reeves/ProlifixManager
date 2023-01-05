@@ -61,35 +61,40 @@
     <div class="view_content" id="{{ organization_data['organization_id'] }}" style="display:none;">
         <div class="view_content_box">
             <h3>Address</h3>
-            <div id="org_docs">
-
-            </div>
         </div>
         <div class="view_content_box">
             <h3>Personel</h3>
-            <p></p>
         </div>
         <div class="view_content_box">
             <h3>Additional Info</h3>
-            <p></p>
         </div>
         <div class="view_content_box">
             <h3>Documents</h3>
-            <table>
-                <tr>
-                    <th>File Name</th>
-                    <th>Date Uploaded</th>
-                </tr>
-                <tr>
-                    <a href="{{ url_for('upload', file_location='organizations/Red Rock Ridge /test_doc.pdf') }}"></a><td>test_doc.pdf</td></a>
-                    <td>99/99/2022</td>
-                </tr>
-            </table>
+            <div id="docs-{{ organization_data['organization_id']}}"></div>
+            <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+            <script>
+                console.log({{ organization_data["files"]| tojson | safe }});
+                function create_grid(org_id) {
+                    var id = "docs-"+org_id;
+                    new gridjs.Grid({
+                        columns: [{
+                            id: "file_name", 
+                            name: "File Name"
+                            formatter: (_, row) => html(`<a href='organizations/{{organization_data["organization_name"]''`) 
+                            // TODO: Trying to get the table to link to the document
+                        }, {
+                            id: "date_uploaded", 
+                            name: "Date Uploaded"
+                        }],
+                        data: {{ organization_data["files"]|tojson|safe }}
+                    }).render(document.getElementById(id));
+                };
+                create_grid({{ organization_data["organization_id"]}})
+            </script>
         </div>
     </div>
     <hr>
 </article>
-
 
 {% if not loop.last %}
 {% endif %}

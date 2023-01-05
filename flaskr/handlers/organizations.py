@@ -427,7 +427,8 @@ class Organization:
                     # create file link in organization collection
                     files["files"].append({
                         "date_uploaded": str(datetime.today()),
-                        "file_path": path
+                        "file_path": path,
+                        "file_name": filename
                     })
 
             # Create Collection if none exists
@@ -793,9 +794,19 @@ def get_clients():
     ).execute()
     g.org_type = "client"
     clients_data = result.fetch_all()
-    print(clients_data)
+    columns = result.get_columns()
+    return_data = []
+    for data in clients_data:
+        res = {"files": []}
+        for i in range(len(list(data))):
+            if columns[i].get_column_name() == "doc":
+                res["files"] = json.loads(data[i].decode(
+                    'utf8').replace("'", '"'))["files"]
+            else:
+                res[columns[i].get_column_name()] = data[i]
+        return_data.append(res)
     return render_template('organizations/read-org.html',
-                           organizations=clients_data)
+                           organizations=return_data)
 
 @bp.route('/suppliers', methods=('GET', ))
 @login_required
@@ -844,9 +855,14 @@ def get_suppliers():
     columns = result.get_columns()
     return_data = []
     for data in suppliers_data:
-        res = {columns[i].get_column_name(): data[i] for i in range(len(list(data)))}
+        res = {"files":[]}
+        for i in range(len(list(data))):
+            if columns[i].get_column_name() == "doc":
+                res["files"] = json.loads(data[i].decode(
+                    'utf8').replace("'", '"'))["files"]
+            else:
+                res[columns[i].get_column_name()] = data[i]
         return_data.append(res)
-    print(return_data)
     return render_template('organizations/read-org.html',
                            organizations=return_data)
 
