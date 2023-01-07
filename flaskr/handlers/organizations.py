@@ -6,7 +6,7 @@ objects.
 import os
 from datetime import date, datetime
 import mysqlx
-from flask import (Blueprint, flash, g, render_template, request,)
+from flask import (Blueprint, flash, g, render_template, request, send_from_directory)
 from werkzeug.utils import secure_filename
 
 import json
@@ -273,10 +273,9 @@ class Organization:
         self.prolifix = data[result.index_of("prolifix")]
         self.supplier = data[result.index_of("supplier")]
         self.client = data[result.index_of("client")]
+        self.documents = json.loads(data[result.index_of("doc")])["files"]
         self.notes = data[result.index_of("notes")]
 
-        # get organization document data from db
-        self._get_org_docs(org_id)
 
         return True
 
@@ -427,8 +426,10 @@ class Organization:
                     # create file link in organization collection
                     files["files"].append({
                         "date_uploaded": str(datetime.today()),
-                        "file_path": path,
-                        "file_name": filename
+                        "full_file_path": path,
+                        "local_file_path": os.path.join("organizations/", self.organization_name, filename),
+                        "file_name": filename,
+                        "organizaiton_name": self.organization_name
                     })
 
             # Create Collection if none exists
@@ -513,40 +514,10 @@ class Organization:
         return_dict["prolifix"] = self.prolifix
         return_dict["supplier"] = self.supplier
         return_dict["client"] = self.client
+        return_dict["documents"] = self.documents
         return_dict["notes"] = self.notes
         return return_dict
         
-    def _get_org_docs(self, org_id):
-        """Fetches organization documents
-
-        Retrieves organization documents using the references provided 
-        by the database.
-
-        Args:
-            org_id (str): The unique identifier of the organization.
-
-        Returns:
-            bool: True on success, otherwise False.
-
-        Raises:
-            IOError: An error occurred accessing the documents.
-        """
-        session = mysqlx.get_session({
-            'host': db.HOST,
-            'port': db.PORT,
-            'user': db.USER,
-            'password': db.PASSWORD
-        })
-        org_schema = session.get_schema('Organizations')
-        org_coll = org_schema.get_collection('OrganizationDocs')
-        documents = org_coll.get_one(org_id)
-        if not documents:
-            self.documents = []
-            return False
-        print(documents)
-        print("RUNNING")
-        return True
-
     def _connect_session(self):
         session = mysqlx.get_session({
             'host': db.HOST,

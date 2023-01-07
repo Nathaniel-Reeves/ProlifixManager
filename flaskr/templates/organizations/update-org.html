@@ -161,6 +161,20 @@
         <div>
 
             <div id="container">
+                {% set count = namespace(value=0) %}
+                {% for doc in organization_data['documents'] %}
+                <div class="list-item" id="{{ count.value }}">
+                    <div class="list-left">
+                            <a href="{{ url_for('uploads', file_location='doc["local_file_path"]') }}">{{ doc['file_name'] }}</a>
+                    </div>
+                    <div class="list-right">
+                        <button type="button" name="removeFile" class="iconbutton" onclick="removeFileInput({{ count.value }});">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                {% set count.value = count.value + 1 %}
+                {% endfor %}
     
             </div>
     

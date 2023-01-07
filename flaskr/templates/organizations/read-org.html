@@ -73,18 +73,20 @@
             <div id="docs-{{ organization_data['organization_id']}}"></div>
             <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
             <script>
-                console.log({{ organization_data["files"]| tojson | safe }});
                 function create_grid(org_id) {
                     var id = "docs-"+org_id;
                     new gridjs.Grid({
                         columns: [{
                             id: "file_name", 
-                            name: "File Name"
-                            formatter: (_, row) => html(`<a href='organizations/{{organization_data["organization_name"]''`) 
-                            // TODO: Trying to get the table to link to the document
+                            name: "File Name",
+                            formatter: (_, row) => gridjs.html(`<a target="_blank" rel="noopener noreferrer" href="${encodeURI("/uploads/" + row.cells[2].data)}">${row.cells[0].data}</a>`)
                         }, {
                             id: "date_uploaded", 
                             name: "Date Uploaded"
+                        }, {
+                            id: "local_file_path",
+                            name: "Local File Path",
+                            hidden: true
                         }],
                         data: {{ organization_data["files"]|tojson|safe }}
                     }).render(document.getElementById(id));

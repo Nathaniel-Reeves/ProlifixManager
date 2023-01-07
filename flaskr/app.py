@@ -36,13 +36,10 @@ def create_app(test_config=None):
     app.register_blueprint(handlers.organizations.bp)
 
     @app.route('/uploads/<path:file_location>', methods=('GET', ))
-    def upload(file_location):
-        file_location_list = os.path.normpath(file_location).split("/")
-        filename = file_location_list.pop()
-        sub_directories = ""
-        for dir in file_location_list:
-            sub_directories += dir + "/"
-        return send_from_directory(os.path.join(db.UPLOAD_FOLDER, sub_directories), filename)
+    def uploads(file_location):
+        print(db.UPLOAD_FOLDER)
+        print(file_location)
+        return send_from_directory(db.UPLOAD_FOLDER, file_location)
 
     return app
 
