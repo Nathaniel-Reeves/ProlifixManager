@@ -1,30 +1,31 @@
 .view_content {
-    display:flex;
-    justify-content:flex-start;
+    display: flex;
+    justify-content: flex-start;
     align-items: flex-start;
     flex-wrap: wrap;
-    contain:content;
+    contain: content;
+    align-items: stretch;
 }
 
 .view_content_box {
     margin: 1em;
     padding: 1em;
-    width:fit-content;
+    width: fit-content;
     min-width: 10em;
-    height:auto;
     border: 1px solid var(--line-color);
 }
 
 @media only screen and (max-width: 750px) {
     .view_content {
-        justify-content: space-evenly;
+        display: flex;
         flex-direction: column;
+        align-items:stretch !important;
     }
 
     .view_content_box {
         margin: 0.5em;
         padding: 1em;
-        width: 25em;
         height: auto;
+        width: auto;
     }
 }

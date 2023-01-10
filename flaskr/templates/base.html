@@ -85,22 +85,7 @@
         <section class="grid-item-footer">
             <div class="card">
                 <h1>Footer</h1>
-                <div id="test_table"></div>
             </div>
         </section>
     </div>
 </body>
-<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
-<script>
-    new gridjs.Grid({
-            columns: ['Name', 'Email'],
-            pagination: true,
-            sort: true,
-            resizable: true,
-            search: true,
-            data: [
-                ['John', 'john@example.com'],
-                ['Mike', 'mike@gmail.com']
-            ]
-        }).render(document.getElementById('test_table'));
-</script>

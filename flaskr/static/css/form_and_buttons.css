@@ -2,12 +2,12 @@
     cursor: default;
 }
 
-a {
+a, button, input {
     cursor: pointer;
 }
 
 input[type="submit" i],
-input[type="button"] {
+input[type="button"], button {
     display: inline;
     text-align: center;
     box-sizing: border-box;
@@ -42,7 +42,7 @@ input[type="button"] {
 }
 
 input,
-textarea {
+textarea, button {
     color: black;
     background-color: var(--card-background-color);
     font-size: medium;
@@ -115,7 +115,8 @@ fieldset {
 input:hover,
 .form-item textarea:hover,
 .button-list li:hover,
-.searchbar:hover {
+.searchbar:hover,
+button:hover {
     background-color: var(--input-hover-background-color);
     cursor: pointer;
 }

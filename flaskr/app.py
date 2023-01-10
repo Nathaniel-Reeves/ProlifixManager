@@ -37,8 +37,6 @@ def create_app(test_config=None):
 
     @app.route('/uploads/<path:file_location>', methods=('GET', ))
     def uploads(file_location):
-        print(db.UPLOAD_FOLDER)
-        print(file_location)
         return send_from_directory(db.UPLOAD_FOLDER, file_location)
 
     return app

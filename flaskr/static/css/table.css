@@ -1,7 +1,14 @@
-table {
-    width: 100%;
+.gridjs-container {
+    width: 100% !important;
 }
 
 table tr:nth-child(even) {
-    background-color: #f2f2f2;
+    background-color: var(--hover-popup-card-background-color);
+}
+
+@media only screen and (max-width: 750px) {
+
+    .gridjs-container {
+        width: fit-content !important;
+    }
 }

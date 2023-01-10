@@ -46,3 +46,26 @@
 .searchbar button:hover {
     background: var(--hover-dropdown-card-background-color);
 }
+
+.searchicon {
+    width: fit-content !important;
+    min-width: 0em;
+}
+
+@media only screen and (max-width: 1200px) {
+    .searchaction {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+@media only screen and (max-width: 750px) {
+    .searchaction {
+        width: 100%;
+        justify-content: space-around;
+        display:flex;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+}

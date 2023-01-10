@@ -768,7 +768,7 @@ def get_clients():
     columns = result.get_columns()
     return_data = []
     for data in clients_data:
-        res = {"files": []}
+        res = {"files": [],"personel":[{"first_name":"dude","last_name":"perfect"}]}
         for i in range(len(list(data))):
             if columns[i].get_column_name() == "doc":
                 res["files"] = json.loads(data[i].decode(

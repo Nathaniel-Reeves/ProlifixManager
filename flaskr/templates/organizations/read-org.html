@@ -15,11 +15,11 @@
     {% if g.user %}
     <ul class="button-list searchaction">
         {% if g.org_type == "client" %}
-            <a href="{{ url_for('organizations.post_organization', org_type=g.org_type) }}"><li class="searchaction">New Client</li></a>
+            <a href="{{ url_for('organizations.post_organization', org_type=g.org_type) }}"><li class="button">New Client</li></a>
             <li class="searchbar">
                 <div>
                     <input name="search" id="searchbar" type="text" placeholder="Search Clients..." onkeyup="search()"></input>
-                    <button class="iconbutton" type="submit"><i class="fa fa-search"></i></button>
+                    <button class="iconbutton searchicon" type="submit"><i class="fa fa-search"></i></button>
                 </div>
             </li>
         {% elif g.org_type == "supplier" %}
@@ -27,7 +27,7 @@
             <li class="searchbar">
                 <div>
                     <input name="search" id="searchbar" type="text" placeholder="Search Suppliers..." onkeyup="search()"></input>
-                    <button class="iconbutton" type="submit"><i class="fa fa-search"></i></button>
+                    <button class="iconbutton searchicon" type="submit"><i class="fa fa-search"></i></button>
                 </div>
             </li>
         {% else %}
@@ -44,7 +44,7 @@
         <div>
             <h2>{{ organization_data['organization_name'] }}</h2>
             <div class="about">
-                Initial: {{ organization_data['organization_initial'] }} | Website: {{ organization_data['website'] }}
+                Initial: {{ organization_data['organization_initial'] }} | Website: <a target="_blank" rel="noopener noreferrer" href="{{ organization_data['website'] }}">{{ organization_data['website'] }}</a>
             </div>
         </div>
         <ul class="button-list justify-bottom">
@@ -61,19 +61,48 @@
     <div class="view_content" id="{{ organization_data['organization_id'] }}" style="display:none;">
         <div class="view_content_box">
             <h3>Address</h3>
+            <p>{{ organization_data['hq_street_address'] }}, Unit/Apt:{{ organization_data['hq_unit_apt'] }}</p>
+            <p>{{ organization_data['hq_city'] }},{{ organization_data['hq_region'] }}</p>
+            <p>{{ organization_data['hq_country'] }}</p>
+            <p>{{ organization_data['hq_zip_code'] }}</p>
         </div>
         <div class="view_content_box">
             <h3>Personel</h3>
+            <div id="personel-{{ organization_data['organization_id']}}"></div>
+            <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+            <script>
+                function personel_grid(org_id) {
+                    var id = "personel-" + org_id;
+                    new gridjs.Grid({
+                        columns: [{
+                            id: "first_name",
+                            name: "First Name",
+                        }, {
+                            id: "last_name",
+                            name: "Last Name"
+                        }],
+                        data: {{ organization_data["personel"]| tojson | safe }}
+                    }).render(document.getElementById(id));
+                };
+                personel_grid({{ organization_data["organization_id"]}})
+            </script>
         </div>
         <div class="view_content_box">
             <h3>Additional Info</h3>
+            {% if organization_data['vetted'] %}
+                <p>{{ organization_data['vetted'] }}</p>
+                <p>{{ organization_data['date_vetted'] }}</p>
+            {% endif %}
+            <p>{{ organization_data['ship_time'] }}{{ organization_data['ship_time_unit'] }}</p>
+            <p>{{ organization_data['date_vetted'] }}</p>
+            <p>Date entered in system: {{ organization_data['date_entered'] }}</p>
         </div>
         <div class="view_content_box">
             <h3>Documents</h3>
             <div id="docs-{{ organization_data['organization_id']}}"></div>
             <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
             <script>
-                function create_grid(org_id) {
+                function docs_grid(org_id) {
                     var id = "docs-"+org_id;
                     new gridjs.Grid({
                         columns: [{
@@ -91,7 +120,7 @@
                         data: {{ organization_data["files"]|tojson|safe }}
                     }).render(document.getElementById(id));
                 };
-                create_grid({{ organization_data["organization_id"]}})
+                docs_grid({{ organization_data["organization_id"]}})
             </script>
         </div>
     </div>
