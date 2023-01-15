@@ -514,7 +514,7 @@ class Organization:
         return_dict["prolifix"] = self.prolifix
         return_dict["supplier"] = self.supplier
         return_dict["client"] = self.client
-        return_dict["documents"] = self.documents
+        #return_dict["documents"] = self.documents
         return_dict["notes"] = self.notes
         return return_dict
         
