@@ -34,6 +34,7 @@ def create_app(test_config=None):
     app.register_blueprint(handlers.home.bp)
     app.register_blueprint(handlers.hello.bp)
     app.register_blueprint(handlers.organizations.bp)
+    app.register_blueprint(handlers.people.bp)
 
     @app.route('/uploads/<path:file_location>', methods=('GET', ))
     def uploads(file_location):

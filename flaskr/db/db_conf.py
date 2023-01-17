@@ -1,14 +1,17 @@
 
 
-#HOST = '192.168.1.42'
-HOST = 'localhost'
-#PORT = 33060
-PORT = 13307
+HOST = '192.168.1.42'
+#HOST = 'localhost'  # Home PC
+
+PORT = 33060  # Work Laptop
+#PORT = 13307  # Home PC
+
+UPLOAD_FOLDER = '/mnt/c/Users/Nathaniel Reeves/Documents/uploads' # Work Laptop
+#UPLOAD_FOLDER = '/mnt/s/uploads' # Home PC
+#UPLOAD_FOLDER = '/mnt/c/uploads' # School Laptop
+
 USER = 'client'
 PASSWORD = 'clientPassword5!'
-#UPLOAD_FOLDER = '/mnt/c/Users/Nathaniel Reeves/Documents/uploads' # Work Laptop
-UPLOAD_FOLDER = '/mnt/s/uploads' # Home PC
-#UPLOAD_FOLDER = '/mnt/c/uploads' # School Laptop
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S"

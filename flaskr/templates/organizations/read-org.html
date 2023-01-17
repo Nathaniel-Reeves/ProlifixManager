@@ -81,7 +81,10 @@
                             id: "last_name",
                             name: "Last Name"
                         }],
-                        data: {{ organization_data["personel"]| tojson | safe }}
+                          server: {
+                            url: 'http://localhost:5000/organizations/'+org_id+'/people',
+                            then: data => data.map(person => [person.first_name, person.last_name])
+                        }
                     }).render(document.getElementById(id));
                 };
                 personel_grid({{ organization_data["organization_id"]}})

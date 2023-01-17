@@ -14,9 +14,6 @@ import json
 from .auth import login_required
 from ..db import db_conf as db
 
-bp = Blueprint('organizations', __name__, url_prefix='/organizations')
-
-
 class Organization:
     """Represents an organization or company.
 
@@ -721,6 +718,17 @@ class Organization:
         else:
             self.ship_time_in_days = 0
 
+            
+
+
+
+
+
+
+
+bp = Blueprint('organizations', __name__, url_prefix='/organizations')
+
+
 @bp.route('/clients', methods=('GET', ))
 @login_required
 def get_clients():
@@ -760,7 +768,8 @@ def get_clients():
     })
     result = session.sql(
         """SELECT * FROM `Organizations`.`Organizations`
-        WHERE `client` = true
+        WHERE `client` = true OR
+        `prolifix` = true
         ORDER BY `organization_name` DESC;"""
     ).execute()
     g.org_type = "client"
@@ -826,7 +835,8 @@ def get_suppliers():
     columns = result.get_columns()
     return_data = []
     for data in suppliers_data:
-        res = {"files":[]}
+        res = {"files": [], "personel": [
+            {"first_name": "dude", "last_name": "perfect"}]}
         for i in range(len(list(data))):
             if columns[i].get_column_name() == "doc":
                 res["files"] = json.loads(data[i].decode(
@@ -965,4 +975,34 @@ def put_organization(org_id):
         get_clients()
     else:
         return render_template('home/index.html')
+
+
+@bp.route('/<int:org_id>/people', methods=('GET',))
+def get_people(org_id):
+    print(org_id)
+    """Returns a list of people."""
+    session = mysqlx.get_session({
+        'host':db.HOST,
+        'port':db.PORT,
+        'user':db.USER,
+        'password':db.PASSWORD
+    })
+    query = ("SELECT * FROM `Organizations`.`People` WHERE `organization_id` = %s ORDER BY `first_name`;" % org_id)
+    print(query)
+    result = session.sql(
+        """
+        SELECT * FROM `Organizations`.`People`
+        WHERE `organization_id` = %s
+        ORDER BY `first_name`;
+        """ % org_id
+    ).execute()
+    people_data = result.fetch_all()
+    columns = result.get_columns()
+    return_data = []
+    for data in people_data:    
+        res = {}
+        for i in range(len(list(data))):
+            res[columns[i].get_column_name()] = data[i]
+        return_data.append(res)
+    return return_data
 
