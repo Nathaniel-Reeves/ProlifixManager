@@ -6,7 +6,7 @@ objects.
 import os
 from datetime import date, datetime
 import mysqlx
-from flask import (Blueprint, flash, g, render_template, request, send_from_directory)
+from flask import (Blueprint, flash, g, render_template, request, send_from_directory, jsonify)
 from werkzeug.utils import secure_filename
 
 import json
@@ -979,7 +979,6 @@ def put_organization(org_id):
 
 @bp.route('/<int:org_id>/people', methods=('GET',))
 def get_people(org_id):
-    print(org_id)
     """Returns a list of people."""
     session = mysqlx.get_session({
         'host':db.HOST,
@@ -987,8 +986,6 @@ def get_people(org_id):
         'user':db.USER,
         'password':db.PASSWORD
     })
-    query = ("SELECT * FROM `Organizations`.`People` WHERE `organization_id` = %s ORDER BY `first_name`;" % org_id)
-    print(query)
     result = session.sql(
         """
         SELECT * FROM `Organizations`.`People`
@@ -1005,4 +1002,17 @@ def get_people(org_id):
             res[columns[i].get_column_name()] = data[i]
         return_data.append(res)
     return return_data
+
+
+@bp.route('/<int:org_id>/files', methods=('GET',))
+def get_documents(org_id):
+    """Returns a list of people."""
+    session = mysqlx.get_session({
+        'host': db.HOST,
+        'port': db.PORT,
+        'user': db.USER,
+        'password': db.PASSWORD
+    })
+    doc = session.get_schema('Organizations').get_collection('Organizations').get_one(org_id).as_str()
+    return json.loads(doc)
 

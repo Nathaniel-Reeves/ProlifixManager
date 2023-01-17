@@ -53,7 +53,7 @@
                 <li>Edit</li>
             </a>
             <a>
-                <li class="view_button" id="{{ organization_data['organization_id'] }}" onclick="viewContent(this.id)">View</li>
+                <li class="view_button" id="{{ organization_data['organization_id'] }}" onclick="personel_grid(this.id);docs_grid(this.id);viewContent(this.id)">View</li>
             </a>
         </ul>
     </header>
@@ -69,26 +69,6 @@
         <div class="view_content_box">
             <h3>Personel</h3>
             <div id="personel-{{ organization_data['organization_id']}}"></div>
-            <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
-            <script>
-                function personel_grid(org_id) {
-                    var id = "personel-" + org_id;
-                    new gridjs.Grid({
-                        columns: [{
-                            id: "first_name",
-                            name: "First Name",
-                        }, {
-                            id: "last_name",
-                            name: "Last Name"
-                        }],
-                          server: {
-                            url: 'http://localhost:5000/organizations/'+org_id+'/people',
-                            then: data => data.map(person => [person.first_name, person.last_name])
-                        }
-                    }).render(document.getElementById(id));
-                };
-                personel_grid({{ organization_data["organization_id"]}})
-            </script>
         </div>
         <div class="view_content_box">
             <h3>Additional Info</h3>
@@ -103,28 +83,6 @@
         <div class="view_content_box">
             <h3>Documents</h3>
             <div id="docs-{{ organization_data['organization_id']}}"></div>
-            <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
-            <script>
-                function docs_grid(org_id) {
-                    var id = "docs-"+org_id;
-                    new gridjs.Grid({
-                        columns: [{
-                            id: "file_name", 
-                            name: "File Name",
-                            formatter: (_, row) => gridjs.html(`<a target="_blank" rel="noopener noreferrer" href="${encodeURI("/uploads/" + row.cells[2].data)}">${row.cells[0].data}</a>`)
-                        }, {
-                            id: "date_uploaded", 
-                            name: "Date Uploaded"
-                        }, {
-                            id: "local_file_path",
-                            name: "Local File Path",
-                            hidden: true
-                        }],
-                        data: {{ organization_data["files"]|tojson|safe }}
-                    }).render(document.getElementById(id));
-                };
-                docs_grid({{ organization_data["organization_id"]}})
-            </script>
         </div>
     </div>
     <hr>
@@ -133,4 +91,54 @@
 {% if not loop.last %}
 {% endif %}
 {% endfor %}
+
+<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+<script>
+    function personel_grid(org_id) {
+        var id = "personel-" + org_id;
+        new gridjs.Grid({
+            columns: [{
+                id: "first_name",
+                name: "First Name",
+            }, {
+                id: "last_name",
+                name: "Last Name"
+            }],
+            server: {
+                url: 'http://localhost:5000/organizations/' + org_id + '/people',
+                then: data => data.map(person => [person.first_name, person.last_name])
+            }
+        }).render(document.getElementById(id));
+    };
+
+    function docs_grid(org_id) {
+        var id = "docs-" + org_id;
+        new gridjs.Grid({
+            columns: [{
+                id: "file_name",
+                name: "File Name",
+                formatter: (_, row) => gridjs.html(`<a target="_blank" rel="noopener noreferrer" href="${encodeURI("/uploads/" + row.cells[2].data)}">${row.cells[0].data}</a>`)
+            }, {
+                id: "date_uploaded",
+                name: "Date Uploaded"
+            }, {
+                id: "local_file_path",
+                name: "Local File Path",
+                hidden: true
+            }, {
+                id: "full_file_path",
+                name: "Full File Path",
+                hidden: true
+            }, {
+                id: "organizaiton_name",
+                name: "Organization Name",
+                hidden: true
+            }],
+            server: {
+                url: 'http://localhost:5000/organizations/' + org_id + '/files',
+                then: data => data.files.map(file => [file.file_name, file.date_uploaded, file.local_file_path, file.full_file_path, file.organization_name])
+            }
+        }).render(document.getElementById(id));
+    };
+</script>
 {% endblock %}
