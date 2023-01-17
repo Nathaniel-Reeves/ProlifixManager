@@ -9,22 +9,20 @@
 
 .view_content_box {
     margin: 1em;
-    padding: 1em;
+    padding: 0.1em;
     width: fit-content;
     min-width: 10em;
-    border: 1px solid var(--line-color);
 }
 
 @media only screen and (max-width: 750px) {
     .view_content {
         display: flex;
-        flex-direction: column;
         align-items:stretch !important;
     }
 
     .view_content_box {
         margin: 0.5em;
-        padding: 1em;
+        padding: 0.1em;
         height: auto;
         width: auto;
     }

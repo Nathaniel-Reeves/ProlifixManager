@@ -249,20 +249,21 @@ class Organization:
 
         # Save table data into self from db
         self.organization_id = data[result.index_of("organization_id")]
-        self.organization_name = data[result.index_of("organization_name")]
+        self.organization_name = data[result.index_of("organization_name")].strip()
         self.organization_initial = data[result.index_of(
             "organization_initial")]
         self.date_entered = data[result.index_of("date_entered")]
-        self.website = data[result.index_of("website")]
+        self.website = data[result.index_of("website")].strip()
         self.vetted = data[result.index_of("vetted")]
         self.date_vetted = data[result.index_of("date_vetted")]
         self.risk_level = data[result.index_of("risk_level")]
-        self.hq_street_address = data[result.index_of("hq_street_address")]
-        self.hq_unit_apt = data[result.index_of("hq_unit_apt")]
-        self.hq_city = data[result.index_of("hq_city")]
-        self.hq_region = data[result.index_of("hq_region")]
-        self.hq_country = data[result.index_of("hq_country")]
-        self.hq_zip_code = data[result.index_of("hq_zip_code")]
+        self.hq_street_address = data[result.index_of(
+            "hq_street_address")].strip()
+        self.hq_unit_apt = data[result.index_of("hq_unit_apt")].strip()
+        self.hq_city = data[result.index_of("hq_city")].strip()
+        self.hq_region = data[result.index_of("hq_region")].strip()
+        self.hq_country = data[result.index_of("hq_country")].strip()
+        self.hq_zip_code = data[result.index_of("hq_zip_code")].strip()
         self.ship_time = data[result.index_of("ship_time")]
         self.ship_time_unit = data[result.index_of(
             "ship_time_unit")]
@@ -988,7 +989,13 @@ def get_people(org_id):
     })
     result = session.sql(
         """
-        SELECT * FROM `Organizations`.`People`
+        SELECT `person_id`, 
+        `first_name`,
+        `last_name`,
+        `job_title`,
+        `phone_number`,
+        `email_address` 
+        FROM `Organizations`.`People`
         WHERE `organization_id` = %s
         ORDER BY `first_name`;
         """ % org_id

@@ -61,28 +61,32 @@
     <div class="view_content" id="{{ organization_data['organization_id'] }}" style="display:none;">
         <div class="view_content_box">
             <h3>Address</h3>
-            <p>{{ organization_data['hq_street_address'] }}, Unit/Apt:{{ organization_data['hq_unit_apt'] }}</p>
-            <p>{{ organization_data['hq_city'] }},{{ organization_data['hq_region'] }}</p>
-            <p>{{ organization_data['hq_country'] }}</p>
-            <p>{{ organization_data['hq_zip_code'] }}</p>
+            <p>{{ organization_data['hq_street_address'] }}<br>
+            Unit/Apt:{{ organization_data['hq_unit_apt'] }}<br>
+            {{ organization_data['hq_city'] }}, {{ organization_data['hq_region'] }}<br>
+            {{ organization_data['hq_country'] }}<br>
+            {{ organization_data['hq_zip_code'] }}</p>
+        </div>
+        <div class="view_content_box">
+            <h3>Additional Info</h3>
+            {% if organization_data['vetted'] %}
+                <p>Vetted Status: TRUE</p>
+                <p>Date Vetted: {{ organization_data['date_vetted'] }}</p>
+            {% endif %}
+            <p>Average Shipping Time: {{ organization_data['ship_time'] }}{{ organization_data['ship_time_unit'] }}</p>
+            <p>Date of entry: {{ organization_data['date_entered'] }}</p>
         </div>
         <div class="view_content_box">
             <h3>Personel</h3>
             <div id="personel-{{ organization_data['organization_id']}}"></div>
         </div>
         <div class="view_content_box">
-            <h3>Additional Info</h3>
-            {% if organization_data['vetted'] %}
-                <p>{{ organization_data['vetted'] }}</p>
-                <p>{{ organization_data['date_vetted'] }}</p>
-            {% endif %}
-            <p>{{ organization_data['ship_time'] }}{{ organization_data['ship_time_unit'] }}</p>
-            <p>{{ organization_data['date_vetted'] }}</p>
-            <p>Date entered in system: {{ organization_data['date_entered'] }}</p>
-        </div>
-        <div class="view_content_box">
             <h3>Documents</h3>
             <div id="docs-{{ organization_data['organization_id']}}"></div>
+        </div>
+        <div class="view_content_box">
+            <h3>Notes</h3>
+            <p>{{ organization_data['notes'] }}</p>
         </div>
     </div>
     <hr>
@@ -98,15 +102,33 @@
         var id = "personel-" + org_id;
         new gridjs.Grid({
             columns: [{
+                id: "person_id",
+                name: "Person_id",
+                hidden: true
+            }, {
                 id: "first_name",
                 name: "First Name",
             }, {
                 id: "last_name",
                 name: "Last Name"
+            }, {
+                id: "job_title",
+                name: "Title"
+            }, {
+                id: "phone_number",
+                name: "Phone Number"
+            }, {
+                id: "email_address",
+                name: "Email",
+                formatter: (cell) => gridjs.html(`<a href='mailto:${cell}'>${cell}</a>`)
+            }, {
+                id: "actions",
+                name: 'Actions',
+                formatter: (cell, row) => gridjs.html(`<a class="grid-button" href="http//localhost:5000/people/update/${row.cells[0].data}">Edit</a>`)
             }],
             server: {
                 url: 'http://localhost:5000/organizations/' + org_id + '/people',
-                then: data => data.map(person => [person.first_name, person.last_name])
+                then: data => data.map(person => [person.person_id, person.first_name, person.last_name, person.phone_number, person.job_title, person.email_address])
             }
         }).render(document.getElementById(id));
     };

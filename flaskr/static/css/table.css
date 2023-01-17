@@ -1,6 +1,4 @@
-.gridjs-container {
-    width: 100% !important;
-}
+
 
 table tr:nth-child(even) {
     background-color: var(--hover-popup-card-background-color);
@@ -8,7 +6,4 @@ table tr:nth-child(even) {
 
 @media only screen and (max-width: 750px) {
 
-    .gridjs-container {
-        width: fit-content !important;
-    }
 }

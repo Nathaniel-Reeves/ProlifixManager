@@ -2,7 +2,7 @@
     cursor: default;
 }
 
-a, button, input {
+a, button, input, .grid-button {
     cursor: pointer;
 }
 
@@ -35,6 +35,7 @@ input[type="button"], button {
     border-radius: 0.1rem;
     background-color: var(--card-background-color);
     vertical-align:middle;
+    transition-duration: .2s;
 }
 
 .justify-bottom {
@@ -116,9 +117,25 @@ input:hover,
 .form-item textarea:hover,
 .button-list li:hover,
 .searchbar:hover,
-button:hover {
+button:hover, 
+.grid-button:hover {
     background-color: var(--input-hover-background-color);
     cursor: pointer;
+    transition-duration: .2s;
+}
+
+td:has(> span .grid-button) {
+    text-align: center;
+}
+
+.grid-button {
+    height: 18px;
+    padding: 0.5em 1.5em;
+    text-decoration: none;
+    border-radius: 0.1rem;
+    background-color: var(--card-background-color);
+    vertical-align: middle;
+    transition-duration: .2s;
 }
 
 .radio-container, 
