@@ -73,20 +73,26 @@
                 <p>Vetted Status: TRUE</p>
                 <p>Date Vetted: {{ organization_data['date_vetted'] }}</p>
             {% endif %}
-            <p>Average Shipping Time: {{ organization_data['ship_time'] }}{{ organization_data['ship_time_unit'] }}</p>
-            <p>Date of entry: {{ organization_data['date_entered'] }}</p>
-        </div>
-        <div class="view_content_box">
-            <h3>Personel</h3>
-            <div id="personel-{{ organization_data['organization_id']}}"></div>
-        </div>
-        <div class="view_content_box">
-            <h3>Documents</h3>
-            <div id="docs-{{ organization_data['organization_id']}}"></div>
+            <p>Average Shipping Time: {{ organization_data['ship_time'] }} {{ organization_data['ship_time_unit'] }}</p>
+            <p>Date of Entry: {{ organization_data['date_entered'].strftime('%Y-%m-%d') }}</p>
         </div>
         <div class="view_content_box">
             <h3>Notes</h3>
             <p>{{ organization_data['notes'] }}</p>
+        </div>
+        <div class="view_content_box">
+            <h3>Personel</h3>
+            <div id="personel-{{ organization_data['organization_id']}}"></div>
+            <ul class="button-list">
+                <a class="edit_button" id="{{ organization_data['organization_id'] }}"
+                    href="{{ url_for('organizations.put_organization', org_id=organization_data['organization_id']) }}">
+                    <li>Add Person</li>
+                </a>
+            </ul>
+        </div>
+        <div class="view_content_box">
+            <h3>Documents</h3>
+            <div id="docs-{{ organization_data['organization_id']}}"></div>
         </div>
     </div>
     <hr>
@@ -128,7 +134,20 @@
             }],
             server: {
                 url: 'http://localhost:5000/organizations/' + org_id + '/people',
-                then: data => data.map(person => [person.person_id, person.first_name, person.last_name, person.phone_number, person.job_title, person.email_address])
+                then: data => data.map(person => [
+                    person.person_id, 
+                    person.first_name, 
+                    person.last_name, 
+                    person.phone_number, 
+                    person.job_title, 
+                    person.email_address
+                ]),
+                handle: (res) => {
+                    // no matching records found
+                    if (res.status === 404) return [];
+                    if (res.ok) return res.json();
+                    throw Error('oh no :(');
+                }
             }
         }).render(document.getElementById(id));
     };

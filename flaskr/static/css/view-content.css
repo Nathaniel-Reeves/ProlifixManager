@@ -9,9 +9,15 @@
 
 .view_content_box {
     margin: 1em;
-    padding: 0.1em;
+    padding: 0;
     width: fit-content;
     min-width: 10em;
+}
+
+.view_content_box p {
+    margin-left: 1.5em;
+    margin-right: 2.5em;
+
 }
 
 @media only screen and (max-width: 750px) {

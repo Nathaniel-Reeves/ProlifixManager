@@ -6,7 +6,7 @@ objects.
 import os
 from datetime import date, datetime
 import mysqlx
-from flask import (Blueprint, flash, g, render_template, request, send_from_directory, jsonify)
+from flask import (Blueprint, flash, g, render_template, request, send_from_directory, jsonify, abort)
 from werkzeug.utils import secure_filename
 
 import json
@@ -769,8 +769,7 @@ def get_clients():
     })
     result = session.sql(
         """SELECT * FROM `Organizations`.`Organizations`
-        WHERE `client` = true OR
-        `prolifix` = true
+        WHERE `client` = true
         ORDER BY `organization_name` DESC;"""
     ).execute()
     g.org_type = "client"
@@ -778,7 +777,7 @@ def get_clients():
     columns = result.get_columns()
     return_data = []
     for data in clients_data:
-        res = {"files": [],"personel":[{"first_name":"dude","last_name":"perfect"}]}
+        res = {"files": [],"personel":[]}
         for i in range(len(list(data))):
             if columns[i].get_column_name() == "doc":
                 res["files"] = json.loads(data[i].decode(
@@ -979,6 +978,7 @@ def put_organization(org_id):
 
 
 @bp.route('/<int:org_id>/people', methods=('GET',))
+@login_required
 def get_people(org_id):
     """Returns a list of people."""
     session = mysqlx.get_session({
@@ -1008,10 +1008,13 @@ def get_people(org_id):
         for i in range(len(list(data))):
             res[columns[i].get_column_name()] = data[i]
         return_data.append(res)
-    return return_data
+    if return_data:
+        return return_data
+    abort(404)
 
 
 @bp.route('/<int:org_id>/files', methods=('GET',))
+@login_required
 def get_documents(org_id):
     """Returns a list of people."""
     session = mysqlx.get_session({
