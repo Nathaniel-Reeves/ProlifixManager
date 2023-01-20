@@ -4,15 +4,21 @@ objects.
 """
 
 import os
+import json
 from datetime import date, datetime
 import mysqlx
-from flask import (Blueprint, flash, g, render_template, request, send_from_directory, jsonify, abort)
+from flask import (
+    Blueprint,
+    flash,
+    g,
+    render_template,
+    request,
+)
 from werkzeug.utils import secure_filename
 
-import json
 
-from .auth import login_required
-from ..db import db_conf as db
+from app.auth import login_required
+from db import db_conf as db
 
 class Organization:
     """Represents an organization or company.

@@ -2,17 +2,9 @@
 Handling api requests related to People objects. Defines people objects.
 """
 
-import os
-from datetime import date, datetime
-import mysqlx
-from flask import (Blueprint, flash, g, render_template,
-                   request, send_from_directory)
-from werkzeug.utils import secure_filename
+from datetime import datetime
+from flask import Blueprint
 
-import json
-
-from .auth import login_required
-from ..db import db_conf as db
 
 bp = Blueprint('people', __name__, url_prefix='/people')
 

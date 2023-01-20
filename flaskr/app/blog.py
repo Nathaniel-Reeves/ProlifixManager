@@ -1,12 +1,21 @@
 import mysqlx
 
+import functools
+import mysqlx
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, url_for
+    Blueprint,
+    flash,
+    g,
+    redirect,
+    render_template,
+    request,
+    url_for
 )
 from werkzeug.exceptions import abort
 
-from .auth import login_required
-from ..db import db_conf as db
+
+from app.auth import login_required
+from db import db_conf as db
 
 bp = Blueprint('blog', __name__, url_prefix='/blog')
 
