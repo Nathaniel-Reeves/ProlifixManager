@@ -224,11 +224,6 @@ def put_organization(org_id):
     org = Organization()
     org.get_org(org_id)
 
-    # Prevent prolifix entry from being edited.
-    if org.prolifix:
-        flash("See IT Manager to edit Prolifix company Details.")
-        return render_template('home/index.html')
-
     if request.method == 'GET':
         return render_template('organizations/update-org.html',
                                    organization_data=org.obj_to_dict())

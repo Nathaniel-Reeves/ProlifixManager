@@ -2,6 +2,7 @@ class Config(object):
     """Base Configuration Settings for Flask App."""
     # Flask Config
     DEBUG = True
+    
     # import secrets
     # secret_key = secrets.token_urlsafe(64)
     SECRET_KEY = 'NiHuLSNTFA4RsvtbBmCcDDJXJxbAnw13MRwJsL9WdNT9Jf8_hrQ0hMKroq_96ewipByaBqGRfSuhMQqSn3cArg'

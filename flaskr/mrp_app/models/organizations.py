@@ -32,7 +32,6 @@ class Organization:
         ship_time (str): Ship time of the organization.
         ship_time_unit (str): Ship time unit of the organization.
         ship_time_in_days (str): Ship time in days of the organization.
-        prolifix (bool): True if the organization is a prolifix.
         supplier (bool): True if the organization is a supplier.
         client (bool): True if the organization is a client.
         documents (list): List of documents associated with the organization.
@@ -151,7 +150,7 @@ class Organization:
         read what this organization is representing.  Here is an example
         of what the output string might look like:
 
-        <org_id = 1 | org_name = prolifix Nutrition | org_initial = PLX>
+        <org_id = 1 | org_name = Prolifix Nutrition | org_initial = PLX>
 
         Args:
             None
@@ -321,7 +320,7 @@ class Organization:
                                 self.organization_id).limit(1).execute()
 
         # Handle errors, commit/rollback and close session
-        if self._check_errors(result):
+        if self._check_errors(result, "DB Err"):
             session.rollback()
             session.close()
             self.print_errors()
@@ -562,9 +561,6 @@ class Organization:
         """
         request_data = request_obj.form
         flag_type = True
-        # prolifix record cannot be edited on the client side.
-        if "prolifix" in request_data:
-            return False
 
         if "supplier" in request_data:
             self.supplier = request_data["supplier"]
