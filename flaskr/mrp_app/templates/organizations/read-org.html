@@ -101,7 +101,9 @@
 {% if not loop.last %}
 {% endif %}
 {% endfor %}
+{% endblock %}
 
+{% block script %}
 <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
 <script>
     function personel_grid(org_id) {
@@ -130,16 +132,16 @@
             }, {
                 id: "actions",
                 name: 'Actions',
-                formatter: (cell, row) => gridjs.html(`<a class="grid-button" href="http//localhost:5000/people/update/${row.cells[0].data}">Edit</a>`)
+                formatter: (cell, row) => gridjs.html(`<a class="grid-button" href=${window.origin}/people/update/${row.cells[0].data}">Edit</a>`)
             }],
             server: {
-                url: 'http://localhost:5000/organizations/' + org_id + '/people',
+                url: window.origin + '/organizations/' + org_id + '/people',
                 then: data => data.map(person => [
-                    person.person_id, 
-                    person.first_name, 
-                    person.last_name, 
-                    person.phone_number, 
-                    person.job_title, 
+                    person.person_id,
+                    person.first_name,
+                    person.last_name,
+                    person.phone_number,
+                    person.job_title,
                     person.email_address
                 ]),
                 handle: (res) => {
@@ -176,7 +178,7 @@
                 hidden: true
             }],
             server: {
-                url: 'http://localhost:5000/organizations/' + org_id + '/files',
+                url: window.origin + '/organizations/' + org_id + '/files',
                 then: data => data.files.map(file => [file.file_name, file.date_uploaded, file.local_file_path, file.full_file_path, file.organization_name])
             }
         }).render(document.getElementById(id));

@@ -16,9 +16,7 @@ from werkzeug.security import (
     generate_password_hash
 )
 
-
-from db import db_conf as db
-
+from mrp_app import app
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -28,8 +26,7 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        session = mysqlx.get_session(
-            {'host': db.HOST, 'port': db.PORT, 'user': db.USER, 'password': db.PASSWORD})
+        session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
         error = None
 
         if not username:
@@ -61,8 +58,7 @@ def login():
         username = request.form['username']
         print("USERNAME = ", username)
         password = request.form['password']
-        sqlsession = mysqlx.get_session(
-            {'host': db.HOST, 'port': db.PORT, 'user': db.USER, 'password': db.PASSWORD})
+        sqlsession = mysqlx.get_session(app.config["DB_CREDENTIALS"])
         error = None
         user = sqlsession.sql(
             'SELECT * FROM `Organizations`.`User` WHERE `username` = ?'
@@ -88,8 +84,7 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        sqlsession = mysqlx.get_session(
-            {'host': db.HOST, 'port': db.PORT, 'user': db.USER, 'password': db.PASSWORD})
+        sqlsession = mysqlx.get_session(app.config["DB_CREDENTIALS"])
         g.user = sqlsession.sql(
             'SELECT * FROM `Organizations`.`User` WHERE `user_id` = ?'
         ).bind((user_id,)).execute().fetch_one()
