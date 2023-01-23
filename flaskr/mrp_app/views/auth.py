@@ -1,6 +1,5 @@
 
 import functools
-import mysqlx
 from flask import (
     Blueprint,
     flash,
@@ -11,12 +10,9 @@ from flask import (
     session,
     url_for
 )
-from werkzeug.security import (
-    check_password_hash, 
-    generate_password_hash
-)
 
 from mrp_app import app
+from mrp_app.models import auth
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -26,24 +22,15 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
         error = None
 
         if not username:
             error = 'Username is required.'
         elif not password:
             error = 'Password is required.'
-
+        
         if error is None:
-            try:
-                session.sql(
-                    "INSERT INTO `Organizations`.`User` (`person_id`, `username`, `encrypted_password`, `access_privileges`) VALUES (?, ?, ?, ?)",
-                ).bind((username, generate_password_hash(password)),).execute()
-            except Exception as err:
-                if err.args[0] == 1062:
-                    error = f"User {username} is already registered."
-            else:
-                return redirect(url_for("auth.login"))
+            error = auth.register(username, password)
 
         flash(error)
         session.commit()
@@ -54,27 +41,13 @@ def register():
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
     if request.method == 'POST':
-        print("TEST")
         username = request.form['username']
-        print("USERNAME = ", username)
         password = request.form['password']
-        sqlsession = mysqlx.get_session(app.config["DB_CREDENTIALS"])
-        error = None
-        user = sqlsession.sql(
-            'SELECT * FROM `Organizations`.`User` WHERE `username` = ?'
-        ).bind((username,)).execute().fetch_one()
-
-        if user is None:
-            error = 'Incorrect username.'
-        elif not check_password_hash(user['encrypted_password'], password):
-            error = 'Incorrect password.'
-        print("ERROR = ", error)
-        if error is None:
-            session.clear()
-            session['user_id'] = user['user_id']
-            return redirect(url_for('home.index'))
-
-        flash(error)
+        error = auth.login(username, password)
+        if error:
+            flash(error)
+        else:
+            return render_template("home/index.html")
 
     return render_template('auth/login.html')
 
@@ -84,10 +57,7 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        sqlsession = mysqlx.get_session(app.config["DB_CREDENTIALS"])
-        g.user = sqlsession.sql(
-            'SELECT * FROM `Organizations`.`User` WHERE `user_id` = ?'
-        ).bind((user_id,)).execute().fetch_one()
+        g.user = auth.get_user(user_id)
 
 
 @bp.route('/logout')

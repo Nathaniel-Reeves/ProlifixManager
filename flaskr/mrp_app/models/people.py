@@ -1,12 +1,8 @@
-"""
-Handling api requests related to People objects. Defines people objects.
-"""
-
 from datetime import datetime
-from flask import Blueprint
+import mysqlx
 
+from mrp_app import app
 
-bp = Blueprint('people', __name__, url_prefix='/people')
 
 class Person:
     """Represents a person."""
@@ -89,29 +85,28 @@ class Person:
 
         return True
 
-# @bp.route('/', methods=('GET',))
-# def get_people():
-#     """Returns a list of people."""
-#     session = mysqlx.get_session({
-#         'host':db.HOST,
-#         'port':db.PORT,
-#         'user':db.USER,
-#         'password':db.PASSWORD
-#     })
-#     result = session.sql(
-#         """
-#         SELECT * FROM `Organizations`.`People`
-#         ORDER BY `first_name`;
-#         """
-#     ).execute()
-#     people_data = result.fetch_all()
-#     columns = result.get_columns()
-#     return_data = []
-#     for data in people_data:    
-#         res = {}
-#         for i in range(len(list(data))):
-#             res[columns[i].get_column_name()] = data[i]
-#         return_data.append(res)
-#     return return_data
-
-
+def fetch_people_by_org(org_id):
+    session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
+    result = session.sql(
+        """
+        SELECT `person_id`, 
+        `first_name`,
+        `last_name`,
+        `job_title`,
+        `phone_number`,
+        `email_address` 
+        FROM `Organizations`.`People`
+        WHERE `organization_id` = %s
+        ORDER BY `first_name`;
+        """ % org_id
+    ).execute()
+    people_data = result.fetch_all()
+    columns = result.get_columns()
+    return_data = []
+    for data in people_data:
+        res = {}
+        for i in range(len(list(data))):
+            res[columns[i].get_column_name()] = data[i]
+        return_data.append(res)
+    if return_data:
+        return return_data

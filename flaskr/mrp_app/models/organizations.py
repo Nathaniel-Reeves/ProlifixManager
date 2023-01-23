@@ -74,65 +74,9 @@ class Organization:
     # """Error Handling Functions"""
 
     def get_errors(self):
-        """Fetches rows from a Bigtable.
-
-        Retrieves rows pertaining to the given keys from the Table instance
-        represented by big_table.  Silly things may happen if
-        other_silly_variable is not None.
-
-        Args:
-            big_table: An open Bigtable Table instance.
-            keys: A sequence of strings representing the key of each table row
-                to fetch.
-            other_silly_variable: Another optional variable, that has a much
-                longer name than the other args, and which does nothing.
-
-        Returns:
-            A dict mapping keys to the corresponding table row data
-            fetched. Each row is represented as a tuple of strings. For
-            example:
-
-            {'Serak': ('Rigel VII', 'Preparer'),
-            'Zim': ('Irk', 'Invader'),
-            'Lrrr': ('Omicron Persei 8', 'Emperor')}
-
-            If a key from the keys argument is missing from the dictionary,
-            then that row was not found in the table.
-
-        Raises:
-            IOError: An error occurred accessing the bigtable.Table object.
-        """
         return self.errors
 
     def clear_errors(self):
-        """Fetches rows from a Bigtable.
-
-        Retrieves rows pertaining to the given keys from the Table instance
-        represented by big_table.  Silly things may happen if
-        other_silly_variable is not None.
-
-        Args:
-            big_table: An open Bigtable Table instance.
-            keys: A sequence of strings representing the key of each table row
-                to fetch.
-            other_silly_variable: Another optional variable, that has a much
-                longer name than the other args, and which does nothing.
-
-        Returns:
-            A dict mapping keys to the corresponding table row data
-            fetched. Each row is represented as a tuple of strings. For
-            example:
-
-            {'Serak': ('Rigel VII', 'Preparer'),
-            'Zim': ('Irk', 'Invader'),
-            'Lrrr': ('Omicron Persei 8', 'Emperor')}
-
-            If a key from the keys argument is missing from the dictionary,
-            then that row was not found in the table.
-
-        Raises:
-            IOError: An error occurred accessing the bigtable.Table object.
-        """
         self.errors = []
 
     def print_errors(self):
@@ -195,34 +139,6 @@ class Organization:
     # """Restful API Functions"""
 
     def get_org(self, org_id):
-        """Fetches rows from a Bigtable.
-
-        Retrieves rows pertaining to the given keys from the Table instance
-        represented by big_table.  Silly things may happen if
-        other_silly_variable is not None.
-
-        Args:
-            big_table: An open Bigtable Table instance.
-            keys: A sequence of strings representing the key of each table row
-                to fetch.
-            other_silly_variable: Another optional variable, that has a much
-                longer name than the other args, and which does nothing.
-
-        Returns:
-            A dict mapping keys to the corresponding table row data
-            fetched. Each row is represented as a tuple of strings. For
-            example:
-
-            {'Serak': ('Rigel VII', 'Preparer'),
-            'Zim': ('Irk', 'Invader'),
-            'Lrrr': ('Omicron Persei 8', 'Emperor')}
-
-            If a key from the keys argument is missing from the dictionary,
-            then that row was not found in the table.
-
-        Raises:
-            IOError: An error occurred accessing the bigtable.Table object.
-        """
         # Connect to db and query organization data
         session = self._connect_session()
         org_table = session.get_schema(
@@ -271,34 +187,6 @@ class Organization:
         return True
 
     def put_org(self, request_obj):
-        """Fetches rows from a Bigtable.
-
-            Retrieves rows pertaining to the given keys from the Table instance
-            represented by big_table.  Silly things may happen if
-            other_silly_variable is not None.
-
-            Args:
-                big_table: An open Bigtable Table instance.
-                keys: A sequence of strings representing the key of each table row
-                    to fetch.
-                other_silly_variable: Another optional variable, that has a much
-                    longer name than the other args, and which does nothing.
-
-            Returns:
-                A dict mapping keys to the corresponding table row data
-                fetched. Each row is represented as a tuple of strings. For
-                example:
-
-                {'Serak': ('Rigel VII', 'Preparer'),
-                'Zim': ('Irk', 'Invader'),
-                'Lrrr': ('Omicron Persei 8', 'Emperor')}
-
-                If a key from the keys argument is missing from the dictionary,
-                then that row was not found in the table.
-
-            Raises:
-                IOError: An error occurred accessing the bigtable.Table object.
-            """
         self._set_data(request_obj)
 
         # Start session and transaction
@@ -330,34 +218,6 @@ class Organization:
         return True
 
     def post_org(self, request_obj):
-        """Fetches rows from a Bigtable.
-
-        Retrieves rows pertaining to the given keys from the Table instance
-        represented by big_table.  Silly things may happen if
-        other_silly_variable is not None.
-
-        Args:
-            big_table: An open Bigtable Table instance.
-            keys: A sequence of strings representing the key of each table row
-                to fetch.
-            other_silly_variable: Another optional variable, that has a much
-                longer name than the other args, and which does nothing.
-
-        Returns:
-            A dict mapping keys to the corresponding table row data
-            fetched. Each row is represented as a tuple of strings. For
-            example:
-
-            {'Serak': ('Rigel VII', 'Preparer'),
-            'Zim': ('Irk', 'Invader'),
-            'Lrrr': ('Omicron Persei 8', 'Emperor')}
-
-            If a key from the keys argument is missing from the dictionary,
-            then that row was not found in the table.
-
-        Raises:
-            IOError: An error occurred accessing the bigtable.Table object.
-        """
 
         self._set_data(request_obj)
 
@@ -531,34 +391,6 @@ class Organization:
         return False
 
     def _set_data(self, request_obj):
-        """Fetches rows from a Bigtable.
-
-        Retrieves rows pertaining to the given keys from the Table instance
-        represented by big_table.  Silly things may happen if
-        other_silly_variable is not None.
-
-        Args:
-            big_table: An open Bigtable Table instance.
-            keys: A sequence of strings representing the key of each table row
-                to fetch.
-            other_silly_variable: Another optional variable, that has a much
-                longer name than the other args, and which does nothing.
-
-        Returns:
-            A dict mapping keys to the corresponding table row data
-            fetched. Each row is represented as a tuple of strings. For
-            example:
-
-            {'Serak': ('Rigel VII', 'Preparer'),
-            'Zim': ('Irk', 'Invader'),
-            'Lrrr': ('Omicron Persei 8', 'Emperor')}
-
-            If a key from the keys argument is missing from the dictionary,
-            then that row was not found in the table.
-
-        Raises:
-            IOError: An error occurred accessing the bigtable.Table object.
-        """
         request_data = request_obj.form
         flag_type = True
 
@@ -604,97 +436,15 @@ class Organization:
         self.update_vetted()
 
     def update_vetted(self):
-        """Fetches rows from a Bigtable.
-
-        Retrieves rows pertaining to the given keys from the Table instance
-        represented by big_table.  Silly things may happen if
-        other_silly_variable is not None.
-
-        Args:
-            big_table: An open Bigtable Table instance.
-            keys: A sequence of strings representing the key of each table row
-                to fetch.
-            other_silly_variable: Another optional variable, that has a much
-                longer name than the other args, and which does nothing.
-
-        Returns:
-            A dict mapping keys to the corresponding table row data
-            fetched. Each row is represented as a tuple of strings. For
-            example:
-
-            {'Serak': ('Rigel VII', 'Preparer'),
-            'Zim': ('Irk', 'Invader'),
-            'Lrrr': ('Omicron Persei 8', 'Emperor')}
-
-            If a key from the keys argument is missing from the dictionary,
-            then that row was not found in the table.
-
-        Raises:
-            IOError: An error occurred accessing the bigtable.Table object.
-        """
+        # TODO:
         self.date_vetted = str(date.today())
 
     def check_vetted_expired(self):
-        """Fetches rows from a Bigtable.
-
-        Retrieves rows pertaining to the given keys from the Table instance
-        represented by big_table.  Silly things may happen if
-        other_silly_variable is not None.
-
-        Args:
-            big_table: An open Bigtable Table instance.
-            keys: A sequence of strings representing the key of each table row
-                to fetch.
-            other_silly_variable: Another optional variable, that has a much
-                longer name than the other args, and which does nothing.
-
-        Returns:
-            A dict mapping keys to the corresponding table row data
-            fetched. Each row is represented as a tuple of strings. For
-            example:
-
-            {'Serak': ('Rigel VII', 'Preparer'),
-            'Zim': ('Irk', 'Invader'),
-            'Lrrr': ('Omicron Persei 8', 'Emperor')}
-
-            If a key from the keys argument is missing from the dictionary,
-            then that row was not found in the table.
-
-        Raises:
-            IOError: An error occurred accessing the bigtable.Table object.
-        """
-        #TODO:
+        # TODO:
         self.vetted = True
 
     def _set_ship_time(self):
-        """Fetches rows from a Bigtable.
-
-        Retrieves rows pertaining to the given keys from the Table instance
-        represented by big_table.  Silly things may happen if
-        other_silly_variable is not None.
-
-        Args:
-            big_table: An open Bigtable Table instance.
-            keys: A sequence of strings representing the key of each table row
-                to fetch.
-            other_silly_variable: Another optional variable, that has a much
-                longer name than the other args, and which does nothing.
-
-        Returns:
-            A dict mapping keys to the corresponding table row data
-            fetched. Each row is represented as a tuple of strings. For
-            example:
-
-            {'Serak': ('Rigel VII', 'Preparer'),
-            'Zim': ('Irk', 'Invader'),
-            'Lrrr': ('Omicron Persei 8', 'Emperor')}
-
-            If a key from the keys argument is missing from the dictionary,
-            then that row was not found in the table.
-
-        Raises:
-            IOError: An error occurred accessing the bigtable.Table object.
-        """
+        # TODO:
         if self.ship_time_unit == "Day/s":
             self.ship_time_in_days = int(self.ship_time)
         elif self.ship_time_unit == "Week/s":
@@ -703,3 +453,78 @@ class Organization:
             self.ship_time_in_days = int(self.ship_time) * 30
         else:
             self.ship_time_in_days = 0
+
+
+def fetch_clients():
+    session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
+    result = session.sql(
+        """SELECT * FROM `Organizations`.`Organizations`
+        WHERE `client` = true
+        ORDER BY `organization_name` DESC;"""
+    ).execute()
+    clients_data = result.fetch_all()
+    clients_columns = result.get_columns()
+    data = table_to_json(clients_data, clients_columns)
+    return data
+
+
+def fetch_suppliers():
+    session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
+    result = session.sql(
+        """SELECT * FROM `Organizations`.`Organizations`
+        WHERE `suppliers` = true
+        ORDER BY `organization_name` DESC;"""
+    ).execute()
+    suppliers_data = result.fetch_all()
+    suppliers_columns = result.get_columns()
+    data = table_to_json(suppliers_data, suppliers_columns)
+    return data
+
+def table_to_json(table_data, columns):
+    return_data = []
+    for row_data in table_data:
+        res = {"files": []}
+        for i in range(len(list(row_data))):
+            if columns[i].get_column_name() == "doc":
+                res["files"] = json.loads(row_data[i].decode(
+                    'utf8').replace("'", '"'))["files"]
+            else:
+                res[columns[i].get_column_name()] = row_data[i]
+        return_data.append(res)
+    return return_data
+
+def fetch_documents(org_id):
+    session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
+    doc = session.get_schema('Organizations').get_collection(
+        'Organizations').get_one(org_id).as_str()
+    return json.loads(doc)
+
+
+"""Fetches rows from a Bigtable.
+
+Retrieves rows pertaining to the given keys from the Table instance
+represented by big_table.  Silly things may happen if
+other_silly_variable is not None.
+
+Args:
+    big_table: An open Bigtable Table instance.
+    keys: A sequence of strings representing the key of each table row
+        to fetch.
+    other_silly_variable: Another optional variable, that has a much
+        longer name than the other args, and which does nothing.
+
+Returns:
+    A dict mapping keys to the corresponding table row data
+    fetched. Each row is represented as a tuple of strings. For
+    example:
+
+    {'Serak': ('Rigel VII', 'Preparer'),
+    'Zim': ('Irk', 'Invader'),
+    'Lrrr': ('Omicron Persei 8', 'Emperor')}
+
+    If a key from the keys argument is missing from the dictionary,
+    then that row was not found in the table.
+
+Raises:
+    IOError: An error occurred accessing the bigtable.Table object.
+"""
