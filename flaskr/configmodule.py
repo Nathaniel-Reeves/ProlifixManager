@@ -1,12 +1,10 @@
 class Config(object):
     """Base Configuration Settings for Flask App."""
     # Flask Config
-    DEBUG = True
     
     # import secrets
     # secret_key = secrets.token_urlsafe(64)
     SECRET_KEY = 'NiHuLSNTFA4RsvtbBmCcDDJXJxbAnw13MRwJsL9WdNT9Jf8_hrQ0hMKroq_96ewipByaBqGRfSuhMQqSn3cArg'
-    TESTING = True
 
     # String Date Formatting
     DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
@@ -48,6 +46,9 @@ class Config(object):
 class Work_Laptop_Config(Config):
     """Work Laptop Config Settings for Flask App"""
     MESSAGE = "Work Laptop Config"
+    TESTING = True
+    DEBUG = True
+    ENV = 'development'
 
     # Database Connection
     HOST = '192.168.1.42'
@@ -73,9 +74,29 @@ class Home_PC_Config(Config):
     UPLOAD_FOLDER = '/mnt/s/uploads'
 
 
+class Home_PC_To_Pi_Config(Config):
+    """Home PC Config Settings for Flask App connecting to pi-server"""
+    MESSAGE = "Home PC To Pi-Server Config"
+    TESTING = True
+    FLASK_DEBUG = True
+    ENV = 'development'
+
+    # Database Connection
+    HOST = '64.255.82.22'
+    PORT = 33060
+    USER = 'client'
+    PASSWORD = 'clientPassword5!'
+
+    # File Saving
+    UPLOAD_FOLDER = '/mnt/s/uploads'
+
+
 class School_Laptop_Config(Config):
     """School Laptop Config Settings for Flask App"""
     MESSAGE = "School Laptop Config"
+    TESTING = True
+    DEBUG = True
+    ENV = 'development'
 
     # Database Connection
     HOST = 'localhost'
@@ -90,6 +111,9 @@ class School_Laptop_Config(Config):
 class Pi_Server_Config(Config):
     """Pi Server Config Settings for Flask App"""
     MESSAGE = "Pi Server Config"
+    TESTING = True
+    DEBUG = True
+    ENV = 'development'
 
     # Database Connection
     HOST = '192.168.1.42'
