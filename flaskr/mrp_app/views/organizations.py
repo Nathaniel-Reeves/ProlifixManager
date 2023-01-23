@@ -11,20 +11,18 @@ from flask import (
     request,
     abort
 )
-from werkzeug.utils import secure_filename
 
 
 from mrp_app.views.auth import (
     login_required
 )
-from mrp_app.models.organizations import (
-    Organization, 
-    fetch_suppliers, 
+from flaskr.mrp_app.models.organizations import (
+    Organization,
+    fetch_suppliers,
     fetch_clients,
     fetch_documents
 )
 from mrp_app.models.people import (
-    Person, 
     fetch_people_by_org
 )
 
@@ -50,7 +48,13 @@ def get_suppliers():
 @login_required
 def post_organization(org_type):
     g.org_type = org_type
+
     if request.method == 'POST':
+        form_data = dict(request.form)
+        print(form_data)
+        file_data = dict(request.files)
+        print(file_data)
+
         new_org = Organization()
         if new_org.org_exists(request):
             flash("'%s' already exists in the database." % new_org.organization_name)
