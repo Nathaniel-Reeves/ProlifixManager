@@ -1,0 +1,229 @@
+organization_id,organization_initial,organization_name,date_entered,alias_names,website_url,vetted,date_vetted,risk_level,supplier,client,lab,other,notes
+1,PLX,Prolifix Nutrition,2020-07-01,Prolifix,www.prolifixnutrition.com,1,,No Risk,1,1,0,0,
+2,ARL,Albion laboratories,2022-02-17,Albion,balchem.com,0,2022-02-17,No Risk,0,0,1,0,Data from survey
+3,AM,Aloha Medicinals,2022-01-19,,https://alohamedicinals.com/,0,2022-01-19,UNKNOWN,1,0,0,0,Data from survey
+4,ANI,AuNutra Industries Inc.,2022-02-09,AuNutra,www.aunutra.com,0,2022-02-09,UNKNOWN,1,0,0,0,Data from survey
+5,AS,Azure Standard,2022-02-22,Azure Market,https://www.azurestandard.com/,0,2022-02-22,UNKNOWN,1,0,0,0,Data from survey
+6,BK,Bio Kinetics Corporation,2022-01-20,Bio-Kinetics,allsprouts.com,0,2022-01-20,UNKNOWN,1,0,0,0,Data from survey
+7,BS,Bulk Supplements,2022-03-09,,bulksupplements.com,0,2022-03-09,UNKNOWN,1,0,0,0,Data from survey
+8,CC,Cambridge Commodities,2022-02-23,,cambridgecommodities.com,0,2022-02-23,UNKNOWN,1,0,0,0,Data from survey
+9,ER,Ecuadorian Rainforest,2022-02-25,Ecuadorian,intotherainforest.com,0,2022-02-25,UNKNOWN,1,0,0,0,Data from survey
+10,D,Daesang,2022-02-25,,foodtopiausa.com,0,2022-02-25,UNKNOWN,1,0,0,0,Data from survey
+11,HQO,High Quality Organics,2022-02-22,,hqorganics.com,0,2022-02-22,UNKNOWN,1,0,0,0,Data from survey
+12,H,Honeyville Inc.,2022-01-28,Honeyville,https://honeyville.com/,0,2022-01-28,UNKNOWN,1,0,0,0,Data from survey
+13,HN,Hunan Nutramax Inc,2022-01-24,"Hunan Nutramax, Nutramax",www.nutra-max.com,0,2022-01-24,UNKNOWN,1,0,0,0,Data from survey
+14,LN,Liberty Natural,2022-03-09,,Libertynatural.com,0,2022-03-09,UNKNOWN,1,0,0,0,Data from survey
+15,LD,LiquaDry,2022-01-19,,LiquaDry.com,0,2022-01-19,UNKNOWN,1,0,0,0,Data from survey
+16,LOOV,LOOV Organic,2022-02-21,LOOV,loovfood.com,0,2022-02-21,UNKNOWN,1,0,0,0,Data from survey
+17,NF,Nature's Flavors,2022-02-21,,naturesflavors.com,0,2022-02-21,UNKNOWN,1,0,0,0,Data from survey
+18,NPN,Nature's Power Nutraceuticals Corp. dba NP Nutra,2022-01-26,"NP Nutra, Nutraceuticals",www.npnutra.com,0,2022-01-26,UNKNOWN,1,0,0,0,Data from survey
+19,N,Nexira International S.A.S.,2022-03-01,Nexira,nexira.com,0,2022-03-01,UNKNOWN,1,0,0,0,Data from survey
+20,NAR,North American Reishi Ltd. DBA Nammex,2022-02-02,,https://www.nammex.com/,0,2022-02-02,UNKNOWN,1,0,0,0,Data from survey
+21,OF,Om Foods Inc (Essential Organics),2022-02-01,Essential Organics,essentialorganicingredients.com,0,2022-02-01,UNKNOWN,1,0,0,0,Data from survey
+22,PB,Pacific Botanicals Holding LLC,2022-01-31,Pacific Botanicals,www.pacificbotanicals.com,0,2022-01-31,UNKNOWN,1,0,0,0,Data from survey
+23,PFL,Prescribed for Life,2022-02-17,Prescribed 4 life,pforlife.com,0,2022-02-17,UNKNOWN,1,0,0,0,Data from survey
+24,PB,Pure Bulk,2022-03-08,,purebulk.com,0,2022-03-08,UNKNOWN,1,0,0,0,Data from survey
+25,SE,Specialty Enzymes E&P,2022-03-08,Specialty E+P,specialtyenzymes.com,0,2022-03-08,UNKNOWN,1,0,0,0,Data from survey
+26,AS,The Australian Superfood Co.,2022-01-30,Australian Superfood,https://austsuperfoods.com.au/,0,2022-01-30,UNKNOWN,1,0,0,0,Data from survey
+27,TYH,To Your Health Sprouted Flour Co.,2022-01-30,To Your Health,Healthyflour.com,0,2022-01-30,UNKNOWN,1,0,0,0,Data from survey
+28,UE,Unichem Enterprises,2022-03-01,Unichem,unichemsupply.com,0,2022-03-01,UNKNOWN,1,0,0,0,Data from survey
+29,WH,Whole Herb Company,2022-02-17,Whole Herb,wholeherbcompany.com,0,2022-02-17,UNKNOWN,1,0,0,0,Data from survey
+30,ZBB,"Zhejiang Biosan Biotech Co.,Ltd",2022-02-17,Biosan,qualitymushroom.com,0,2022-02-17,UNKNOWN,1,0,0,0,Data from survey
+31,HB,Healthway Biotech,2022-03-15,"Healthway Bio, Xi'an Healthway Biotech",xahealthway.com,0,2022-03-15,UNKNOWN,1,0,0,0,Data from survey
+32,S,Stryka,2022-03-23,,stryka.com,0,2022-03-23,UNKNOWN,1,0,0,0,Data from survey
+33,CM,Consulting Management,,,,0,,UNKNOWN,0,1,0,0,Data from URL Library
+34,E,Enerex,,,https://enerex.ca/,0,,UNKNOWN,0,1,0,0,Data from URL Library
+35,HG,Herbally Grounded,,Herb Garden,https://herballygrounded.com/,0,,UNKNOWN,0,1,0,0,Data from URL Library
+36,HES,Holistic Earth Supplements,,,,0,,UNKNOWN,1,1,0,0,Data from URL Library
+37,IS,Immune Solution,,,https://immunesolution.com/,0,,UNKNOWN,0,1,0,0,Data from URL Library
+38,MAJU,Maju Superfoods,,Maju,https://majusuperfoods.com/,0,,UNKNOWN,1,1,0,0,Data from URL Library
+39,M,Markus Rothcranz,,Markus,https://www.markusrothkranz.com/online-store/index.html,0,,UNKNOWN,1,1,0,0,Data from URL Library
+40,M3O,Makes3Organics,,Petsmot,https://makes3organics.com/,0,,UNKNOWN,0,1,0,0,Data from URL Library
+41,RH,Revelation Health,,Safer Medical,https://revelationhealth.com/,0,,UNKNOWN,1,1,0,0,Data from URL Library
+42,V,Vita-myr,,,https://vita-myr.com/,0,,UNKNOWN,0,1,0,0,Data from URL Library
+43,KN,KN Life-Biotics,,Life-Biotics,https://www.knlifebiotics.com/,0,,UNKNOWN,0,1,0,0,Data from URL Library
+44,BON,Balance of Nature,,,https://www.balanceofnature.com/,0,,UNKNOWN,0,1,0,0,Data from URL Library
+45,NA,Natrual Approch Nutrition,,NAN Health,https://www.naturalapproachnutrition.com/,0,,UNKNOWN,1,1,0,0,Data from URL Library
+46,T,Tranont,,Mana Life,https://www.tranont.com/,0,,UNKNOWN,0,1,0,0,Data from URL Library
+47,BR,Bloomfield Roots,,,https://www.bloomfieldroots.com/,0,,UNKNOWN,1,1,0,0,Data from URL Library
+48,,AG Commodities,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+49,,AIDP,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+50,,Albion,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+51,,Alpha Naturals,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+52,,Altaiga,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+53,,Altalena,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+54,,American Botanicals,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+55,,American Lecithin Company,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+56,,Ameriherb,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+57,,Aminature,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+58,,Anchor,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+59,,Anhui Sealong Bio,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+60,,APP Global,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+61,,Aroma Depot,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+62,,Austrade,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+63,,Aviva,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+64,,Balchem,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+65,,Baobab Foods,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+66,,Baolingbao Bio Co Ltd,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+67,,Bio-Gen,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+68,,Bioresponse,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+69,,Black Earth,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+70,,Blue Mountain,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+71,,Box Nutra Maxsun Industries,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+72,,Bulk Foods,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+73,,Bulkeez,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+74,,CarGill,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+75,,Changsha HuaKang Bio,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+76,,CI Inc,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+77,,Cypress,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+78,,diatomaceousearth.com,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+79,,DNP International,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+80,,DolCas Biotech,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+81,,Dongguan,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+82,,Earthrise,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+83,,Elite Ingredients,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+84,,Flora Aromatics,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+85,,Fying,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+86,,GeroNova Innovations,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+87,,Ginco,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+88,,Glory Bee,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+89,,Gold Coast,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+90,,Gourmet Mushroom,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+91,,Green Source Organic,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+92,,Green Wave Ingredients,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+93,,Greenjeeva,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+94,,GTX Technologies,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+95,,Hand Ground,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+96,,Harmony Concepts,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+97,,Health Tech,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+98,,Heartland Flax,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+99,,Hebei Changhao,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+100,,Hebei Huaheng,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+101,,Herb Green Health,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+102,,Hong Hao,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+103,,Hubei Grand Life Science,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+104,,Hunan Essence,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+105,,Imaherb,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+106,,IN Ingredients,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+107,,Ingredients Online,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+108,,Innomark,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+109,,Inter Naturales,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+110,,Jiangsu Jiushoutang,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+111,,JianGxi Tianxin,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+112,,Jinan Asia Pharmaceutical,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+113,,JoMar Labs,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+114,,Jubliant Ingrevia,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+115,,King-Year Bio,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+116,,KN Bioscience,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+117,,Konoshima Chemical,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+118,,Lakanto,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+119,,Lallemand,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+120,,Le-Sen Biotech,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+121,,Lin-he,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+122,,Live Earth,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+123,,Longze Bio,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+124,,Lycored,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+125,,Monterey Bay,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+126,,Mountain Rose,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+127,,Murray cevticals,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+128,,Mushroom Harvest,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+129,,Nammex,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+130,,National Enzyme Co.,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+131,,Natreon,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+132,,Natural Grocers,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+133,,Nature Vibe,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+134,,Nature's Harvest International,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+135,,Natures's Harvest International,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+136,,Naturex,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+137,,NB Foods,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+138,,Ningbo Herb,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+139,,Northe,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+140,,Novel Nutrients,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+141,,Novotech Nutraceuticals,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+142,,Now Foods,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+143,,Nuherbs,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+144,,Nura,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+145,,Nutrafood,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+146,,Nutri Vita,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+147,,Nutricargo,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+148,,Nutrient Innovations,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+149,,Nutriland,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+150,,Nutrisol Solutions,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+151,,Nuts.com,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+152,,OH Nuts,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+153,,Orcas Naturals,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+154,,Orgenetics,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+155,,Parashaunt,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+156,,Pioneer,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+157,,PNI,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+158,,ProNatrual,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+159,,PurCaf,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+160,,Pure Assay,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+161,,Qimei Industrial,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+162,,Raw Power,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+163,,RDV,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+164,,Redmond,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+165,,Rice Bran Technologies,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+166,,Rice Plus,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+167,,Ringing Cedar,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+168,,Rya Foods,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+169,,SA Herbal,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+170,,SA Retail,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+171,,Saherbal,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+172,,San Francisco Herb Co,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+173,,Sandong Aocter,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+174,,Saw Palmetto Florida,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+175,,Segment,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+176,,Shandong Tianli Pharmaceutical,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+177,,Shining Seas,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+178,,Shuangta Food,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+179,,Shuguang,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+180,,Siberian Green,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+181,,Silva,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+182,,Skystone Feed,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+183,,Skystone Pharm,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+184,,Small Town Specialties,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+185,,Starwest Botanicals,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+186,,Swanson,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+187,,Synergized,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+188,,Talya,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+189,,Teng Yun,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+190,,TheraPlantes,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+191,,Tianhua Pharmacy,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+192,,TruHerb,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+193,,Urmi Lifesciences,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+194,,USGreens,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+195,,Valensa,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+196,,Van Drunen,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+197,,Venkatesh,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+198,,VitaJoy,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+199,,VitaminSea,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+200,,Vivion,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+201,,Wonderful Herb,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+202,,Wuhan Grand Hoyo,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+203,,Xi'an Dealing Biotechnology,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+204,,Yosin Bio,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+205,,Z Natural Foods,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+206,,ZHT Sci-Tech,,,,0,,UNKNOWN,1,0,0,0,Data from Powders Inventory
+207,,Alpha,,,,0,,No Risk,1,0,0,0,Data from Items Inventory
+208,,Bright Pharma,,,,0,,No Risk,1,0,0,0,Data from Items Inventory
+209,,Canyon Plastics,,,,0,,No Risk,1,0,0,0,Data from Items Inventory
+210,,Carolina,,,,0,,No Risk,1,0,0,0,Data from Items Inventory
+211,,Comar,,,,0,,No Risk,1,0,0,0,Data from Items Inventory
+212,,Consolidated Design,,,,0,,No Risk,1,0,0,0,Data from Items Inventory
+213,,Desiccare,,,,0,,No Risk,1,0,0,0,Data from Items Inventory
+214,,Industrial Container,,,,0,,No Risk,1,0,0,0,Data from Items Inventory
+215,,Keystone Corp.,,,,0,,No Risk,1,0,0,0,Data from Items Inventory
+216,,MeasureX,,,,0,,No Risk,1,0,0,0,Data from Items Inventory
+217,,Mold-Rite Plastics,,,,0,,No Risk,1,0,0,0,Data from Items Inventory
+218,,National Measures,,,,0,,No Risk,1,0,0,0,Data from Items Inventory
+219,,Performance Dry,,,,0,,No Risk,1,0,0,0,Data from Items Inventory
+220,,Phoenix,,,,0,,No Risk,1,0,0,0,Data from Items Inventory
+221,,PSPrint,,,,0,,No Risk,1,0,0,0,Data from Items Inventory
+222,,Rieke,,,,0,,No Risk,1,0,0,0,Data from Items Inventory
+223,,Silver Spur Corp.,,,,0,,No Risk,1,0,0,0,Data from Items Inventory
+224,,Sonic Plastic,,,,0,,No Risk,1,0,0,0,Data from Items Inventory
+225,,Super Shrink,,,,0,,No Risk,1,0,0,0,Data from Items Inventory
+226,,Total Label USA,,,,0,,No Risk,1,0,0,0,Data from Items Inventory
+227,,Uline,,,,0,,No Risk,1,0,0,0,Data from Items Inventory
+228,,Visible,,,,0,,No Risk,1,0,0,0,Data from Items Inventory
