@@ -11,10 +11,10 @@ from flask import (
     url_for
 )
 
+bp = Blueprint('auth', __name__, url_prefix='/auth')
+
 from mrp_app import app
 from mrp_app.models import auth
-
-bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
 @bp.route('/register', methods=('GET', 'POST'))

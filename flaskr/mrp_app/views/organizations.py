@@ -41,6 +41,7 @@ def get_suppliers():
     return render_template('organizations/read-org.html',
                            organizations=fetch_suppliers())
 
+
 @bp.route('/create/<string:org_type>', methods=('GET', 'POST', ))
 @login_required
 def post_organization(org_type):
@@ -72,15 +73,16 @@ def post_organization(org_type):
 
     return render_template('organizations/create-org.html')
 
+
 @bp.route('/update/<int:org_id>', methods=('GET', 'PUT', 'POST', ))
 @login_required
 def put_organization(org_id):
-    org = Organization()
-    org.get_org(org_id)
+    org = Organization(org_id)
 
     if request.method == 'GET':
+        print(org.fetch_org())
         return render_template('organizations/update-org.html',
-                                   organization_data=org.obj_to_dict())
+                                   organization_data=org.fetch_org())
 
     if request.method == 'POST':
         org_saved = org.put_org(request)
