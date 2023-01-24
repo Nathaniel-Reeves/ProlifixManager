@@ -108,6 +108,23 @@ class School_Laptop_Config(Config):
     UPLOAD_FOLDER = '/mnt/c/uploads'
 
 
+class School_Laptop_To_Pi_Config(Config):
+    """School Laptop Config Settings for Flask App"""
+    MESSAGE = "School Laptop Config"
+    TESTING = True
+    DEBUG = True
+    ENV = 'development'
+
+    # Database Connection
+    HOST = '64.255.82.22'
+    PORT = 33060
+    USER = 'client'
+    PASSWORD = 'clientPassword5!'
+
+    # File Saving
+    UPLOAD_FOLDER = '/mnt/c/uploads'
+
+
 class Pi_Server_Config(Config):
     """Pi Server Config Settings for Flask App"""
     MESSAGE = "Pi Server Config"
