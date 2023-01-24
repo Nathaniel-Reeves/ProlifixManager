@@ -25,15 +25,10 @@ class Organization:
         vetted (bool): True if the organization is vetted.
         date_vetted (datetime): Date when the organization was vetted.
         risk_level (int): Risk level of the organization.
-        hq_street_address (str): HQ street address of the organization.
-        hq_city (str): HQ city of the organization.
-        hq_unit_apt (str): HQ unit/apt of the organization.
-        hq_zip_code (str): HQ zip code of the organization.
-        ship_time (str): Ship time of the organization.
-        ship_time_unit (str): Ship time unit of the organization.
-        ship_time_in_days (str): Ship time in days of the organization.
         supplier (bool): True if the organization is a supplier.
         client (bool): True if the organization is a client.
+        lab (bool): True if the organization is a lab.
+        other (bool): True if the organization some other catagory.
         documents (list): List of documents associated with the organization.
         notes (list): notes associated with the organization.
         TODO: files
@@ -51,17 +46,10 @@ class Organization:
         self.vetted = False
         self.date_vetted = None
         self.risk_level = 1
-        self.hq_street_address = ""
-        self.hq_unit_apt = ""
-        self.hq_city = ""
-        self.hq_region = ""
-        self.hq_country = ""
-        self.hq_zip_code = ""
-        self.ship_time = 0
-        self.ship_time_unit = 1
-        self.ship_time_in_days = 0
         self.supplier = False
         self.client = False
+        self.lab = False
+        self.other = False
         self.documents = []
         self.notes = ""
 
@@ -460,7 +448,7 @@ def fetch_clients():
     result = session.sql(
         """SELECT * FROM `Organizations`.`Organizations`
         WHERE `client` = true
-        ORDER BY `organization_name` DESC;"""
+        ORDER BY `organization_name`;"""
     ).execute()
     clients_data = result.fetch_all()
     clients_columns = result.get_columns()
@@ -472,8 +460,8 @@ def fetch_suppliers():
     session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
     result = session.sql(
         """SELECT * FROM `Organizations`.`Organizations`
-        WHERE `suppliers` = true
-        ORDER BY `organization_name` DESC;"""
+        WHERE `supplier` = true
+        ORDER BY `organization_name`;"""
     ).execute()
     suppliers_data = result.fetch_all()
     suppliers_columns = result.get_columns()

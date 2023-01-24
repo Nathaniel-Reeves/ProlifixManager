@@ -61,11 +61,20 @@
     <div class="view_content" id="{{ organization_data['organization_id'] }}" style="display:none;">
         <div class="view_content_box">
             <h3>Address</h3>
-
+            <!-- <p>{{ organization_data['hq_street_address'] }}<br>
+            Unit/Apt:{{ organization_data['hq_unit_apt'] }}<br>
+            {{ organization_data['hq_city'] }}, {{ organization_data['hq_region'] }}<br>
+            {{ organization_data['hq_country'] }}<br>
+            {{ organization_data['hq_zip_code'] }}</p> -->
         </div>
         <div class="view_content_box">
             <h3>Additional Info</h3>
-
+            <!-- {% if organization_data['vetted'] %}
+                <p>Vetted Status: TRUE</p>
+                <p>Date Vetted: {{ organization_data['date_vetted'] }}</p>
+            {% endif %}
+            <p>Average Shipping Time: {{ organization_data['ship_time'] }} {{ organization_data['ship_time_unit'] }}</p>
+            <p>Date of Entry: {{ organization_data['date_entered'].strftime('%Y-%m-%d') }}</p> -->
         </div>
         <div class="view_content_box">
             <h3>Notes</h3>
