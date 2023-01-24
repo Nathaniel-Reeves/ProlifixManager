@@ -9,7 +9,6 @@ DROP DATABASE IF EXISTS `Inventory`;
 DROP DATABASE IF EXISTS `Orders`;
 DROP DATABASE IF EXISTS `Products`;
 DROP DATABASE IF EXISTS `Manufacturing`;
-DROP DATABASE IF EXISTS `OrganizationDocs`;
 DROP DATABASE IF EXISTS `Organizations`;
 
 
@@ -32,30 +31,53 @@ CREATE TABLE `Organizations`.`User` (
 
 CREATE TABLE `Organizations`.`Organizations` (
   `organization_id` INT,
-  `organization_name` VARCHAR(200),
-  `organization_initial` VARCHAR(10),
-  `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `website` VARCHAR(200),
+  `organization_name` VARCHAR(200) NOT NULL,
+  `alias_names` VARCHAR(1000),
+  `organization_initial` VARCHAR(10) NOT NULL,
+  `date_entered` DATE DEFAULT NULL,
+  `website_url` VARCHAR(200),
   `vetted` BOOL,
-  `date_vetted` DATE,
+  `date_vetted` DATE DEFAULT NULL,
   `risk_level` ENUM("UNKNOWN", "No Risk", "Low Risk", "Medium Risk", "High Risk"),
-  `hq_street_address` VARCHAR(500),
-  `hq_unit_apt` VARCHAR(20),
-  `hq_city` VARCHAR(300),
-  `hq_region` VARCHAR(300),
-  `hq_country` VARCHAR(300),
-  `hq_zip_code` VARCHAR(20),
-  `ship_time` INT,
-  `ship_time_unit` ENUM( "Unknown","Day/s", "Week/s", "Month/s"),
-  `ship_time_in_days` INT,
   `supplier` BOOL DEFAULT false,
   `client` BOOL DEFAULT false,
+  `lab` BOOL DEFAULT false,
+  `other` BOOL DEFAULT false,
   `_json_schema` json GENERATED ALWAYS AS (_utf8mb4'{"type":"object"}') VIRTUAL,
   `doc` json DEFAULT (CONCAT('{"_id":"',`organization_id`,'","files":[]}')),
   `notes` VARCHAR(2500),
   PRIMARY KEY (`organization_id`),
   CONSTRAINT `Org_Org_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `Organizations`.`Facilities` (
+  `facility_id` INT AUTO_INCREMENT,
+  `organization_id` INT,
+  `building_name` VARCHAR(500),
+  `building_type` ENUM('Head Office', 'Office', 'Distribution Warehouse', 'Manufacturing Facility', 'Storefront'),
+  `street_1_number` INT,
+  `street_1_number_suffix` VARCHAR(10),
+  `street_1_name` VARCHAR(500),
+  `street_1_type` VARCHAR(300),
+  `street_1_direction` VARCHAR(2),
+  `street_2_number` INT,
+  `street_2_number_suffix` VARCHAR(10),
+  `street_2_name` VARCHAR(500),
+  `street_2_type` VARCHAR(300),
+  `street_2_direction` VARCHAR(2),
+  `address_type` VARCHAR(300),
+  `local_municipality` VARCHAR(500),
+  `city_town` VARCHAR(500),
+  `governing_district` VARCHAR(500),
+  `postal_area` VARCHAR(100),
+  `country` VARCHAR(500),
+  `ship_time` INT,
+  `ship_time_units` ENUM( "Unknown","Day/s", "Week/s", "Month/s"),
+  `ship_time_days` INT,
+  `notes` VARCHAR(2500),
+  PRIMARY KEY (`facility_id`),
+  FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
+);
 
 CREATE TABLE `Products`.`Product_Master` (
   `product_id` VARCHAR(250),
@@ -290,20 +312,15 @@ SELECT
     `Organizations`.`organization_id`,
     `Organizations`.`organization_name`,
     `Organizations`.`organization_initial`,
+    `Organizations`.`alias_names`,
     `Organizations`.`date_entered`,
-    `Organizations`.`website`,
+    `Organizations`.`website_url`,
     `Organizations`.`date_vetted`,
     `Organizations`.`risk_level`,
-    `Organizations`.`hq_street_address`,
-    `Organizations`.`hq_unit_apt`,
-    `Organizations`.`hq_city`,
-    `Organizations`.`hq_country`,
-    `Organizations`.`hq_zip_code`,
-    `Organizations`.`ship_time`,
-    `Organizations`.`ship_time_unit`,
-    `Organizations`.`ship_time_in_days`,
     `Organizations`.`supplier`,
     `Organizations`.`client`,
+    `Organizations`.`lab`,
+    `Organizations`.`other`,
     `Organizations`.`doc`,
     `Organizations`.`notes`
 FROM `Organizations`
@@ -314,32 +331,31 @@ LEFT JOIN `People` ON `Organizations`.`organization_id` = `People`.`organization
 -- Create Owner and Dev Accounts
 
 -- Insert Prolifix Nutrition Information
-INSERT INTO `Organizations`.`Organizations` (`organization_id`, `organization_name`, `organization_initial`, `website`, `hq_street_address`, `hq_unit_apt`, 
-	`hq_city`, `hq_region`, `hq_country`, `hq_zip_code`, `ship_time`, `ship_time_unit`, `supplier`, `client`, `risk_level`) VALUES (
-     "1", "Prolifix Nutrition", "PLX", "https://www.prolifixnutrition.com/", "696 South 5300 W", "#1", "Hurricane", "Utah", "United States", "84737", 0, "Day/s", True, True, "No Risk" );
+-- INSERT INTO `Organizations`.`Organizations` (`organization_id`, `organization_name`, `organization_initial`, `website`, `supplier`, `client`, `risk_level`) VALUES (
+--      "1", "Prolifix Nutrition", "PLX", "https://www.prolifixnutrition.com/", True, True, "No Risk" );
 
--- Some Client Information
-INSERT INTO `Organizations`.`Organizations` (`organization_id`, `organization_name`, `organization_initial`, `client`) VALUES ("2", "Markus", "MK", True);
-INSERT INTO `Organizations`.`Organizations` (`organization_id`, `organization_name`, `organization_initial`, `client`) VALUES ("3", "Maju", "MJ", True);
-INSERT INTO `Organizations`.`Organizations` (`organization_id`, `organization_name`, `organization_initial`, `client`) VALUES ("4", "Herbally Grounded", "MG", True);
+-- -- Some Client Information
+-- INSERT INTO `Organizations`.`Organizations` (`organization_id`, `organization_name`, `organization_initial`, `client`) VALUES ("2", "Markus", "MK", True);
+-- INSERT INTO `Organizations`.`Organizations` (`organization_id`, `organization_name`, `organization_initial`, `client`) VALUES ("3", "Maju", "MJ", True);
+-- INSERT INTO `Organizations`.`Organizations` (`organization_id`, `organization_name`, `organization_initial`, `client`) VALUES ("4", "Herbally Grounded", "MG", True);
 
--- Some Supplier Information
-INSERT INTO `Organizations`.`Organizations` (`organization_id`, `organization_name`, `organization_initial`, `supplier`) VALUES ("5", "Equadorian Rainforest", "ER", true);
-INSERT INTO `Organizations`.`Organizations` (`organization_id`, `organization_name`, `organization_initial`, `supplier`) VALUES ("6", "Stryka", "SK", true);
-INSERT INTO `Organizations`.`Organizations` (`organization_id`, `organization_name`, `organization_initial`, `supplier`) VALUES ("7", "Ingredients Online", "IO", true);
+-- -- Some Supplier Information
+-- INSERT INTO `Organizations`.`Organizations` (`organization_id`, `organization_name`, `organization_initial`, `supplier`) VALUES ("5", "Equadorian Rainforest", "ER", true);
+-- INSERT INTO `Organizations`.`Organizations` (`organization_id`, `organization_name`, `organization_initial`, `supplier`) VALUES ("6", "Stryka", "SK", true);
+-- INSERT INTO `Organizations`.`Organizations` (`organization_id`, `organization_name`, `organization_initial`, `supplier`) VALUES ("7", "Ingredients Online", "IO", true);
 
 -- Insert Nathaniel Reeves Person Info
-INSERT INTO `Organizations`.`People` (`organization_id`, `first_name`, `last_name`, `job_title`, `phone_number`, `email_address`, `is_employee`, `hourly_wage`, `contract_date`) VALUES 
-	(1, "Nathaniel", "Reeves", "Developer", "8013801953", "nathaniel.jacob.reeves@gmail.com", true, 18.50, '2020-6-16');
+-- INSERT INTO `Organizations`.`People` (`organization_id`, `first_name`, `last_name`, `job_title`, `phone_number`, `email_address`, `is_employee`, `hourly_wage`, `contract_date`) VALUES 
+-- 	(1, "Nathaniel", "Reeves", "Developer", "8013801953", "nathaniel.jacob.reeves@gmail.com", true, 18.50, '2020-6-16');
 
--- Insert Nathaniel Reeves User Info  (Password = testpassword)
-INSERT INTO `Organizations`.`User` (`user_id`, `person_id`, `username`, `encrypted_password`) VALUES (1, 1, "nreeves", "pbkdf2:sha256:260000$xwmRNkYGEsbVxWQk$598deee9e52133d7d3a96eeb060c81f90b06d3ea17fb705b1e834855f5234df6");
-UPDATE `Organizations`.`User` SET `doc` = JSON_SET(`doc`, '$.access_privileges', '{human_resources:manager, client_relations:manager, supplier_relations:manager, production:manager, logistics:manager}') WHERE `user_id` = 1;
+-- -- Insert Nathaniel Reeves User Info  (Password = testpassword)
+-- INSERT INTO `Organizations`.`User` (`user_id`, `person_id`, `username`, `encrypted_password`) VALUES (1, 1, "nreeves", "pbkdf2:sha256:260000$xwmRNkYGEsbVxWQk$598deee9e52133d7d3a96eeb060c81f90b06d3ea17fb705b1e834855f5234df6");
+-- UPDATE `Organizations`.`User` SET `doc` = JSON_SET(`doc`, '$.access_privileges', '{human_resources:manager, client_relations:manager, supplier_relations:manager, production:manager, logistics:manager}') WHERE `user_id` = 1;
 
--- Insert Kathy Jensen Person Info
-INSERT INTO `Organizations`.`People` (`organization_id`, `first_name`, `last_name`, `job_title`, `phone_number`, `email_address`, `is_employee`, `hourly_wage`, `contract_date`) VALUES 
-	(1, "Kathy", "Jensen", "Owner", "8016025244 ", "Info@holisticlifesupplements.com", true, 0, '2016-1-1');
+-- -- Insert Kathy Jensen Person Info
+-- INSERT INTO `Organizations`.`People` (`organization_id`, `first_name`, `last_name`, `job_title`, `phone_number`, `email_address`, `is_employee`, `hourly_wage`, `contract_date`) VALUES 
+-- 	(1, "Kathy", "Jensen", "Owner", "8016025244 ", "Info@holisticlifesupplements.com", true, 0, '2016-1-1');
 
--- Insert Kathy Jensen User Info  (Password = password)
-INSERT INTO `Organizations`.`User` (`user_id`, `person_id`, `username`, `encrypted_password`) VALUES (2, 2, "kathyj", "pbkdf2:sha256:260000$D8qPhRKS15pNXdWb$7bd4d1a2603d4365d0711b7342a1a59f67fad6354b8424e574d0654cf276ec5c");
-UPDATE `Organizations`.`User` SET `doc` = JSON_SET(`doc`, '$.access_privileges', '{human_resources:manager, client_relations:manager, supplier_relations:manager, production:manager, logistics:manager}') WHERE `user_id` = 2;
+-- -- Insert Kathy Jensen User Info  (Password = password)
+-- INSERT INTO `Organizations`.`User` (`user_id`, `person_id`, `username`, `encrypted_password`) VALUES (2, 2, "kathyj", "pbkdf2:sha256:260000$D8qPhRKS15pNXdWb$7bd4d1a2603d4365d0711b7342a1a59f67fad6354b8424e574d0654cf276ec5c");
+-- UPDATE `Organizations`.`User` SET `doc` = JSON_SET(`doc`, '$.access_privileges', '{human_resources:manager, client_relations:manager, supplier_relations:manager, production:manager, logistics:manager}') WHERE `user_id` = 2;
