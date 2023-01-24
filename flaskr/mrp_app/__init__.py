@@ -8,9 +8,9 @@ Config Settings for Flask App
 app = Flask(__name__, instance_relative_config=True)
 
 
-# cfg = import_string('configmodule.Work_Laptop_Config')()
+cfg = import_string('configmodule.Work_Laptop_Config')()
 # cfg = import_string('configmodule.Home_PC_Config')()
-cfg = import_string('configmodule.Home_PC_To_Pi_Config')()
+# cfg = import_string('configmodule.Home_PC_To_Pi_Config')()
 # cfg = import_string('configmodule.School_Laptop_Config')()
 # cfg = import_string('configmodule.Pi_Server_Config')()
 

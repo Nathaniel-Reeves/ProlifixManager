@@ -1,35 +1,37 @@
 -- Refresh Databases
-DROP TABLE IF EXISTS `Inventory`.`Check-in_Log`;
-DROP TABLE IF EXISTS `Inventory`.`Check-out_Log`;
-DROP TABLE IF EXISTS `Inventory`.`Cycle_Counts_Log`;
-DROP TABLE IF EXISTS `Organizations`.`User`;
-DROP TABLE IF EXISTS `Organizations`.`People`;
-DROP TABLE IF EXISTS `Products`.`Components`;
-DROP DATABASE IF EXISTS `Inventory`;
-DROP DATABASE IF EXISTS `Orders`;
-DROP DATABASE IF EXISTS `Products`;
-DROP DATABASE IF EXISTS `Manufacturing`;
-DROP DATABASE IF EXISTS `Organizations`;
+-- DROP TABLE IF EXISTS `Inventory`.`Check-in_Log`;
+-- DROP TABLE IF EXISTS `Inventory`.`Check-out_Log`;
+-- DROP TABLE IF EXISTS `Inventory`.`Cycle_Counts_Log`;
+-- DROP TABLE IF EXISTS `Organizations`.`User`;
+-- DROP TABLE IF EXISTS `Organizations`.`People`;
+-- DROP TABLE IF EXISTS `Products`.`Components`;
+-- DROP DATABASE IF EXISTS `Inventory`;
+-- DROP DATABASE IF EXISTS `Orders`;
+-- DROP DATABASE IF EXISTS `Products`;
+-- DROP DATABASE IF EXISTS `Manufacturing`;
+-- DROP DATABASE IF EXISTS `Organizations`;
 
 
-CREATE DATABASE `Organizations`;
-CREATE DATABASE `Inventory`;
-CREATE DATABASE `Products`;
-CREATE DATABASE `Manufacturing`;
-CREATE DATABASE `Orders`;
+CREATE DATABASE IF NOT EXISTS `Organizations`;
+CREATE DATABASE IF NOT EXISTS `Inventory`;
+CREATE DATABASE IF NOT EXISTS `Products`;
+CREATE DATABASE IF NOT EXISTS `Manufacturing`;
+CREATE DATABASE IF NOT EXISTS `Orders`;
 
-CREATE TABLE `Organizations`.`User` (
+CREATE TABLE IF NOT EXISTS `Organizations`.`Users` (
   `user_id` INT,
   `person_id` INT,
   `username` VARCHAR(100) UNIQUE NOT NULL,
   `encrypted_password` VARCHAR(250) NOT NULL,
+  `profile_picture` VARCHAR(500),
+  `color_theme` ENUM('Light','Dark'),
   `_json_schema` json GENERATED ALWAYS AS (_utf8mb4'{"type":"object"}') VIRTUAL,
   `doc` json DEFAULT (CONCAT('{"_id":',`user_id`,',"access_privileges":{"human_resources":"staff", "client_relations":"staff", "supplier_relations":"staff", "production":"staff", "logistics":"staff"}}')),
   PRIMARY KEY (`user_id`),
   CONSTRAINT `Org_User_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `Organizations`.`Organizations` (
+CREATE TABLE IF NOT EXISTS `Organizations`.`Organizations` (
   `organization_id` INT,
   `organization_name` VARCHAR(200) NOT NULL,
   `alias_names` VARCHAR(1000),
@@ -50,7 +52,7 @@ CREATE TABLE `Organizations`.`Organizations` (
   CONSTRAINT `Org_Org_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `Organizations`.`Facilities` (
+CREATE TABLE IF NOT EXISTS `Organizations`.`Facilities` (
   `facility_id` INT AUTO_INCREMENT,
   `organization_id` INT,
   `building_name` VARCHAR(500),
@@ -66,6 +68,7 @@ CREATE TABLE `Organizations`.`Facilities` (
   `street_2_type` VARCHAR(300),
   `street_2_direction` VARCHAR(2),
   `address_type` VARCHAR(300),
+  `address_type_identifier` VARCHAR(100),
   `local_municipality` VARCHAR(500),
   `city_town` VARCHAR(500),
   `governing_district` VARCHAR(500),
@@ -79,7 +82,7 @@ CREATE TABLE `Organizations`.`Facilities` (
   FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
-CREATE TABLE `Products`.`Product_Master` (
+CREATE TABLE IF NOT EXISTS `Products`.`Product_Master` (
   `product_id` VARCHAR(250),
   `organization_id` INT,
   `product_name` VARCHAR(300) NOT NULL,
@@ -97,7 +100,7 @@ CREATE TABLE `Products`.`Product_Master` (
   FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
-CREATE TABLE `Inventory`.`Components` (
+CREATE TABLE IF NOT EXISTS `Inventory`.`Components` (
   `component_id` VARCHAR(250),
   `component_name` VARCHAR(300),
   `brand_id` INT,
@@ -112,7 +115,7 @@ CREATE TABLE `Inventory`.`Components` (
   FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
-CREATE TABLE `Inventory`.`Inventory` (
+CREATE TABLE IF NOT EXISTS `Inventory`.`Inventory` (
   `inv_id` INT AUTO_INCREMENT,
   `item_id` VARCHAR(250),
   `actual_inventory` DECIMAL(16,4),
@@ -123,7 +126,7 @@ CREATE TABLE `Inventory`.`Inventory` (
   FOREIGN KEY (`item_id`) REFERENCES `Inventory`.`Components`(`component_id`)
 );
 
-CREATE TABLE `Inventory`.`Check-in_Log` (
+CREATE TABLE IF NOT EXISTS `Inventory`.`Check-in_Log` (
   `check_in_id` INT AUTO_INCREMENT,
   `inv_id` INT,
   `amount` DECIMAL(16,4),
@@ -133,10 +136,10 @@ CREATE TABLE `Inventory`.`Check-in_Log` (
   `date_modified` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`check_in_id`),
   FOREIGN KEY (`inv_id`) REFERENCES `Inventory`.`Inventory`(`inv_id`),
-  FOREIGN KEY (`user_id`) REFERENCES `Organizations`.`User`(`user_id`)
+  FOREIGN KEY (`user_id`) REFERENCES `Organizations`.`Users`(`user_id`)
 );
 
-CREATE TABLE `Inventory`.`Cycle_Counts_Log` (
+CREATE TABLE IF NOT EXISTS `Inventory`.`Cycle_Counts_Log` (
   `cycle_count_id` INT AUTO_INCREMENT,
   `inv_id` INT,
   `actual_inventory_precheck` DECIMAL(16,4),
@@ -148,10 +151,10 @@ CREATE TABLE `Inventory`.`Cycle_Counts_Log` (
   `notes` VARCHAR(2000),
   PRIMARY KEY (`cycle_count_id`),
   FOREIGN KEY (`inv_id`) REFERENCES `Inventory`.`Inventory`(`inv_id`),
-  FOREIGN KEY (`user_id`) REFERENCES `Organizations`.`User`(`user_id`)
+  FOREIGN KEY (`user_id`) REFERENCES `Organizations`.`Users`(`user_id`)
 );
 
-CREATE TABLE `Inventory`.`Check-out_Log` (
+CREATE TABLE IF NOT EXISTS `Inventory`.`Check-out_Log` (
   `check_out_id` INT AUTO_INCREMENT,
   `inv_id` INT,
   `amount` DECIMAL(16,4),
@@ -161,10 +164,10 @@ CREATE TABLE `Inventory`.`Check-out_Log` (
   `date_modified` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`check_out_id`),
   FOREIGN KEY (`inv_id`) REFERENCES `Inventory`.`Inventory`(`inv_id`),
-  FOREIGN KEY (`user_id`) REFERENCES `Organizations`.`User`(`user_id`)
+  FOREIGN KEY (`user_id`) REFERENCES `Organizations`.`Users`(`user_id`)
 );
 
-CREATE TABLE `Products`.`Manufacturing_Process` (
+CREATE TABLE IF NOT EXISTS `Products`.`Manufacturing_Process` (
   `process_spec_id` INT AUTO_INCREMENT,
   `product_id` VARCHAR(250),
   `processes_collection` JSON,
@@ -175,7 +178,7 @@ CREATE TABLE `Products`.`Manufacturing_Process` (
   FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`)
 );
 
-CREATE TABLE `Manufacturing`.`Processes` (
+CREATE TABLE IF NOT EXISTS `Manufacturing`.`Processes` (
   `process_id` INT AUTO_INCREMENT,
   `process_name` VARCHAR(100) NOT NULL,
   `number_of_operators` TINYINT NOT NULL,
@@ -186,24 +189,28 @@ CREATE TABLE `Manufacturing`.`Processes` (
   PRIMARY KEY (`process_id`)
 );
 
-CREATE TABLE `Organizations`.`People` (
+CREATE TABLE IF NOT EXISTS `Organizations`.`People` (
   `person_id` INT AUTO_INCREMENT,
   `organization_id` INT,
   `first_name` VARCHAR(100),
   `last_name` VARCHAR(100),
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `job_title` VARCHAR(100),
-  `phone_number` VARCHAR(500),
-  `email_address` VARCHAR(100),
+  `job_description` VARCHAR(100),
+  `department` VARCHAR(500),
+  `phone_number_primary` VARCHAR(20),
+  `phone_number_secondary` VARCHAR(20),
+  `email_address_primary` VARCHAR(100),
+  `email_address_secondary` VARCHAR(100),
+  `birthday` DATE,
   `is_employee` BOOL,
-  `hourly_wage` INT,
   `contract_date` DATE,
   `termination_date` DATE,
+  `clock_number` VARCHAR(20),
   PRIMARY KEY (`person_id`),
   FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
-CREATE TABLE `Orders`.`Purchase_Orders` (
+CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Orders` (
   `prefix` VARCHAR(10),
   `year` TINYINT,
   `month` TINYINT,
@@ -219,7 +226,7 @@ CREATE TABLE `Orders`.`Purchase_Orders` (
   FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
-CREATE TABLE `Orders`.`Purchase_Orders_Detail` (
+CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Orders_Detail` (
   `po_detail_id` INT AUTO_INCREMENT,
   `prolifix_purchase_order_id` VARCHAR(15),
   `product_id` VARCHAR(250),
@@ -232,7 +239,7 @@ CREATE TABLE `Orders`.`Purchase_Orders_Detail` (
   FOREIGN KEY (`prolifix_purchase_order_id`) REFERENCES `Orders`.`Purchase_Orders`(`prolifix_purchase_order_id`)
 );
 
-CREATE TABLE `Orders`.`Lot_Numbers` (
+CREATE TABLE IF NOT EXISTS `Orders`.`Lot_Numbers` (
   `prefix` VARCHAR(15),
   `year` TINYINT,
   `month` TINYINT,
@@ -254,7 +261,7 @@ CREATE TABLE `Orders`.`Lot_Numbers` (
   FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`)
 );
 
-CREATE TABLE `Products`.`Components` (
+CREATE TABLE IF NOT EXISTS `Products`.`Components` (
   `component_id` INT AUTO_INCREMENT,
   `materials_id` VARCHAR(250),
   `product_id` VARCHAR(250),
@@ -267,7 +274,7 @@ CREATE TABLE `Products`.`Components` (
   FOREIGN KEY (`materials_id`) REFERENCES `Inventory`.`Components`(`component_id`)
 );
 
-CREATE TABLE `Products`.`Formula` (
+CREATE TABLE IF NOT EXISTS `Products`.`Formula` (
   `formula_id` INT AUTO_INCREMENT,
   `product_id` VARCHAR(250),
   `ingredient_and_brand` JSON,
@@ -282,7 +289,7 @@ CREATE TABLE `Products`.`Formula` (
   FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`)
 );
 
-CREATE TABLE `Manufacturing`.`Equipment` (
+CREATE TABLE IF NOT EXISTS `Manufacturing`.`Equipment` (
   `equipment_id` INT AUTO_INCREMENT,
   `process_id` INT,
   `equipment_sn` VARCHAR(50),
@@ -302,13 +309,17 @@ SELECT
 	`People`.`person_id`,
     `People`.`first_name`,
     `People`.`last_name`,
-    `People`.`job_title`,
-    `People`.`phone_number`,
-    `People`.`email_address`,
+    `People`.`job_description`,
+    `People`.`department`,
+    `People`.`phone_number_primary`,
+    `People`.`phone_number_secondary`,
+    `People`.`email_address_primary`,
+    `People`.`email_address_secondary`,
+    `People`.`birthday`,
     `People`.`is_employee`,
-    `People`.`hourly_wage`,
     `People`.`contract_date`,
     `People`.`termination_date`,
+    `People`.`clock_number`,
     `Organizations`.`organization_id`,
     `Organizations`.`organization_name`,
     `Organizations`.`organization_initial`,
