@@ -43,37 +43,7 @@
     
         <div class="form-item">
             <label for="website">Company Website Homepage</label>
-            <input name="website" id="website" type="url" value="{{ organization_data['Organization_Website'] }}">
-        </div>
-    
-        <div class="form-item">
-            <label for="hq_street_address">Street Address</label>
-            <input name="hq_street_address" value="{{ organization_data['hq_street_address'] }}" id="hq_street_address">
-        </div>
-    
-        <div class="form-item">
-            <label for="hq_unit_apt">Apartment/Suite Number</label>
-            <input name="hq_unit_apt" value="{{ organization_data['hq_unit_apt'] }}" id="hq_unit_apt">
-        </div>
-    
-        <div class="form-item">
-            <label for="hq_city">City</label>
-            <input name="hq_city" id="hq_city" value="{{ organization_data['hq_city'] }}">
-        </div>
-    
-        <div class="form-item">
-            <label for="hq_region">State, Province, or Region</label>
-            <input name="hq_region" id="hq_region" value="{{ organization_data['hq_region'] }}">
-        </div>
-    
-        <div class="form-item">
-            <label for="hq_country">Country</label>
-            <input name="hq_country" id="hq_country" value="{{ organization_data['hq_country'] }}">
-        </div>
-    
-        <div class="form-item">
-            <label for="hq_zip_code">Mailing or Zip Code</label>
-            <input name="hq_zip_code" id="hq_zip_code" value="{{ organization_data['hq_zip_code'] }}">
+            <input name="website" id="website" type="url" value="{{ organization_data['website_url'] }}">
         </div>
     </div>
 
@@ -81,69 +51,6 @@
         <header class="card-content">
             <h1>Additional Info</h1>
         </header>
-
-        <div class="form-item">
-            <label for="ship_time">Average Shipment Time</label>
-            <input type="number" name="ship_time" id="ship_time" value="{{ organization_data['ship_time'] }}">
-        </div>
-        
-        <div class="form-item">
-            <p></p>
-            <fieldset class="radio-container">
-                <div class="radio-item">
-                    <input type="radio" id="Day/s" name="ship_time_unit" value="Day/s" {% if organization_data['ship_time_unit']=="Day/s"
-                        %}checked{% endif %}>
-                    <label for="Day/s">Day/s</label>
-                </div>
-                <div class="radio-item">
-                    <input type="radio" id="Week/s" name="ship_time_unit" value="Week/s" {% if organization_data['ship_time_unit']=="Week/s"
-                        %}checked{% endif %}>
-                    <label for="Week/s">Week/s</label>
-                </div>
-                <div class="radio-item">
-                    <input type="radio" id="Month/s" name="ship_time_unit" value="Month/s" {% if organization_data['ship_time_unit']=="Month/s"
-                        %}checked{% endif %}>
-                    <label for="Month/s">Month/s</label>
-                </div>
-            </fieldset>
-        </div>
-
-        <!-- BEGIN BLOCK for suppliers only -->
-
-        <div class="form-item">
-            <p>Risk Level</p>
-            <fieldset class="radio-container">
-                <div class="radio-item">
-                    <input type="radio" id="No Risk" name="risk_level" value="UNKNOWN" {% if organization_data['risk_level']=="UNKNOWN" %}checked{% endif %}>
-                    <label for="No Risk">Unknown Risk</label>
-                </div>
-                <div class="radio-item">
-                    <input type="radio" id="No Risk" name="risk_level" value="No Risk" {% if organization_data['risk_level']=="No Risk" %}checked{% endif %}>
-                    <label for="No Risk">No Risk</label>
-                </div>
-                <div class="radio-item">
-                    <input type="radio" id="Low Risk" name="risk_level" value="Low Risk" {% if
-                        organization_data['risk_level']=="Low Risk" %}checked{% endif %}>
-                    <label for="Low Risk">Low Risk</label>
-                </div>
-                <div class="radio-item">
-                    <input type="radio" id="Medium Risk" name="risk_level" value="Medium Risk" {% if
-                        organization_data['risk_level']=="Medium Risk" %}checked{% endif %}>
-                    <label for="Medium Risk">Medium Risk</label>
-                </div>
-                <div class="radio-item">
-                    <input type="radio" id="High Risk" name="risk_level" value="High Risk" {% if
-                        organization_data['risk_level']=="High Risk" %}checked{% endif %}>
-                    <label for="High Risk">High Risk</label>
-                </div>
-            </fieldset>
-        </div>
-
-        <div class="form-item">
-            <label for="date_vetted">Date Last Vetted</label>
-            <input type="date" name="date_vetted" id="date_vetted" value="{{ organization_data['date_vetted'] }}">
-            <p></p>
-        </div>
 
         <!-- END BLOCK -->
 
@@ -157,37 +64,7 @@
         <header class="card-content">
             <h1>Uploaded Files</h1>
         </header>
-    
-        <div>
-
-            <div id="container">
-                {% set count = namespace(value=0) %}
-                {% for doc in organization_data['documents'] %}
-                <div class="list-item" id="{{ count.value }}_preupload">
-                    <div class="list-left">
-                            <a target="_blank" rel="noopener noreferrer" href="{{ url_for('uploads', file_location=doc['local_file_path']) }}">{{ doc['file_name'] }}</a>
-                    </div>
-                    <div class="list-right">
-                        <button type="button" name="removeFile" class="iconbutton" onclick="removeFileInput({{ count.value }});">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-                {% set count.value = count.value + 1 %}
-                {% endfor %}
-    
-            </div>
-    
-            <div class="list-item">
-                <div class="list-right"></div>
-                <div class="list-left">
-                    <button name="addFile" type="button" class="iconbutton" onclick="addFileInput()" value="Add File">
-                        <i class="fa fa-plus"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    
+    </div>
 </form>
 
 <div class="form-section">
