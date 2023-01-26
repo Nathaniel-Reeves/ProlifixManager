@@ -19,11 +19,8 @@ from mrp_app.views.auth import (
 from mrp_app.models.people import (
     fetch_people_by_org
 )
-from flaskr.mrp_app.models.organizations import (
-    Organization,
-    fetch_suppliers,
-    fetch_clients,
-    fetch_documents
+from mrp_app.models.organizations import (
+    Organization
 )
 
 
@@ -31,15 +28,19 @@ from flaskr.mrp_app.models.organizations import (
 @login_required
 def get_clients(): 
     g.org_type = 'client'
+    org = Organization()
+    data = org.fetch_clients()
     return render_template('organizations/read-org.html',
-                           organizations=fetch_clients())
+                           organizations=data)
 
 @bp.route('/suppliers', methods=('GET', ))
 @login_required
 def get_suppliers():
     g.org_type = 'supplier'
+    org = Organization()
+    data = org.fetch_suppliers()
     return render_template('organizations/read-org.html',
-                           organizations=fetch_suppliers())
+                           organizations=data)
 
 
 @bp.route('/create/<string:org_type>', methods=('GET', 'POST', ))
@@ -80,7 +81,6 @@ def put_organization(org_id):
     org = Organization(org_id)
 
     if request.method == 'GET':
-        print(org.fetch_org())
         return render_template('organizations/update-org.html',
                                    organization_data=org.fetch_org())
 

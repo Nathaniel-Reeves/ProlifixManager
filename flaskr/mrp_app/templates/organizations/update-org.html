@@ -19,6 +19,16 @@
                     %}checked{% endif %} value="1">
                 <label for="supplier">Supplier</label>
             </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="lab" name="lab" class="onerequired" {% if organization_data['lab']==1
+                    %}checked{% endif %} value="1">
+                <label for="lab">Laboratory</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="other" name="other" class="onerequired" {% if organization_data['other']==1
+                    %}checked{% endif %} value="1">
+                <label for="other">Other</label>
+            </div>
         </fieldset>
     </div>
 
@@ -38,7 +48,7 @@
 
     <div class="form-section">
         <header class="card-content">
-            <h1>Website & Mailing Info</h1>
+            <h1>Website & Contact Info</h1>
         </header>
     
         <div class="form-item">
@@ -51,8 +61,6 @@
         <header class="card-content">
             <h1>Additional Info</h1>
         </header>
-
-        <!-- END BLOCK -->
 
         <div class="form-item">
             <label for="notes">Notes</label>

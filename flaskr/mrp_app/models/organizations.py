@@ -1,14 +1,14 @@
-
-import os
 import json
-from datetime import date, datetime
+from datetime import date
 import mysqlx
-from werkzeug.utils import secure_filename
-
-
 from mrp_app import app
-from mrp_app.models.db import allowed_file
 
+# try:
+#     from mrp_app import app
+# except ImportError:
+#     from mrp_app.models.substitute_App_class import App
+#     app = App()
+    
 
 class Organization:
     """Represents an organization or company.
@@ -39,77 +39,124 @@ class Organization:
         self.errors = []
 
         # Organization Attributes
-        self.organization_id = organization_id
-        self.organization_data = {}
+        self.org_id = organization_id
+        self.org_data = {"organization_id": self.org_id}
         self.raw_files = []
         self.database_errors = []
 
         # If organization_id query db
-        if self.organization_id:
+        if self.org_id:
             self.fetch_org()
+
+    def __str__(self):
+        return str(self.org_data)
     
     def fetch_org(self, org_id=None):
         if not org_id:
-            org_id = self.organization_id
-        if not self.organization_data:
+            org_id = self.org_id
+        if self.org_data["organization_id"] != org_id:
             session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
             result = session.sql(
-                """SELECT * FROM `Organizations`.`Organizations`
-                WHERE `organization_id` = %s
-                ORDER BY `organization_name`;""" % org_id).execute()
-            self.organization_data = result.fetch_all()[0]
-            print(type(self.organization_data))
-            self.organization_id = org_id
-        return self.organization_data
+                """SELECT
+                    `organization_id`,
+                    `organization_name`,
+                    `organization_initial`,
+                    `alias_names`,
+                    `date_entered`,
+                    `website_url`,
+                    `vetted`,
+                    `date_vetted`,
+                    `risk_level`,
+                    `supplier`,
+                    `client`,
+                    `lab`,
+                    `other`,
+                    `doc`,
+                    `notes`
+                FROM `Organizations`.`Organizations`
+                WHERE `organization_id` = %s;""" % org_id).execute()
+            session.close()
+            row = result.fetch_one()
+            if row:
+                self.org_data = self.org_row_to_dict(row)
+                self.org_id = org_id
+        return self.org_data
 
+    def org_row_to_dict(self, row):
+        data = {}
+        data["organization_id"] = row["organization_id"]
+        data["organization_name"] = row["organization_name"]
+        data["organization_initial"] = row["organization_initial"]
+        data["alias_names"] = row["alias_names"]
+        if row["date_entered"]:
+            data["date_entered"] = date.fromisoformat(
+                row["date_entered"])
+        else:
+            data["date_entered"] = None
+        data["website_url"] = row["website_url"]
+        data["vetted"] = row["vetted"]
+        data["date_vetted"] = row["date_vetted"]
+        data["risk_level"] = row["risk_level"].decode("utf-8")
+        data["supplier"] = row["supplier"]
+        data["client"] = row["client"]
+        data["lab"] = row["lab"]
+        data["other"] = row["other"]
+        data["doc"] = json.loads(row["doc"].decode("utf-8"))
+        data["notes"] = row["notes"]
+        return data
 
-
-
-
-
-def fetch_clients():
-    session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
-    result = session.sql(
-        """SELECT * FROM `Organizations`.`Organizations`
-        WHERE `client` = true
-        ORDER BY `organization_name`;"""
-    ).execute()
-    clients_data = result.fetch_all()
-    clients_columns = result.get_columns()
-    data = table_to_json(clients_data, clients_columns)
-    return data
-
-
-def fetch_suppliers():
-    session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
-    result = session.sql(
-        """SELECT * FROM `Organizations`.`Organizations`
-        WHERE `supplier` = true
-        ORDER BY `organization_name`;"""
-    ).execute()
-    suppliers_data = result.fetch_all()
-    suppliers_columns = result.get_columns()
-    data = table_to_json(suppliers_data, suppliers_columns)
-    return data
-
-def table_to_json(table_data, columns):
-    return_data = []
-    for row_data in table_data:
-        res = {"files": []}
-        for i in range(len(list(row_data))):
-            if columns[i].get_column_name() == "doc":
-                res["files"] = json.loads(row_data[i].decode(
-                    'utf8').replace("'", '"'))["files"]
+    def fetch_clients(self):
+        return self.fetch_orgs("client")
+    
+    def fetch_suppliers(self):
+        return self.fetch_orgs("supplier")
+        
+    def fetch_orgs(self, org_roll):
+        session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
+        result = session.sql(
+            """SELECT
+            `organization_id`,
+            `organization_name`,
+            `organization_initial`,
+            `alias_names`,
+            `date_entered`,
+            `website_url`,
+            `vetted`,
+            `date_vetted`,
+            `risk_level`,
+            `supplier`,
+            `client`,
+            `lab`,
+            `other`,
+            `doc`,
+            `notes`
+        FROM `Organizations`.`Organizations`
+        WHERE %s = true
+        ORDER BY `organization_name`;""" % org_roll
+        ).execute()
+        session.close()
+        table = result.fetch_all()
+        l = []
+        for row in table:
+            data = self.org_row_to_dict(row)
+            l.append(data)
+        return l
+    
+    def org_id_exists(self, org_id=None):
+        if not org_id:
+            if self.org_id:
+                org_id = self.org_id
             else:
-                res[columns[i].get_column_name()] = row_data[i]
-        return_data.append(res)
-    return return_data
+                return False
+        session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
+        result = session.sql(
+            """SELECT
+	            `organization_id`
+            FROM `Organizations`.`Organizations`
+            WHERE `organization_id` = %s;""" % org_id).execute()
+        session.close()
+        return result.has_data()
 
-def fetch_documents(org_id):
-    session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
-    doc = session.get_schema('Organizations').get_collection(
-        'Organizations').get_one(org_id).as_str()
-    return json.loads(doc)
 
 
 """Fetches rows from a Bigtable.

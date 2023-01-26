@@ -73,6 +73,18 @@ class Home_PC_Config(Config):
     # File Saving
     UPLOAD_FOLDER = '/mnt/s/uploads'
 
+    def __init__(self,host=HOST,port=PORT,user=USER,password=PASSWORD,upload_folder=UPLOAD_FOLDER):
+        self.config = {
+            "DB_CREDENTIALS":{
+                'host': host,
+                'port': port,
+                'user': user,
+                'password': password
+            },
+            "UPLOAD_FOLDER": upload_folder,
+        }
+
+
 
 class Home_PC_To_Pi_Config(Config):
     """Home PC Config Settings for Flask App connecting to pi-server"""
