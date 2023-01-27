@@ -50,16 +50,18 @@ def post_organization(org_type):
 
     if request.method == 'POST':
         form_data = dict(request.form)
-        print(form_data)
         file_data = dict(request.files)
-        print(file_data)
 
         new_org = Organization()
-        if new_org.org_exists(request):
-            flash("'%s' already exists in the database." % new_org.organization_name)
-            flash("'%s' was NOT saved!" % new_org.organization_name)
+
+        possible_duplicates = new_org.org_exists(
+            form_data["organization_name"])
+        if possible_duplicates:
+            for dup in possible_duplicates:
+                flash(dup)
+                
         else:
-            org_saved = new_org.post_org(request)
+            org_saved = new_org.post_org(form_data)
             errors = new_org.get_errors()
 
             # Flash Errors if any, else send data to db
@@ -68,9 +70,9 @@ def post_organization(org_type):
                     flash(error)
                 if not org_saved:
                     flash("You must specify if the organization is a supplier, client or both.")
-                flash("'%s' was NOT saved!" % new_org.organization_name)
+                flash("'%s' was NOT saved!" % new_org)
             else:
-                flash("'%s' was saved!" % new_org.organization_name)
+                flash("'%s' was saved!" % new_org)
 
     return render_template('organizations/create-org.html')
 

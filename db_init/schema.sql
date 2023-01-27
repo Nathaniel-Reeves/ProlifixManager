@@ -1,15 +1,15 @@
 -- Refresh Databases
--- DROP TABLE IF EXISTS `Inventory`.`Check-in_Log`;
--- DROP TABLE IF EXISTS `Inventory`.`Check-out_Log`;
--- DROP TABLE IF EXISTS `Inventory`.`Cycle_Counts_Log`;
--- DROP TABLE IF EXISTS `Organizations`.`User`;
--- DROP TABLE IF EXISTS `Organizations`.`People`;
--- DROP TABLE IF EXISTS `Products`.`Components`;
--- DROP DATABASE IF EXISTS `Inventory`;
--- DROP DATABASE IF EXISTS `Orders`;
--- DROP DATABASE IF EXISTS `Products`;
--- DROP DATABASE IF EXISTS `Manufacturing`;
--- DROP DATABASE IF EXISTS `Organizations`;
+DROP TABLE IF EXISTS `Inventory`.`Check-in_Log`;
+DROP TABLE IF EXISTS `Inventory`.`Check-out_Log`;
+DROP TABLE IF EXISTS `Inventory`.`Cycle_Counts_Log`;
+DROP TABLE IF EXISTS `Organizations`.`User`;
+DROP TABLE IF EXISTS `Organizations`.`People`;
+DROP TABLE IF EXISTS `Products`.`Components`;
+DROP DATABASE IF EXISTS `Inventory`;
+DROP DATABASE IF EXISTS `Orders`;
+DROP DATABASE IF EXISTS `Products`;
+DROP DATABASE IF EXISTS `Manufacturing`;
+DROP DATABASE IF EXISTS `Organizations`;
 
 
 CREATE DATABASE IF NOT EXISTS `Organizations`;
@@ -34,7 +34,9 @@ CREATE TABLE IF NOT EXISTS `Organizations`.`Users` (
 CREATE TABLE IF NOT EXISTS `Organizations`.`Organizations` (
   `organization_id` INT,
   `organization_name` VARCHAR(200) NOT NULL,
-  `alias_names` VARCHAR(1000),
+  `alias_name_1` VARCHAR(200),
+  `alias_name_2` VARCHAR(200),
+  `alias_name_3` VARCHAR(200),
   `organization_initial` VARCHAR(10) NOT NULL,
   `date_entered` DATE DEFAULT NULL,
   `website_url` VARCHAR(200),
@@ -48,6 +50,7 @@ CREATE TABLE IF NOT EXISTS `Organizations`.`Organizations` (
   `_json_schema` json GENERATED ALWAYS AS (_utf8mb4'{"type":"object"}') VIRTUAL,
   `doc` json DEFAULT (CONCAT('{"_id":"',`organization_id`,'","files":[]}')),
   `notes` VARCHAR(2500),
+  FULLTEXT INDEX `SECONDARY` (`organization_name`, `alias_name_1`, `alias_name_2`, `alias_name_3`) VISIBLE,
   PRIMARY KEY (`organization_id`),
   CONSTRAINT `Org_Org_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -323,7 +326,9 @@ SELECT
     `Organizations`.`organization_id`,
     `Organizations`.`organization_name`,
     `Organizations`.`organization_initial`,
-    `Organizations`.`alias_names`,
+    `Organizations`.`alias_name_1`,
+    `Organizations`.`alias_name_2`,
+    `Organizations`.`alias_name_3`,
     `Organizations`.`date_entered`,
     `Organizations`.`website_url`,
     `Organizations`.`date_vetted`,

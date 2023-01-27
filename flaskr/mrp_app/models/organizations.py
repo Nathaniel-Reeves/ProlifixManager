@@ -18,21 +18,10 @@ class Organization:
     organizations.
 
     Attributes:
-        organization_id (int): ID of the organization.
-        organization_name (str): Name of the organization.
-        organization_initial (str): Initials of the organization.
-        date_entered (datetime): Date when the organization was entered.
-        website (str): website for the organization.
-        vetted (bool): True if the organization is vetted.
-        date_vetted (datetime): Date when the organization was vetted.
-        risk_level (int): Risk level of the organization.
-        supplier (bool): True if the organization is a supplier.
-        client (bool): True if the organization is a client.
-        lab (bool): True if the organization is a lab.
-        other (bool): True if the organization some other catagory.
-        documents (list): List of documents associated with the organization.
-        notes (list): notes associated with the organization.
-        TODO: files
+        self.org_id = the organization id
+        self.org_data = a dict containing organization data
+        self.raw_files = a list containing files sent in by the client
+        self.db_errors = a list contaning database errors
     """
 
     def __init__(self, organization_id=None):
@@ -42,7 +31,7 @@ class Organization:
         self.org_id = organization_id
         self.org_data = {"organization_id": self.org_id}
         self.raw_files = []
-        self.database_errors = []
+        self.db_errors = []
 
         # If organization_id query db
         if self.org_id:
@@ -61,7 +50,9 @@ class Organization:
                     `organization_id`,
                     `organization_name`,
                     `organization_initial`,
-                    `alias_names`,
+                    `alias_name_1`,
+                    `alias_name_2`,
+                    `alias_name_3`,
                     `date_entered`,
                     `website_url`,
                     `vetted`,
@@ -87,7 +78,9 @@ class Organization:
         data["organization_id"] = row["organization_id"]
         data["organization_name"] = row["organization_name"]
         data["organization_initial"] = row["organization_initial"]
-        data["alias_names"] = row["alias_names"]
+        data["alias_name_1"] = row["alias_name_1"]
+        data["alias_name_2"] = row["alias_name_2"]
+        data["alias_name_3"] = row["alias_name_3"]
         if row["date_entered"]:
             data["date_entered"] = date.fromisoformat(
                 row["date_entered"])
@@ -118,7 +111,9 @@ class Organization:
             `organization_id`,
             `organization_name`,
             `organization_initial`,
-            `alias_names`,
+            `alias_name_1`,
+            `alias_name_2`,
+            `alias_name_3`,
             `date_entered`,
             `website_url`,
             `vetted`,
@@ -142,21 +137,32 @@ class Organization:
             l.append(data)
         return l
     
-    def org_id_exists(self, org_id=None):
-        if not org_id:
-            if self.org_id:
-                org_id = self.org_id
-            else:
-                return False
+    def org_exists(self, org_name=None):
+        if not org_name:
+            return False
         session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
+        clean = str(org_name).strip()
         result = session.sql(
-            """SELECT
-	            `organization_id`
-            FROM `Organizations`.`Organizations`
-            WHERE `organization_id` = %s;""" % org_id).execute()
+            """CALL `Organizations`.ORG_EXISTS('%s')""" % (clean)).execute()
         session.close()
-        return result.has_data()
+        columns = []
+        for column in result.get_columns():
+            columns.append(column.get_column_name())
+        rows = result.fetch_all()
+        l = []
+        for row in rows:
+            d = {}
+            for col in columns:
+                d[col] = row.get_string(col)
+            l.append(d)
+        return l
 
+    def post_org(self, data):
+        print(data)
+        return False
+
+    def get_errors(self):
+        return self.errors
 
 
 """Fetches rows from a Bigtable.
