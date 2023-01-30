@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from werkzeug.utils import import_string
 
 
@@ -6,6 +7,8 @@ from werkzeug.utils import import_string
 Config Settings for Flask App
 """
 app = Flask(__name__, instance_relative_config=True)
+
+CORS(app, resources={r'/*': {'origins': '*'}})
 
 
 cfg = import_string('configmodule.Work_Laptop_Config')()

@@ -15,7 +15,7 @@
     {% if g.user %}
     <ul class="button-list searchaction">
         {% if g.org_type == "client" %}
-            <a href="{{ url_for('organizations.post_organization', org_type=g.org_type) }}"><li class="button">New Client</li></a>
+            <a v-on:click="helloWorld()"><li class="button">New Client</li></a>
             <li class="searchbar">
                 <div>
                     <input name="search" id="searchbar" type="text" placeholder="Search Clients..." onkeyup="search()"></input>
@@ -38,141 +38,167 @@
 {% endblock %}
 
 {% block content %}
-{% for organization_data in organizations %}
-<article class="card-content" id="{{ organization_data['organization_id'] }}" name="{{ organization_data['organization_name'] }}">
+{% raw %}
+<article class="card-content" v-for="org, i in organizations">
     <header>
         <div>
-            <h2>{{ organization_data['organization_name'] }}</h2>
+            <h2>{{ org.organization_name }}</h2>
             <div class="about">
-                Initial: {{ organization_data['organization_initial'] }} | Website: <a target="_blank" rel="noopener noreferrer" href="{{ organization_data['website_url'] }}">{{ organization_data['website'] }}</a>
+                Initial: {{ org.organization_initial }} | Website: <a target="_blank" rel="noopener noreferrer" v-bind:href="`${org.website_url}`">{{ org.website_url }}</a>
             </div>
         </div>
         <ul class="button-list justify-bottom">
-            <a class="edit_button" id="{{ organization_data['organization_id'] }}"
-                href="{{ url_for('organizations.put_organization', org_id=organization_data['organization_id']) }}">
+            <a class="edit_button">
                 <li>Edit</li>
             </a>
             <a>
-                <li class="view_button" id="{{ organization_data['organization_id'] }}" onclick="personel_grid(this.id);docs_grid(this.id);viewContent(this.id)">View</li>
+                <li class="view_button" v-on:click="org.seen = !org.seen;personel_grid(`${org.organization_id}`);docs_grid(`${org.organization_id}`);">View</li>
             </a>
         </ul>
     </header>
 
-    <div class="view_content" id="{{ organization_data['organization_id'] }}" style="display:none;">
+    <div class="view_content" v-show="org.seen" v-bind:id="`org.organization_id`">
         <div class="view_content_box">
-            <h3>Address</h3>
-
+            <h3>Recent Orders</h3>
         </div>
         <div class="view_content_box">
             <h3>Additional Info</h3>
-
-        </div>
-        <div class="view_content_box">
-            <h3>Notes</h3>
-            <p>{{ organization_data['notes'] }}</p>
         </div>
         <div class="view_content_box">
             <h3>Personel</h3>
-            <div id="personel-{{ organization_data['organization_id']}}"></div>
+            <div v-bind:id="`personel-${org.organization_id}`"></div>
             <ul class="button-list">
-                <a class="edit_button" id="{{ organization_data['organization_id'] }}"
-                    href="{{ url_for('organizations.put_organization', org_id=organization_data['organization_id']) }}">
+                <a class="edit_button">
                     <li>Add Person</li>
                 </a>
             </ul>
         </div>
         <div class="view_content_box">
             <h3>Documents</h3>
-            <div id="docs-{{ organization_data['organization_id']}}"></div>
+            <div v-bind:id="`docs-${org.organization_id}`"></div>
+        </div>
+        <div class="view_content_box">
+            <h3>Notes</h3>
+            <p>{{ org.notes }}</p>
         </div>
     </div>
+
     <hr>
 </article>
 
-{% if not loop.last %}
-{% endif %}
-{% endfor %}
+{% endraw %}
 {% endblock %}
 
 {% block script %}
 <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+<script src="https://unpkg.com/vue@3"></script>
 <script>
-    function personel_grid(org_id) {
-        var id = "personel-" + org_id;
-        new gridjs.Grid({
-            columns: [{
-                id: "person_id",
-                name: "Person_id",
-                hidden: true
-            }, {
-                id: "first_name",
-                name: "First Name",
-            }, {
-                id: "last_name",
-                name: "Last Name"
-            }, {
-                id: "job_title",
-                name: "Title"
-            }, {
-                id: "phone_number",
-                name: "Phone Number"
-            }, {
-                id: "email_address",
-                name: "Email",
-                formatter: (cell) => gridjs.html(`<a href='mailto:${cell}'>${cell}</a>`)
-            }, {
-                id: "actions",
-                name: 'Actions',
-                formatter: (cell, row) => gridjs.html(`<a class="grid-button" href=${window.origin}/people/update/${row.cells[0].data}">Edit</a>`)
-            }],
-            server: {
-                url: window.origin + '/organizations/' + org_id + '/people',
-                then: data => data.map(person => [
-                    person.person_id,
-                    person.first_name,
-                    person.last_name,
-                    person.phone_number,
-                    person.job_title,
-                    person.email_address
-                ]),
-                handle: (res) => {
-                    // no matching records found
-                    if (res.status === 404) return [];
-                    if (res.ok) return res.json();
-                    throw Error('oh no :(');
+Vue.createApp({
+    data: function () {
+        return {
+            organizations: [],
+        }
+    },
+    methods: {
+        get_organizations: function () {
+            fetch(window.location.href + "/json")
+            .then(response => {
+                response.json()
+                .then(data => {
+                    data.forEach(function (org) {
+                        org["seen"] = false;
+                    });
+                    console.log("loaded organizations from the server: ", data)
+                    this.organizations = data;
+                });
+            });
+        },
+        personel_grid: function (org_id) {
+            var id = "personel-" + org_id;
+            new gridjs.Grid({
+                columns: [{
+                    id: "person_id",
+                    name: "Person_id",
+                    hidden: true
+                }, {
+                    id: "first_name",
+                    name: "First Name",
+                }, {
+                    id: "last_name",
+                    name: "Last Name"
+                }, {
+                    id: "department",
+                    name: "Department"
+                }, {
+                    id: "job_description",
+                    name: "Job Description"
+                }, {
+                    id: "phone_number_primary",
+                    name: "Phone Number"
+                }, {
+                    id: "email_address_primary",
+                    name: "Email",
+                    formatter: (cell) => gridjs.html(`<a href='mailto:${cell}'>${cell}</a>`)
+                }, {
+                    id: "actions",
+                    name: 'Actions',
+                    formatter: (cell, row) => gridjs.html(`<a class="grid-button" href=${window.origin}/people/update/${row.cells[0].data}">Edit</a>`)
+                }],
+                server: {
+                    url: window.origin + '/organizations/' + org_id + '/people',
+                    then: data => data.map(person => [
+                        person.person_id,
+                        person.first_name,
+                        person.last_name,
+                        person.department,
+                        person.job_description,
+                        person.phone_number_primary,
+                        person.email_address_primary
+                    ]),
+                    handle: (res) => {
+                        // no matching records found
+                        if (res.status === 404) return [];
+                        if (res.ok) return res.json();
+                        throw Error('oh no :(');
+                    }
                 }
-            }
-        }).render(document.getElementById(id));
-    };
+            }).render(document.getElementById(id));
+        },
+        docs_grid: function (org_id) {
+            var id = "docs-" + org_id;
+            new gridjs.Grid({
+                columns: [{
+                    id: "file_name",
+                    name: "File Name",
+                    formatter: (_, row) => gridjs.html(`<a target="_blank" rel="noopener noreferrer" href="${encodeURI("/uploads/" + row.cells[2].data)}">${row.cells[0].data}</a>`)
+                }, {
+                    id: "date_uploaded",
+                    name: "Date Uploaded"
+                }, {
+                    id: "local_file_path",
+                    name: "Local File Path",
+                    hidden: true
+                }, {
+                    id: "full_file_path",
+                    name: "Full File Path",
+                    hidden: true
+                }, {
+                    id: "organizaiton_name",
+                    name: "Organization Name",
+                    hidden: true
+                }],
+                server: {
+                    url: window.origin + '/organizations/' + org_id + '/files',
+                    then: data => data.files.map(file => [file.file_name, file.date_uploaded, file.local_file_path, file.full_file_path, file.organization_name])
+                }
+            }).render(document.getElementById(id));
+        }
+    },
+    created: function () {
+        this.get_organizations()
+    }
 
-    function docs_grid(org_id) {
-        var id = "docs-" + org_id;
-        new gridjs.Grid({
-            columns: [{
-                id: "file_name",
-                name: "File Name",
-                formatter: (_, row) => gridjs.html(`<a target="_blank" rel="noopener noreferrer" href="${encodeURI("/uploads/" + row.cells[2].data)}">${row.cells[0].data}</a>`)
-            }, {
-                id: "date_uploaded",
-                name: "Date Uploaded"
-            }, {
-                id: "local_file_path",
-                name: "Local File Path",
-                hidden: true
-            }, {
-                id: "full_file_path",
-                name: "Full File Path",
-                hidden: true
-            }, {
-                id: "organizaiton_name",
-                name: "Organization Name",
-                hidden: true
-            }],
-            server: {
-                url: window.origin + '/organizations/' + org_id + '/files',
-                then: data => data.files.map(file => [file.file_name, file.date_uploaded, file.local_file_path, file.full_file_path, file.organization_name])
-            }
-        }).render(document.getElementById(id));
-    };
+}).mount("#app");
 </script>
 {% endblock %}
+

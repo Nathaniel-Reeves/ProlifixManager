@@ -53,7 +53,7 @@
             </div>
         </section>
         <section class="grid-item-content" id="grid-item-content">
-            <div class="card">
+            <div class="card" id="app">
                 <header>
                     {% block header %}{% endblock %}
                 </header>
@@ -75,8 +75,8 @@
                 <nav>
                     <ul>
                         <a href="{{ url_for('home.index') }}"><li>Home</li></a>
-                        <a href="{{ url_for('organizations.get_clients') }}"><li>Clients</li></a>
-                        <a href="{{ url_for('organizations.get_suppliers') }}"><li>Suppliers</li></a>
+                        <a href="{{ url_for('organizations.show_clients') }}"><li>Clients</li></a>
+                        <a href="{{ url_for('organizations.show_suppliers') }}"><li>Suppliers</li></a>
                     </ul>
                 </nav>
                 <hr>
@@ -88,6 +88,9 @@
             </div>
         </section>
     </div>
-    {% block script %}{% endblock %}
+    {% block script %}
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="{{ url_for('static', filename='javascript/client.js') }}"></script>
+    {% endblock %}
 </body>
 </html>

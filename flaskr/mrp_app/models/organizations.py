@@ -43,7 +43,7 @@ class Organization:
     def fetch_org(self, org_id=None):
         if not org_id:
             org_id = self.org_id
-        if self.org_data["organization_id"] != org_id:
+        if self.org_data["organization_id"] != org_id or len(self.org_data) <= 1:
             session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
             result = session.sql(
                 """SELECT
@@ -65,12 +65,12 @@ class Organization:
                     `doc`,
                     `notes`
                 FROM `Organizations`.`Organizations`
-                WHERE `organization_id` = %s;""" % org_id).execute()
-            session.close()
+                WHERE `organization_id` = {id};""".format(id = org_id)).execute()
             row = result.fetch_one()
             if row:
                 self.org_data = self.org_row_to_dict(row)
                 self.org_id = org_id
+            session.close()
         return self.org_data
 
     def org_row_to_dict(self, row):
@@ -129,12 +129,12 @@ class Organization:
         WHERE %s = true
         ORDER BY `organization_name`;""" % org_roll
         ).execute()
-        session.close()
         table = result.fetch_all()
         l = []
         for row in table:
             data = self.org_row_to_dict(row)
             l.append(data)
+        session.close()
         return l
     
     def org_exists(self, org_name=None):
@@ -144,7 +144,6 @@ class Organization:
         clean = str(org_name).strip()
         result = session.sql(
             """CALL `Organizations`.ORG_EXISTS('%s')""" % (clean)).execute()
-        session.close()
         columns = []
         for column in result.get_columns():
             columns.append(column.get_column_name())
@@ -155,6 +154,7 @@ class Organization:
             for col in columns:
                 d[col] = row.get_string(col)
             l.append(d)
+        session.close()
         return l
 
     def post_org(self, data):

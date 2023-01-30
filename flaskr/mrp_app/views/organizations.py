@@ -8,7 +8,8 @@ from flask import (
     g,
     render_template,
     request,
-    abort
+    abort,
+    jsonify
 )
 
 bp = Blueprint('organizations', __name__, url_prefix='/organizations')
@@ -24,23 +25,34 @@ from mrp_app.models.organizations import (
 )
 
 
-@bp.route('/clients', methods=('GET', ))
+@bp.route('/clients/json', methods=('GET', ))
 @login_required
 def get_clients(): 
+    org = Organization()
+    return jsonify(org.fetch_clients())
+
+@bp.route('/suppliers/json', methods=('GET', ))
+@login_required
+def get_suppliers():
+    org = Organization()
+    return jsonify(org.fetch_suppliers())
+
+
+@bp.route('/clients', methods=('GET', ))
+@login_required
+def show_clients():
     g.org_type = 'client'
     org = Organization()
     data = org.fetch_clients()
-    return render_template('organizations/read-org.html',
-                           organizations=data)
+    return render_template("organizations/read-org.html")
+
 
 @bp.route('/suppliers', methods=('GET', ))
 @login_required
-def get_suppliers():
+def show_suppliers():
     g.org_type = 'supplier'
     org = Organization()
-    data = org.fetch_suppliers()
-    return render_template('organizations/read-org.html',
-                           organizations=data)
+    return render_template("organizations/read-org.html")
 
 
 @bp.route('/create/<string:org_type>', methods=('GET', 'POST', ))
@@ -57,8 +69,7 @@ def post_organization(org_type):
         possible_duplicates = new_org.org_exists(
             form_data["organization_name"])
         if possible_duplicates:
-            for dup in possible_duplicates:
-                flash(dup)
+            return jsonify({"possible_duplicates": possible_duplicates})
                 
         else:
             org_saved = new_org.post_org(form_data)
@@ -74,7 +85,7 @@ def post_organization(org_type):
             else:
                 flash("'%s' was saved!" % new_org)
 
-    return render_template('organizations/create-org.html')
+    return jsonify({})
 
 
 @bp.route('/update/<int:org_id>', methods=('GET', 'PUT', 'POST', ))
@@ -83,8 +94,7 @@ def put_organization(org_id):
     org = Organization(org_id)
 
     if request.method == 'GET':
-        return render_template('organizations/update-org.html',
-                                   organization_data=org.fetch_org())
+        return jsonify(org.fetch_org())
 
     if request.method == 'POST':
         org_saved = org.put_org(request)
@@ -98,12 +108,10 @@ def put_organization(org_id):
                 flash(
                     "You must specify if the organization is a supplier, client or both.")
             flash("Organization changes were not saved!")
-            return render_template('organizations/update-org.html',
-                                   organization_data=org.obj_to_dict())
+            return jsonify(org.obj_to_dict())
         else:
             flash("Organization changes was saved!")
-            return render_template('organizations/update-org.html',
-                                   organization_data=org.obj_to_dict())
+            return jsonify(org.obj_to_dict())
 
     if org.supplier:
         get_suppliers()

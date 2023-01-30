@@ -92,9 +92,10 @@ def fetch_people_by_org(org_id):
         SELECT `person_id`, 
         `first_name`,
         `last_name`,
-        `job_title`,
-        `phone_number`,
-        `email_address` 
+        `job_description`,
+        `department`,
+        `phone_number_primary`,
+        `email_address_primary` 
         FROM `Organizations`.`People`
         WHERE `organization_id` = %s
         ORDER BY `first_name`;
