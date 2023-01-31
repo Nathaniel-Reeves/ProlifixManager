@@ -1,6 +1,6 @@
 
 -- USE `Organizations`;
--- CALL ORG_EXISTS("Health");
+CALL ORG_EXISTS("Health");
 
 SET @org_name = "Health";
 SELECT

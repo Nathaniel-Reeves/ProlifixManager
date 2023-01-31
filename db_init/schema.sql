@@ -4,12 +4,14 @@ DROP TABLE IF EXISTS `Inventory`.`Check-out_Log`;
 DROP TABLE IF EXISTS `Inventory`.`Cycle_Counts_Log`;
 DROP TABLE IF EXISTS `Organizations`.`User`;
 DROP TABLE IF EXISTS `Organizations`.`People`;
+DROP TABLE IF EXISTS `Formulas`.`Formula_Master`;
 DROP TABLE IF EXISTS `Products`.`Components`;
 DROP DATABASE IF EXISTS `Inventory`;
 DROP DATABASE IF EXISTS `Orders`;
 DROP DATABASE IF EXISTS `Products`;
 DROP DATABASE IF EXISTS `Manufacturing`;
 DROP DATABASE IF EXISTS `Organizations`;
+DROP DATABASE IF EXISTS `Formulas`;
 
 
 CREATE DATABASE IF NOT EXISTS `Organizations`;
@@ -17,6 +19,7 @@ CREATE DATABASE IF NOT EXISTS `Inventory`;
 CREATE DATABASE IF NOT EXISTS `Products`;
 CREATE DATABASE IF NOT EXISTS `Manufacturing`;
 CREATE DATABASE IF NOT EXISTS `Orders`;
+CREATE DATABASE IF NOT EXISTS `Formulas`;
 
 CREATE TABLE IF NOT EXISTS `Organizations`.`Users` (
   `user_id` INT,
@@ -78,7 +81,7 @@ CREATE TABLE IF NOT EXISTS `Organizations`.`Facilities` (
   `postal_area` VARCHAR(100),
   `country` VARCHAR(500),
   `ship_time` INT,
-  `ship_time_units` ENUM( "Unknown","Day/s", "Week/s", "Month/s"),
+  `ship_time_units` ENUM( "Unknown", "Day/s", "Week/s", "Month/s"),
   `ship_time_days` INT,
   `notes` VARCHAR(2500),
   PRIMARY KEY (`facility_id`),
@@ -99,6 +102,7 @@ CREATE TABLE IF NOT EXISTS `Products`.`Product_Master` (
   `exp_time_frame` SMALLINT,
   `exp_unit` ENUM('Years','Months','Days'),
   `exp_type` ENUM('Best By', 'Exp'),
+  `exp_use_oldest_ingredient` BOOL,
   PRIMARY KEY (`product_id`),
   FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
@@ -106,16 +110,15 @@ CREATE TABLE IF NOT EXISTS `Products`.`Product_Master` (
 CREATE TABLE IF NOT EXISTS `Inventory`.`Components` (
   `component_id` VARCHAR(250),
   `component_name` VARCHAR(300),
-  `brand_id` INT,
-  `category` Enum('Organic Powder', 'Non-Organic Powder', 'Jar/Container', 'Bag', 'Shrink Band', 'Lid/Cap', 'Label', 'Capsule', 'MISC', 'Scoop', 'Desicant', 'Box/Carton', 'Packaging Material'),
+  `component_type` Enum('Powder', 'Liquid', 'Jar/Container', 'Bag', 'Shrink Band', 'Lid/Cap', 'Label', 'Capsule', 'MISC', 'Scoop', 'Desiccant', 'Box/Carton', 'Packaging Material'),
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `client_owned` INT,
-  `supplier_id` INT,
+  `owner_id` INT,
   `component_collection` JSON,
+  `alias_name_1` VARCHAR(300),
+  `alias_name_2` VARCHAR(300),
+  `alias_name_3` VARCHAR(300),
   PRIMARY KEY (`component_id`),
-  FOREIGN KEY (`supplier_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`),
-  FOREIGN KEY (`client_owned`) REFERENCES `Organizations`.`Organizations`(`organization_id`),
-  FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
+  FOREIGN KEY (`owner_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
 CREATE TABLE IF NOT EXISTS `Inventory`.`Inventory` (
@@ -124,9 +127,12 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Inventory` (
   `actual_inventory` DECIMAL(16,4),
   `theoretical_inventory` DECIMAL(16,4),
   `recent_cycle_count_id` INT,
+  `organic` ENUM('organic', 'non-organic', 'n/a'),
+  `brand_id` INT,
   PRIMARY KEY (`inv_id`),
   FOREIGN KEY (`item_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
-  FOREIGN KEY (`item_id`) REFERENCES `Inventory`.`Components`(`component_id`)
+  FOREIGN KEY (`item_id`) REFERENCES `Inventory`.`Components`(`component_id`),
+  FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
 CREATE TABLE IF NOT EXISTS `Inventory`.`Check-in_Log` (
@@ -218,28 +224,31 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Orders` (
   `year` TINYINT,
   `month` TINYINT,
   `sec_number` SMALLINT,
-  `prolifix_purchase_order_id` VARCHAR(15),
   `organization_id` INT,
   `client_po_num` VARCHAR(30),
   `order_date` DATE,
   `target_completion_date` DATE,
   `completion_date` DATE,
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`prolifix_purchase_order_id`),
+  PRIMARY KEY (`prefix`, `year`, `month`, `sec_number`),
   FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
 CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Orders_Detail` (
   `po_detail_id` INT AUTO_INCREMENT,
-  `prolifix_purchase_order_id` VARCHAR(15),
+  `prefix` VARCHAR(10),
+  `year` TINYINT,
+  `month` TINYINT,
+  `sec_number` SMALLINT,
   `product_id` VARCHAR(250),
   `unit_order_qty` INT,
   `kilos_order_qty` DECIMAL(16,4),
   `special_instructions` VARCHAR(2000),
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`po_detail_id`),
-  FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
-  FOREIGN KEY (`prolifix_purchase_order_id`) REFERENCES `Orders`.`Purchase_Orders`(`prolifix_purchase_order_id`)
+  CONSTRAINT `fk_Purchase_Orders_Detail_pk` 
+	  FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
+      FOREIGN KEY (`prefix`, `year`, `month`, `sec_number`) REFERENCES `Orders`.`Purchase_Orders`(`prefix`, `year`, `month`, `sec_number`)
 );
 
 CREATE TABLE IF NOT EXISTS `Orders`.`Lot_Numbers` (
@@ -249,7 +258,6 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Lot_Numbers` (
   `sec_number` SMALLINT,
   `suffix` VARCHAR(15),
   `product_id` VARCHAR(250),
-  `prolifix_lot_number` VARCHAR(20),
   `po_detail_id` INT,
   `target_unit_yield` INT,
   `actual_unit_yield` INT,
@@ -259,7 +267,7 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Lot_Numbers` (
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `exp_date` DATE,
   `exp_type` ENUM('Best By', 'Exp'),
-  PRIMARY KEY (`prolifix_lot_number`),
+  PRIMARY KEY (`prefix`, `year`, `month`, `sec_number`, `suffix`),
   FOREIGN KEY (`po_detail_id`) REFERENCES `Orders`.`Purchase_Orders_Detail`(`po_detail_id`),
   FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`)
 );
@@ -277,19 +285,20 @@ CREATE TABLE IF NOT EXISTS `Products`.`Components` (
   FOREIGN KEY (`materials_id`) REFERENCES `Inventory`.`Components`(`component_id`)
 );
 
-CREATE TABLE IF NOT EXISTS `Products`.`Formula` (
+CREATE TABLE `Formulas`.`Formula_Master` (
   `formula_id` INT AUTO_INCREMENT,
   `product_id` VARCHAR(250),
-  `ingredient_and_brand` JSON,
   `percent` DOUBLE,
   `mg_per_capsule` DOUBLE,
   `gram_per_unit` DOUBLE,
   `ml_per_unit` DOUBLE,
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `formulation_version` SMALLINT,
-  `current_default_formula` BOOL,
+  `organic_spec` ENUM('organic', 'non-organic', 'any'),
+  `ingredient_id` VARCHAR(250),
   PRIMARY KEY (`formula_id`),
-  FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`)
+  FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
+  FOREIGN KEY (`ingredient_id`) REFERENCES `Inventory`.`Components`(`component_id`)
 );
 
 CREATE TABLE IF NOT EXISTS `Manufacturing`.`Equipment` (
@@ -302,6 +311,46 @@ CREATE TABLE IF NOT EXISTS `Manufacturing`.`Equipment` (
   `equipment_history` JSON,
   PRIMARY KEY (`equipment_id`),
   FOREIGN KEY (`process_id`) REFERENCES `Manufacturing`.`Processes`(`process_id`)
+);
+
+CREATE TABLE `Formulas`.`Quaternary_Group` (
+  `id` INT AUTO_INCREMENT,
+  `formula_id` INT,
+  `brand_id` INT,
+  `organic_spec` ENUM('organic', 'non-organic', 'any'),
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`formula_id`) REFERENCES `Formulas`.`Formula_Master`(`formula_id`),
+  FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
+);
+
+CREATE TABLE `Formulas`.`Tertiary_Group` (
+  `id` INT AUTO_INCREMENT,
+  `formula_id` INT,
+  `brand_id` INT,
+  `organic_spec` ENUM('organic', 'non-organic', 'any'),
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`formula_id`) REFERENCES `Formulas`.`Formula_Master`(`formula_id`),
+  FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
+);
+
+CREATE TABLE `Formulas`.`Secondary_Group` (
+  `id` INT AUTO_INCREMENT,
+  `formula_id` INT,
+  `brand_id` INT,
+  `organic_spec` ENUM('organic', 'non-organic', 'any'),
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`formula_id`) REFERENCES `Formulas`.`Formula_Master`(`formula_id`),
+  FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
+);
+
+CREATE TABLE `Formulas`.`Primary_Group` (
+  `id` INT AUTO_INCREMENT,
+  `formula_id` INT,
+  `brand_id` INT,
+  `organic_spec` ENUM('organic', 'non-organic', 'any'),
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`formula_id`) REFERENCES `Formulas`.`Formula_Master`(`formula_id`),
+  FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
 -- Create Views
