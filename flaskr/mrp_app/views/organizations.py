@@ -55,7 +55,7 @@ def show_suppliers():
     return render_template("organizations/read-org.html")
 
 
-@bp.route('/create/<string:org_type>', methods=('GET', 'POST', ))
+@bp.route('/<string:org_type>/create', methods=('GET', 'POST', ))
 @login_required
 def post_organization(org_type):
     g.org_type = org_type
@@ -85,10 +85,10 @@ def post_organization(org_type):
             else:
                 flash("'%s' was saved!" % new_org)
 
-    return jsonify({})
+    return render_template("organizations/create-org.html")
 
 
-@bp.route('/update/<int:org_id>', methods=('GET', 'PUT', 'POST', ))
+@bp.route('/<int:org_id>/update', methods=('GET', 'PUT', 'POST', ))
 @login_required
 def put_organization(org_id):
     org = Organization(org_id)
