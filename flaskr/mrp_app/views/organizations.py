@@ -125,14 +125,13 @@ def put_organization(org_id):
 @login_required
 def get_people(org_id):
     data = fetch_people_by_org(org_id)
-    if data:
-        return data
-    abort(404)
+    return data
 
 
-@bp.route('/<int:org_id>/files', methods=('GET',))
+@bp.route('/<int:org_id>/documents', methods=('GET',))
 @login_required
 def get_documents(org_id):
-    return fetch_documents(org_id)
+    org = Organization(org_id)
+    return jsonify(org.fetch_documents())
 
 

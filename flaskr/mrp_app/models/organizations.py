@@ -130,12 +130,12 @@ class Organization:
         ORDER BY `organization_name`;""" % org_roll
         ).execute()
         table = result.fetch_all()
-        l = []
+        d = {}
         for row in table:
             data = self.org_row_to_dict(row)
-            l.append(data)
+            d[data["organization_id"]] = data
         session.close()
-        return l
+        return d
     
     def org_exists(self, org_name=None):
         if not org_name:
@@ -163,6 +163,10 @@ class Organization:
 
     def get_errors(self):
         return self.errors
+
+    def fetch_documents(self):
+        print(self.org_data["doc"])
+        return self.org_data["doc"]
 
 
 """Fetches rows from a Bigtable.

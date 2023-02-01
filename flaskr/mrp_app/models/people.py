@@ -89,7 +89,8 @@ def fetch_people_by_org(org_id):
     session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
     result = session.sql(
         """
-        SELECT `person_id`, 
+        SELECT 
+        `person_id`, 
         `first_name`,
         `last_name`,
         `job_description`,
@@ -103,11 +104,10 @@ def fetch_people_by_org(org_id):
     ).execute()
     people_data = result.fetch_all()
     columns = result.get_columns()
-    return_data = []
+    d = {}
     for data in people_data:
         res = {}
         for i in range(len(list(data))):
             res[columns[i].get_column_name()] = data[i]
-        return_data.append(res)
-    if return_data:
-        return return_data
+        d[res["person_id"]] = res
+    return d
