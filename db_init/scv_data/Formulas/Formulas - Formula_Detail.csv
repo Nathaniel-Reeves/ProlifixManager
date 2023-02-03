@@ -1,0 +1,13 @@
+formula_ingredient_id,formula_id,percent,mg_per_capsule,ml_per_unit,gram_per_unit,organic_spec,ingredient_id,notes,brand_specific,organic_specific
+NULL,84,0.19,NULL,NULL,42,any,4,NULL,0,0
+NULL,84,0.08,NULL,NULL,39,any,5,NULL,0,0
+NULL,84,0.03,NULL,NULL,9,any,16,NULL,0,0
+NULL,84,0.17,NULL,NULL,52,any,183,NULL,0,0
+NULL,84,0.02,NULL,NULL,7,any,155,NULL,0,0
+NULL,84,0.01,NULL,NULL,2,any,205,NULL,0,0
+NULL,84,0.01,NULL,NULL,3,any,236,NULL,0,0
+NULL,84,0.06,NULL,NULL,18,any,302,NULL,0,0
+NULL,84,0.00,NULL,NULL,0.1,any,323,NULL,0,0
+NULL,84,0.15,NULL,NULL,46,any,360,NULL,0,0
+NULL,84,0.25,NULL,NULL,75,any,369,NULL,0,0
+NULL,84,0.03,NULL,NULL,8,any,427,NULL,0,0

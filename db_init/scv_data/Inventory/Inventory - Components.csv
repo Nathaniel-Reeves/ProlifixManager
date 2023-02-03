@@ -1,0 +1,450 @@
+component_id,component_name,component_type,date_entered,owner_id
+1,5 HTP,Powder,NULL,NULL
+2,Acacia Fiber Gum Powder,Powder,NULL,NULL
+3,Acai Juice,Powder,NULL,NULL
+4,Acerola Cherry,Powder,NULL,NULL
+5,Acerola Cherry 17%,Powder,NULL,NULL
+6,Activated Barley,Powder,NULL,NULL
+7,Activated Charcoal (Coconut Shell-FG),Powder,NULL,NULL
+8,Agaricus Blazei,Powder,NULL,NULL
+9,Alfalfa Juice,Powder,NULL,NULL
+10,Alfalfa Juice 85% Maltodextrin 15%,Powder,NULL,NULL
+11,Alfalfa Whole,Powder,NULL,NULL
+12,Almond Flour,Powder,NULL,NULL
+13,Aloe Vera Leaf,Powder,NULL,NULL
+14,Alpha Lipoic Acid,Powder,NULL,NULL
+15,Amaranth Sprout,Powder,NULL,NULL
+16,Amla Berry,Powder,NULL,NULL
+17,Andrographis,Powder,NULL,NULL
+18,Apple Fiber-Pectin,Powder,NULL,NULL
+19,Apple Fruit,Powder,NULL,NULL
+20,Apple Peel,Powder,NULL,NULL
+21,Arjuna Bark (Terminalia),Powder,NULL,NULL
+22,Aronia (chokeberries),Powder,NULL,NULL
+23,Artichoke Leaf,Powder,NULL,NULL
+24,Arugula Leaf,Powder,NULL,NULL
+25,Ascorbic Acid (vitamin C),Powder,NULL,NULL
+26,Ascorbyl Palmitate,Powder,NULL,NULL
+27,Ashwagandha,Powder,NULL,NULL
+28,Ashwagandha,Powder,NULL,13
+29,Asparagus,Powder,NULL,NULL
+30,Astragalus Root,Powder,NULL,NULL
+31,Bamboo,Powder,NULL,NULL
+32,Bamboo Extract,Powder,NULL,NULL
+33,Banana Peel,Powder,NULL,NULL
+34,Baobab,Powder,NULL,NULL
+35,Barberry,Powder,NULL,NULL
+36,Barberry Root C/S,Powder,NULL,NULL
+37,Barley Grass Juice,Powder,NULL,NULL
+38,Barley Grass Whole,Powder,NULL,NULL
+39,Bee Pollen,Powder,NULL,NULL
+40,Beet Juice,Powder,NULL,NULL
+41,Beet Root,Powder,NULL,NULL
+42,Bentonite Clay,Powder,NULL,NULL
+43,Berberis,Powder,NULL,NULL
+44,Berry Flavor,Powder,NULL,NULL
+45,Beta Carotene,Powder,NULL,NULL
+46,Beta Carotene 10%,Powder,NULL,NULL
+47,Beta Carotene 20%,Powder,NULL,NULL
+48,Beta-Sitosterol,Powder,NULL,NULL
+49,Bio-Fermented Brown Rice Protein,Powder,NULL,NULL
+50,Bio-mineralyte,Powder,NULL,NULL
+51,Biotin 1%,Powder,NULL,NULL
+52,Black Cumin Seed,Powder,NULL,NULL
+53,Black Currant,Powder,NULL,NULL
+54,Black Fulvic Acid Liquid,Powder,NULL,NULL
+55,Black Pepper Extract 95% Pipperine,Powder,NULL,NULL
+56,Black Seed Oil,Powder,NULL,NULL
+57,Black Walnut Hulls Powder,Powder,NULL,NULL
+58,Blackberry,Powder,NULL,NULL
+59,Bladderwrack,Powder,NULL,NULL
+60,Blessed Thistle,Powder,NULL,NULL
+61,Boron Amino Acid Acetate,Powder,NULL,NULL
+62,Boron Chelate 5%,Powder,NULL,NULL
+63,Boron Glycinate Malate 20%,Powder,NULL,NULL
+64,Bosellia Serrata (B),Powder,NULL,NULL
+65,Boswellia Ext 65%,Powder,NULL,NULL
+66,Brazil Nut,Powder,NULL,NULL
+67,Broccoli Juice,Powder,NULL,NULL
+68,Broccoli Whole,Powder,NULL,NULL
+69,Bromelain 2400 GDU/g,Powder,NULL,NULL
+70,Brown Rice Protein,Powder,NULL,NULL
+71,Buckthorn Bark C/S,Powder,NULL,NULL
+72,Bupleurum,Powder,NULL,NULL
+73,Burdock Root,Powder,NULL,NULL
+74,Burdock Root 10:1,Powder,NULL,NULL
+75,Burdock Root C/S,Powder,NULL,NULL
+76,Butchers Broom,Powder,NULL,NULL
+77,Butternut Bark,Powder,NULL,NULL
+78,Cacao,Powder,NULL,NULL
+79,Caffeine,Powder,NULL,NULL
+80,Calcium Ascorbate,Powder,NULL,NULL
+81,Calcium Bisglycinate Chelate,Powder,NULL,NULL
+82,Calcium Carbonate,Powder,NULL,NULL
+83,Calcium Citrate Malate,Powder,NULL,NULL
+84,California Poppy Extract,Powder,NULL,NULL
+85,Camu Camu,Powder,NULL,NULL
+86,Cape Aloe,Powder,NULL,NULL
+87,Carnosine,Powder,NULL,NULL
+88,Carrot,Powder,NULL,NULL
+89,Cascara Sagrada,Powder,NULL,NULL
+90,Cascara Sagrada C/S,Powder,NULL,NULL
+91,Cayenne,Powder,NULL,NULL
+92,Ceylon Cinnamon,Powder,NULL,NULL
+93,Chaga,Powder,NULL,NULL
+94,Chamomile,Powder,NULL,NULL
+95,Chanca Piedra,Powder,NULL,NULL
+96,Chaste Berry,Powder,NULL,NULL
+97,Chia Seed,Powder,NULL,NULL
+98,Chickweed,Powder,NULL,NULL
+99,Chicory Root,Powder,NULL,NULL
+100,Chlorella,Powder,NULL,NULL
+101,Chocolate Flavor,Powder,NULL,NULL
+102,Chocolate Flavor 651202,Powder,NULL,NULL
+103,Choline L Bitartrate,Powder,NULL,NULL
+104,Chondroitin Sulfate,Powder,NULL,NULL
+105,Chromium AAC 2.5%,Powder,NULL,NULL
+106,Chromium Nicotinate (GTF),Powder,NULL,NULL
+107,Chromium Picolinate,Powder,NULL,NULL
+108,Cinnulin PF,Powder,NULL,NULL
+109,Citric Acid,Powder,NULL,NULL
+110,CLA TG 60%,Powder,NULL,NULL
+111,Cloves Bud Powder,Powder,NULL,NULL
+112,CO-Q-10,Powder,NULL,NULL
+113,Cocoa Dutch,Powder,NULL,NULL
+114,CocOganic,Powder,NULL,NULL
+115,Coconut Milk,Powder,NULL,NULL
+116,Coconut Water,Powder,NULL,NULL
+117,Collagen,Powder,NULL,NULL
+118,Copper Glycinate Chelate,Powder,NULL,NULL
+119,Cordyceps,Powder,NULL,NULL
+120,Corydalis Yanhusuo Ext,Powder,NULL,NULL
+121,Cranberry Ext 15% PAC,Powder,NULL,NULL
+122,Curcumin 90% (A),Powder,NULL,NULL
+123,Curcumin Lecithin (B),Powder,NULL,NULL
+124,D-Mannose,Powder,NULL,NULL
+125,D-Ribose,Powder,NULL,NULL
+126,D-Salina,Powder,NULL,NULL
+127,Damiana Leaf,Powder,NULL,NULL
+128,Dan Shen,Powder,NULL,NULL
+129,Dandelion Leaf,Powder,NULL,NULL
+130,Dandelion Leaf 4:1 Extract,Powder,NULL,NULL
+131,Dandelion Root,Powder,NULL,NULL
+132,Dandelion Root C/S,Powder,NULL,NULL
+133,Dandelion Root Roasted,Powder,NULL,NULL
+134,Date Sugar,Powder,NULL,NULL
+135,Deer Antler Gelatin,Powder,NULL,NULL
+136,Diatomaceous Earth,Powder,NULL,NULL
+137,Diindolylmethane (DIM),Powder,NULL,NULL
+138,DMAE Bitartrate,Powder,NULL,NULL
+139,DMG,Powder,NULL,NULL
+140,Dong Quai,Powder,NULL,NULL
+141,Dulse,Powder,NULL,NULL
+142,Dunelliala Salina Bld 7.5%,Powder,NULL,NULL
+143,Durian (freeze dried),Powder,NULL,NULL
+144,Erythritol,Powder,NULL,NULL
+145,Fava Bean,Powder,NULL,NULL
+146,Fennel Seed,Powder,NULL,NULL
+147,Fenugreek,Powder,NULL,NULL
+148,Fermented Barley,Powder,NULL,NULL
+149,Fine Rice Powder,Powder,NULL,NULL
+150,Flax Seed Meal,Powder,NULL,NULL
+151,Fo-Ti Root,Powder,NULL,NULL
+152,Folic Acid,Powder,NULL,NULL
+153,Forskohlii (Coleus),Powder,NULL,NULL
+154,FOS(Fructooligosaccharides),Powder,NULL,NULL
+155,Freeze Dried Kakadu Plum Gubinge,Powder,NULL,NULL
+156,Fulvic Acid (GTX GOLD-L),Powder,NULL,NULL
+157,Fulvic Powder,Powder,NULL,NULL
+158,Gamma Aminobuturic Acid (GABA),Powder,NULL,NULL
+159,Garcinia P.E. 50%,Powder,NULL,NULL
+160,Garlic,Powder,NULL,NULL
+161,Geranium,Powder,NULL,NULL
+162,Ginger Root,Powder,NULL,NULL
+163,Ginkgo Leaf,Powder,NULL,NULL
+164,Glucomannan,Powder,NULL,NULL
+165,Glucomannan 70%,Powder,NULL,NULL
+166,Glucosamine,Powder,NULL,NULL
+167,Glucosamine Hydrochloride,Powder,NULL,NULL
+168,Glucosamine Sulfate,Powder,NULL,NULL
+169,Glycine,Powder,NULL,NULL
+170,Goats Rue,Powder,NULL,NULL
+171,Goji,Powder,NULL,NULL
+172,Gotu Kola,Powder,NULL,NULL
+173,GPC Greens,Powder,NULL,NULL
+174,GPC Super Plant Protein,Powder,NULL,NULL
+175,GPC Vitamin C,Powder,NULL,NULL
+176,Grape Juice Powder,Powder,NULL,NULL
+177,Grapefruit,Powder,NULL,NULL
+178,Grapeseed Extract,Powder,NULL,NULL
+179,Graviola Leaf,Powder,NULL,NULL
+180,Green Apple Flavor,Powder,NULL,NULL
+181,Green Tea,Powder,NULL,NULL
+182,Guar Gum,Powder,NULL,NULL
+183,Guava,Powder,NULL,NULL
+184,Gymnema Sylvestre,Powder,NULL,NULL
+185,Hawthorne Berry,Powder,NULL,NULL
+186,Hemp Protein,Powder,NULL,NULL
+187,Hibiscus 4:1 Extract,Powder,NULL,NULL
+188,Hibiscus Flower,Powder,NULL,NULL
+189,Holy Basil,Powder,NULL,NULL
+190,Hops Flower,Powder,NULL,NULL
+191,Horny Goat Weed,Powder,NULL,NULL
+192,Hu Zhang,Powder,NULL,NULL
+193,Humalite,Powder,NULL,NULL
+194,Hydrangea,Powder,NULL,NULL
+195,ID-ALG,Powder,NULL,NULL
+196,Inositol NF,Powder,NULL,NULL
+197,Iodide Trituration (I 1%),Powder,NULL,NULL
+198,Irish Moss,Powder,NULL,NULL
+199,Irish Moss (Maju),Powder,NULL,NULL
+200,Iron Ferrochel,Powder,NULL,NULL
+201,Iron Glycinate,Powder,NULL,NULL
+202,Jiao Gu Lan,Powder,NULL,NULL
+203,Juniper Berry,Powder,NULL,NULL
+204,K2 Vital,Powder,NULL,NULL
+205,Kakadu 4:1 Ext,Powder,NULL,NULL
+206,Kakadu Gubinge,Powder,NULL,NULL
+207,Kale,Powder,NULL,NULL
+208,KAMUT Wheatgrass Juice,Powder,NULL,NULL
+209,Kelp,Powder,NULL,NULL
+210,Kiwi Flavor,Powder,NULL,NULL
+211,Kudzu Root,Powder,NULL,NULL
+212,L-Arginine,Powder,NULL,NULL
+213,L-Arginine HCL,Powder,NULL,NULL
+214,L-Carnitine,Powder,NULL,NULL
+215,L-Carnosine,Powder,NULL,NULL
+216,L-Citrulline,Powder,NULL,NULL
+217,L-Cystine,Powder,NULL,NULL
+218,L-Cytenine,Powder,NULL,NULL
+219,L-Glutamine,Powder,NULL,NULL
+220,L-Leucine,Powder,NULL,NULL
+221,L-Lutein 5%,Powder,NULL,NULL
+222,L-Lysine Mono HCL,Powder,NULL,NULL
+223,L-Methionine,Powder,NULL,NULL
+224,L-Ornithine,Powder,NULL,NULL
+225,L-Ornithine HCL,Powder,NULL,NULL
+226,L-Phenylalenine,Powder,NULL,NULL
+227,L-Taurine,Powder,NULL,NULL
+228,L-Theanine,Powder,NULL,NULL
+229,L-Tyrosine,Powder,NULL,NULL
+230,L. Acidophilus,Powder,NULL,NULL
+231,Lakanto Golden Monk Fruit Sweetener,Powder,NULL,NULL
+232,Lalmin B Complex,Powder,NULL,NULL
+233,Lalmin Vita D Yeast,Powder,NULL,NULL
+234,Lecithin,Powder,NULL,NULL
+235,Lemon Flavor,Powder,NULL,NULL
+236,Lemon Peel,Powder,NULL,NULL
+237,Lemon Peel C/S,Powder,NULL,NULL
+238,Lentil Flour,Powder,NULL,NULL
+239,Licorice Root,Powder,NULL,NULL
+240,Licorice Root C/S,Powder,NULL,NULL
+241,Lime Flavor,Powder,NULL,NULL
+242,Lions Mane,Powder,NULL,NULL
+243,Lipase,Powder,NULL,NULL
+244,Lupini Bean,Powder,NULL,NULL
+245,Lycopene 5%,Powder,NULL,NULL
+246,Lycopene Beadlets,Powder,NULL,NULL
+247,Lycopene Beadlets 10%,Powder,NULL,NULL
+248,Maca Gelatinized,Powder,NULL,NULL
+249,Maca Red,Powder,NULL,NULL
+250,Maca Root,Powder,NULL,NULL
+251,Maca Root (Maju),Powder,NULL,NULL
+252,Maca Root 60%,Powder,NULL,NULL
+253,Maca Root Black,Powder,NULL,NULL
+254,Maca Root Red,Powder,NULL,NULL
+255,Magnesium Bisglycinate,Powder,NULL,NULL
+256,Magnesium Bisglycinate Chelate 18%,Powder,NULL,NULL
+257,Magnesium Caprylate,Powder,NULL,NULL
+258,Magnesium Glycinate (Mg 11.7%),Powder,NULL,NULL
+259,Magnesium Hydroxide,Powder,NULL,NULL
+260,Magnesium Malate (Blend Mg Mal 3:Malic Acid 1),Powder,NULL,NULL
+261,Magnesium Malate 15% Mg (does not need to be blended),Powder,NULL,NULL
+262,Magnesium Stearate,Powder,NULL,NULL
+263,Magnolia Bark,Powder,NULL,NULL
+264,Maitake,Powder,NULL,NULL
+265,Makwood Probiotic Mix,Powder,NULL,NULL
+266,Malic Acid,Powder,NULL,NULL
+267,Maltodextrin,Powder,NULL,NULL
+268,Manganese Glycinate Chelate,Powder,NULL,NULL
+269,Marshmallow Root,Powder,NULL,NULL
+270,Matcha,Powder,NULL,NULL
+271,MCT,Powder,NULL,NULL
+272,Methylcobalamin,Powder,NULL,NULL
+273,Microbes (Advanced),Powder,NULL,NULL
+274,Microbes (Origional),Powder,NULL,NULL
+275,Mocha Flavor,Powder,NULL,NULL
+276,Molybdenum AAC 0.1%,Powder,NULL,NULL
+277,Monk Fruit 25%,Powder,NULL,NULL
+278,Monk Fruit 50%,Powder,NULL,NULL
+279,Monk Fruit 7%,Powder,NULL,NULL
+280,Monk Fruit Extract,Powder,NULL,NULL
+281,Moringa Leaf,Powder,NULL,NULL
+282,Moringa Leaf (Maju),Powder,NULL,NULL
+283,MSM 20-40 Mesh,Powder,NULL,NULL
+284,MSM-80 Mesh,Powder,NULL,NULL
+285,Mucuna Pruriens,Powder,NULL,NULL
+286,Muira Puama,Powder,NULL,NULL
+287,N-Acetyl-L-Cysteine,Powder,NULL,NULL
+288,Natural Bitter Blocker,Powder,NULL,NULL
+289,Nettle Leaf,Powder,NULL,NULL
+290,Nettle Root,Powder,NULL,NULL
+291,Nettle Root Ext.,Powder,NULL,NULL
+292,Nopal Cactus,Powder,NULL,NULL
+293,Nutritional Yeast,Powder,NULL,NULL
+294,Oatgrass Juice,Powder,NULL,NULL
+295,Oatgrass Whole,Powder,NULL,NULL
+296,Olive Leaf C/S,Powder,NULL,NULL
+297,Olive Leaf Ext 20% A,Powder,NULL,NULL
+298,Olive Leaf Ext 20% B,Powder,NULL,NULL
+299,Omega-3 Fatty Acid,Powder,NULL,NULL
+300,Omya Cal Fg-15 Calcium Carbonate,Powder,NULL,NULL
+301,Orange Juice Flavor,Powder,NULL,NULL
+302,Orange Peel,Powder,NULL,NULL
+303,Orgen HIM,Powder,NULL,NULL
+304,Orgen-FA (Folic Acid),Powder,NULL,NULL
+305,Oyster Mushroom Ext 1:1,Powder,NULL,NULL
+306,Papain,Powder,NULL,NULL
+307,Papaya Fruit,Powder,NULL,NULL
+308,Papaya Juice,Powder,NULL,NULL
+309,Papaya Whole,Powder,NULL,NULL
+310,Parsley Leaf,Powder,NULL,NULL
+311,Passion Flower,Powder,NULL,NULL
+312,Passion Flower Ext 3.5%,Powder,NULL,NULL
+313,PEA (palmitoylethanolamide),Powder,NULL,NULL
+314,Pea Fiber,Powder,NULL,NULL
+315,Pea Protein,Powder,NULL,NULL
+316,Pea Protein Isolate,Powder,NULL,NULL
+317,Peppermint Flavor,Powder,NULL,NULL
+318,Peppermint Leaf,Powder,NULL,NULL
+319,Periwinkle Leaf,Powder,NULL,NULL
+320,Phytic Acid,Powder,NULL,NULL
+321,Phytosterols (Phytopin),Powder,NULL,NULL
+322,Pina Colada Flavor,Powder,NULL,NULL
+323,Pine Needle Powder (Markus owned),Powder,NULL,NULL
+324,Pine Nut,Powder,NULL,NULL
+325,Pine Nuts Medium,Powder,NULL,NULL
+326,Pine Phytosterols,Powder,NULL,NULL
+327,Pine Pollen,Powder,NULL,NULL
+328,Pine Pollen 10:1,Powder,NULL,NULL
+329,Pineapple Flavor,Powder,NULL,NULL
+330,Pixie Herbal Blend,Powder,NULL,NULL
+331,Plantain Leaf,Powder,NULL,NULL
+332,Pomegranate Seed&Fruit,Powder,NULL,NULL
+333,Potassium Citrate,Powder,NULL,NULL
+334,Potassium Gluconate,Powder,NULL,NULL
+335,Potassium Glycinate Complex,Powder,NULL,NULL
+336,Prickly Pear Fruit,Powder,NULL,NULL
+337,Probiotic Blend (Paracasei 5B/Plantarum 5B/Longum 5B/Reuteri 5B),Powder,NULL,NULL
+338,PRVNT Probiotics Mix,Powder,NULL,NULL
+339,Pumpkin Seed Ext 20:1,Powder,NULL,NULL
+340,Pumpkin Seed Protein,Powder,NULL,NULL
+341,Purslane,Powder,NULL,NULL
+342,Quassia Wood - Bark,Powder,NULL,NULL
+343,Quercitin,Powder,NULL,NULL
+344,Quercitin B,Powder,NULL,NULL
+345,Quercitin Dihydrate,Powder,NULL,NULL
+346,Quinoa,Powder,NULL,NULL
+347,R-Lipoic Acid,Powder,NULL,NULL
+348,Red Clover,Powder,NULL,NULL
+349,Red Clover C/S,Powder,NULL,NULL
+350,Red Raspberry Leaf,Powder,NULL,NULL
+351,Rehmannia,Powder,NULL,NULL
+352,Reishi,Powder,NULL,NULL
+353,Resveratrol,Powder,NULL,NULL
+354,Resveratrol 98%,Powder,NULL,NULL
+355,Rhodiola Root,Powder,NULL,NULL
+356,Rhubarb Root,Powder,NULL,NULL
+357,Rice Bran,Powder,NULL,NULL
+358,Rice Maltodextrin,Powder,NULL,NULL
+359,RiFiber,Powder,NULL,NULL
+360,Rose Hips,Powder,NULL,NULL
+361,Rosemary,Powder,NULL,NULL
+362,Royal Jelly,Powder,NULL,NULL
+363,Rutin,Powder,NULL,NULL
+364,SAMe Tosylate Disulfate,Powder,NULL,NULL
+365,Sarsaparilla,Powder,NULL,NULL
+366,Saw Palmetto,Powder,NULL,NULL
+367,Saw Palmetto Ext.,Powder,NULL,NULL
+368,Schisandra Berry,Powder,NULL,NULL
+369,Sea Buckthorn Berry,Powder,NULL,NULL
+370,Sea Salt,Powder,NULL,NULL
+371,Selenium Select,Powder,NULL,NULL
+372,Seleno Yeast,Powder,NULL,NULL
+373,Senna Leaf,Powder,NULL,NULL
+374,Serrapeptase,Powder,NULL,NULL
+375,Shiitake,Powder,NULL,NULL
+376,Shilajit,Powder,NULL,NULL
+377,Siberian Eleuthero Root,Powder,NULL,NULL
+378,Silica (Silicon dioxide),Powder,NULL,NULL
+379,Slippery Elm,Powder,NULL,NULL
+380,Sodium Hyaluronate,Powder,NULL,NULL
+381,Sodium Iodide,Powder,NULL,NULL
+382,Spearmint Flavor,Powder,NULL,NULL
+383,Spinach,Powder,NULL,NULL
+384,Spirulina,Powder,NULL,NULL
+385,Spirulina (Maju Owned),Powder,NULL,NULL
+386,Spirulina (MAJU Owned),Powder,NULL,NULL
+387,St John's Wart,Powder,NULL,NULL
+388,Stevia Leaf Powder,Powder,NULL,NULL
+389,Stone Root,Powder,NULL,NULL
+390,Suma Root,Powder,NULL,NULL
+391,Sunflower Lecithin,Powder,NULL,NULL
+392,Sunflower Lecithin non-GMO,Powder,NULL,NULL
+393,Super 15 SBO,Powder,NULL,NULL
+394,Superoxide Dismutase,Powder,NULL,NULL
+395,Tapioca Starch,Powder,NULL,NULL
+396,Taurine,Powder,NULL,NULL
+397,TMG Betaine Anhydrous,Powder,NULL,NULL
+398,Tongkat Ali,Powder,NULL,NULL
+399,Tremella Mushroom Ext 1:1,Powder,NULL,NULL
+400,Tribulus Terestris,Powder,NULL,NULL
+401,Tropical Punch Flavor,Powder,NULL,NULL
+402,Tumeric Root,Powder,NULL,NULL
+403,Turkey Tail Mushroom,Powder,NULL,NULL
+404,Uva Ursi,Powder,NULL,NULL
+405,Valerian Root Ext 0.8%,Powder,NULL,NULL
+406,Vanadium Chelate 1%,Powder,NULL,NULL
+407,Vanilla Extract,Powder,NULL,NULL
+408,Vanilla Flavor,Powder,NULL,NULL
+409,Vanilla Flavor 326913,Powder,NULL,NULL
+410,Vegatex,Powder,NULL,NULL
+411,Vitamin A Palmitate,Powder,NULL,NULL
+412,Vitamin B1 (Thiamin),Powder,NULL,NULL
+413,Vitamin B12 (Methylcobalamin 1%),Powder,NULL,NULL
+414,Vitamin B2 (Riboflavin),Powder,NULL,NULL
+415,Vitamin B3 (Niacin),Powder,NULL,NULL
+416,Vitamin B5,Powder,NULL,NULL
+417,Vitamin B5 (D-Calcium Pantothenate),Powder,NULL,NULL
+418,Vitamin B6,Powder,NULL,NULL
+419,Vitamin B6 P5P,Powder,NULL,NULL
+420,Vitamin B9 (L-Methylfolate Calcium),Powder,NULL,NULL
+421,Vitamin D(Cholecalciferol),Powder,NULL,NULL
+422,Vitamin D3,Powder,NULL,NULL
+423,Vitamin E,Powder,NULL,NULL
+424,Vitamin E (D-a-tocpheryl),Powder,NULL,NULL
+425,Vitamin E Succinate,Powder,NULL,NULL
+426,Vitamin K2-7 0.2% Menoquione,Powder,NULL,NULL
+427,Watercress,Powder,NULL,NULL
+428,Wheatgrass Juice,Powder,NULL,NULL
+429,Wheatgrass Whole,Powder,NULL,NULL
+430,Whey Protein 90%,Powder,NULL,NULL
+431,White Kidney Bean,Powder,NULL,NULL
+432,White Oak Bark,Powder,NULL,NULL
+433,White Pine Bark,Powder,NULL,NULL
+434,Wild Lettuce,Powder,NULL,NULL
+435,Wild Lettuce Extract,Powder,NULL,NULL
+436,Wild Yam Root,Powder,NULL,NULL
+437,Willow Bark Ext 25%,Powder,NULL,NULL
+438,Witch Hazel Bark,Powder,NULL,NULL
+439,Wormwood,Powder,NULL,NULL
+440,Xanthan Gum,Powder,NULL,NULL
+441,Yellowdock,Powder,NULL,NULL
+442,Yerba Mate,Powder,NULL,NULL
+443,Yohimbe Bark Ext 1%,Powder,NULL,NULL
+444,Yucca Root,Powder,NULL,NULL
+445,Zinc Aspartate,Powder,NULL,NULL
+446,Zinc Bisglycinate Chelate,Powder,NULL,NULL
+447,Zinc Citrate,Powder,NULL,NULL
+448,Zinc Gluconate Dihydrate,Powder,NULL,NULL
+449,Zinc Picolinate,Powder,NULL,NULL

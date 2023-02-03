@@ -4,6 +4,11 @@ DROP TABLE IF EXISTS `Inventory`.`Check-out_Log`;
 DROP TABLE IF EXISTS `Inventory`.`Cycle_Counts_Log`;
 DROP TABLE IF EXISTS `Organizations`.`User`;
 DROP TABLE IF EXISTS `Organizations`.`People`;
+DROP TABLE IF EXISTS `Formulas`.`Primary_Group`;
+DROP TABLE IF EXISTS `Formulas`.`Secondary_Group`;
+DROP TABLE IF EXISTS `Formulas`.`Tertiary_Group`;
+DROP TABLE IF EXISTS `Formulas`.`Quaternary_Group`;
+DROP TABLE IF EXISTS `Formulas`.`Formula_Detail`;
 DROP TABLE IF EXISTS `Formulas`.`Formula_Master`;
 DROP TABLE IF EXISTS `Products`.`Components`;
 DROP DATABASE IF EXISTS `Inventory`;
@@ -12,7 +17,6 @@ DROP DATABASE IF EXISTS `Products`;
 DROP DATABASE IF EXISTS `Manufacturing`;
 DROP DATABASE IF EXISTS `Organizations`;
 DROP DATABASE IF EXISTS `Formulas`;
-
 
 CREATE DATABASE IF NOT EXISTS `Organizations`;
 CREATE DATABASE IF NOT EXISTS `Inventory`;
@@ -32,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `Organizations`.`Users` (
   `doc` json DEFAULT (CONCAT('{"_id":',`user_id`,',"access_privileges":{"human_resources":"staff", "client_relations":"staff", "supplier_relations":"staff", "production":"staff", "logistics":"staff"}}')),
   PRIMARY KEY (`user_id`),
   CONSTRAINT `Org_User_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 CREATE TABLE IF NOT EXISTS `Organizations`.`Organizations` (
   `organization_id` INT,
@@ -56,7 +60,7 @@ CREATE TABLE IF NOT EXISTS `Organizations`.`Organizations` (
   FULLTEXT INDEX `SECONDARY` (`organization_name`, `alias_name_1`, `alias_name_2`, `alias_name_3`) VISIBLE,
   PRIMARY KEY (`organization_id`),
   CONSTRAINT `Org_Org_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 CREATE TABLE IF NOT EXISTS `Organizations`.`Facilities` (
   `facility_id` INT AUTO_INCREMENT,
@@ -92,19 +96,357 @@ CREATE TABLE IF NOT EXISTS `Products`.`Product_Master` (
   `product_id` VARCHAR(250),
   `organization_id` INT,
   `product_name` VARCHAR(300) NOT NULL,
-  `type` ENUM('Powder',' Capsule', 'Liquid','NS'),
+  `type` ENUM('Powder','Capsule', 'Liquid','Other'),
   `current_product` BOOL,
-  `label_id` VARCHAR(250),
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `spec_issue_date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `spec_revise_date` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
-  `products_collection` JSON,
   `exp_time_frame` SMALLINT,
-  `exp_unit` ENUM('Years','Months','Days'),
+  `exp_unit` ENUM('Year/s','Month/s','Day/s'),
   `exp_type` ENUM('Best By', 'Exp'),
   `exp_use_oldest_ingredient` BOOL,
+  `default_formula_id` INT DEFAULT NULL,
+  `_json_schema` json GENERATED ALWAYS AS (_utf8mb4'{"type":"object"}') VIRTUAL,
+  `doc` json DEFAULT (CONCAT('{
+    "_id":',`product_id`,',
+    "lab_specs": {
+        "organoleptic": {
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sample_lot": "",
+            "file_pointer": "",
+            "visual": "",
+            "odor": "",
+            "taste_dry": "",
+            "taste_dissolved": "",
+            "texture": "",
+            "mesh": ""
+        },
+        "microbiological": {
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sample_lot": "",
+            "file_pointer": "",
+            "tests": {
+                "total_plate_count": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                },
+                "coliform_count": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                },
+                "escherichia_coli_count": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                },
+                "staphylococcus_count": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                },
+                "salmonella_count": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                },
+                "yeast_count": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                },
+                "mold_count": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                },
+                "moisture": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                }
+            }
+        },
+        "heavy_metals": {
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sampleLot": "",
+            "file_pointer": "",
+            "tests": {
+                "total_heavy_metals": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                },
+                "arsenic": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                },
+                "cadmium": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                },
+                "lead": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                },
+                "mercury": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                }
+            }
+        },
+        "ftir": {
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sample_lot": "",
+            "file_pointer": "",
+            "percent_match_standard": "",
+            "method": "",
+            "rf_value": ""
+        },
+        "microscopic": {
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sample_lot": "",
+            "file_pointer": "",
+            "image_file_pointer": "",
+            "description": "",
+            "magnification": "",
+            "microscope_type": ""
+        },
+        "chromatography": {
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sample_lot": "",
+            "file_pointer": "",
+            "method": "",
+            "description": ""
+        },
+        "nutritionalFacts": {
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sample_lot": "",
+            "file_pointer": "",
+            "serving_size": "",
+            "serving_units": "",
+            "tests": {
+                "calories": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "total_fats": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "saturated_fats": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "trans_fats": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "cholesterol": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "total_carbohydrate": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "dietary_fiber": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "total_sugars": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "added_sugars": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "protein": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "sodium": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "potassium": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "calcium": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "zinc": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "iron": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "copper": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "magnesium": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "selenium": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "manganese": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "biotin": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitamin_a": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitamin_b1": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitamin_b2": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitamin_b3": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitamin_b5": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitamin_b6": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitamin_b12": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitamin_c": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitamin_d3": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitamin_e": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitamin_k2": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                }
+            }
+        },
+        "pesticides": {
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sample_lot": "",
+            "file_pointer": ""
+        },
+        "foreign_matter": {
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sample_lot": "",
+            "file_pointer": ""
+        }
+    }
+}')),
   PRIMARY KEY (`product_id`),
-  FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
+  FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`),
+  CONSTRAINT `Products_Master_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
 );
 
 CREATE TABLE IF NOT EXISTS `Inventory`.`Components` (
@@ -113,12 +455,350 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Components` (
   `component_type` Enum('Powder', 'Liquid', 'Jar/Container', 'Bag', 'Shrink Band', 'Lid/Cap', 'Label', 'Capsule', 'MISC', 'Scoop', 'Desiccant', 'Box/Carton', 'Packaging Material'),
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `owner_id` INT,
-  `component_collection` JSON,
+  `_json_schema` json GENERATED ALWAYS AS (_utf8mb4'{"type":"object"}') VIRTUAL,
+  `doc` json DEFAULT (CONCAT('{
+    "_id":',`component_id`,',
+    "lab_specs": {
+        "organoleptic": {
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sample_lot": "",
+            "file_pointer": "",
+            "visual": "",
+            "odor": "",
+            "taste_dry": "",
+            "taste_dissolved": "",
+            "texture": "",
+            "mesh": ""
+        },
+        "microbiological": {
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sample_lot": "",
+            "file_pointer": "",
+            "tests": {
+                "total_plate_count": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                },
+                "coliform_count": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                },
+                "escherichia_coli_count": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                },
+                "staphylococcus_count": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                },
+                "salmonella_count": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                },
+                "yeast_count": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                },
+                "mold_count": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                },
+                "moisture": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                }
+            }
+        },
+        "heavy_metals": {
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sampleLot": "",
+            "file_pointer": "",
+            "tests": {
+                "total_heavy_metals": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                },
+                "arsenic": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                },
+                "cadmium": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                },
+                "lead": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                },
+                "mercury": {
+                    "required_spec": "",
+                    "method": "",
+                    "count": "",
+                    "units": "",
+                    "less_than": ""
+                }
+            }
+        },
+        "ftir": {
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sample_lot": "",
+            "file_pointer": "",
+            "percent_match_standard": "",
+            "method": "",
+            "rf_value": ""
+        },
+        "microscopic": {
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sample_lot": "",
+            "file_pointer": "",
+            "image_file_pointer": "",
+            "description": "",
+            "magnification": "",
+            "microscope_type": ""
+        },
+        "chromatography": {
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sample_lot": "",
+            "file_pointer": "",
+            "method": "",
+            "description": ""
+        },
+        "nutritionalFacts": {
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sample_lot": "",
+            "file_pointer": "",
+            "serving_size": "",
+            "serving_units": "",
+            "tests": {
+                "calories": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "total_fats": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "saturated_fats": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "trans_fats": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "cholesterol": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "total_carbohydrate": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "dietary_fiber": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "total_sugars": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "added_sugars": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "protein": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "sodium": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "potassium": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "calcium": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "zinc": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "iron": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "copper": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "magnesium": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "selenium": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "manganese": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "biotin": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitamin_a": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitamin_b1": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitamin_b2": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitamin_b3": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitamin_b5": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitamin_b6": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitamin_b12": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitamin_c": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitamin_d3": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitamin_e": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                },
+                "vitamin_k2": {
+                    "ammount_per_serving": "",
+                    "units": "",
+                    "source": ""
+                }
+            }
+        },
+        "pesticides": {
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sample_lot": "",
+            "file_pointer": ""
+        },
+        "foreign_matter": {
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sample_lot": "",
+            "file_pointer": ""
+        }
+    }
+}')),
   `alias_name_1` VARCHAR(300),
   `alias_name_2` VARCHAR(300),
   `alias_name_3` VARCHAR(300),
   PRIMARY KEY (`component_id`),
-  FOREIGN KEY (`owner_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
+  FOREIGN KEY (`owner_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`),
+  CONSTRAINT `Inv_components_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
 );
 
 CREATE TABLE IF NOT EXISTS `Inventory`.`Inventory` (
@@ -235,7 +915,7 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Orders` (
 );
 
 CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Orders_Detail` (
-  `po_detail_id` INT AUTO_INCREMENT,
+`po_detail_id` INT AUTO_INCREMENT,
   `prefix` VARCHAR(10),
   `year` TINYINT,
   `month` TINYINT,
@@ -245,6 +925,9 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Orders_Detail` (
   `kilos_order_qty` DECIMAL(16,4),
   `special_instructions` VARCHAR(2000),
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `bid_price_per_unit` INT,
+  `completed_and_billed` BOOL,
+  `final_ship_date` DATE,
   PRIMARY KEY (`po_detail_id`),
   CONSTRAINT `fk_Purchase_Orders_Detail_pk` 
 	  FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
@@ -288,17 +971,37 @@ CREATE TABLE IF NOT EXISTS `Products`.`Components` (
 CREATE TABLE `Formulas`.`Formula_Master` (
   `formula_id` INT AUTO_INCREMENT,
   `product_id` VARCHAR(250),
-  `percent` DOUBLE,
-  `mg_per_capsule` DOUBLE,
-  `gram_per_unit` DOUBLE,
-  `ml_per_unit` DOUBLE,
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `formulation_version` SMALLINT,
+  `notes` VARCHAR(1000),
+  `capsule_size` VARCHAR(100),
+  `empty_capsule_mg` DOUBLE,
+  `total_grams_per_unit` DOUBLE,
+  `total_capsules_per_unit` DOUBLE,
+  `total_milliliters_per_unit` DOUBLE,
+  `fill_min` DOUBLE,
+  `fill_max` DOUBLE,
+  `label_id` VARCHAR(250),
+  PRIMARY KEY (`formula_id`),
+  FOREIGN KEY (`label_id`) REFERENCES `Inventory`.`Components`(`component_id`),
+  FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`)
+);
+
+CREATE TABLE `Formulas`.`Formula_Detail` (
+  `formula_ingredient_id` INT AUTO_INCREMENT,
+  `formula_id` INT,
+  `percent` DOUBLE,
+  `mg_per_capsule` DOUBLE,
+  `ml_per_unit` DOUBLE,
+  `grams_per_unit` DOUBLE,
   `organic_spec` ENUM('organic', 'non-organic', 'any'),
   `ingredient_id` VARCHAR(250),
-  PRIMARY KEY (`formula_id`),
-  FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
-  FOREIGN KEY (`ingredient_id`) REFERENCES `Inventory`.`Components`(`component_id`)
+  `notes` VARCHAR(1000),
+  `brand_specific` BOOL,
+  `organic_specific` BOOL,
+  PRIMARY KEY (`formula_ingredient_id`),
+  FOREIGN KEY (`ingredient_id`) REFERENCES `Inventory`.`Components`(`component_id`),
+  FOREIGN KEY (`formula_id`) REFERENCES `Formulas`.`Formula_Master`(`formula_id`)
 );
 
 CREATE TABLE IF NOT EXISTS `Manufacturing`.`Equipment` (
@@ -319,37 +1022,37 @@ CREATE TABLE `Formulas`.`Quaternary_Group` (
   `brand_id` INT,
   `organic_spec` ENUM('organic', 'non-organic', 'any'),
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`formula_id`) REFERENCES `Formulas`.`Formula_Master`(`formula_id`),
+  FOREIGN KEY (`formula_id`) REFERENCES `Formulas`.`Formula_Detail`(`formula_ingredient_id`),
   FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
 CREATE TABLE `Formulas`.`Tertiary_Group` (
   `id` INT AUTO_INCREMENT,
-  `formula_id` INT,
+  `formula_ingredient_id` INT,
   `brand_id` INT,
   `organic_spec` ENUM('organic', 'non-organic', 'any'),
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`formula_id`) REFERENCES `Formulas`.`Formula_Master`(`formula_id`),
+  FOREIGN KEY (`formula_ingredient_id`) REFERENCES `Formulas`.`Formula_Detail`(`formula_ingredient_id`),
   FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
 CREATE TABLE `Formulas`.`Secondary_Group` (
   `id` INT AUTO_INCREMENT,
-  `formula_id` INT,
+  `formula_ingredient_id` INT,
   `brand_id` INT,
   `organic_spec` ENUM('organic', 'non-organic', 'any'),
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`formula_id`) REFERENCES `Formulas`.`Formula_Master`(`formula_id`),
+  FOREIGN KEY (`formula_ingredient_id`) REFERENCES `Formulas`.`Formula_Detail`(`formula_ingredient_id`),
   FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
 CREATE TABLE `Formulas`.`Primary_Group` (
   `id` INT AUTO_INCREMENT,
-  `formula_id` INT,
+  `formula_ingredient_id` INT,
   `brand_id` INT,
   `organic_spec` ENUM('organic', 'non-organic', 'any'),
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`formula_id`) REFERENCES `Formulas`.`Formula_Master`(`formula_id`),
+  FOREIGN KEY (`formula_ingredient_id`) REFERENCES `Formulas`.`Formula_Detail`(`formula_ingredient_id`),
   FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
@@ -390,6 +1093,30 @@ SELECT
     `Organizations`.`notes`
 FROM `Organizations`
 LEFT JOIN `People` ON `Organizations`.`organization_id` = `People`.`organization_id`;
+
+-- Create Stored Procedures
+
+DELIMITER //
+CREATE PROCEDURE `Organizations`.`ORG_EXISTS`(IN s1 VARCHAR(200))
+BEGIN
+	SELECT
+		`organization_id`,
+		`organization_name`, 
+        GREATEST(
+			sys.LEVENSHTEIN_RATIO(`organization_name`, s1),
+			sys.LEVENSHTEIN_RATIO(`alias_name_1`, s1),
+			sys.LEVENSHTEIN_RATIO(`alias_name_2`, s1),
+			sys.LEVENSHTEIN_RATIO(`alias_name_3`, s1)
+            ) AS `max_duplicate_percent`
+	FROM `Organizations`.`Organizations` 
+	WHERE 
+		sys.LEVENSHTEIN_RATIO(`organization_name`, s1) > 50 OR
+		sys.LEVENSHTEIN_RATIO(`alias_name_1`, s1) > 50 OR
+		sys.LEVENSHTEIN_RATIO(`alias_name_2`, s1) > 50 OR
+		sys.LEVENSHTEIN_RATIO(`alias_name_3`, s1) > 50 OR
+		s1 LIKE `organization_name`;
+END//
+
 
 
 
