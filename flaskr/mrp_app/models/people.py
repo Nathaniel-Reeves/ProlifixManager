@@ -60,6 +60,7 @@ class Person:
             'Organizations').get_table('People')
         result = org_table.select().where(
             (f"person_id = '%s'") % str(person_id)).execute()
+        session.close()
         encoded_data = result.fetch_one()
 
         # Decode byte objects to str objects
@@ -103,6 +104,7 @@ def fetch_people_by_org(org_id):
         """ % org_id
     ).execute()
     people_data = result.fetch_all()
+    session.close()
     columns = result.get_columns()
     d = {}
     for data in people_data:

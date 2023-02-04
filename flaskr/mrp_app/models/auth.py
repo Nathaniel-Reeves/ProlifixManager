@@ -18,6 +18,7 @@ def register(username, password):
     except Exception as err:
         if err.args[0] == 1062:
             error = f"User {username} is already registered."
+    session.close()
     return error
 
 def login(username, password):
@@ -34,12 +35,14 @@ def login(username, password):
 
     if error is None:
         client_session['user_id'] = user['user_id']
-
+    db_session.close()
     return error
 
 def get_user(user_id):
     session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
-    return session.sql(
+    data = session.sql(
         'SELECT * FROM `Organizations`.`Users` WHERE `user_id` = ?'
     ).bind((user_id,)).execute().fetch_one()
+    session.close()
+    return data
 

@@ -1,5 +1,5 @@
 import json
-from datetime import date
+from datetime import date, datetime
 import mysqlx
 from mrp_app import app
 
@@ -82,8 +82,8 @@ class Organization:
         data["alias_name_2"] = row["alias_name_2"]
         data["alias_name_3"] = row["alias_name_3"]
         if row["date_entered"]:
-            data["date_entered"] = date.fromisoformat(
-                row["date_entered"])
+            data["date_entered"] = datetime.date(
+                row["date_entered"]).isoformat()
         else:
             data["date_entered"] = None
         data["website_url"] = row["website_url"]
