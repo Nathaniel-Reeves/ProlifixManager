@@ -915,7 +915,11 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Orders` (
 );
 
 CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Orders_Detail` (
+<<<<<<< Updated upstream
 `po_detail_id` INT AUTO_INCREMENT,
+=======
+  `po_detail_id` INT AUTO_INCREMENT,
+>>>>>>> Stashed changes
   `prefix` VARCHAR(10),
   `year` TINYINT,
   `month` TINYINT,
@@ -925,6 +929,7 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Orders_Detail` (
   `kilos_order_qty` DECIMAL(16,4),
   `special_instructions` VARCHAR(2000),
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+<<<<<<< Updated upstream
   `bid_price_per_unit` INT,
   `completed_and_billed` BOOL,
   `final_ship_date` DATE,
@@ -932,6 +937,14 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Orders_Detail` (
   CONSTRAINT `fk_Purchase_Orders_Detail_pk` 
 	  FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
       FOREIGN KEY (`prefix`, `year`, `month`, `sec_number`) REFERENCES `Orders`.`Purchase_Orders`(`prefix`, `year`, `month`, `sec_number`)
+=======
+  `bid_price_per_unit` DOUBLE,
+  `completed_and_billed` BOOL,
+  `final_ship_date` DATE,
+  PRIMARY KEY (`po_detail_id`),
+  FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
+  FOREIGN KEY (`prefix`, `year`, `month`, `sec_number`) REFERENCES `Orders`.`Purchase_Orders`(`prefix`, `year`, `month`, `sec_number`)
+>>>>>>> Stashed changes
 );
 
 CREATE TABLE IF NOT EXISTS `Orders`.`Lot_Numbers` (
@@ -941,10 +954,15 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Lot_Numbers` (
   `sec_number` SMALLINT,
   `suffix` VARCHAR(15),
   `product_id` VARCHAR(250),
+<<<<<<< Updated upstream
+=======
+  `prolifix_lot_number` VARCHAR(20) DEFAULT (CONCAT(`prefix`, `year`, `month`, `sec_number`, `suffix`)),
+>>>>>>> Stashed changes
   `po_detail_id` INT,
   `target_unit_yield` INT,
   `actual_unit_yield` INT,
-  `production_runs_collection` JSON,
+  `_json_schema` json GENERATED ALWAYS AS (_utf8mb4'{"type":"object"}') VIRTUAL,
+  `doc` json DEFAULT (CONCAT('{"_id":"',`prolifix_lot_number`,'"}')),
   `batch_printed` BOOL,
   `bpr_printed` BOOL,
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -952,8 +970,9 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Lot_Numbers` (
   `exp_type` ENUM('Best By', 'Exp'),
   PRIMARY KEY (`prefix`, `year`, `month`, `sec_number`, `suffix`),
   FOREIGN KEY (`po_detail_id`) REFERENCES `Orders`.`Purchase_Orders_Detail`(`po_detail_id`),
-  FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`)
-);
+  FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
+  CONSTRAINT `Org_Org_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE IF NOT EXISTS `Products`.`Components` (
   `component_id` INT AUTO_INCREMENT,
