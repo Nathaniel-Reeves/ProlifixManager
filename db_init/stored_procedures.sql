@@ -1,3 +1,5 @@
+-- Create Stored Procedures
+----------------------------------
 DELIMITER //
 CREATE PROCEDURE `Organizations`.`ORG_EXISTS`(IN s1 VARCHAR(200))
 BEGIN
