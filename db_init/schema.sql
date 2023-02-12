@@ -1,12 +1,12 @@
 -- Build all tables and databases.
---
+
 CREATE DATABASE IF NOT EXISTS `Organizations`;
 CREATE DATABASE IF NOT EXISTS `Inventory`;
 CREATE DATABASE IF NOT EXISTS `Products`;
 CREATE DATABASE IF NOT EXISTS `Manufacturing`;
 CREATE DATABASE IF NOT EXISTS `Orders`;
 CREATE DATABASE IF NOT EXISTS `Formulas`;
---
+
 CREATE TABLE IF NOT EXISTS `Organizations`.`Users` (
   `user_id` INT,
   `person_id` INT,
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `Organizations`.`Users` (
   PRIMARY KEY (`user_id`),
   CONSTRAINT `Org_User_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
 );
---
+
 CREATE TABLE IF NOT EXISTS `Organizations`.`Organizations` (
   `organization_id` INT,
   `organization_name` VARCHAR(200) NOT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `Organizations`.`Organizations` (
   PRIMARY KEY (`organization_id`),
   CONSTRAINT `Org_Org_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
 );
---
+
 CREATE TABLE IF NOT EXISTS `Organizations`.`Facilities` (
   `facility_id` INT AUTO_INCREMENT,
   `organization_id` INT,
@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS `Organizations`.`Facilities` (
   PRIMARY KEY (`facility_id`),
   FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
---
+
 CREATE TABLE IF NOT EXISTS `Products`.`Product_Master` (
   `product_id` INT,
   `organization_id` INT,
@@ -430,7 +430,7 @@ CREATE TABLE IF NOT EXISTS `Products`.`Product_Master` (
   FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`),
   CONSTRAINT `Products_Master_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
 );
---
+
 CREATE TABLE IF NOT EXISTS `Inventory`.`Components` (
   `component_id` INT,
   `component_name` VARCHAR(300),
@@ -782,7 +782,7 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Components` (
   FOREIGN KEY (`owner_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`),
   CONSTRAINT `Inv_components_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
 );
---
+
 CREATE TABLE IF NOT EXISTS `Inventory`.`Inventory` (
   `inv_id` INT AUTO_INCREMENT,
   `item_id` INT,
@@ -796,7 +796,7 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Inventory` (
   FOREIGN KEY (`item_id`) REFERENCES `Inventory`.`Components`(`component_id`),
   FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
---
+
 CREATE TABLE IF NOT EXISTS `Inventory`.`Check-in_Log` (
   `check_in_id` INT AUTO_INCREMENT,
   `inv_id` INT,
@@ -809,7 +809,7 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Check-in_Log` (
   FOREIGN KEY (`inv_id`) REFERENCES `Inventory`.`Inventory`(`inv_id`),
   FOREIGN KEY (`user_id`) REFERENCES `Organizations`.`Users`(`user_id`)
 );
---
+
 CREATE TABLE IF NOT EXISTS `Inventory`.`Cycle_Counts_Log` (
   `cycle_count_id` INT AUTO_INCREMENT,
   `inv_id` INT,
@@ -824,7 +824,7 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Cycle_Counts_Log` (
   FOREIGN KEY (`inv_id`) REFERENCES `Inventory`.`Inventory`(`inv_id`),
   FOREIGN KEY (`user_id`) REFERENCES `Organizations`.`Users`(`user_id`)
 );
---
+
 CREATE TABLE IF NOT EXISTS `Inventory`.`Check-out_Log` (
   `check_out_id` INT AUTO_INCREMENT,
   `inv_id` INT,
@@ -837,7 +837,7 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Check-out_Log` (
   FOREIGN KEY (`inv_id`) REFERENCES `Inventory`.`Inventory`(`inv_id`),
   FOREIGN KEY (`user_id`) REFERENCES `Organizations`.`Users`(`user_id`)
 );
---
+
 CREATE TABLE IF NOT EXISTS `Products`.`Manufacturing_Process` (
   `process_spec_id` INT AUTO_INCREMENT,
   `product_id` INT,
@@ -848,7 +848,7 @@ CREATE TABLE IF NOT EXISTS `Products`.`Manufacturing_Process` (
   PRIMARY KEY (`process_spec_id`),
   FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`)
 );
---
+
 CREATE TABLE IF NOT EXISTS `Manufacturing`.`Processes` (
   `process_id` INT AUTO_INCREMENT,
   `process_name` VARCHAR(100) NOT NULL,
@@ -859,7 +859,7 @@ CREATE TABLE IF NOT EXISTS `Manufacturing`.`Processes` (
   `date_modified` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`process_id`)
 );
---
+
 CREATE TABLE IF NOT EXISTS `Organizations`.`People` (
   `person_id` INT AUTO_INCREMENT,
   `organization_id` INT,
@@ -880,7 +880,7 @@ CREATE TABLE IF NOT EXISTS `Organizations`.`People` (
   PRIMARY KEY (`person_id`),
   FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
---
+
 CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Orders` (
   `prefix` VARCHAR(10),
   `year` TINYINT,
@@ -895,7 +895,7 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Orders` (
   PRIMARY KEY (`prefix`, `year`, `month`, `sec_number`),
   FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
---
+
 CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Orders_Detail` (
   `po_detail_id` INT AUTO_INCREMENT,
   `prefix` VARCHAR(10),
@@ -914,7 +914,7 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Orders_Detail` (
   FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
   FOREIGN KEY (`prefix`, `year`, `month`, `sec_number`) REFERENCES `Orders`.`Purchase_Orders`(`prefix`, `year`, `month`, `sec_number`)
 );
---
+
 CREATE TABLE IF NOT EXISTS `Orders`.`Lot_Numbers` (
   `prefix` VARCHAR(15),
   `year` TINYINT,
@@ -938,7 +938,7 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Lot_Numbers` (
   FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
   CONSTRAINT `Org_Org_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
---
+
 CREATE TABLE IF NOT EXISTS `Products`.`Components` (
   `component_id` INT AUTO_INCREMENT,
   `materials_id` INT,
@@ -951,7 +951,7 @@ CREATE TABLE IF NOT EXISTS `Products`.`Components` (
   FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
   FOREIGN KEY (`materials_id`) REFERENCES `Inventory`.`Components`(`component_id`)
 );
---
+
 CREATE TABLE `Formulas`.`Formula_Master` (
   `formula_id` INT AUTO_INCREMENT,
   `product_id` INT,
@@ -970,7 +970,7 @@ CREATE TABLE `Formulas`.`Formula_Master` (
   FOREIGN KEY (`label_id`) REFERENCES `Inventory`.`Components`(`component_id`),
   FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`)
 );
---
+
 CREATE TABLE `Formulas`.`Formula_Detail` (
   `formula_ingredient_id` INT AUTO_INCREMENT,
   `formula_id` INT,
@@ -987,7 +987,7 @@ CREATE TABLE `Formulas`.`Formula_Detail` (
   FOREIGN KEY (`ingredient_id`) REFERENCES `Inventory`.`Components`(`component_id`),
   FOREIGN KEY (`formula_id`) REFERENCES `Formulas`.`Formula_Master`(`formula_id`)
 );
---
+
 CREATE TABLE IF NOT EXISTS `Manufacturing`.`Equipment` (
   `equipment_id` INT AUTO_INCREMENT,
   `process_id` INT,
@@ -999,7 +999,7 @@ CREATE TABLE IF NOT EXISTS `Manufacturing`.`Equipment` (
   PRIMARY KEY (`equipment_id`),
   FOREIGN KEY (`process_id`) REFERENCES `Manufacturing`.`Processes`(`process_id`)
 );
---
+
 CREATE TABLE `Formulas`.`Quaternary_Group` (
   `id` INT AUTO_INCREMENT,
   `formula_id` INT,
@@ -1009,7 +1009,7 @@ CREATE TABLE `Formulas`.`Quaternary_Group` (
   FOREIGN KEY (`formula_id`) REFERENCES `Formulas`.`Formula_Detail`(`formula_ingredient_id`),
   FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
---
+
 CREATE TABLE `Formulas`.`Tertiary_Group` (
   `id` INT AUTO_INCREMENT,
   `formula_ingredient_id` INT,
@@ -1019,7 +1019,7 @@ CREATE TABLE `Formulas`.`Tertiary_Group` (
   FOREIGN KEY (`formula_ingredient_id`) REFERENCES `Formulas`.`Formula_Detail`(`formula_ingredient_id`),
   FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
---
+
 CREATE TABLE `Formulas`.`Secondary_Group` (
   `id` INT AUTO_INCREMENT,
   `formula_ingredient_id` INT,
@@ -1029,7 +1029,7 @@ CREATE TABLE `Formulas`.`Secondary_Group` (
   FOREIGN KEY (`formula_ingredient_id`) REFERENCES `Formulas`.`Formula_Detail`(`formula_ingredient_id`),
   FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
---
+
 CREATE TABLE `Formulas`.`Primary_Group` (
   `id` INT AUTO_INCREMENT,
   `formula_ingredient_id` INT,

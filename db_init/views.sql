@@ -1,5 +1,4 @@
 -- Create Views
---
 USE `Organizations`;
 CREATE OR REPLACE VIEW `org_and_people_detail` AS
 SELECT 

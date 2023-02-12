@@ -1,6 +1,6 @@
 -- Create Stored Procedures
-----------------------------------
-DELIMITER //
+DROP PROCEDURE IF EXISTS `Organizations`.`ORG_EXISTS`;
+DELIMITER $
 CREATE PROCEDURE `Organizations`.`ORG_EXISTS`(IN s1 VARCHAR(200))
 BEGIN
 	SELECT
@@ -19,4 +19,5 @@ BEGIN
 		sys.LEVENSHTEIN_RATIO(`alias_name_2`, s1) > 50 OR
 		sys.LEVENSHTEIN_RATIO(`alias_name_3`, s1) > 50 OR
 		s1 LIKE `organization_name`;
-END//
+END $
+DELIMITER ;
