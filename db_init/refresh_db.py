@@ -1,7 +1,7 @@
 import mysqlx
 import re
 import os
-import json
+import csv
 
 # Define the connection details
 HOST = '192.168.1.42'  # Office
@@ -82,7 +82,7 @@ DATABASES = [
             },
             {
                 "file": "scv_data/Formulas/Formulas - Formula_Detail.csv",
-                "table_name": "Formula_Details"
+                "table_name": "Formula_Detail"
             }
         ]
     }
@@ -123,8 +123,8 @@ def execute_from_sql(file_name, session):
                 else:
                     # Execute the complete SQL statement
                     statement = statement + line
-                    print("\033[0mExecuting SQL statement...")
-                    print("\033[0m     ", statement[:60].strip(), "...")
+                    # print("\033[0mExecuting SQL statement...")
+                    # print("\033[0m     ", statement[:60].strip(), "...")
                     session.sql(statement).execute()
                     statement = ""
 
@@ -141,7 +141,7 @@ def execute_from_sql(file_name, session):
             # Commit the transaction
             print("\033[32mExecution successful!")
             session.commit()
-            print("\033[32mCommitting the transaction...")
+            print("\033[0mCommitting the transaction...")
             flag = True
 
     return flag
@@ -164,77 +164,37 @@ def refresh_database_schema(session):
         # Load the SQL drop_order from the file
         print("\033[0mDropping existing tables...")
         flag = execute_from_sql("drop_order.sql", session)
+        print()
 
     if flag:
         # Load the SQL schema from the file
         print("\033[0mRecreating tables...")
         flag = execute_from_sql("schema.sql", session)
+        print()
 
     if flag:
         # Load the SQL views from the file
         print("\033[0mReloading views...")
         flag = execute_from_sql("views.sql", session)
+        print()
 
     # if flag:
     #     # Load the SQL stored_procedures from the file
     #     flag = execute_from_sql("stored_procedures.sql", session)
 
     if flag:
-        print("Refresh database schema successful!")
+        print("\033[32mRefresh database schema successful!")
+
     else:
         print("\033[31mRefresh database schema failed.")
+    print()
+
 
     return flag
 
-
-def smart_split_csv(csv_string):
-    """
-    Splits a CSV string into a list of values.
-
-    Args:
-    csv_string: A string containing comma-separated values.
-
-    Returns:
-    A list of values.
-    """
-    values = []
-    quote_open = False
-    current_item = ""
-
-    # Iterate through each character in the CSV string
-    for char in csv_string:
-        # If the current character is a comma and not inside quotes,
-        # add the current item to the list and start a new item
-        if char == ',' and not quote_open:
-            values.append(current_item.strip())
-            current_item = ""
-        # If the current character is a quote, toggle the quote_open flag
-        # and add the character to the current item
-        elif char == '"':
-            quote_open = not quote_open
-            current_item += char
-        # Otherwise, add the character to the current item
-        else:
-            current_item += char
-
-    # Add the final item to the list
-    values.append(current_item.strip())
-
-    # Check each value in the list for "_id" or "NULL" and modify as necessary
-    for v in range(len(values)):
-        if "_id" in values[v]:
-            # If the value contains "_id", convert to a JSON string
-            values[v] = json.dumps(values[v].replace('""', ''))
-        if values[v] == 'NULL':
-            # If the value is "NULL", convert to None
-            values[v] = None
-
-    return values
-
-
 def main():
     # Reload the database
-    print("\033[0mReloading the database...")
+    print("\033[0mStarting Program...")
 
     # Display the connection details
     print("\033[0mConnection Details:")
@@ -259,12 +219,17 @@ def main():
         }
     )
     print("\033[32mConnection Successful!\033[0m")
+    print()
 
     # Refresh the database schema
     flag = refresh_database_schema(session)
     if not flag:
+        print("\033[31mExiting...\033[0m")
         session.close()
         exit(0)
+    else:
+        print("loading fresh data into new databases...\033[0m")
+        print()
 
     # Loop through each database and CSV file and insert the data
     for database in DATABASES:
@@ -273,35 +238,45 @@ def main():
         if database["csv_files"]:
             # Start a transaction
             session.start_transaction()
-            db = session.get_schema(db_name)
             loaded = True
 
             for csv_file in database["csv_files"]:
                 table_name = csv_file["table_name"]
-                table = db.get_table(table_name)
 
                 print("\033[0mLoading CSV for {} file...".format(table_name))
-                csv_data = open(os.getcwd() + "/" + csv_file["file"], "r")
+                file = open(os.getcwd() + "/" +
+                                csv_file["file"], newline='')
+                data = list(csv.DictReader(file))
 
-                header = csv_data.readline().strip().split(",")
-                print(
-                    "\033[0mInserting data into the '{}' table...".format(table_name))
+                print("\033[0mInserting data into the '{}' table...".format(table_name))
 
                 # Loop through each line of the CSV file and insert the data
-                for line in csv_data:
-                    values = smart_split_csv(line.strip())
+                for line in data:
                     try:
-                        table.insert(header).values(values).execute()
+                        row = list(line.values())
+                        for i in range(len(row)):
+                            if "_id" in row[i]:
+                                row[i] = row[i].replace('"','\\"')
+
+                        values = '"' + '", "'.join(row) + '"'
+                        values = values.replace('"NULL"', 'NULL')
+
+                        headers = ', '.join(list(line.keys()))
+
+                        query = 'INSERT INTO `{}`.`{}` ({}) VALUES ({})'.format(
+                            db_name, table_name, headers, values)
+                        session.sql(query).execute()
+
                     except Exception as e:
                         print(
                             "\033[31mInserting failed due to error: {}\033[0m".format(e))
                         loaded = False
                         break
 
-                csv_data.close()
+                file.close()
                 if loaded:
                     print(
-                        "\033[32mCSV for {} file loaded successfully!\033[0m".format(table_name))
+                        "\033[32mCSV '{}' file loaded successfully!\033[0m".format(table_name))
                 else:
                     break
 
@@ -315,7 +290,8 @@ def main():
                     "\033[31mCSV for {} file failed to load!\033[0m".format(table_name))
                 session.rollback()
         else:
-            print("\033[0mNo CSV files found for {}".format(db_name))
+            print("\033[31mNo CSV files found for {}".format(db_name))
+        print()
 
     # Close the connection to the database
     print("\033[0mClosing the connection to the database...")
