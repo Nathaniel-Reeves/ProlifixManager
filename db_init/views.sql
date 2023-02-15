@@ -17,11 +17,6 @@ SELECT
     `People`.`termination_date`,
     `People`.`clock_number`,
     `Organizations`.`organization_id`,
-    `Organizations`.`organization_name`,
-    `Organizations`.`organization_initial`,
-    `Organizations`.`alias_name_1`,
-    `Organizations`.`alias_name_2`,
-    `Organizations`.`alias_name_3`,
     `Organizations`.`date_entered`,
     `Organizations`.`website_url`,
     `Organizations`.`date_vetted`,
@@ -31,6 +26,33 @@ SELECT
     `Organizations`.`lab`,
     `Organizations`.`other`,
     `Organizations`.`doc`,
-    `Organizations`.`notes`
+    `Organizations`.`notes`,
+    `Organization_Names`.`organization_name`,
+    `Organization_Names`.`organization_initial`
 FROM `Organizations`
-LEFT JOIN `People` ON `Organizations`.`organization_id` = `People`.`organization_id`;
+LEFT JOIN `People` ON 
+	`Organizations`.`organization_id` = `People`.`organization_id`
+LEFT JOIN `Organization_Names` ON 
+	`Organizations`.`organization_id` = `Organization_Names`.`organization_id` AND 
+    `Organization_Names`.`primary_name` = 1;
+    
+USE `Organizations`;
+CREATE OR REPLACE VIEW `org_primary` AS
+SELECT 
+    `Organizations`.`organization_id`,
+    `Organizations`.`date_entered`,
+    `Organizations`.`website_url`,
+    `Organizations`.`date_vetted`,
+    `Organizations`.`risk_level`,
+    `Organizations`.`supplier`,
+    `Organizations`.`client`,
+    `Organizations`.`lab`,
+    `Organizations`.`other`,
+    `Organizations`.`doc`,
+    `Organizations`.`notes`,
+    `Organization_Names`.`organization_name`,
+    `Organization_Names`.`organization_initial`
+FROM `Organizations`
+LEFT JOIN `Organization_Names` ON 
+	`Organizations`.`organization_id` = `Organization_Names`.`organization_id` AND 
+    `Organization_Names`.`primary_name` = 1;

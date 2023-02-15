@@ -22,11 +22,6 @@ CREATE TABLE IF NOT EXISTS `Organizations`.`Users` (
 
 CREATE TABLE IF NOT EXISTS `Organizations`.`Organizations` (
   `organization_id` INT,
-  `organization_name` VARCHAR(200) NOT NULL,
-  `alias_name_1` VARCHAR(200),
-  `alias_name_2` VARCHAR(200),
-  `alias_name_3` VARCHAR(200),
-  `organization_initial` VARCHAR(10) NOT NULL,
   `date_entered` DATE NULL DEFAULT NULL,
   `website_url` VARCHAR(200),
   `vetted` BOOL,
@@ -39,9 +34,20 @@ CREATE TABLE IF NOT EXISTS `Organizations`.`Organizations` (
   `_json_schema` json GENERATED ALWAYS AS (_utf8mb4'{"type":"object"}') VIRTUAL,
   `doc` json DEFAULT (CONCAT('{"_id":"',`organization_id`,'","files":[]}')),
   `notes` VARCHAR(2500),
-  FULLTEXT INDEX `SECONDARY` (`organization_name`, `alias_name_1`, `alias_name_2`, `alias_name_3`) VISIBLE,
   PRIMARY KEY (`organization_id`),
   CONSTRAINT `Org_Org_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
+);
+
+CREATE TABLE `Organizations`.`Organization_Names` (
+  `name_id` INT,
+  `organization_id` INT,
+  `organization_name` VARCHAR(200) NOT NULL,
+  `organization_initial` VARCHAR(10) NOT NULL,
+  `primary_name` BOOL,
+  PRIMARY KEY (`name_id`),
+  FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`),
+  INDEX ( `organization_name` ),
+  INDEX ( `organization_initial` )
 );
 
 CREATE TABLE IF NOT EXISTS `Organizations`.`Facilities` (
@@ -433,7 +439,6 @@ CREATE TABLE IF NOT EXISTS `Products`.`Product_Master` (
 
 CREATE TABLE IF NOT EXISTS `Inventory`.`Components` (
   `component_id` INT,
-  `component_name` VARCHAR(300),
   `component_type` Enum('Powder', 'Liquid', 'Jar/Container', 'Bag', 'Shrink Band', 'Lid/Cap', 'Label', 'Capsule', 'MISC', 'Scoop', 'Desiccant', 'Box/Carton', 'Packaging Material'),
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `owner_id` INT,
@@ -775,12 +780,19 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Components` (
         }
     }
 }')),
-  `alias_name_1` VARCHAR(300),
-  `alias_name_2` VARCHAR(300),
-  `alias_name_3` VARCHAR(300),
   PRIMARY KEY (`component_id`),
   FOREIGN KEY (`owner_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`),
   CONSTRAINT `Inv_components_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
+);
+
+CREATE TABLE `Inventory`.`Component_Names` (
+  `name_id` INT,
+  `component_id` INT,
+  `component_name` VARCHAR(300) NOT NULL,
+  `primary_name` BOOL,
+  PRIMARY KEY (`name_id`),
+  FOREIGN KEY (`component_id`) REFERENCES `Inventory`.`Components`(`component_id`),
+  INDEX ( `component_name` )
 );
 
 CREATE TABLE IF NOT EXISTS `Inventory`.`Inventory` (

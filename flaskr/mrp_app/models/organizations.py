@@ -50,9 +50,6 @@ class Organization:
                     `organization_id`,
                     `organization_name`,
                     `organization_initial`,
-                    `alias_name_1`,
-                    `alias_name_2`,
-                    `alias_name_3`,
                     `date_entered`,
                     `website_url`,
                     `vetted`,
@@ -64,7 +61,7 @@ class Organization:
                     `other`,
                     `doc`,
                     `notes`
-                FROM `Organizations`.`Organizations`
+                FROM `Organizations`.`org_primary`
                 WHERE `organization_id` = {id};""".format(id = org_id)).execute()
             row = result.fetch_one()
             if row:
@@ -78,17 +75,12 @@ class Organization:
         data["organization_id"] = row["organization_id"]
         data["organization_name"] = row["organization_name"]
         data["organization_initial"] = row["organization_initial"]
-        data["alias_name_1"] = row["alias_name_1"]
-        data["alias_name_2"] = row["alias_name_2"]
-        data["alias_name_3"] = row["alias_name_3"]
         if row["date_entered"]:
             data["date_entered"] = datetime.date(
                 row["date_entered"]).isoformat()
         else:
             data["date_entered"] = None
         data["website_url"] = row["website_url"]
-        data["vetted"] = row["vetted"]
-        data["date_vetted"] = row["date_vetted"]
         data["risk_level"] = row["risk_level"].decode("utf-8")
         data["supplier"] = row["supplier"]
         data["client"] = row["client"]
@@ -111,12 +103,8 @@ class Organization:
             `organization_id`,
             `organization_name`,
             `organization_initial`,
-            `alias_name_1`,
-            `alias_name_2`,
-            `alias_name_3`,
             `date_entered`,
             `website_url`,
-            `vetted`,
             `date_vetted`,
             `risk_level`,
             `supplier`,
@@ -125,7 +113,7 @@ class Organization:
             `other`,
             `doc`,
             `notes`
-        FROM `Organizations`.`Organizations`
+        FROM `Organizations`.`org_primary`
         WHERE %s = true
         ORDER BY `organization_name`;""" % org_roll
         ).execute()

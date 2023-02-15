@@ -20,6 +20,10 @@ DATABASES = [
                     "table_name": "Organizations"
             },
             {
+                "file": "scv_data/Organizations/Organizations db - Organization_Names.csv",
+                "table_name": "Organization_Names"
+            },
+            {
                 "file": "scv_data/Organizations/Organizations db - People.csv",
                 "table_name": "People"
             },
@@ -39,6 +43,10 @@ DATABASES = [
             {
                 "file": "scv_data/Inventory/Inventory - Components.csv",
                 "table_name": "Components"
+            },
+            {
+                "file": "scv_data/Inventory/Inventory - Component_names.csv",
+                "table_name": "Component_Names"
             }
         ]
     },

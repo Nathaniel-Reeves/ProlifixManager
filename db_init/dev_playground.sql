@@ -1,30 +1,15 @@
 
 
 USE `Organizations`;
-SET @search = "prolifix";
+SET @search = "health";
 
 SELECT
 	`organization_id`,
 	`organization_name`, 
-    sys.LEVENSHTEIN_RATIO(`organization_name`, @search),
-	sys.LEVENSHTEIN_RATIO(`alias_name_1`, @search),
-    `alias_name_1`,
-	sys.LEVENSHTEIN_RATIO(`alias_name_2`, @search),
-    `alias_name_2`,
-	sys.LEVENSHTEIN_RATIO(`alias_name_3`, @search),
-    `alias_name_3`,
-	GREATEST(
-		sys.LEVENSHTEIN_RATIO(`organization_name`, @search),
-		sys.LEVENSHTEIN_RATIO(`alias_name_1`, @search),
-		sys.LEVENSHTEIN_RATIO(`alias_name_2`, @search),
-		sys.LEVENSHTEIN_RATIO(`alias_name_3`, @search)
-		) AS `max_duplicate_percent`
-FROM `Organizations`.`Organizations` 
+    sys.LEVENSHTEIN_RATIO(`organization_name`, @search)
+FROM `Organizations`.`Organization_Names` 
 WHERE 
-	sys.LEVENSHTEIN_RATIO(`organization_name`, @search) > 50 OR
-	sys.LEVENSHTEIN_RATIO(`alias_name_1`, @search) > 50 OR
-	sys.LEVENSHTEIN_RATIO(`alias_name_2`, @search) > 50 OR
-	sys.LEVENSHTEIN_RATIO(`alias_name_3`, @search) > 50;
+	sys.LEVENSHTEIN_RATIO(`organization_name`, @search) > 50;
 
 
 

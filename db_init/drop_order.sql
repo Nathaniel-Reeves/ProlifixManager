@@ -1,4 +1,5 @@
 -- drop all tables and databases.
+DROP TABLE IF EXISTS `Inventory`.`Component_Names`;
 DROP TABLE IF EXISTS `Inventory`.`Check-in_Log`;
 DROP TABLE IF EXISTS `Inventory`.`Check-out_Log`;
 DROP TABLE IF EXISTS `Inventory`.`Cycle_Counts_Log`;
