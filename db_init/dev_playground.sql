@@ -89,7 +89,7 @@ SELECT
 	CONCAT("PO#", a.`prefix`, LPAD(a.`year`,2,"0"), "~", LPAD(a.`month`,2,"0"), "~", LPAD(a.`sec_number`,3,"0")) AS PO_number,
     d.`product_name`,
 	d.`type`,
-    e.`organization_name`,
+    f.`organization_name`,
     a.`client_po_num`,
     b.`unit_order_qty`
 FROM `Orders`.`Purchase_Orders` a
@@ -104,6 +104,9 @@ INNER JOIN `Products`.`Product_Master` d ON
 	c.`product_id` = d.`product_id`
 INNER JOIN `Organizations`.`Organizations` e ON
 	d.`organization_id` = e.`organization_id`
+INNER JOIN `Organizations`.`Organization_Names` f ON
+	e.`organization_id` = f.`organization_id` AND
+    f.`primary_name` = 1
 ORDER BY c.`year`, c.`month`, c.`sec_number`, c.`prefix` DESC;
 
 

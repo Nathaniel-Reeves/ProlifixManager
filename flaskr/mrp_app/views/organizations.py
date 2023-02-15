@@ -2,6 +2,7 @@
 Handling api requests related to Organization objects.  Defines organization
 objects.
 """
+
 from flask import (
     Blueprint,
     flash,
@@ -22,6 +23,9 @@ from mrp_app.models.people import (
 )
 from mrp_app.models.organizations import (
     Organization
+)
+from mrp_app.models.orders import (
+    fetch_orders_by_org
 )
 
 
@@ -127,6 +131,12 @@ def get_people(org_id):
     data = fetch_people_by_org(org_id)
     return data
 
+
+@bp.route('/<int:org_id>/orders', methods=('GET',))
+@login_required
+def get_orders(org_id):
+    data = fetch_orders_by_org(org_id)
+    return data
 
 @bp.route('/<int:org_id>/documents', methods=('GET',))
 @login_required
