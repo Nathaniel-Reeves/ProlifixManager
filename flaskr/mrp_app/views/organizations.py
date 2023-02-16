@@ -2,7 +2,7 @@
 Handling api requests related to Organization objects.  Defines organization
 objects.
 """
-
+import json
 from flask import (
     Blueprint,
     flash,
@@ -129,7 +129,7 @@ def put_organization(org_id):
 @login_required
 def get_people(org_id):
     data = fetch_people_by_org(org_id)
-    return data
+    return jsonify(data)
 
 
 @bp.route('/<int:org_id>/orders', methods=('GET',))

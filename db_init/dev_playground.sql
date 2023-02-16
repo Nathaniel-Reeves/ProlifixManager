@@ -60,27 +60,27 @@ ORDER BY b.`po_detail_id` DESC;
 
 SELECT 
 	CONCAT("PO#", a.`prefix`, LPAD(a.`year`,2,"0"), "~", LPAD(a.`month`,2,"0"), "~", LPAD(a.`sec_number`,3,"0")) AS PO_number,
-    a.`client_po_num`,
-    COUNT(CONCAT(c.`prefix`, LPAD(c.`year`,2,"0"), LPAD(c.`month`,2,"0"), LPAD(c.`sec_number`,3,"0"), c.suffix)) AS production_runs_count,
-    d.`product_name`,
-    d.`type`,
-    b.`unit_order_qty`,
-    b.`kilos_order_qty`
+    `client_po_num`,
+    COUNT(CONCAT(c.`prefix`, LPAD(c.`year`,2,"0"), LPAD(c.`month`,2,"0"), LPAD(c.`sec_number`,3,"0"), c.suffix)) AS production_runs_count
 FROM `Orders`.`Purchase_Orders` a
-INNER JOIN `Orders`.`Purchase_Orders_Detail` b ON
+LEFT JOIN `Orders`.`Purchase_Orders_Detail` b ON
 	a.`prefix` = b.`prefix` AND
     a.`year` = b.`year` AND
     a.`month` = b.`month` AND
     a.`sec_number` = b.`sec_number`
-INNER JOIN `Orders`.`Lot_Numbers` c ON
+LEFT JOIN `Orders`.`Lot_Numbers` c ON
 	c.`po_detail_id` = b.`po_detail_id`
-INNER JOIN `Products`.`Product_Master` d ON
-	c.`product_id` = d.`product_id`
-INNER JOIN `Organizations`.`Organizations` e ON
-	d.`organization_id` = e.`organization_id`
-WHERE d.`organization_id` = 39
-GROUP BY b.`po_detail_id`, d.`product_id`
-ORDER BY b.`po_detail_id` DESC;
+WHERE a.`organization_id` = 39
+GROUP BY 
+	a.`prefix`,
+    a.`year`,
+    a.`month`,
+    a.`sec_number`
+ORDER BY
+    a.`year` DESC,
+    a.`month` DESC,
+    a.`sec_number` DESC
+LIMIT 10;
 
 SELECT * FROM `Products`.`Product_Master` ORDER BY product_id;
 
@@ -88,7 +88,7 @@ SELECT
 	CONCAT(c.`prefix`, LPAD(c.`year`,2,"0"), LPAD(c.`month`,2,"0"), LPAD(c.`sec_number`,3,"0"), c.suffix) AS lot_number,
 	CONCAT("PO#", a.`prefix`, LPAD(a.`year`,2,"0"), "~", LPAD(a.`month`,2,"0"), "~", LPAD(a.`sec_number`,3,"0")) AS PO_number,
     d.`product_name`,
-	d.`type`,
+	CONVERT(d.`type` USING utf8mb4) AS type,
     f.`organization_name`,
     a.`client_po_num`,
     b.`unit_order_qty`

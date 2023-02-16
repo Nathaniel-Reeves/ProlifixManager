@@ -139,6 +139,5 @@ class Organization:
         return self.errors
 
     def fetch_documents(self):
-        print(self.org_data["doc"])
         return self.org_data["doc"]
 

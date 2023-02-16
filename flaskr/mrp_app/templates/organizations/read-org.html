@@ -60,6 +60,15 @@
     <div class="view_content" v-show="org.seen" v-bind:id="`org.organization_id`">
         <div class="view_content_box">
             <h3>Recent Orders</h3>
+            <div v-bind:id="`orders-${org.organization_id}`"></div>
+            <ul class="button-list">
+                <a class="edit_button">
+                    <li>Add New Order</li>
+                </a>
+                <a class="edit_button">
+                    <li>View All Orders</li>
+                </a>
+            </ul>
         </div>
         <div class="view_content_box">
             <h3>Additional Info</h3>
@@ -122,6 +131,10 @@ Vue.createApp({
                     this.docs_grid(org_id);
                     console.log("fetched documents:", this.organizations[org_id]);
                 }
+                if (!(this.organizations[org_id].hasOwnProperty("orders"))) {
+                    this.orders_grid(org_id);
+                    console.log("fetched orders:", this.organizations[org_id]);
+                }
             }
             this.organizations[org_id]["view"] = true;
         },
@@ -139,6 +152,9 @@ Vue.createApp({
                     }).then(() => {
                         var id = "personel-" + org_id;
                         new gridjs.Grid({
+                            pagination: {
+                                limit: 6
+                            },
                             columns: [{
                                 id: "person_id",
                                 name: "Person_id",
@@ -177,7 +193,7 @@ Vue.createApp({
         },
         docs_grid: function (org_id) {
             fetch(window.origin + '/organizations/' + org_id + '/documents')
-                .then(response => {
+            .then(response => {
                 if (response.status = 200) {
                     response.json()
                     .then(data => {
@@ -185,6 +201,9 @@ Vue.createApp({
                     }).then(() => {
                         var id = "docs-" + org_id;
                         new gridjs.Grid({
+                            pagination: {
+                                limit: 6
+                            },
                             columns: [{
                                 id: "file_name",
                                 name: "File Name",
@@ -210,6 +229,45 @@ Vue.createApp({
                     });
                 } else {
                     console.error("Failed to fetch organization personel.", response.status);
+                }
+            });
+        },
+        orders_grid: function (org_id) {
+            fetch(window.origin + '/organizations/' + org_id + '/orders')
+            .then(response => {
+                if (response.status = 200) {
+                    response.json()
+                        .then(data => {
+                            var l = [];
+                            for (var order in data) {
+                                l.push(data[order]);
+                            }
+                            this.organizations[org_id]["orders"] = l.reverse();
+                        }).then(() => {
+                            var id = "orders-" + org_id;
+                            new gridjs.Grid({
+                                pagination: {
+                                    limit: 6
+                                },
+                                columns: [{
+                                    id: "PO_number",
+                                    name: "PO#"
+                                }, {
+                                    id: "client_po_num",
+                                    name: "Client PO#"
+                                }, {
+                                    id: "production_runs_count",
+                                    name: "# of Batches"
+                                }, {
+                                    id: "actions",
+                                    name: 'Actions',
+                                    formatter: (cell, row) => gridjs.html(`<a class="grid-button" href=${window.origin}/orders/update/${row.cells[0].data}">View Details</a>`)
+                                }],
+                                data: this.organizations[org_id].orders
+                            }).render(document.getElementById(id));
+                        });
+                } else {
+                    console.log("Failed to fetch organization orders.", response.status);
                 }
             });
         }
