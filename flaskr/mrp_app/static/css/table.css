@@ -1,9 +1,8 @@
 
-
-table tr:nth-child(even) {
-    background-color: var(--hover-popup-card-background-color);
+tr:nth-of-type(odd) td {
+    background: #ffffff;
 }
 
-@media only screen and (max-width: 750px) {
-
+tr:nth-of-type(even) td {
+    background: #f9fafb;
 }

@@ -23,6 +23,7 @@ input[type="button"], button {
     flex-direction: row;
     align-items: center;
     justify-content: space-evenly;
+    width: auto;
 }
 
 .button-list li {
@@ -43,7 +44,7 @@ input[type="button"], button {
 }
 
 input,
-textarea, button {
+textarea, .button-list button {
     color: black;
     background-color: var(--card-background-color);
     font-size: medium;

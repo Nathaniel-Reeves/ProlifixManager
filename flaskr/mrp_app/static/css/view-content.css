@@ -10,13 +10,24 @@
 .view_content_box {
     margin: 1em;
     padding: 0;
-    width: fit-content;
+    width: auto;
+}
+
+.half {
+    width: 50%
+}
+
+.three_quarter {
+    width: 75%
+}
+
+.one_quarter {
+    width: 25%
 }
 
 .view_content_box p {
     margin-left: 1.5em;
     margin-right: 2.5em;
-
 }
 
 @media only screen and (max-width: 750px) {
