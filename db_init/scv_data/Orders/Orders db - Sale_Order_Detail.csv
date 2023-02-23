@@ -1,4 +1,4 @@
-po_detail_id,prefix,year,month,sec_number,product_id,unit_order_qty,kilos_order_qty,special_instructions,date_entered,bid_price_per_unit,completed_and_billed,final_ship_date
+so_detail_id,prefix,year,month,sec_number,product_id,unit_order_qty,kilos_order_qty,special_instructions,date_entered,bid_price_per_unit,completed_and_billed,final_ship_date
 1,,21,10,037,37,11000,663.32,NULL,NULL,NULL,NULL,NULL
 2,,21,10,038,5,40,1000,NULL,NULL,NULL,NULL,NULL
 3,,21,10,039,49,1500,NULL,NULL,NULL,NULL,NULL,NULL

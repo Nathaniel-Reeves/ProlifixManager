@@ -809,17 +809,36 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Inventory` (
   FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
-CREATE TABLE IF NOT EXISTS `Inventory`.`Check-in_Log` (
-  `check_in_id` INT AUTO_INCREMENT,
-  `inv_id` INT,
-  `amount` DECIMAL(16,4),
-  `status` JSON,
-  `user_id` INT,
+CREATE TABLE `Orders`.`Purchase_Orders` (
+  `prefix` VARCHAR(10),
+  `year` TINYINT,
+  `month` TINYINT,
+  `sec_number` SMALLINT,
+  `organization_id` INT,
+  `supplier_so_num` VARCHAR(30),
+  `order_date` DATE,
+  `eta_date` DATE,
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `date_modified` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`check_in_id`),
-  FOREIGN KEY (`inv_id`) REFERENCES `Inventory`.`Inventory`(`inv_id`),
-  FOREIGN KEY (`user_id`) REFERENCES `Organizations`.`Users`(`user_id`)
+  PRIMARY KEY (`prefix`, `year`, `month`, `sec_number`),
+  FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
+);
+
+CREATE TABLE `Orders`.`Purchase_Order_Detail` (
+  `po_detail_id` INT AUTO_INCREMENT,
+  `prefix` VARCHAR(10),
+  `year` TINYINT,
+  `month` TINYINT,
+  `sec_number` SMALLINT,
+  `component_id` INT,
+  `unit_order_qty` INT,
+  `kilos_order_qty` DECIMAL(16,4),
+  `special_instructions` VARCHAR(2000),
+  `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `bid_price_per_unit` DECIMAL(16,4),
+  `bid_price_per_kilo` DECIMAL(16,4),
+  PRIMARY KEY (`po_detail_id`),
+  FOREIGN KEY (`prefix`, `year`, `month`, `sec_number`) REFERENCES `Orders`.`Purchase_Orders`(`prefix`, `year`, `month`, `sec_number`),
+  FOREIGN KEY (`component_id`) REFERENCES `Inventory`.`Components`(`component_id`)
 );
 
 CREATE TABLE IF NOT EXISTS `Inventory`.`Cycle_Counts_Log` (
@@ -837,17 +856,19 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Cycle_Counts_Log` (
   FOREIGN KEY (`user_id`) REFERENCES `Organizations`.`Users`(`user_id`)
 );
 
-CREATE TABLE IF NOT EXISTS `Inventory`.`Check-out_Log` (
-  `check_out_id` INT AUTO_INCREMENT,
+CREATE TABLE `Inventory`.`Check-in_Log` (
+  `check_in_id` INT AUTO_INCREMENT,
   `inv_id` INT,
   `amount` DECIMAL(16,4),
   `status` JSON,
   `user_id` INT,
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `date_modified` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`check_out_id`),
+  `po_detail_id` INT DEFAULT NULL,
+  PRIMARY KEY (`check_in_id`),
   FOREIGN KEY (`inv_id`) REFERENCES `Inventory`.`Inventory`(`inv_id`),
-  FOREIGN KEY (`user_id`) REFERENCES `Organizations`.`Users`(`user_id`)
+  FOREIGN KEY (`user_id`) REFERENCES `Organizations`.`Users`(`user_id`),
+  FOREIGN KEY (`po_detail_id`) REFERENCES `Orders`.`Purchase_Order_Detail`(`po_detail_id`)
 );
 
 CREATE TABLE IF NOT EXISTS `Products`.`Manufacturing_Process` (
@@ -893,7 +914,7 @@ CREATE TABLE IF NOT EXISTS `Organizations`.`People` (
   FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
-CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Orders` (
+CREATE TABLE IF NOT EXISTS `Orders`.`Sales_Orders` (
   `prefix` VARCHAR(10),
   `year` TINYINT,
   `month` TINYINT,
@@ -908,8 +929,8 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Orders` (
   FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
-CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Orders_Detail` (
-  `po_detail_id` INT AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `Orders`.`Sale_Order_Detail` (
+  `so_detail_id` INT AUTO_INCREMENT,
   `prefix` VARCHAR(10),
   `year` TINYINT,
   `month` TINYINT,
@@ -919,12 +940,12 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Orders_Detail` (
   `kilos_order_qty` DECIMAL(16,4),
   `special_instructions` VARCHAR(2000),
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `bid_price_per_unit` INT,
+  `bid_price_per_unit` DECIMAL(16,4),
   `completed_and_billed` BOOL,
   `final_ship_date` DATE,
-  PRIMARY KEY (`po_detail_id`),
+  PRIMARY KEY (`so_detail_id`),
   FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
-  FOREIGN KEY (`prefix`, `year`, `month`, `sec_number`) REFERENCES `Orders`.`Purchase_Orders`(`prefix`, `year`, `month`, `sec_number`)
+  FOREIGN KEY (`prefix`, `year`, `month`, `sec_number`) REFERENCES `Orders`.`Sales_Orders`(`prefix`, `year`, `month`, `sec_number`)
 );
 
 CREATE TABLE IF NOT EXISTS `Orders`.`Lot_Numbers` (
@@ -935,7 +956,7 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Lot_Numbers` (
   `suffix` VARCHAR(15),
   `product_id` INT,
   `prolifix_lot_number` VARCHAR(20) DEFAULT (CONCAT(`prefix`, LPAD(`year`,2,"0"), LPAD(`month`,2,"0"), LPAD(`sec_number`,3,"0"), `suffix`)),
-  `po_detail_id` INT,
+  `so_detail_id` INT,
   `target_unit_yield` INT,
   `actual_unit_yield` INT,
   `_json_schema` json GENERATED ALWAYS AS (_utf8mb4'{"type":"object"}') VIRTUAL,
@@ -946,7 +967,7 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Lot_Numbers` (
   `exp_date` DATE,
   `exp_type` ENUM('Best By', 'Exp'),
   PRIMARY KEY (`prefix`, `year`, `month`, `sec_number`, `suffix`),
-  FOREIGN KEY (`po_detail_id`) REFERENCES `Orders`.`Purchase_Orders_Detail`(`po_detail_id`),
+  FOREIGN KEY (`so_detail_id`) REFERENCES `Orders`.`Sale_Order_Detail`(`so_detail_id`),
   FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
   CONSTRAINT `Org_Org_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

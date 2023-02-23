@@ -1,4 +1,4 @@
-prefix,year,month,sec_number,suffix,product_id,po_detail_id,target_unit_yield,actual_unit_yield,batch_printed,bpr_printed,exp_date,exp_type
+prefix,year,month,sec_number,suffix,product_id,so_detail_id,target_unit_yield,actual_unit_yield,batch_printed,bpr_printed,exp_date,exp_type
 ,21,10,170,,37,1,5279,5553,1,1,NULL,NULL
 ,21,10,171,,37,1,5279,NULL,1,1,NULL,NULL
 ,21,10,173,,5,2,8,8,1,1,NULL,NULL

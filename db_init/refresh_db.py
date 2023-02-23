@@ -68,12 +68,12 @@ DATABASES = [
         "database": "Orders",
         "csv_files": [
             {
-                "file": "scv_data/Orders/Orders db - Purchase_Orders.csv",
-                "table_name": "Purchase_Orders"
+                "file": "scv_data/Orders/Orders db - Sales_Orders.csv",
+                "table_name": "Sales_Orders"
             },
             {
-                "file": "scv_data/Orders/Orders db - Purchase_Orders_Detail.csv",
-                "table_name": "Purchase_Orders_Detail"
+                "file": "scv_data/Orders/Orders db - Sale_Order_Detail.csv",
+                "table_name": "Sale_Order_Detail"
             },
             {
                 "file": "scv_data/Orders/Orders db - Lot_Numbers.csv",

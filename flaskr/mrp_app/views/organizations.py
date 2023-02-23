@@ -25,7 +25,7 @@ from mrp_app.models.organizations import (
     Organization
 )
 from mrp_app.models.orders import (
-    fetch_orders_by_org
+    fetch_sales_by_org
 )
 
 
@@ -132,10 +132,17 @@ def get_people(org_id):
     return jsonify(data)
 
 
-@bp.route('/<int:org_id>/orders', methods=('GET',))
+@bp.route('/<int:org_id>/sales', methods=('GET',))
 @login_required
-def get_orders(org_id):
-    data = fetch_orders_by_org(org_id)
+def get_sales(org_id):
+    data = fetch_sales_by_org(org_id)
+    return data
+
+@bp.route('/<int:org_id>/purchases', methods=('GET',))
+@login_required
+def get_purchases(org_id):
+    # data = fetch_purchases_by_org(org_id)
+    data = {}
     return data
 
 @bp.route('/<int:org_id>/documents', methods=('GET',))
