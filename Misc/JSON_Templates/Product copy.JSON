@@ -15,6 +15,7 @@
             "mesh": ""
         },
         "microbiological": {
+            "test_name": "microbiological",
             "required_spec": "",
             "spec_issue_date": "",
             "spec_reviced_date": "",
@@ -22,60 +23,68 @@
             "file_pointer": "",
             "tests": {
                 "total_plate_count": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "coliform_count": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "escherichia_coli_count": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "staphylococcus_count": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "salmonella_count": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "yeast_count": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "mold_count": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "moisture": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 }
             }
         },
@@ -87,39 +96,44 @@
             "file_pointer": "",
             "tests": {
                 "total_heavy_metals": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "arsenic": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "cadmium": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "lead": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "mercury": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 }
             }
         },

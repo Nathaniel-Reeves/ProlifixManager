@@ -46,3 +46,24 @@ def fetch_sales_by_org(org_id):
             res[columns[i].get_column_name()] = data[i]
         d[res["SO_number"]] = res
     return d
+
+
+def fetch_qc(lot_number):
+    session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
+    schema = session.get_schema("Orders")
+
+    collection = schema.get_collection('Lot_Numbers')
+    result = collection.find("'microbiological' IN $**.test_type AND _id == :lot_number") \
+        .bind("lot_number", lot_number) \
+        .execute()
+    # result = collection.find("'microbiological' IN $**.test_type AND _id == :lot_number") \
+    #     .fields("$**.tests") \
+    #     .bind("lot_number", lot_number) \
+    #     .execute()
+    data = dict(result.fetch_one())
+    print(data)
+
+
+
+
+# "test_type": "microbiological"

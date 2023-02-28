@@ -62,6 +62,10 @@ DATABASES = [
     {
         "database": "Manufacturing",
         "csv_files": [
+            {
+                "file": "scv_data/Manufacturing/Manufacturing db - Processes.csv",
+                "table_name": "Processes"
+            }
         ]
     },
     {

@@ -62,7 +62,6 @@ def show_suppliers():
 @bp.route('/<string:org_type>/create', methods=('GET', 'POST', ))
 @login_required
 def post_organization(org_type):
-    g.org_type = org_type
 
     if request.method == 'POST':
         form_data = dict(request.form)
@@ -72,24 +71,8 @@ def post_organization(org_type):
 
         possible_duplicates = new_org.org_exists(
             form_data["organization_name"])
-        if possible_duplicates:
-            return jsonify({"possible_duplicates": possible_duplicates})
-                
-        else:
-            org_saved = new_org.post_org(form_data)
-            errors = new_org.get_errors()
 
-            # Flash Errors if any, else send data to db
-            if errors or (not org_saved):
-                for error in errors:
-                    flash(error)
-                if not org_saved:
-                    flash("You must specify if the organization is a supplier, client or both.")
-                flash("'%s' was NOT saved!" % new_org)
-            else:
-                flash("'%s' was saved!" % new_org)
-
-    return render_template("organizations/create-org.html")
+    return render_template("organizations/create-org.html", org_type=org_type)
 
 
 @bp.route('/<int:org_id>/update', methods=('GET', 'PUT', 'POST', ))
@@ -98,10 +81,12 @@ def put_organization(org_id):
     org = Organization(org_id)
 
     if request.method == 'GET':
-        return jsonify(org.fetch_org())
+        data = org.fetch_org()
+        return render_template("organizations/update-org.html", organization_data=data)
+
 
     if request.method == 'POST':
-        org_saved = org.put_org(request)
+        org_saved = org.post_org(request)
         errors = org.get_errors()
 
         # Flash Erros if any, else send data to db
@@ -109,8 +94,7 @@ def put_organization(org_id):
             for error in errors:
                 flash(error)
             if not org_saved:
-                flash(
-                    "You must specify if the organization is a supplier, client or both.")
+                flash("You must specify if the organization is a supplier, client or both.")
             flash("Organization changes were not saved!")
             return jsonify(org.obj_to_dict())
         else:

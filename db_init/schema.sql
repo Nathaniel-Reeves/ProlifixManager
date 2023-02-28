@@ -112,6 +112,7 @@ CREATE TABLE IF NOT EXISTS `Products`.`Product_Master` (
             "mesh": ""
         },
         "microbiological": {
+            "test_name": "microbiological",
             "required_spec": "",
             "spec_issue_date": "",
             "spec_reviced_date": "",
@@ -119,60 +120,68 @@ CREATE TABLE IF NOT EXISTS `Products`.`Product_Master` (
             "file_pointer": "",
             "tests": {
                 "total_plate_count": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "coliform_count": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "escherichia_coli_count": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "staphylococcus_count": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "salmonella_count": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "yeast_count": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "mold_count": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "moisture": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 }
             }
         },
@@ -184,39 +193,44 @@ CREATE TABLE IF NOT EXISTS `Products`.`Product_Master` (
             "file_pointer": "",
             "tests": {
                 "total_heavy_metals": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "arsenic": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "cadmium": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "lead": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "mercury": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 }
             }
         },
@@ -460,6 +474,7 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Components` (
             "mesh": ""
         },
         "microbiological": {
+            "test_name": "microbiological",
             "required_spec": "",
             "spec_issue_date": "",
             "spec_reviced_date": "",
@@ -467,60 +482,68 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Components` (
             "file_pointer": "",
             "tests": {
                 "total_plate_count": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "coliform_count": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "escherichia_coli_count": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "staphylococcus_count": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "salmonella_count": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "yeast_count": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "mold_count": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "moisture": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 }
             }
         },
@@ -532,39 +555,44 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Components` (
             "file_pointer": "",
             "tests": {
                 "total_heavy_metals": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "arsenic": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "cadmium": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "lead": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 },
                 "mercury": {
-                    "required_spec": "",
+                    "required_spec": 0,
                     "method": "",
+                    "summary": "",
                     "count": "",
                     "units": "",
-                    "less_than": ""
+                    "less_than": 0
                 }
             }
         },
@@ -785,7 +813,7 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Components` (
   CONSTRAINT `Inv_components_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
 );
 
-CREATE TABLE `Inventory`.`Component_Names` (
+CREATE TABLE IF NOT EXISTS `Inventory`.`Component_Names` (
   `name_id` INT,
   `component_id` INT,
   `component_name` VARCHAR(300) NOT NULL,
@@ -809,7 +837,7 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Inventory` (
   FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
-CREATE TABLE `Orders`.`Purchase_Orders` (
+CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Orders` (
   `prefix` VARCHAR(10),
   `year` TINYINT,
   `month` TINYINT,
@@ -823,7 +851,7 @@ CREATE TABLE `Orders`.`Purchase_Orders` (
   FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
-CREATE TABLE `Orders`.`Purchase_Order_Detail` (
+CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Order_Detail` (
   `po_detail_id` INT AUTO_INCREMENT,
   `prefix` VARCHAR(10),
   `year` TINYINT,
@@ -856,7 +884,7 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Cycle_Counts_Log` (
   FOREIGN KEY (`user_id`) REFERENCES `Organizations`.`Users`(`user_id`)
 );
 
-CREATE TABLE `Inventory`.`Check-in_Log` (
+CREATE TABLE IF NOT EXISTS `Inventory`.`Check-in_Log` (
   `check_in_id` INT AUTO_INCREMENT,
   `inv_id` INT,
   `amount` DECIMAL(16,4),
@@ -883,14 +911,15 @@ CREATE TABLE IF NOT EXISTS `Products`.`Manufacturing_Process` (
 );
 
 CREATE TABLE IF NOT EXISTS `Manufacturing`.`Processes` (
-  `process_id` INT AUTO_INCREMENT,
+  `process_id` INT,
   `process_name` VARCHAR(100) NOT NULL,
-  `number_of_operators` TINYINT NOT NULL,
-  `process_sop` VARCHAR(30),
-  `process_record_template` JSON,
+  `process_sop_id` VARCHAR(30),
+  `_json_schema` json GENERATED ALWAYS AS (_utf8mb4'{"type":"object"}') VIRTUAL,
+  `doc` json DEFAULT (CONCAT('{"_id":',`process_id`,'}')),
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `date_modified` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`process_id`)
+  PRIMARY KEY (`process_id`),
+  CONSTRAINT `man_process_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
 );
 
 CREATE TABLE IF NOT EXISTS `Organizations`.`People` (
@@ -959,6 +988,8 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Lot_Numbers` (
   `so_detail_id` INT,
   `target_unit_yield` INT,
   `actual_unit_yield` INT,
+  `retentions` INT,
+  `total_shippable_product` INT,
   `_json_schema` json GENERATED ALWAYS AS (_utf8mb4'{"type":"object"}') VIRTUAL,
   `doc` json DEFAULT (CONCAT('{"_id":"',`prolifix_lot_number`,'"}')),
   `batch_printed` BOOL,
@@ -985,7 +1016,7 @@ CREATE TABLE IF NOT EXISTS `Products`.`Components` (
   FOREIGN KEY (`materials_id`) REFERENCES `Inventory`.`Components`(`component_id`)
 );
 
-CREATE TABLE `Formulas`.`Formula_Master` (
+CREATE TABLE IF NOT EXISTS `Formulas`.`Formula_Master` (
   `formula_id` INT AUTO_INCREMENT,
   `product_id` INT,
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -1004,7 +1035,7 @@ CREATE TABLE `Formulas`.`Formula_Master` (
   FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`)
 );
 
-CREATE TABLE `Formulas`.`Formula_Detail` (
+CREATE TABLE IF NOT EXISTS `Formulas`.`Formula_Detail` (
   `formula_ingredient_id` INT AUTO_INCREMENT,
   `formula_id` INT,
   `percent` DOUBLE,
@@ -1033,7 +1064,7 @@ CREATE TABLE IF NOT EXISTS `Manufacturing`.`Equipment` (
   FOREIGN KEY (`process_id`) REFERENCES `Manufacturing`.`Processes`(`process_id`)
 );
 
-CREATE TABLE `Formulas`.`Quaternary_Group` (
+CREATE TABLE IF NOT EXISTS `Formulas`.`Quaternary_Group` (
   `id` INT AUTO_INCREMENT,
   `formula_id` INT,
   `brand_id` INT,
@@ -1043,7 +1074,7 @@ CREATE TABLE `Formulas`.`Quaternary_Group` (
   FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
-CREATE TABLE `Formulas`.`Tertiary_Group` (
+CREATE TABLE IF NOT EXISTS `Formulas`.`Tertiary_Group` (
   `id` INT AUTO_INCREMENT,
   `formula_ingredient_id` INT,
   `brand_id` INT,
@@ -1053,7 +1084,7 @@ CREATE TABLE `Formulas`.`Tertiary_Group` (
   FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
-CREATE TABLE `Formulas`.`Secondary_Group` (
+CREATE TABLE IF NOT EXISTS `Formulas`.`Secondary_Group` (
   `id` INT AUTO_INCREMENT,
   `formula_ingredient_id` INT,
   `brand_id` INT,
@@ -1063,7 +1094,7 @@ CREATE TABLE `Formulas`.`Secondary_Group` (
   FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
-CREATE TABLE `Formulas`.`Primary_Group` (
+CREATE TABLE IF NOT EXISTS `Formulas`.`Primary_Group` (
   `id` INT AUTO_INCREMENT,
   `formula_ingredient_id` INT,
   `brand_id` INT,

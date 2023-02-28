@@ -117,7 +117,13 @@ class Organization:
         session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
         clean = str(org_name).strip()
         result = session.sql(
-            """CALL `Organizations`.ORG_EXISTS('%s')""" % (clean)).execute()
+            """SELECT
+                `organization_id`,
+                `organization_name`, 
+                sys.LEVENSHTEIN_RATIO(`organization_name`, '%s') AS duplicate_probability_score
+            FROM `Organizations`.`Organization_Names` 
+            WHERE 
+                sys.LEVENSHTEIN_RATIO(`organization_name`, '%s') > 50;""" % (clean, clean)).execute()
         columns = []
         for column in result.get_columns():
             columns.append(column.get_column_name())
