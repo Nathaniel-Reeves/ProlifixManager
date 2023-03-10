@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 
 import functools
@@ -36,6 +36,11 @@ app.register_blueprint(auth_bp)
 
 from server.views.organizations import bp as organizations_bp
 app.register_blueprint(organizations_bp)
+
+# sanity check route
+@app.route('/ping', methods=['GET'])
+def ping_pong():
+    return jsonify('pong!')
 
 if __name__ == "__main__":
     print('~~~ SERVER START ~~~')
