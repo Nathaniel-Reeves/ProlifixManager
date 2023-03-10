@@ -1,4 +1,4 @@
-import functools
+
 import mysqlx
 from werkzeug.security import (
     check_password_hash,
@@ -6,11 +6,11 @@ from werkzeug.security import (
 )
 from flask import session as client_session
 
-from mrp_app import app
+from server.db import init_db
 
 
 def register(username, password):
-    session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
+    session = init_db()
     try:
         session.sql(
             "INSERT INTO `Organizations`.`Users` (`person_id`, `username`, `encrypted_password`, `access_privileges`) VALUES (?, ?, ?, ?)",
@@ -22,7 +22,7 @@ def register(username, password):
     return error
 
 def login(username, password):
-    db_session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
+    db_session = init_db()
     error = None
     user = db_session.sql(
         'SELECT * FROM `Organizations`.`Users` WHERE `username` = ?'
@@ -39,7 +39,7 @@ def login(username, password):
     return error
 
 def get_user(user_id):
-    session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
+    session = init_db()
     data = session.sql(
         'SELECT * FROM `Organizations`.`Users` WHERE `user_id` = ?'
     ).bind((user_id,)).execute().fetch_one()

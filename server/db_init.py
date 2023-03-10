@@ -2,8 +2,7 @@ import click
 from flask import current_app, g
 from flask.cli import with_appcontext
 import mysqlx
-
-from mrp_app import app
+from .run import app
 
 
 def close_db(e=None):

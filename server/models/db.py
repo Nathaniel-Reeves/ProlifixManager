@@ -1,4 +1,4 @@
-from mrp_app import app
+from server.db_init import init_db
 
 
 def allowed_file(filename, allowed_extensions=app.config["ALLOWED_EXTENSIONS"]):

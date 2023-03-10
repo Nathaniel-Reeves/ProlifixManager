@@ -1,7 +1,7 @@
 
 from flask import send_from_directory
 
-from mrp_app import app
+from server.run import app
 
 @app.route('/uploads/<path:file_location>', methods=('GET', ))
 def uploads(file_location):

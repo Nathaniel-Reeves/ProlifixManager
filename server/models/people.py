@@ -1,7 +1,7 @@
 from datetime import datetime
 import mysqlx
 
-from mrp_app import app
+from server.db import init_db
 
 
 class Person:
@@ -87,7 +87,7 @@ class Person:
         return True
 
 def fetch_people_by_org(org_id):
-    session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
+    session = init_db()
     result = session.sql(
         """
         SELECT 

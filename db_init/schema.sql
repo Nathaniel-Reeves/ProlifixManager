@@ -453,7 +453,7 @@ CREATE TABLE IF NOT EXISTS `Products`.`Product_Master` (
 
 CREATE TABLE IF NOT EXISTS `Inventory`.`Components` (
   `component_id` INT,
-  `component_type` Enum('Powder', 'Liquid', 'Jar/Container', 'Bag', 'Shrink Band', 'Lid/Cap', 'Label', 'Capsule', 'MISC', 'Scoop', 'Desiccant', 'Box/Carton', 'Packaging Material'),
+  `component_type` ENUM('powder', 'liquid', 'container', 'pouch', 'shrink_band', 'lid', 'label', 'capsule', 'misc', 'scoop', 'desiccant', 'box', 'carton', 'packaging_material'),
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `owner_id` INT,
   `_json_schema` json GENERATED ALWAYS AS (_utf8mb4'{"type":"object"}') VIRTUAL,

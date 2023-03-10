@@ -1,15 +1,10 @@
 import mysqlx
 
-try:
-    from mrp_app import app
-except ImportError:
-    print("Import app failure, Importing from Substitute Class")
-    from mrp_app.models.substitute_App_class import App
-    app = App()
+from server.db import init_db
 
 
 def fetch_sales_by_org(org_id):
-    session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
+    session = init_db()
     result = session.sql(
         """
         SELECT 
@@ -49,7 +44,7 @@ def fetch_sales_by_org(org_id):
 
 
 def fetch_qc(lot_number):
-    session = mysqlx.get_session(app.config["DB_CREDENTIALS"])
+    session = init_db()
     schema = session.get_schema("Orders")
 
     collection = schema.get_collection('Lot_Numbers')
