@@ -14,10 +14,8 @@ CREATE TABLE IF NOT EXISTS `Organizations`.`Users` (
   `encrypted_password` VARCHAR(250) NOT NULL,
   `profile_picture` VARCHAR(500),
   `color_theme` ENUM('Light','Dark'),
-  `_json_schema` json GENERATED ALWAYS AS (_utf8mb4'{"type":"object"}') VIRTUAL,
   `doc` json DEFAULT (CONCAT('{"_id":',`user_id`,',"access_privileges":{"human_resources":"staff", "client_relations":"staff", "supplier_relations":"staff", "production":"staff", "logistics":"staff"}}')),
-  PRIMARY KEY (`user_id`),
-  CONSTRAINT `Org_User_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
+  PRIMARY KEY (`user_id`)
 );
 
 CREATE TABLE IF NOT EXISTS `Organizations`.`Organizations` (
@@ -31,11 +29,9 @@ CREATE TABLE IF NOT EXISTS `Organizations`.`Organizations` (
   `client` BOOL DEFAULT false,
   `lab` BOOL DEFAULT false,
   `other` BOOL DEFAULT false,
-  `_json_schema` json GENERATED ALWAYS AS (_utf8mb4'{"type":"object"}') VIRTUAL,
   `doc` json DEFAULT (CONCAT('{"_id":"',`organization_id`,'","files":[]}')),
   `notes` VARCHAR(2500),
-  PRIMARY KEY (`organization_id`),
-  CONSTRAINT `Org_Org_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
+  PRIMARY KEY (`organization_id`)
 );
 
 CREATE TABLE `Organizations`.`Organization_Names` (
@@ -94,7 +90,6 @@ CREATE TABLE IF NOT EXISTS `Products`.`Product_Master` (
   `exp_type` ENUM('Best By', 'Exp'),
   `exp_use_oldest_ingredient` BOOL,
   `default_formula_id` INT DEFAULT NULL,
-  `_json_schema` json GENERATED ALWAYS AS (_utf8mb4'{"type":"object"}') VIRTUAL,
   `doc` json DEFAULT (CONCAT('{
     "_id":',`product_id`,',
     "lab_specs": {
@@ -447,8 +442,7 @@ CREATE TABLE IF NOT EXISTS `Products`.`Product_Master` (
     }
 }')),
   PRIMARY KEY (`product_id`),
-  FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`),
-  CONSTRAINT `Products_Master_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
+  FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
 CREATE TABLE IF NOT EXISTS `Inventory`.`Components` (
@@ -456,7 +450,6 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Components` (
   `component_type` ENUM('powder', 'liquid', 'container', 'pouch', 'shrink_band', 'lid', 'label', 'capsule', 'misc', 'scoop', 'desiccant', 'box', 'carton', 'packaging_material'),
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `owner_id` INT,
-  `_json_schema` json GENERATED ALWAYS AS (_utf8mb4'{"type":"object"}') VIRTUAL,
   `doc` json DEFAULT (CONCAT('{
     "_id":',`component_id`,',
     "lab_specs": {
@@ -809,8 +802,7 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Components` (
     }
 }')),
   PRIMARY KEY (`component_id`),
-  FOREIGN KEY (`owner_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`),
-  CONSTRAINT `Inv_components_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
+  FOREIGN KEY (`owner_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
 CREATE TABLE IF NOT EXISTS `Inventory`.`Component_Names` (
@@ -847,12 +839,13 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Orders` (
   `order_date` DATE,
   `eta_date` DATE,
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `doc` json DEFAULT (CONCAT('{"_id":"',`prefix`, `year`, `month`, `sec_number`,'","files":[]}')),
   PRIMARY KEY (`prefix`, `year`, `month`, `sec_number`),
   FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
 CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Order_Detail` (
-  `po_detail_id` INT AUTO_INCREMENT,
+  `po_detail_id` INT,
   `prefix` VARCHAR(10),
   `year` TINYINT,
   `month` TINYINT,
@@ -864,6 +857,7 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Order_Detail` (
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `bid_price_per_unit` DECIMAL(16,4),
   `bid_price_per_kilo` DECIMAL(16,4),
+  `doc` json DEFAULT (CONCAT('{"_id":"',`po_detail_id`,'","files":[]}')),
   PRIMARY KEY (`po_detail_id`),
   FOREIGN KEY (`prefix`, `year`, `month`, `sec_number`) REFERENCES `Orders`.`Purchase_Orders`(`prefix`, `year`, `month`, `sec_number`),
   FOREIGN KEY (`component_id`) REFERENCES `Inventory`.`Components`(`component_id`)
@@ -914,12 +908,10 @@ CREATE TABLE IF NOT EXISTS `Manufacturing`.`Processes` (
   `process_id` INT,
   `process_name` VARCHAR(100) NOT NULL,
   `process_sop_id` VARCHAR(30),
-  `_json_schema` json GENERATED ALWAYS AS (_utf8mb4'{"type":"object"}') VIRTUAL,
   `doc` json DEFAULT (CONCAT('{"_id":',`process_id`,'}')),
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `date_modified` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`process_id`),
-  CONSTRAINT `man_process_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
+  PRIMARY KEY (`process_id`)
 );
 
 CREATE TABLE IF NOT EXISTS `Organizations`.`People` (
@@ -954,12 +946,13 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Sales_Orders` (
   `target_completion_date` DATE,
   `completion_date` DATE,
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `doc` json DEFAULT (CONCAT('{"_id":"',`prefix`, `year`, `month`, `sec_number`,'","files":[]}')),
   PRIMARY KEY (`prefix`, `year`, `month`, `sec_number`),
   FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
 CREATE TABLE IF NOT EXISTS `Orders`.`Sale_Order_Detail` (
-  `so_detail_id` INT AUTO_INCREMENT,
+  `so_detail_id` INT,
   `prefix` VARCHAR(10),
   `year` TINYINT,
   `month` TINYINT,
@@ -972,6 +965,7 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Sale_Order_Detail` (
   `bid_price_per_unit` DECIMAL(16,4),
   `completed_and_billed` BOOL,
   `final_ship_date` DATE,
+  `doc` json DEFAULT (CONCAT('{"_id":"',`so_detail_id`,'","files":[]}')),
   PRIMARY KEY (`so_detail_id`),
   FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
   FOREIGN KEY (`prefix`, `year`, `month`, `sec_number`) REFERENCES `Orders`.`Sales_Orders`(`prefix`, `year`, `month`, `sec_number`)
@@ -990,7 +984,6 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Lot_Numbers` (
   `actual_unit_yield` INT,
   `retentions` INT,
   `total_shippable_product` INT,
-  `_json_schema` json GENERATED ALWAYS AS (_utf8mb4'{"type":"object"}') VIRTUAL,
   `doc` json DEFAULT (CONCAT('{"_id":"',`prolifix_lot_number`,'"}')),
   `batch_printed` BOOL,
   `bpr_printed` BOOL,
@@ -999,9 +992,8 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Lot_Numbers` (
   `exp_type` ENUM('Best By', 'Exp'),
   PRIMARY KEY (`prefix`, `year`, `month`, `sec_number`, `suffix`),
   FOREIGN KEY (`so_detail_id`) REFERENCES `Orders`.`Sale_Order_Detail`(`so_detail_id`),
-  FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
-  CONSTRAINT `Org_Org_t1_chk_1` CHECK (json_schema_valid(`_json_schema`,`doc`)) /*!80016 NOT ENFORCED */
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`)
+);
 
 CREATE TABLE IF NOT EXISTS `Products`.`Components` (
   `component_id` INT AUTO_INCREMENT,

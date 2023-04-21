@@ -1,12 +1,12 @@
-import mysqlx
+import mariadb
 import re
 import os
 import csv
 
 # Define the connection details
-HOST = '192.168.1.42'  # Office
-# HOST = '64.255.82.22'  # Home
-PORT = 33060
+HOST = '192.168.1.136'  # Office
+# HOST = '209.33.207.141'  # Home
+PORT = 3306
 USER = 'client'
 PASSWORD = 'clientPassword5!'
 
@@ -116,7 +116,7 @@ def execute_from_sql(file_name, session):
     flag = False
     # Start a transaction
     print("\033[0mStarting a transaction...")
-    session.start_transaction()
+    # session.start_transaction()
 
     # Load the SQL file
     print("\033[0mLoading the SQL file: {}".format(file_name))
@@ -125,6 +125,7 @@ def execute_from_sql(file_name, session):
         try:
             # Execute each SQL statement in the file
             statement = ""
+            cur = session.cursor()
             for line in f:
                 if re.match(r'--', line):
                     # Ignore comments
@@ -137,7 +138,7 @@ def execute_from_sql(file_name, session):
                     statement = statement + line
                     # print("\033[0mExecuting SQL statement...")
                     # print("\033[0m     ", statement[:60].strip(), "...")
-                    session.sql(statement).execute()
+                    cur.execute(statement)
                     statement = ""
 
         except Exception as e:
@@ -222,13 +223,11 @@ def main():
 
     # Connect to the database
     print("\033[0mConnecting to the database...")
-    session = mysqlx.get_session(
-        {
-            "host": HOST,
-            "port": PORT,
-            "user": USER,
-            "password": PASSWORD
-        }
+    session = mariadb.connect(
+            host=HOST,
+            port=PORT,
+            user=USER,
+            password=PASSWORD
     )
     print("\033[32mConnection Successful!\033[0m")
     print()
@@ -249,7 +248,7 @@ def main():
         print("\033[0m{} data loading...".format(db_name))
         if database["csv_files"]:
             # Start a transaction
-            session.start_transaction()
+            # session.start_transaction()
             loaded = True
 
             for csv_file in database["csv_files"]:
@@ -265,6 +264,7 @@ def main():
                 # Loop through each line of the CSV file and insert the data
                 for line in data:
                     try:
+                        cur = session.cursor()
                         row = list(line.values())
                         for i in range(len(row)):
                             if "_id" in row[i]:
@@ -277,7 +277,7 @@ def main():
 
                         query = 'INSERT INTO `{}`.`{}` ({}) VALUES ({})'.format(
                             db_name, table_name, headers, values)
-                        session.sql(query).execute()
+                        cur.execute(query)
 
                     except Exception as e:
                         print(

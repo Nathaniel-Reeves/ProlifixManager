@@ -1,0 +1,2 @@
+facility_id,organization_id,building_name,building_type,street_1_number,street_1_number_suffix,street_1_name,street_1_type,street_1_direction,street_2_number,street_2_number_suffix,street_2_name,street_2_type,street_2_direction,address_type,address_type_identifier,local_municipality,city_town,governing_district,postal_area,country,ship_time,ship_time_units,ship_time_in_days,notes
+1,1,Prolifix Nutrition HQ,Head Office,696,NULL,NULL,street,S,5300,NULL,NULL,street,W,suite,1-5,NULL,Hurricane,Utah,84737,United States of America,0,Day/s,0,NULL

@@ -14,7 +14,7 @@ class Config:
 
         # Database Config
         self.HOST = 'localhost'
-        self.PORT = 33060
+        self.PORT = 3306
         self.USER = 'client'
         self.PASSWORD = 'clientPassword5!'
 
@@ -41,7 +41,7 @@ class Work_Laptop_Config(Config):
         self.MESSAGE = 'Work Laptop DB Connection Credentials'
 
         # Database Connection
-        self.HOST = '192.168.1.42'
+        self.HOST = '192.168.1.136'
 
         # File Saving
         self.UPLOAD_FOLDER = '/mnt/c/Users/Nathaniel Reeves/Documents/uploads'
@@ -73,7 +73,7 @@ class Home_PC_To_Pi_Config(Config):
         self.MESSAGE = 'Home PC DB Connection Credentials'
 
         # Database Connection
-        self.HOST = '64.255.82.22'
+        self.HOST = '209.33.207.141'
 
         # File Saving
         self.UPLOAD_FOLDER = '/mnt/s/uploads'
@@ -105,7 +105,7 @@ class School_Laptop_To_Pi_Config(Config):
         self.MESSAGE = "School Laptop DB Connection Credentials"
 
         # Database Connection
-        self.HOST = '64.255.82.22'
+        self.HOST = '209.33.207.141'
 
         # File Saving
         self.UPLOAD_FOLDER = '/mnt/c/uploads'
@@ -121,7 +121,7 @@ class Pi_Server_Config(Config):
         self.MESSAGE = "Pi Server DB Connection Credentials"
 
         # Database Connection
-        self.HOST = '192.168.1.42'
+        self.HOST = '192.168.1.136'
 
         # File Saving
         self.UPLOAD_FOLDER = '/home/nreeves/uploads'
