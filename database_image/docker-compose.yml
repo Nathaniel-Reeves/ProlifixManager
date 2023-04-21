@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  mariadb:
+    image: mariadb:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      [
+        3306:3306,
+        33060:33060
+      ]
+    networks:
+      - db-network
+
+  python:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./csv_data:./csv_data
+      - ./entrypoint.sh:/entrypoint.sh
+    networks:
+      - db-network
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    entrypoint: /entrypoint.sh
+
+networks:
+  db-network:
+    driver: bridge

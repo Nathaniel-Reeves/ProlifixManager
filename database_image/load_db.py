@@ -1,14 +1,19 @@
+# sudo apt install libmariadb3 libmariadb-dev
+# pip3 install mariadb
+
 import mariadb
 import re
 import os
 import csv
+import configparser
 
 # Define the connection details
-HOST = '192.168.1.136'  # Office
-# HOST = '209.33.207.141'  # Home
-PORT = 3306
-USER = 'client'
-PASSWORD = 'clientPassword5!'
+config = configparser.ConfigParser()
+config.read('conf/config.ini')
+HOST = config.get('database', 'ip_address')
+PORT = config.get('database', 'port')
+USER = config.get('client', 'username')
+PASSWORD = config.get('client', 'password')
 
 # Define the databases and their corresponding CSV files
 DATABASES = [
@@ -125,21 +130,45 @@ def execute_from_sql(file_name, session):
         try:
             # Execute each SQL statement in the file
             statement = ""
+            function_flag = False
             cur = session.cursor()
             for line in f:
                 if re.match(r'--', line):
                     # Ignore comments
                     continue
-                if not re.search(r';$', line):
-                    # Add the line to the current statement
-                    statement = statement + line
-                else:
-                    # Execute the complete SQL statement
-                    statement = statement + line
+                
+                if re.match(r'DELIMITER ~~', line):
+                    print("Delimiter change!  DELIMITER ~~")
+                    function_flag = True
+                    continue
+                
+                if re.match(r'~~', line) and function_flag:
+                    print("End Temporary Delimiter change!")
+                    function_flag = False
                     # print("\033[0mExecuting SQL statement...")
                     # print("\033[0m     ", statement[:60].strip(), "...")
                     cur.execute(statement)
                     statement = ""
+                    continue
+                
+                if re.match(r'DELIMITER ;', line):
+                    function_flag = False
+                    statement = ""
+                    continue
+                    
+                if not function_flag:
+                    if not re.search(r';$', line):
+                        # Add the line to the current statement
+                        statement = statement + line
+                    else:
+                        # Execute the complete SQL statement
+                        statement = statement + line
+                        # print("\033[0mExecuting SQL statement...")
+                        # print("\033[0m     ", statement[:60].strip(), "...")
+                        cur.execute(statement)
+                        statement = ""
+                else:
+                    statement = statement + line
 
         except Exception as e:
             # Rollback the transaction in case of an error
@@ -149,6 +178,7 @@ def execute_from_sql(file_name, session):
             # Print the error for debugging
             print("\033[31mAn error occurred: {}".format(e))
             print("\033[31mStopped near: \n{}\n".format(statement))
+            print()
 
         else:
             # Commit the transaction
@@ -176,24 +206,26 @@ def refresh_database_schema(session):
     if flag:
         # Load the SQL drop_order from the file
         print("\033[0mDropping existing tables...")
-        flag = execute_from_sql("drop_order.sql", session)
+        flag = execute_from_sql("./schema/drop_order.sql", session)
         print()
 
     if flag:
         # Load the SQL schema from the file
         print("\033[0mRecreating tables...")
-        flag = execute_from_sql("schema.sql", session)
+        flag = execute_from_sql("./schema/schema.sql", session)
         print()
 
     if flag:
         # Load the SQL views from the file
         print("\033[0mReloading views...")
-        flag = execute_from_sql("views.sql", session)
+        flag = execute_from_sql("./schema/views.sql", session)
         print()
 
-    # if flag:
-    #     # Load the SQL stored_procedures from the file
-    #     flag = execute_from_sql("stored_procedures.sql", session)
+    if flag:
+        # Load the SQL sys_functions from the file
+        print("\033[0mReloading sys_functions...")
+        flag = execute_from_sql("./schema/sys_functions.sql", session)
+        print()
 
     if flag:
         print("\033[32mRefresh database schema successful!")
@@ -215,7 +247,11 @@ def main():
     print("\033[0m    Port: {}".format(PORT))
     print("\033[0m    User: {}".format(USER))
     print("\033[0m    Password: {}".format(PASSWORD))
-    check = input("Are these credentials correct (Y/N)?\n")
+    
+    # Comment this line for debugging connection
+    # check = input("Are these credentials correct (Y/N)?\n")
+    check = "y"
+    
     print()
     if check.lower() != "y":
         print("\033[31mExiting...\033[0m")
