@@ -6,14 +6,15 @@ import re
 import os
 import csv
 import configparser
+import sys
 
 # Define the connection details
 config = configparser.ConfigParser()
-config.read('conf/config.ini')
-HOST = config.get('database', 'ip_address')
-PORT = config.get('database', 'port')
-USER = config.get('client', 'username')
-PASSWORD = config.get('client', 'password')
+config.read('config.ini')
+HOST = config.get('database', 'HOST')
+PORT = int(config.get('database', 'PORT'))
+USER = config.get('root', 'MYSQL_ROOT_USERNAME')
+PASSWORD = config.get('root', 'MYSQL_ROOT_PASSWORD')
 
 # Define the databases and their corresponding CSV files
 DATABASES = [
@@ -21,23 +22,23 @@ DATABASES = [
         "database": "Organizations",
         "csv_files": [
             {
-                "file": "scv_data/Organizations/Organizations db - Organizations.csv",
-                    "table_name": "Organizations"
+                "file": "csv_data/Organizations/Organizations db - Organizations.csv",
+                "table_name": "Organizations"
             },
             {
-                "file": "scv_data/Organizations/Organizations db - Organization_Names.csv",
+                "file": "csv_data/Organizations/Organizations db - Organization_Names.csv",
                 "table_name": "Organization_Names"
             },
             {
-                "file": "scv_data/Organizations/Organizations db - People.csv",
+                "file": "csv_data/Organizations/Organizations db - People.csv",
                 "table_name": "People"
             },
             {
-                "file": "scv_data/Organizations/Organizations db - Users.csv",
+                "file": "csv_data/Organizations/Organizations db - Users.csv",
                 "table_name": "Users"
             },
             {
-                "file": "scv_data/Organizations/Organizations db - Facilities.csv",
+                "file": "csv_data/Organizations/Organizations db - Facilities.csv",
                 "table_name": "Facilities"
             }
         ]
@@ -46,11 +47,11 @@ DATABASES = [
         "database": "Inventory",
         "csv_files": [
             {
-                "file": "scv_data/Inventory/Inventory - Components.csv",
+                "file": "csv_data/Inventory/Inventory - Components.csv",
                 "table_name": "Components"
             },
             {
-                "file": "scv_data/Inventory/Inventory - Component_names.csv",
+                "file": "csv_data/Inventory/Inventory - Component_Names.csv",
                 "table_name": "Component_Names"
             }
         ]
@@ -59,7 +60,7 @@ DATABASES = [
         "database": "Products",
         "csv_files": [
             {
-                "file": "scv_data/Products/Products db - Product_Master.csv",
+                "file": "csv_data/Products/Products db - Product_Master.csv",
                 "table_name": "Product_Master"
             }
         ]
@@ -68,7 +69,7 @@ DATABASES = [
         "database": "Manufacturing",
         "csv_files": [
             {
-                "file": "scv_data/Manufacturing/Manufacturing db - Processes.csv",
+                "file": "csv_data/Manufacturing/Manufacturing db - Processes.csv",
                 "table_name": "Processes"
             }
         ]
@@ -77,15 +78,15 @@ DATABASES = [
         "database": "Orders",
         "csv_files": [
             {
-                "file": "scv_data/Orders/Orders db - Sales_Orders.csv",
+                "file": "csv_data/Orders/Orders db - Sales_Orders.csv",
                 "table_name": "Sales_Orders"
             },
             {
-                "file": "scv_data/Orders/Orders db - Sale_Order_Detail.csv",
+                "file": "csv_data/Orders/Orders db - Sale_Order_Detail.csv",
                 "table_name": "Sale_Order_Detail"
             },
             {
-                "file": "scv_data/Orders/Orders db - Lot_Numbers.csv",
+                "file": "csv_data/Orders/Orders db - Lot_Numbers.csv",
                 "table_name": "Lot_Numbers"
             }
         ]
@@ -94,11 +95,11 @@ DATABASES = [
         "database": "Formulas",
         "csv_files": [
             {
-                "file": "scv_data/Formulas/Formulas - Formula_Master.csv",
+                "file": "csv_data/Formulas/Formulas - Formula_Master.csv",
                 "table_name": "Formula_Master"
             },
             {
-                "file": "scv_data/Formulas/Formulas - Formula_Detail.csv",
+                "file": "csv_data/Formulas/Formulas - Formula_Detail.csv",
                 "table_name": "Formula_Detail"
             }
         ]
@@ -237,6 +238,7 @@ def refresh_database_schema(session):
 
     return flag
 
+
 def main():
     # Reload the database
     print("\033[0mStarting Program...")
@@ -259,21 +261,28 @@ def main():
 
     # Connect to the database
     print("\033[0mConnecting to the database...")
-    session = mariadb.connect(
-            host=HOST,
-            port=PORT,
-            user=USER,
-            password=PASSWORD
-    )
-    print("\033[32mConnection Successful!\033[0m")
-    print()
+    try:
+        session = mariadb.connect(
+                host=HOST,
+                port=PORT,
+                user=USER,
+                password=PASSWORD
+        )
+        print("\033[32mConnection Successful!\033[0m")
+        print()
+    except Exception as e:
+        print("\033[31mConnection Failed!\033[0m")
+        print()
+        print(e)
+        print()
+        sys.exit(1)
 
     # Refresh the database schema
     flag = refresh_database_schema(session)
     if not flag:
         print("\033[31mExiting...\033[0m")
         session.close()
-        exit(0)
+        sys.exit(0)
     else:
         print("loading fresh data into new databases...\033[0m")
         print()
