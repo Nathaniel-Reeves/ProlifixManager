@@ -26,4 +26,3 @@ COPY . /database_image
 # Install Python dependencies
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-# RUN python3 load_db.py

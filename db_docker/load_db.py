@@ -243,8 +243,7 @@ def refresh_database_schema(session):
 def main():
     
     file_exists = exists("./init_db_flag_do_not_delete.txt")
-    arg = sys.argv[1]
-    if file_exists and arg != "force":
+    if file_exists:
         print("\033[31minit_db_flag_do_not_delete.txt already exists. Exiting...\033[0m")
         sys.exit(0)
     

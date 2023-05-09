@@ -9,7 +9,7 @@ services:
       MYSQL_USER: client
       MYSQL_PASSWORD: clientPassword5!
     volumes:
-     - './mariadb/:/var/lib/mysql/'
+     - './mariadb_data/:/var/lib/mysql/'
     ports:
       [
         3306:3306,
