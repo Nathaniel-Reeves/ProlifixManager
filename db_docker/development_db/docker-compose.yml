@@ -31,6 +31,7 @@ services:
     volumes:
       - ../csv_data:/csv_data:rw
       - ../schema:/schema:rw
+      - ../development_db:/development_db:rw
     networks:
       - db-init-network
     depends_on:

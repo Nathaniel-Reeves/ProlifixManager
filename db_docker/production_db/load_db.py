@@ -246,14 +246,28 @@ def refresh_database_schema(session):
 
 def main():
 
-    file_exists = exists("init_db_flag_do_not_delete.txt")
-    if file_exists:
-        print(
-            "\033[31minit_db_flag_do_not_delete.txt already exists. Exiting...\033[0m")
-        sys.exit(0)
+    print("\033[0mStarting Program...")
+    # Handle Force Run Overide Argument
+    try:
+        force = sys.argv[1] == "force"
+    except IndexError:
+        force = False
+
+    if not force:
+        file_exists = exists(
+            "../production_db/init_db_flag_do_not_delete.txt")
+        if file_exists:
+            print(
+                "\033[31minit_db_flag_do_not_delete.txt already exists. Exiting...\033[0m")
+            sys.exit(0)
+        else:
+            print(
+                "\033[31minit_db_flag_do_not_delete.txt does not exist. Exiting...\033[0m")
+            print("Continueing...")
+    else:
+        print("Database Refresh Forced!")
 
     # Reload the database
-    print("\033[0mStarting Program...")
 
     # Display the connection details
     print("\033[0mConnection Details:")
@@ -368,7 +382,7 @@ def main():
     session.close()
 
     # Create a flag file to indicate that the database has been initialized
-    file = open("./init_db_flag_do_not_delete.txt", "w")
+    file = open("../production_db/init_db_flag_do_not_delete.txt", "w")
     file.close()
     print("\033[32mDatabase initialized successfully!\033[0m")
     print()
