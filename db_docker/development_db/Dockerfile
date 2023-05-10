@@ -18,10 +18,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 
 # Set working directory
-WORKDIR /database_image
+WORKDIR /db_docker
 
 # Copy application files
-COPY . /database_image
+COPY . /db_docker
 
 # Install Python dependencies
 RUN pip3 install --no-cache-dir -r requirements.txt

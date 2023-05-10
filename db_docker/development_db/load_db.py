@@ -23,23 +23,23 @@ DATABASES = [
         "database": "Organizations",
         "csv_files": [
             {
-                "file": "csv_data/Organizations/Organizations db - Organizations.csv",
+                "file": "../csv_data/Organizations/Organizations db - Organizations.csv",
                 "table_name": "Organizations"
             },
             {
-                "file": "csv_data/Organizations/Organizations db - Organization_Names.csv",
+                "file": "../csv_data/Organizations/Organizations db - Organization_Names.csv",
                 "table_name": "Organization_Names"
             },
             {
-                "file": "csv_data/Organizations/Organizations db - People.csv",
+                "file": "../csv_data/Organizations/Organizations db - People.csv",
                 "table_name": "People"
             },
             {
-                "file": "csv_data/Organizations/Organizations db - Users.csv",
+                "file": "../csv_data/Organizations/Organizations db - Users.csv",
                 "table_name": "Users"
             },
             {
-                "file": "csv_data/Organizations/Organizations db - Facilities.csv",
+                "file": "../csv_data/Organizations/Organizations db - Facilities.csv",
                 "table_name": "Facilities"
             }
         ]
@@ -48,11 +48,11 @@ DATABASES = [
         "database": "Inventory",
         "csv_files": [
             {
-                "file": "csv_data/Inventory/Inventory - Components.csv",
+                "file": "../csv_data/Inventory/Inventory - Components.csv",
                 "table_name": "Components"
             },
             {
-                "file": "csv_data/Inventory/Inventory - Component_Names.csv",
+                "file": "../csv_data/Inventory/Inventory - Component_Names.csv",
                 "table_name": "Component_Names"
             }
         ]
@@ -61,7 +61,7 @@ DATABASES = [
         "database": "Products",
         "csv_files": [
             {
-                "file": "csv_data/Products/Products db - Product_Master.csv",
+                "file": "../csv_data/Products/Products db - Product_Master.csv",
                 "table_name": "Product_Master"
             }
         ]
@@ -70,7 +70,7 @@ DATABASES = [
         "database": "Manufacturing",
         "csv_files": [
             {
-                "file": "csv_data/Manufacturing/Manufacturing db - Processes.csv",
+                "file": "../csv_data/Manufacturing/Manufacturing db - Processes.csv",
                 "table_name": "Processes"
             }
         ]
@@ -79,15 +79,15 @@ DATABASES = [
         "database": "Orders",
         "csv_files": [
             {
-                "file": "csv_data/Orders/Orders db - Sales_Orders.csv",
+                "file": "../csv_data/Orders/Orders db - Sales_Orders.csv",
                 "table_name": "Sales_Orders"
             },
             {
-                "file": "csv_data/Orders/Orders db - Sale_Order_Detail.csv",
+                "file": "../csv_data/Orders/Orders db - Sale_Order_Detail.csv",
                 "table_name": "Sale_Order_Detail"
             },
             {
-                "file": "csv_data/Orders/Orders db - Lot_Numbers.csv",
+                "file": "../csv_data/Orders/Orders db - Lot_Numbers.csv",
                 "table_name": "Lot_Numbers"
             }
         ]
@@ -96,11 +96,11 @@ DATABASES = [
         "database": "Formulas",
         "csv_files": [
             {
-                "file": "csv_data/Formulas/Formulas - Formula_Master.csv",
+                "file": "../csv_data/Formulas/Formulas - Formula_Master.csv",
                 "table_name": "Formula_Master"
             },
             {
-                "file": "csv_data/Formulas/Formulas - Formula_Detail.csv",
+                "file": "../csv_data/Formulas/Formulas - Formula_Detail.csv",
                 "table_name": "Formula_Detail"
             }
         ]
@@ -138,12 +138,12 @@ def execute_from_sql(file_name, session):
                 if re.match(r'--', line):
                     # Ignore comments
                     continue
-                
+
                 if re.match(r'DELIMITER ~~', line):
                     print("Delimiter change!  DELIMITER ~~")
                     function_flag = True
                     continue
-                
+
                 if re.match(r'~~', line) and function_flag:
                     print("End Temporary Delimiter change!")
                     function_flag = False
@@ -152,12 +152,12 @@ def execute_from_sql(file_name, session):
                     cur.execute(statement)
                     statement = ""
                     continue
-                
+
                 if re.match(r'DELIMITER ;', line):
                     function_flag = False
                     statement = ""
                     continue
-                    
+
                 if not function_flag:
                     if not re.search(r';$', line):
                         # Add the line to the current statement
@@ -204,29 +204,34 @@ def refresh_database_schema(session):
     bool: True if successful, False otherwise.
     """
     flag = True
+    
+    # Print working directory to console
+    working_dir = os.getcwd()
+    print("Working Directory: ", working_dir)
+    print("ls :", os.listdir())
 
     if flag:
         # Load the SQL drop_order from the file
         print("\033[0mDropping existing tables...")
-        flag = execute_from_sql("./schema/drop_order.sql", session)
+        flag = execute_from_sql("../schema/drop_order.sql", session)
         print()
 
     if flag:
         # Load the SQL schema from the file
         print("\033[0mRecreating tables...")
-        flag = execute_from_sql("./schema/schema.sql", session)
+        flag = execute_from_sql("../schema/schema.sql", session)
         print()
 
     if flag:
         # Load the SQL views from the file
         print("\033[0mReloading views...")
-        flag = execute_from_sql("./schema/views.sql", session)
+        flag = execute_from_sql("../schema/views.sql", session)
         print()
 
     if flag:
         # Load the SQL sys_functions from the file
         print("\033[0mReloading sys_functions...")
-        flag = execute_from_sql("./schema/sys_functions.sql", session)
+        flag = execute_from_sql("../schema/sys_functions.sql", session)
         print()
 
     if flag:
@@ -236,17 +241,17 @@ def refresh_database_schema(session):
         print("\033[31mRefresh database schema failed.")
     print()
 
-
     return flag
 
 
 def main():
-    
-    file_exists = exists("./init_db_flag_do_not_delete.txt")
+
+    file_exists = exists("init_db_flag_do_not_delete.txt")
     if file_exists:
-        print("\033[31minit_db_flag_do_not_delete.txt already exists. Exiting...\033[0m")
+        print(
+            "\033[31minit_db_flag_do_not_delete.txt already exists. Exiting...\033[0m")
         sys.exit(0)
-    
+
     # Reload the database
     print("\033[0mStarting Program...")
 
@@ -256,11 +261,11 @@ def main():
     print("\033[0m    Port: {}".format(PORT))
     print("\033[0m    User: {}".format(USER))
     print("\033[0m    Password: {}".format(PASSWORD))
-    
+
     # Comment this line for debugging connection
     # check = input("Are these credentials correct (Y/N)?\n")
     check = "y"
-    
+
     print()
     if check.lower() != "y":
         print("\033[31mExiting...\033[0m")
@@ -270,10 +275,10 @@ def main():
     print("\033[0mConnecting to the database...")
     try:
         session = mariadb.connect(
-                host=HOST,
-                port=PORT,
-                user=USER,
-                password=PASSWORD
+            host=HOST,
+            port=PORT,
+            user=USER,
+            password=PASSWORD
         )
         print("\033[32mConnection Successful!\033[0m")
         print()
@@ -308,10 +313,11 @@ def main():
 
                 print("\033[0mLoading CSV for {} file...".format(table_name))
                 file = open(os.getcwd() + "/" +
-                                csv_file["file"], newline='')
+                            csv_file["file"], newline='')
                 data = list(csv.DictReader(file))
 
-                print("\033[0mInserting data into the '{}' table...".format(table_name))
+                print(
+                    "\033[0mInserting data into the '{}' table...".format(table_name))
 
                 # Loop through each line of the CSV file and insert the data
                 for line in data:
@@ -320,7 +326,7 @@ def main():
                         row = list(line.values())
                         for i in range(len(row)):
                             if "_id" in row[i]:
-                                row[i] = row[i].replace('"','\\"')
+                                row[i] = row[i].replace('"', '\\"')
 
                         values = '"' + '", "'.join(row) + '"'
                         values = values.replace('"NULL"', 'NULL')
@@ -360,7 +366,7 @@ def main():
     # Close the connection to the database
     print("\033[0mClosing the connection to the database...")
     session.close()
-    
+
     # Create a flag file to indicate that the database has been initialized
     file = open("./init_db_flag_do_not_delete.txt", "w")
     file.close()
@@ -368,6 +374,7 @@ def main():
     print()
     print("\033[31mExiting...\033[0m")
     sys.exit(0)
+
 
 if __name__ == "__main__":
     main()

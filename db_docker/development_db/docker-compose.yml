@@ -2,6 +2,7 @@ version: "3.9"
 
 services:
   mariadb:
+    container_name: Development-MariaDB
     image: mariadb:10.6.4-focal
     restart: always
     environment:
@@ -12,13 +13,13 @@ services:
      - './mariadb_data/:/var/lib/mysql/'
     ports:
       [
-        3306:3306,
-        33060:33060
+        3307:3306,
+        33070:33060
       ]
     networks:
       - db-init-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "192.168.1.136"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "192.168.1.136", "--port", "3307"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -28,13 +29,14 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ./csv_data:/csv_data:rw
+      - ../csv_data:/csv_data:rw
+      - ../schema:/schema:rw
     networks:
       - db-init-network
     depends_on:
       mariadb:
         condition: service_healthy
-    command: python3 load_db.py
+    command: python3 load_db.py force
     stdin_open: true
     tty: true
 
