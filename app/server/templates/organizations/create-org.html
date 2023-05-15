@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h1>New Organization</h1>
+{% endblock %}
+
+{% block content %}
+{% raw %}
+<form method="POST" enctype="multipart/form-data">
+    <div class="form-item">
+        <p>What rolls will this organization hold?</p>
+        <fieldset class="checkbox-container">
+            <div class="checkbox-item">
+                <input type="checkbox" id="client" name="client" v-model="org_types" value="client">
+                <label for="client">Client</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="supplier" name="supplier" v-model="org_types"  value="supplier">
+                <label for="supplier">Supplier</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="lab" name="lab" v-model="org_types" value="lab">
+                <label for="lab">Laboratory</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="other" name="other" v-model="org_types" value="other">
+                <label for="other">Other</label>
+            </div>
+        </fieldset>
+    </div>
+
+    <div class="form-section">
+        <header class="card-content">
+            <h2>Organization Name/s</h2>
+        </header>
+
+        <div class="form-item">
+            <label for="organization_name">*Primary Organization Name</label>
+            <input name="organization_name" id="organization_name" required>
+        </div>
+
+        <div class="form-item">
+            <label for="organization_initial">*Primary Organization Initials</label>
+            <input name="organization_initial" id="organization_initial" maxlength="10" required>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <input class="button" type="submit" value="Save">
+    </div>
+
+</form>
+{% endraw %}
+{% endblock %}
+
+{% block script %}
+<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+<script src="https://unpkg.com/vue@3"></script>
+<script>
+    Vue.createApp({
+        data: function () {
+            return {
+                errors: {},
+                possible_duplicates: [],
+                org_types: ["{{org_type}}"]
+            }
+        },
+        methods: {
+            
+        },
+        created: function () {
+            console.log("Fetched Organization: ", this.org_type);
+        }
+    }).mount("#app");
+</script>
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h1>Edit Organization</h1>
+{% endblock %}
+
+{% block content %}
+
+
+<form method="POST" enctype="multipart/form-data">
+    <div class="form-item">
+        <p>What rolls will this organization hold?</p>
+        <fieldset class="checkbox-container">
+            <div class="checkbox-item">
+                <input type="checkbox" id="client" name="client" class="onerequired" {% if organization_data['client']==1 %}checked{%
+                    endif %} value="1">
+                <label for="client">Client</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="supplier" name="supplier" class="onerequired" {% if organization_data['supplier']==1
+                    %}checked{% endif %} value="1">
+                <label for="supplier">Supplier</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="lab" name="lab" class="onerequired" {% if organization_data['lab']==1
+                    %}checked{% endif %} value="1">
+                <label for="lab">Laboratory</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="other" name="other" class="onerequired" {% if organization_data['other']==1
+                    %}checked{% endif %} value="1">
+                <label for="other">Other</label>
+            </div>
+        </fieldset>
+    </div>
+
+    <div class="form-section">
+        <div class="form-item">
+            <label for="organization_name">*Company Name</label>
+            <input name="organization_name" id="organization_name" value="{{ organization_data['organization_name'] }}"
+                required>
+        </div>
+    
+        <div class="form-item">
+            <label for="organization_initial">*Company Initials</label>
+            <input name="organization_initial" id="organization_initial" maxlength="10"
+                value="{{ organization_data['organization_initial'] }}" required>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <header class="card-content">
+            <h1>Website & Contact Info</h1>
+        </header>
+    
+        <div class="form-item">
+            <label for="website">Company Website Homepage</label>
+            <input name="website" id="website" type="url" value="{{ organization_data['website_url'] }}">
+        </div>
+    </div>
+
+    <div class="form-section">
+        <header class="card-content">
+            <h1>Additional Info</h1>
+        </header>
+
+        <div class="form-item">
+            <label for="notes">Notes</label>
+            <textarea name="notes" id="notes">{{ organization_data['notes'] }}</textarea>
+        </div>
+    </div>
+
+    <div class="form-section">
+        <header class="card-content">
+            <h1>Uploaded Files</h1>
+        </header>
+    </div>
+</form>
+
+<div class="form-section">
+    <div class="button-list">
+        <input class="button" type="submit" value="Save">
+    </div>
+</div>
+
+<div class="list-item" id="template" style="display: none;">
+    <div class="list-left">
+        <div class="file-upload" multiple name="uploads">
+            <input type="file">
+        </div>
+    </div>
+    <div class="list-right">
+        <button type="button" name="removeFile" class="iconbutton" onclick="removeFileInput(this.id);">
+            <i class="fa fa-minus"></i>
+        </button>
+    </div>
+</div>
+
+
+{% endblock %}

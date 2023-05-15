@@ -1,1 +1,5 @@
 env/
+*.pyc
+*.pyc
+*.pyc
+app/node_modules/*

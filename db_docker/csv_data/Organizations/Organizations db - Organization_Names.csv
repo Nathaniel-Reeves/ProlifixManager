@@ -1,0 +1,263 @@
+name_id,organization_id,organization_initial,organization_name,primary_name
+1,1,PLX,Prolifix Nutrition,1
+2,1,PLX,Prolifix,0
+3,2,ARL,Albion laboratories,1
+4,2,ARL,Albion,0
+5,3,AM,Aloha Medicinals,1
+6,4,ANI,AuNutra Industries Inc.,1
+7,4,ANI,AuNutra,0
+8,5,AS,Azure Standard,1
+9,5,AS,Azure Market,0
+10,5,AS,Azure,0
+11,6,BK,Bio Kinetics Corporation,1
+12,6,BK,Bio-Kinetics,0
+13,7,BS,Bulk Supplements,1
+14,8,CC,Cambridge Commodities,1
+15,9,ER,Ecuadorian Rainforest,1
+16,9,ER,Ecuadorian,0
+17,10,D,Daesang,1
+18,11,HQO,High Quality Organics,1
+19,12,H,Honeyville Inc.,1
+20,12,H,Honeyville,0
+21,13,HN,Hunan Nutramax Inc,1
+22,13,HN,Hunan Nutramax,0
+23,13,HN,Nutramax,0
+24,14,LN,Liberty Natural,1
+25,15,LD,LiquaDry,1
+26,16,LOOV,LOOV Organic,1
+27,16,LOOV,LOOV,0
+28,17,NF,Nature's Flavors,1
+29,18,NPN,Nature's Power Nutraceuticals Corp. dba NP Nutra,1
+30,18,NPN,NP Nutra,0
+31,18,NPN,Nutraceuticals,0
+32,19,N,Nexira International S.A.S.,1
+33,20,NAR,North American Reishi Ltd. DBA Nammex,1
+34,21,OF,Om Foods Inc (Essential Organics),1
+35,21,OF,Essential Organics,0
+36,22,PB,Pacific Botanicals Holding LLC,1
+37,22,PB,Pacific Botanicals,0
+38,23,PFL,Prescribed for Life,1
+39,23,PFL,Prescribed 4 life,0
+40,24,PB,Pure Bulk,1
+41,25,SE,Specialty Enzymes E&P,1
+42,25,SE,Specialty E+P,0
+43,26,AS,The Australian Superfood Co.,1
+44,26,AS,Australian Superfood,0
+45,27,TYH,To Your Health Sprouted Flour Co.,1
+46,27,TYH,To Your Health,0
+47,28,UE,Unichem Enterprises,1
+48,28,UE,Unichem,0
+49,29,WH,Whole Herb Company,1
+50,29,WH,Whole Herb,0
+51,30,ZBB,"Zhejiang Biosan Biotech Co.,Ltd",1
+52,30,ZBB,Biosan,0
+53,31,HB,Healthway Biotech,1
+54,31,HB,Healthway Bio,0
+55,31,HB,Xi'an Healthway Biotech,0
+56,31,HB,Healthway,0
+57,32,S,Stryka,1
+58,33,CM,Consulting Management,1
+59,34,E,Enerex,1
+60,35,HG,Herbally Grounded,1
+61,35,HG,Herb Garden,0
+62,36,HES,Holistic Earth Supplements,1
+63,36,HES,Holistic Earth,0
+64,37,IS,Immune Solution,1
+65,38,MAJU,Maju Superfoods,1
+66,38,MAJU,Maju,0
+67,39,M,Markus Rothcranz,1
+68,39,M,Markus,0
+69,40,M3O,Makes3Organics,1
+70,40,M3O,Petsmot,0
+71,41,RH,Revelation Health,1
+72,41,RH,Safer Medical,0
+73,42,V,Vita-myr,1
+74,43,KN,KN Life-Biotics,1
+75,43,KN,Life-Biotics,0
+76,44,BON,Balance of Nature,1
+77,45,NAN,Natrual Approch Nutrition,1
+78,45,NAN,NAN Health,0
+79,46,T,Tranont,1
+80,46,T,Mana Life,0
+81,47,BR,Bloomfield Roots,1
+82,48,,AG Commodities,1
+83,49,,AIDP,1
+84,50,,Albion,1
+85,51,,Alpha Naturals,1
+86,52,,Altaiga,1
+87,53,,Altalena,1
+88,54,,American Botanicals,1
+89,55,,American Lecithin Company,1
+90,56,,Ameriherb,1
+91,57,,Aminature,1
+92,58,,Anchor,1
+93,59,,Anhui Sealong Bio,1
+94,60,,APP Global,1
+95,61,,Aroma Depot,1
+96,62,,Austrade,1
+97,63,,Aviva,1
+98,64,,Balchem,1
+99,65,,Baobab Foods,1
+100,66,,Baolingbao Bio Co Ltd,1
+101,67,,Bio-Gen,1
+102,68,,Bioresponse,1
+103,69,,Black Earth,1
+104,70,,Blue Mountain,1
+105,71,,Box Nutra Maxsun Industries,1
+106,72,,Bulk Foods,1
+107,73,,Bulkeez,1
+108,74,,CarGill,1
+109,75,,Changsha HuaKang Bio,1
+110,76,,CI Inc,1
+111,77,,Cypress,1
+112,78,,diatomaceousearth.com,1
+113,79,,DNP International,1
+114,80,,DolCas Biotech,1
+115,81,,Dongguan,1
+116,82,,Earthrise,1
+117,83,,Elite Ingredients,1
+118,84,,Flora Aromatics,1
+119,85,,Fying,1
+120,86,,GeroNova Innovations,1
+121,87,,Ginco,1
+122,88,,Glory Bee,1
+123,89,,Gold Coast,1
+124,90,,Gourmet Mushroom,1
+125,91,,Green Source Organic,1
+126,92,,Green Wave Ingredients,1
+127,93,,Greenjeeva,1
+128,94,,GTX Technologies,1
+129,95,,Hand Ground,1
+130,96,,Harmony Concepts,1
+131,97,,Health Tech,1
+132,98,,Heartland Flax,1
+133,99,,Hebei Changhao,1
+134,100,,Hebei Huaheng,1
+135,101,,Herb Green Health,1
+136,102,,Hong Hao,1
+137,103,,Hubei Grand Life Science,1
+138,104,,Hunan Essence,1
+139,105,,Imaherb,1
+140,106,,IN Ingredients,1
+141,107,,Ingredients Online,1
+142,108,,Innomark,1
+143,109,,Inter Naturales,1
+144,110,,Jiangsu Jiushoutang,1
+145,111,,JianGxi Tianxin,1
+146,112,,Jinan Asia Pharmaceutical,1
+147,113,,JoMar Labs,1
+148,114,,Jubliant Ingrevia,1
+149,115,,King-Year Bio,1
+150,116,,KN Bioscience,1
+151,117,,Konoshima Chemical,1
+152,118,,Lakanto,1
+153,119,,Lallemand,1
+154,120,,Le-Sen Biotech,1
+155,121,,Lin-he,1
+156,122,,Live Earth,1
+157,123,,Longze Bio,1
+158,124,,Lycored,1
+159,125,,Monterey Bay,1
+160,126,,Mountain Rose,1
+161,127,,Murray cevticals,1
+162,128,,Mushroom Harvest,1
+163,129,,Nammex,1
+164,130,,National Enzyme Co.,1
+165,131,,Natreon,1
+166,132,,Natural Grocers,1
+167,133,,Nature Vibe,1
+168,134,,Nature's Harvest International,1
+169,135,,Natures's Harvest International,1
+170,136,,Naturex,1
+171,137,,NB Foods,1
+172,138,,Ningbo Herb,1
+173,139,,Northe,1
+174,140,,Novel Nutrients,1
+175,141,,Novotech Nutraceuticals,1
+176,142,,Now Foods,1
+177,143,,Nuherbs,1
+178,144,,Nura,1
+179,145,,Nutrafood,1
+180,146,,Nutri Vita,1
+181,147,,Nutricargo,1
+182,148,,Nutrient Innovations,1
+183,149,,Nutriland,1
+184,150,,Nutrisol Solutions,1
+185,151,,Nuts.com,1
+186,152,,OH Nuts,1
+187,153,,Orcas Naturals,1
+188,154,,Orgenetics,1
+189,155,,Parashaunt,1
+190,156,,Pioneer,1
+191,157,,PNI,1
+192,158,,ProNatrual,1
+193,159,,PurCaf,1
+194,160,,Pure Assay,1
+195,161,,Qimei Industrial,1
+196,162,,Raw Power,1
+197,163,,RDV,1
+198,164,,Redmond,1
+199,165,,Rice Bran Technologies,1
+200,166,,Rice Plus,1
+201,167,,Ringing Cedar,1
+202,168,,Rya Foods,1
+203,169,,SA Herbal,1
+204,170,,SA Retail,1
+205,171,,Saherbal,1
+206,172,,San Francisco Herb Co,1
+207,173,,Sandong Aocter,1
+208,174,,Saw Palmetto Florida,1
+209,175,,Segment,1
+210,176,,Shandong Tianli Pharmaceutical,1
+211,177,,Shining Seas,1
+212,178,,Shuangta Food,1
+213,179,,Shuguang,1
+214,180,,Siberian Green,1
+215,181,,Silva,1
+216,182,,Skystone Feed,1
+217,183,,Skystone Pharm,1
+218,184,,Small Town Specialties,1
+219,185,,Starwest Botanicals,1
+220,186,,Swanson,1
+221,187,,Synergized,1
+222,188,,Talya,1
+223,189,,Teng Yun,1
+224,190,,TheraPlantes,1
+225,191,,Tianhua Pharmacy,1
+226,192,,TruHerb,1
+227,193,,Urmi Lifesciences,1
+228,194,,USGreens,1
+229,195,,Valensa,1
+230,196,,Van Drunen,1
+231,197,,Venkatesh,1
+232,198,,VitaJoy,1
+233,199,,VitaminSea,1
+234,200,,Vivion,1
+235,201,,Wonderful Herb,1
+236,202,,Wuhan Grand Hoyo,1
+237,203,,Xi'an Dealing Biotechnology,1
+238,204,,Yosin Bio,1
+239,205,,Z Natural Foods,1
+240,206,,ZHT Sci-Tech,1
+241,207,,Alpha,1
+242,208,,Bright Pharma,1
+243,209,,Canyon Plastics,1
+244,210,,Carolina,1
+245,211,,Comar,1
+246,212,,Consolidated Design,1
+247,213,,Desiccare,1
+248,214,,Industrial Container,1
+249,215,,Keystone Corp.,1
+250,216,,MeasureX,1
+251,217,,Mold-Rite Plastics,1
+252,218,,National Measures,1
+253,219,,Performance Dry,1
+254,220,,Phoenix,1
+255,221,,PSPrint,1
+256,222,,Rieke,1
+257,223,,Silver Spur Corp.,1
+258,224,,Sonic Plastic,1
+259,225,,Super Shrink,1
+260,226,,Total Label USA,1
+261,227,,Uline,1
+262,228,,Visible,1

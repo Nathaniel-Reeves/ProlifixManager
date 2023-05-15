@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+  mariadb:
+    container_name: Production-MariaDB
+    image: mariadb:10.6.4-focal
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Newspaper5
+      MYSQL_USER: client
+      MYSQL_PASSWORD: clientPassword5!
+    volumes:
+     - './mariadb_data/:/var/lib/mysql/'
+    ports:
+      [
+        3306:3306,
+        33060:33060
+      ]
+    networks:
+      - db-init-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "192.168.1.136"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  python:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../csv_data:/csv_data:rw
+      - ../schema:/schema:rw
+      - ../production_db:/production_db:rw
+    networks:
+      - db-init-network
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    command: python3 load_db.py
+    stdin_open: true
+    tty: true
+
+networks:
+  db-init-network:
+    driver: bridge

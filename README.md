@@ -1,4 +1,9 @@
 <div id="top"></div>
+
+Vue with Flask
+https://testdriven.io/blog/developing-a-single-page-app-with-flask-and-vuejs/
+
+
 <!--
 *** Thanks for checking out the Best-README-Template. If you have a suggestion
 *** that would make this better, please fork the repo and create a pull request
@@ -181,6 +186,17 @@ Don't forget to give the project a star! Thanks again!
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
+### Formatting & Styling
+
+#### Python
+
+Styling and formatting is checked with yapf on default settings and pylint using the pylint_conf/settings_conf.txt file.  Use the following commands to check styling:
+
+```
+pylint --rcfile="pylint_conf/settings_conf.txt" <filepath>
+
+yapf <filepath>
+```
 
 
 <!-- LICENSE -->

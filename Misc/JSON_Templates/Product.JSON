@@ -88,363 +88,363 @@
             }
         }
     },
-    "labSpecs":{
+    "lab_specs":{
         "organoleptic":{
-            "requiredSpec": "",
-            "specIssueDate": "",
-            "specRevicedDate": "",
-            "standardSampleLot":"",
-            "filePointer": "",
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sample_lot":"",
+            "file_pointer": "",
             "visual":"",
             "odor":"",
-            "tasteDry":"",
-            "tasteDissolved":"",
+            "taste_dry":"",
+            "taste_dissolved":"",
             "texture":"",
             "mesh":""
         },
         "microbiological":{
-            "requiredSpec": "",
-            "specIssueDate":"",
-            "specRevicedDate":"",
-            "standardSampleLot": "",
-            "filePointer": "",
+            "required_spec": "",
+            "spec_issue_date":"",
+            "spec_reviced_date":"",
+            "standard_sample_lot": "",
+            "file_pointer": "",
             "tests":{
-                "totalPlateCount":{
-                    "requiredSpec": "",
+                "total_plate_count":{
+                    "required_spec": "",
                     "method":"",
                     "count":"",
                     "units":"",
-                    "lessThan":""
+                    "less_than":""
                 },
-                "coliformCount":{
-                    "requiredSpec": "",
+                "coliform_count":{
+                    "required_spec": "",
                     "method": "",
                     "count": "",
                     "units": "",
-                    "lessThan": ""
+                    "less_than": ""
                 },
-                "escherichiaColiCount":{
-                    "requiredSpec": "",
+                "escherichia_coli_count":{
+                    "required_spec": "",
                     "method": "",
                     "count": "",
                     "units": "",
-                    "lessThan": ""
+                    "less_than": ""
                 },
-                "staphylococcusCount":{
-                    "requiredSpec": "",
+                "staphylococcus_count":{
+                    "required_spec": "",
                     "method": "",
                     "count": "",
                     "units": "",
-                    "lessThan": ""
+                    "less_than": ""
                 },
-                "salmonellaCount":{
-                    "requiredSpec": "",
+                "salmonella_count":{
+                    "required_spec": "",
                     "method": "",
                     "count": "",
                     "units": "",
-                    "lessThan": ""
+                    "less_than": ""
                 },
-                "yeastCount":{
-                    "requiredSpec": "",
+                "yeast_count":{
+                    "required_spec": "",
                     "method": "",
                     "count": "",
                     "units": "",
-                    "lessThan": ""
-                    },
-                "moldCount":{
-                    "requiredSpec": "",
+                    "less_than": ""
+                },
+                "mold_count":{
+                    "required_spec": "",
                     "method": "",
                     "count": "",
                     "units": "",
-                    "lessThan": ""
+                    "less_than": ""
                 },
                 "moisture":{
-                    "requiredSpec": "",
+                    "required_spec": "",
                     "method": "",
                     "count": "",
                     "units": "",
-                    "lessThan": ""
+                    "less_than": ""
                 }
             }
         },
-        "heavyMetals":{
-            "requiredSpec": "",
-            "specIssueDate": "",
-            "specRevicedDate": "",
-            "standardSampleLot": "",
-            "filePointer": "",
+        "heavy_metals":{
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sampleLot": "",
+            "file_pointer": "",
             "tests":{
-                "totalHeavyMetals":{
-                    "requiredSpec": "",
+                "total_heavy_metals":{
+                    "required_spec": "",
                     "method": "",
                     "count": "",
                     "units": "",
-                    "lessThan": ""
+                    "less_than": ""
                 },
                 "arsenic":{
-                    "requiredSpec": "",
+                    "required_spec": "",
                     "method": "",
                     "count": "",
                     "units": "",
-                    "lessThan": ""
+                    "less_than": ""
                 },
                 "cadmium":{
-                    "requiredSpec": "",
+                    "required_spec": "",
                     "method": "",
                     "count": "",
                     "units": "",
-                    "lessThan": ""
+                    "less_than": ""
                 },
                 "lead":{
-                    "requiredSpec": "",
+                    "required_spec": "",
                     "method": "",
                     "count": "",
                     "units": "",
-                    "lessThan": ""
+                    "less_than": ""
                 },
                 "mercury":{
-                    "requiredSpec": "",
+                    "required_spec": "",
                     "method": "",
                     "count": "",
                     "units": "",
-                    "lessThan": ""
+                    "less_than": ""
                 }
             }
         },
-        "FTIR":{
-            "requiredSpec": "",
-            "specIssueDate": "",
-            "specRevicedDate": "",
-            "standardSampleLot": "",
-            "filePointer": "",
-            "percentMatchStandard":"",
+        "ftir":{
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sample_lot": "",
+            "file_pointer": "",
+            "percent_match_standard":"",
             "method":"",
-            "rfValue":""
+            "rf_value":""
         },
         "microscopic":{
-            "requiredSpec": "",
-            "specIssueDate": "",
-            "specRevicedDate": "",
-            "standardSampleLot": "",
-            "filePointer": "",
-            "imageFilePointer":"",
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sample_lot": "",
+            "file_pointer": "",
+            "image_file_pointer":"",
             "description":"",
             "magnification":"",
-            "microscopeType":""
+            "microscope_type":""
         },
         "chromatography":{
-            "requiredSpec":"",
-            "specIssueDate": "",
-            "specRevicedDate": "",
-            "standardSampleLot": "",
-            "filePointer": "",
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sample_lot": "",
+            "file_pointer": "",
             "method":"",
             "description":""
         },
         "nutritionalFacts":{
-            "requiredSpec": "",
-            "specIssueDate": "",
-            "specRevicedDate": "",
-            "standardSampleLot": "",
-            "filePointer": "",
-            "servingSize":"",
-            "servingUnits":"",
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sample_lot": "",
+            "file_pointer": "",
+            "serving_size":"",
+            "serving_units":"",
             "tests":{
                 "calories":{
-                    "ammountPerServing":"",
+                    "ammount_per_serving":"",
                     "units":"",
                     "source":""
                 },
-                "totalFat":{
-                    "ammountPerServing": "",
+                "total_fats":{
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
-                "saturatedFat":{
-                    "ammountPerServing": "",
+                "saturated_fats":{
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
-                "transFat":{
-                    "ammountPerServing": "",
+                "trans_fats":{
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
                 "cholesterol":{
-                    "ammountPerServing": "",
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
-                "totalCarbohydrate":{
-                    "ammountPerServing": "",
+                "total_carbohydrate":{
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
-                "dietaryFiber":{
-                    "ammountPerServing": "",
+                "dietary_fiber":{
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
-                "totalSugars":{
-                    "ammountPerServing": "",
+                "total_sugars":{
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
-                "addedSugars":{
-                    "ammountPerServing": "",
+                "added_sugars":{
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
                 "protein":{
-                    "ammountPerServing": "",
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
                 "sodium":{
-                    "ammountPerServing": "",
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
                 "potassium":{
-                    "ammountPerServing": "",
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
                 "calcium":{
-                    "ammountPerServing": "",
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
                 "zinc":{
-                    "ammountPerServing": "",
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
                 "iron":{
-                    "ammountPerServing": "",
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
                 "copper":{
-                    "ammountPerServing": "",
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
                 "magnesium":{
-                    "ammountPerServing": "",
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
                 "selenium":{
-                    "ammountPerServing": "",
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
                 "manganese":{
-                    "ammountPerServing": "",
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
                 "biotin":{
-                    "ammountPerServing": "",
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
-                "vitaminA":{
-                    "ammountPerServing": "",
+                "vitamin_a":{
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
-                "vitaminB1":{
-                    "ammountPerServing": "",
+                "vitamin_b1":{
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
-                "vitaminB2": {
-                    "ammountPerServing": "",
+                "vitamin_b2":{
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
-                "vitaminB3": {
-                    "ammountPerServing": "",
+                "vitamin_b3": {
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
-                "vitaminB5": {
-                    "ammountPerServing": "",
+                "vitamin_b5":{
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
-                "vitaminB6": {
-                    "ammountPerServing": "",
+                "vitamin_b6":{
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
-                "vitaminB12": {
-                    "ammountPerServing": "",
+                "vitamin_b12":{
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
-                "vitaminC":{
-                    "ammountPerServing": "",
+                "vitamin_c":{
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
-                "vitaminD3":{
-                    "ammountPerServing": "",
+                "vitamin_d3":{
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
-                "vitaminE":{
-                    "ammountPerServing": "",
+                "vitamin_e":{
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 },
-                "vitaminK2":{
-                    "ammountPerServing": "",
+                "vitamin_k2":{
+                    "ammount_per_serving": "",
                     "units": "",
                     "source": ""
                 }
             }
         },
         "pesticides": {
-            "requiredSpec": "",
-            "specIssueDate": "",
-            "specRevicedDate": "",
-            "standardSampleLot": "",
-            "filePointer": ""
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sample_lot": "",
+            "file_pointer": ""
         },
-        "foreignMatter":{
-            "requiredSpec": "",
-            "specIssueDate": "",
-            "specRevicedDate": "",
-            "standardSampleLot": "",
-            "filePointer": ""
+        "foreign_matter":{
+            "required_spec": "",
+            "spec_issue_date": "",
+            "spec_reviced_date": "",
+            "standard_sample_lot": "",
+            "file_pointer": ""
         }
     },
-    "liquidProductSpecs":{
-        "specIssueDate": "",
-        "specRevicedDate": "",
-        "targetVolumePerUnit_ml":"",
-        "minVolumePerUnit_ml":"",
-        "maxVolumePerUnit_ml":""
+    "liquid_product_specs":{
+        "spec_issue_date": "",
+        "spec_reviced_date": "",
+        "milliliters_per_unit_ml":"",
+        "min_milliliters_per_unit_ml":"",
+        "max_milliliters_per_unit_ml":""
     },
-    "powderProductSpecs":{
-        "specIssueDate": "",
-        "specRevicedDate": "",
-        "targetMassPerUnit_g":"",
-        "minMassPerUnit_g":"",
-        "maxMassPerUnit_g":""
+    "powder_product_specs":{
+        "spec_issue_date": "",
+        "spec_reviced_date": "",
+        "target_grams_per_unit":"",
+        "min_grams_per_unit":"",
+        "max_grams_per_unit":""
     },
-    "capsuleProductSpecs":{
-        "specIssueDate": "",
-        "specRevicedDate":"",
-        "targetCapsuleFill_mg":"",
-        "minCapsuleFill_mg":"",
-        "maxCapsuleFill_mg":"",
-        "capsuleCountPerUnit":""
+    "capsule_product_specs":{
+        "spec_issue_date": "",
+        "spec_reviced_date": "",
+        "target_milligrams_per_capsule":"",
+        "min_milligrams_per_capsule":"",
+        "max_milligrams_per_capsule":"",
+        "capsule_count_per_unit":""
     },
-    "productionSpecs":{
+    "production_specs":{
         "specIssueDate": "",
         "specRevicedDate": "",
         "requiredSpec": "",
