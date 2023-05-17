@@ -1,3 +1,2 @@
 *.pyc
 app/client/node_modules/*
-app_dev/client/node_modules/*
