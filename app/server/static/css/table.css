@@ -1,8 +1,0 @@
-
-tr:nth-of-type(odd) td {
-    background: #ffffff;
-}
-
-tr:nth-of-type(even) td {
-    background: #f9fafb;
-}

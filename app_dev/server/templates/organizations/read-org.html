@@ -1,0 +1,358 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<h1>{% block title %}
+    {% if g.org_type == "client" %}
+        Clients
+    {% elif g.org_type == "supplier" %}
+        Suppliers
+    {% else %}
+        ERR
+    {% endif %}
+    {% endblock %}</h1>
+
+
+    {% if g.user %}
+    <ul class="button-list searchaction">
+        {% if g.org_type == "client" %}
+            <a href="{{ url_for('organizations.post_organization', org_type=g.org_type) }}"><li class="button">New Client</li></a>
+            <li class="searchbar">
+                <div>
+                    <input name="search" id="searchbar" type="text" placeholder="Search Clients..." onkeyup="search()"></input>
+                    <button class="iconbutton searchicon" type="submit"><i class="fa fa-search"></i></button>
+                </div>
+            </li>
+        {% elif g.org_type == "supplier" %}
+            <a href="{{ url_for('organizations.post_organization', org_type=g.org_type) }}"><li class="action">New Supplier</li></a>
+            <li class="searchbar">
+                <div>
+                    <input name="search" id="searchbar" type="text" placeholder="Search Suppliers..." onkeyup="search()"></input>
+                    <button class="iconbutton searchicon" type="submit"><i class="fa fa-search"></i></button>
+                </div>
+            </li>
+        {% else %}
+            <p>ERR</p>
+        {% endif %}
+    </ul>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+{% raw %}
+<article class="card-content" v-for="org, i in organizations">
+    <header>
+        <div>
+            <h2>{{ org.organization_name }}</h2>
+            <div class="about">
+                Initial: {{ org.organization_initial }} | Website: <a target="_blank" rel="noopener noreferrer" v-bind:href="`${org.website_url}`">{{ org.website_url }}</a>
+            </div>
+        </div>
+        <ul class="button-list justify-bottom">
+            <a class="edit_button" v-bind:href="`${org.organization_id}`+`/update`">
+                <li>Edit</li>
+            </a>
+            <a>
+                <li class="view_button" v-on:click="org.seen = !org.seen;view_content(`${org.organization_id}`);">{{ org.seen ? 'Hide' : 'View' }}</li>
+            </a>
+        </ul>
+    </header>
+
+    <div class="view_content" v-show="org.seen" v-bind:id="`org.organization_id`">
+        <div class="view_content_box half" v-show="org.client">
+            <h3>Sales Orders</h3>
+            <div v-bind:id="`sales-${org.organization_id}`"></div>
+            <ul class="button-list">
+                <a class="edit_button">
+                    <li>Add New Sales Order</li>
+                </a>
+                <a class="edit_button">
+                    <li>View All Sales Orders</li>
+                </a>
+            </ul>
+        </div>
+        <div class="view_content_box half" v-show="org.supplier">
+            <h3>Purchase Orders</h3>
+            <div v-bind:id="`purchases-${org.organization_id}`"></div>
+            <ul class="button-list">
+                <a class="edit_button">
+                    <li>Add New Purchase Order</li>
+                </a>
+                <a class="edit_button">
+                    <li>View All Purchase Orders</li>
+                </a>
+            </ul>
+        </div>
+        <div class="view_content_box three_quarter">
+            <h3>Personel</h3>
+            <div v-bind:id="`personel-${org.organization_id}`"></div>
+            <ul class="button-list">
+                <a class="edit_button">
+                    <li>Add Person</li>
+                </a>
+            </ul>
+        </div>
+        <div class="view_content_box one_quarter">
+            <h3>Additional Info</h3>
+        </div>
+        <div class="view_content_box half">
+            <h3>Documents</h3>
+            <div v-bind:id="`docs-${org.organization_id}`"></div>
+        </div>
+        <div class="view_content_box">
+            <h3>General Notes</h3>
+            <p>{{ org.notes }}</p>
+        </div>
+    </div>
+
+    <hr>
+</article>
+
+{% endraw %}
+{% endblock %}
+
+{% block script %}
+<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+<script src="https://unpkg.com/vue@3"></script>
+<script>
+Vue.createApp({
+    data: function () {
+        return {
+            organizations: {},
+        }
+    },
+    methods: {
+        get_organizations: function () {
+            fetch(window.location.href + "/json")
+            .then(response => {
+                response.json()
+                .then(data => {
+                    for (var org in data) {
+                        org["seen"] = false;
+                    };
+                    this.organizations = data;
+                });
+            });
+        },
+        view_content: function(org_id) {
+            if (!(this.organizations[org_id].hasOwnProperty("view"))) {
+                if (!(this.organizations[org_id].hasOwnProperty("people"))) {
+                    this.personel_grid(org_id);
+                }
+                if (!(this.organizations[org_id].hasOwnProperty("documents"))) {
+                    this.docs_grid(org_id);
+                }
+                if (!(this.organizations[org_id].hasOwnProperty("sales"))) {
+                    this.sales_grid(org_id);
+                }
+                if (!(this.organizations[org_id].hasOwnProperty("purchases"))) {
+                    this.purchases_grid(org_id);
+                }
+            }
+            this.organizations[org_id]["view"] = true;
+        },
+        personel_grid: function (org_id) {
+            fetch(window.origin + '/organizations/' + org_id + '/people')
+            .then(response => {
+                if (response.status = 200) {
+                    response.json()
+                    .then(data => {
+                        var l = [];
+                        for (var person in data) {
+                            
+                            l.push(data[person]);
+                        }
+                        this.organizations[org_id]["people"] = l;
+                        console.log("fetched personel:", this.organizations[org_id]);
+                    }).then(() => {
+                        var id = "personel-" + org_id;
+                        new gridjs.Grid({
+                            pagination: {
+                                limit: 6
+                            },
+                            width: "fit-content",
+                            columns: [{
+                                id: "person_id",
+                                name: "Person_id",
+                                hidden: true
+                            }, {
+                                id: "first_name",
+                                name: "First Name",
+                            }, {
+                                id: "last_name",
+                                name: "Last Name"
+                            }, {
+                                id: "department",
+                                name: "Department",
+                                hidden: true
+                            }, {
+                                id: "job_description",
+                                name: "Job Description",
+                                hidden: true
+                            }, {
+                                id: "phone_number_primary",
+                                name: "Phone Number",
+                                formatter: (cell) => formatPhoneNumber(cell)
+                            }, {
+                                id: "email_address_primary",
+                                name: "Email",
+                                formatter: (cell) => gridjs.html(`<a href='mailto:${cell}'>${cell}</a>`)
+                            }, {
+                                id: "actions",
+                                name: 'Actions',
+                                formatter: (cell, row) => gridjs.html(`<a class="grid-button" href=${window.origin}/people/update/${row.cells[0].data}">View Details</a>`)
+                            }],
+                            data: this.organizations[org_id].people
+                        }).render(document.getElementById(id));
+                    });
+                } else {
+                    console.log("Failed to fetch organization personel.", response.status);
+                }
+            });
+        },
+        docs_grid: function (org_id) {
+            fetch(window.origin + '/organizations/' + org_id + '/documents')
+            .then(response => {
+                if (response.status = 200) {
+                    response.json()
+                    .then(data => {
+                        this.organizations[org_id]["doc"] = data;
+                        console.log("fetched documents:", this.organizations[org_id]);
+                        console.log("fetched sales:", this.organizations[org_id]);
+                    }).then(() => {
+                        var id = "docs-" + org_id;
+                        new gridjs.Grid({
+                            pagination: {
+                                limit: 6
+                            },
+                            width: "auto",
+                            columns: [{
+                                id: "file_name",
+                                name: "File Name",
+                                formatter: (_, row) => gridjs.html(`<a target="_blank" rel="noopener noreferrer" href="${encodeURI("/uploads/" + row.cells[2].data)}">${row.cells[0].data}</a>`)
+                            }, {
+                                id: "date_uploaded",
+                                name: "Date Uploaded"
+                            }, {
+                                id: "local_file_path",
+                                name: "Local File Path",
+                                hidden: true
+                            }, {
+                                id: "full_file_path",
+                                name: "Full File Path",
+                                hidden: true
+                            }, {
+                                id: "organizaiton_name",
+                                name: "Organization Name",
+                                hidden: true
+                            }],
+                            data: this.organizations[org_id].doc.files
+                        }).render(document.getElementById(id));
+                    });
+                } else {
+                    console.error("Failed to fetch organization personel.", response.status);
+                }
+            });
+        },
+        sales_grid: function (org_id) {
+            fetch(window.origin + '/organizations/' + org_id + '/sales')
+            .then(response => {
+                if (response.status = 200) {
+                    response.json()
+                    .then(data => {
+                        var l = [];
+                        for (var order in data) {
+                            l.push(data[order]);
+                        }
+                        this.organizations[org_id]["sales"] = l.reverse();
+                    }).then(() => {
+                        var id = "sales-" + org_id;
+                        new gridjs.Grid({
+                            pagination: {
+                                limit: 6,
+                                buttonsCount: 1,
+                                summary: false
+                            },
+                            width: "fit-content",
+                            columns: [{
+                                id: "SO_number",
+                                name: "SO#"
+                            }, {
+                                id: "client_po_num",
+                                name: "Client PO#"
+                            }, {
+                                id: "production_runs_count",
+                                name: "# of Batches"
+                            }, {
+                                id: "actions",
+                                name: 'Actions',
+                                formatter: (cell, row) => gridjs.html(`<a class="grid-button" href=${window.origin}/sales/${row.cells[0].data}">View Details</a>`)
+                            }],
+                            data: this.organizations[org_id].sales
+                        }).render(document.getElementById(id));
+                    });
+                } else {
+                    console.log("Failed to fetch organization sales.", response.status);
+                }
+            });
+        },
+        purchases_grid: function (org_id) {
+            fetch(window.origin + '/organizations/' + org_id + '/purchases')
+            .then(response => {
+                if (response.status = 200) {
+                    response.json()
+                    .then(data => {
+                        var l = [];
+                        for (var order in data) {
+                            l.push(data[order]);
+                        }
+                        this.organizations[org_id]["purchases"] = l.reverse();
+                        console.log("fetched purchases:", this.organizations[org_id]);
+                    }).then(() => {
+                        var id = "purchases-" + org_id;
+                        new gridjs.Grid({
+                            pagination: {
+                                limit: 6,
+                                buttonsCount: 1,
+                                summary: false
+                            },
+                            width: "fit-content",
+                            columns: [{
+                                id: "SO_number",
+                                name: "SO#"
+                            }, {
+                                id: "client_po_num",
+                                name: "Client PO#"
+                            }, {
+                                id: "production_runs_count",
+                                name: "# of Batches"
+                            }, {
+                                id: "actions",
+                                name: 'Actions',
+                                formatter: (cell, row) => gridjs.html(`<a class="grid-button" href=${window.origin}/purchases/${row.cells[0].data}">View Details</a>`)
+                            }],
+                            data: this.organizations[org_id].purchases
+                        }).render(document.getElementById(id));
+                    });
+                } else {
+                    console.log("Failed to fetch organization purchases.", response.status);
+                }
+            });
+        }
+    },
+    created: function () {
+        this.get_organizations()
+        console.log("Fetched Organizations: ", this.organizations);
+    }
+}).mount("#app");
+function formatPhoneNumber(phoneNumberString) {
+    var cleaned = ('' + phoneNumberString).replace(/\D/g, '');
+    var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
+    if (match) {
+        var intlCode = (match[1] ? '+1 ' : '');
+        return [intlCode, '(', match[2], ') ', match[3], '-', match[4]].join('');
+    }
+    return null;
+}
+</script>
+{% endblock %}
+
