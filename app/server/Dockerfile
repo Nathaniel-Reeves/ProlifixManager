@@ -16,13 +16,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libmariadb-dev \
     && rm -rf /var/lib/apt/lists/*
 
-
 # Set working directory
-WORKDIR /app_dev
+WORKDIR /app
 
 # Copy application files
-COPY . /app_dev
+COPY . /app
 
 # Install Python dependencies
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir -r server/requirements.txt
+
+CMD ["python3", "server/app.py"]
+
 

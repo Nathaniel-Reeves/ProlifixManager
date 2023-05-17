@@ -28,20 +28,15 @@ services:
       ROOT_PASSWORD: $ROOT_PASSWORD
       HOSTNAME: $HOSTNAME
       DB_PORT: $DB_PORT
-      DEBUG_MODE: $DEBUG_MODE
-      API_PORT: $API_PORT
     restart: "no"
     build:
       context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ../db:/db:rw
+      dockerfile: db/Dockerfile
     networks:
       - dev-network
     depends_on:
       mariadb:
         condition: service_healthy
-    command: python3 db/load_db.py $FORCE
     stdin_open: true
     tty: true
 
@@ -53,13 +48,11 @@ services:
       ROOT_PASSWORD: $ROOT_PASSWORD
       HOSTNAME: $HOSTNAME
       DB_PORT: $DB_PORT
-      DEBUG_MODE: $DEBUG_MODE
+      FLASK_ENV: $FLASK_ENV
       API_PORT: $API_PORT
     build:
       context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ../server:/server:rw
+      dockerfile: server/Dockerfile
     ports:
       - $API_PORT:5000
     networks:
@@ -67,9 +60,18 @@ services:
     depends_on:
       mariadb:
         condition: service_healthy
-    command: python3 server/app.py
     stdin_open: true
     tty: true
+
+  client:
+    container_name: $CLIENT_NAME
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+    ports:
+    - '$CLIENT_PORT:8080'
+    networks:
+      - dev-network
 
 networks:
   dev-network:
