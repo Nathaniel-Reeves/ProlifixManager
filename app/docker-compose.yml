@@ -16,7 +16,7 @@ services:
     networks:
       - dev-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "192.168.1.136", "--port", $DB_PORT, "-p$ROOT_PASSWORD"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "$HOSTNAME", "--port", $DB_PORT, "-p$ROOT_PASSWORD"]
       interval: 30s
       timeout: 10s
       retries: 5
