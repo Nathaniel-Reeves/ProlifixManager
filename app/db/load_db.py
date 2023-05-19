@@ -20,23 +20,23 @@ DATABASES = [
         "database": "Organizations",
         "csv_files": [
             {
-                "file": "./db/csv_data/Organizations/Organizations db - Organizations.csv",
+                "file": "./csv_data/Organizations/Organizations db - Organizations.csv",
                 "table_name": "Organizations"
             },
             {
-                "file": "./db/csv_data/Organizations/Organizations db - Organization_Names.csv",
+                "file": "./csv_data/Organizations/Organizations db - Organization_Names.csv",
                 "table_name": "Organization_Names"
             },
             {
-                "file": "./db/csv_data/Organizations/Organizations db - People.csv",
+                "file": "./csv_data/Organizations/Organizations db - People.csv",
                 "table_name": "People"
             },
             {
-                "file": "./db/csv_data/Organizations/Organizations db - Users.csv",
+                "file": "./csv_data/Organizations/Organizations db - Users.csv",
                 "table_name": "Users"
             },
             {
-                "file": "./db/csv_data/Organizations/Organizations db - Facilities.csv",
+                "file": "./csv_data/Organizations/Organizations db - Facilities.csv",
                 "table_name": "Facilities"
             }
         ]
@@ -45,11 +45,11 @@ DATABASES = [
         "database": "Inventory",
         "csv_files": [
             {
-                "file": "./db/csv_data/Inventory/Inventory - Components.csv",
+                "file": "./csv_data/Inventory/Inventory - Components.csv",
                 "table_name": "Components"
             },
             {
-                "file": "./db/csv_data/Inventory/Inventory - Component_Names.csv",
+                "file": "./csv_data/Inventory/Inventory - Component_Names.csv",
                 "table_name": "Component_Names"
             }
         ]
@@ -58,7 +58,7 @@ DATABASES = [
         "database": "Products",
         "csv_files": [
             {
-                "file": "./db/csv_data/Products/Products db - Product_Master.csv",
+                "file": "./csv_data/Products/Products db - Product_Master.csv",
                 "table_name": "Product_Master"
             }
         ]
@@ -67,7 +67,7 @@ DATABASES = [
         "database": "Manufacturing",
         "csv_files": [
             {
-                "file": "./db/csv_data/Manufacturing/Manufacturing db - Processes.csv",
+                "file": "./csv_data/Manufacturing/Manufacturing db - Processes.csv",
                 "table_name": "Processes"
             }
         ]
@@ -76,15 +76,15 @@ DATABASES = [
         "database": "Orders",
         "csv_files": [
             {
-                "file": "./db/csv_data/Orders/Orders db - Sales_Orders.csv",
+                "file": "./csv_data/Orders/Orders db - Sales_Orders.csv",
                 "table_name": "Sales_Orders"
             },
             {
-                "file": "./db/csv_data/Orders/Orders db - Sale_Order_Detail.csv",
+                "file": "./csv_data/Orders/Orders db - Sale_Order_Detail.csv",
                 "table_name": "Sale_Order_Detail"
             },
             {
-                "file": "./db/csv_data/Orders/Orders db - Lot_Numbers.csv",
+                "file": "./csv_data/Orders/Orders db - Lot_Numbers.csv",
                 "table_name": "Lot_Numbers"
             }
         ]
@@ -93,11 +93,11 @@ DATABASES = [
         "database": "Formulas",
         "csv_files": [
             {
-                "file": "./db/csv_data/Formulas/Formulas - Formula_Master.csv",
+                "file": "./csv_data/Formulas/Formulas - Formula_Master.csv",
                 "table_name": "Formula_Master"
             },
             {
-                "file": "./db/csv_data/Formulas/Formulas - Formula_Detail.csv",
+                "file": "./csv_data/Formulas/Formulas - Formula_Detail.csv",
                 "table_name": "Formula_Detail"
             }
         ]
@@ -210,26 +210,26 @@ def refresh_database_schema(session):
     if flag:
         # Load the SQL drop_order from the file
         print("\033[0mDropping existing tables...")
-        flag = execute_from_sql("./db/schema/drop_order.sql", session)
+        flag = execute_from_sql("./schema/drop_order.sql", session)
         print()
 
     if flag:
         # Load the SQL schema from the file
         print("\033[0mRecreating tables...")
-        flag = execute_from_sql("./db/schema/schema.sql", session)
+        flag = execute_from_sql("./schema/schema.sql", session)
         print()
 
     if flag:
         # Load the SQL views from the file
         print("\033[0mReloading views...")
-        flag = execute_from_sql("./db/schema/views.sql", session)
+        flag = execute_from_sql("./schema/views.sql", session)
         print()
 
     if flag:
         # Load the SQL sys_functions from the file
         print("\033[0mReloading sys_functions...")
         flag = execute_from_sql(
-            "./db/schema/sys_functions.sql", session)
+            "./schema/sys_functions.sql", session)
         print()
 
     if flag:
@@ -253,7 +253,7 @@ def main():
 
     if not force:
         file_exists = exists(
-            "./db/init_db_flag_do_not_delete.txt")
+            "init_db_flag_do_not_delete.txt")
         if file_exists:
             print(
                 "\033[31minit_db_flag_do_not_delete.txt already exists. Exiting...\033[0m")
@@ -380,9 +380,12 @@ def main():
     session.close()
 
     # Create a flag file to indicate that the database has been initialized
-    file = open("./db/init_db_flag_do_not_delete.txt", "w")
+    file = open("init_db_flag_do_not_delete.txt", "w")
     file.close()
     print("\033[32mDatabase initialized successfully!\033[0m")
+    working_dir = os.getcwd()
+    print("Working Directory: ", working_dir)
+    print("ls :", os.listdir())
     print()
     print("\033[31mExiting...\033[0m")
     sys.exit(0)

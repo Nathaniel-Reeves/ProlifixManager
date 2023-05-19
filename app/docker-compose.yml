@@ -29,6 +29,10 @@ services:
       HOSTNAME: $HOSTNAME
       DB_PORT: $DB_PORT
     restart: "no"
+    volumes:
+      - type: bind
+        source: ./db
+        target: ./db
     build:
       context: .
       dockerfile: db/Dockerfile
@@ -48,11 +52,15 @@ services:
       ROOT_PASSWORD: $ROOT_PASSWORD
       HOSTNAME: $HOSTNAME
       DB_PORT: $DB_PORT
-      FLASK_ENV: $FLASK_ENV
+      FLASK_DEBUG: $FLASK_DEBUG
       API_PORT: $API_PORT
     build:
       context: .
       dockerfile: server/Dockerfile
+    volumes:
+      - type: bind
+        source: ./client/public
+        target: ./client/public
     ports:
       - $API_PORT:5000
     networks:
@@ -72,6 +80,10 @@ services:
     - '$CLIENT_PORT:8080'
     networks:
       - dev-network
+    volumes:
+      - type: bind
+        source: ./client/public
+        target: ./client/public
 
 networks:
   dev-network:

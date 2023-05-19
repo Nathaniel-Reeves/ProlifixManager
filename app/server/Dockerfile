@@ -1,5 +1,11 @@
 FROM python:3.9-slim-buster
 
+# Set working directory
+WORKDIR /server
+
+# Copy application files
+COPY ./server /server
+
 # Prepare dependancies for mariadb-connector
 USER root
 
@@ -16,15 +22,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libmariadb-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
-WORKDIR /app
-
-# Copy application files
-COPY . /app
-
 # Install Python dependencies
-RUN pip3 install --no-cache-dir -r server/requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
-CMD ["python3", "server/app.py"]
+CMD ["python3", "app.py"]
 
 
