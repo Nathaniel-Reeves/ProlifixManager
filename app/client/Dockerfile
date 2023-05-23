@@ -12,8 +12,6 @@ COPY ./client/src /client/src
 COPY ./client/tests /client/tests
 COPY ./client/.editorconfig /client/.editorconfig
 
-VOLUME ./client/public
-
 # add `/client/node_modules/.bin` to $PATH
 ENV PATH /app/client/node_modules/.bin:$PATH
 

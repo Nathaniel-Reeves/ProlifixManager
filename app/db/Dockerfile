@@ -6,7 +6,6 @@ WORKDIR /db
 
 # Copy application files
 COPY ./db /db
-VOLUME ./db
 
 
 # Prepare dependancies for mariadb-connector

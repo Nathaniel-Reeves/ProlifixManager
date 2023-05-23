@@ -7,12 +7,16 @@ HOST = os.environ.get('HOSTNAME')
 PORT = os.environ.get('DB_PORT')
 USER = os.environ.get('ROOT_USERNAME')
 PASSWORD = os.environ.get('ROOT_PASSWORD')
+API_PORT = int(os.environ.get('API_PORT'))
+DEBUG_MODE = bool(os.environ.get('API_PORT'))
 
 print('~~~ DATABASE CONFIG ~~~')
 print('    Host:         ', HOST)
 print('    Port:         ', PORT)
 print('    SQL User:     ', USER)
 print('    SQL Password: ', PASSWORD)
+print('    API_PORT:     ', API_PORT)
+print('    DEBUG_MODE:   ', DEBUG_MODE)
 print()
 
 
@@ -24,25 +28,17 @@ app = Flask(__name__, instance_relative_config=True)
 CORS(app, resources={r'/*': {'origins': '*'}})
 
 """
-Import Views
+Import Handlers
 """
-# from server.views.home import bp as home_bp
-# app.register_blueprint(home_bp)
+from handlers.organizations import bp as organizations_bp
+app.register_blueprint(organizations_bp)
 
-# from server.views.auth import bp as auth_bp
-# app.register_blueprint(auth_bp)
-
-# from server.views.organizations import bp as organizations_bp
-# app.register_blueprint(organizations_bp)
 
 # sanity check route
 @app.route('/ping', methods=['GET'])
 def ping_pong():
     return jsonify('pong!')
 
-
-API_PORT = int(os.environ.get('API_PORT'))
-DEBUG_MODE = bool(os.environ.get('API_PORT'))
 
 if __name__ == "__main__":
     print('~~~ SERVER START ~~~')
