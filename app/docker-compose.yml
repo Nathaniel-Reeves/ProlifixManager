@@ -44,29 +44,29 @@ services:
     tty: true
 
   # BROKEN!!
-  # server:
-  #   container_name: $API_NAME
-  #   restart: always
-  #   environment:
-  #     ROOT_USERNAME: $ROOT_USERNAME
-  #     ROOT_PASSWORD: $ROOT_PASSWORD
-  #     HOSTNAME: $HOSTNAME
-  #     DB_PORT: $DB_PORT
-  #     FLASK_DEBUG: $FLASK_DEBUG
-  #     API_PORT: $API_PORT
-  #   build:
-  #     context: .
-  #     dockerfile: server/Dockerfile
-  #   volumes:
-  #       - './client/public:/client/public'
-  #   ports:
-  #     - $API_PORT:5000
-  #   networks:
-  #     - dev-network
-  #   depends_on:
-  #     mariadb:
-  #       condition: service_healthy
-  #   tty: true
+  server:
+    container_name: $API_NAME
+    restart: always
+    environment:
+      ROOT_USERNAME: $ROOT_USERNAME
+      ROOT_PASSWORD: $ROOT_PASSWORD
+      HOSTNAME: $HOSTNAME
+      DB_PORT: $DB_PORT
+      FLASK_DEBUG: $FLASK_DEBUG
+      API_PORT: $API_PORT
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    volumes:
+        - './client/public:/client/public'
+    ports:
+      - $API_PORT:5000
+    networks:
+      - dev-network
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    tty: true
 
   # WORKS!!
   client:
