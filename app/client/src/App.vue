@@ -23,13 +23,11 @@
               <router-link class="nav-link" to="/gridchart">Grid Chart Test</router-link>
             </li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Dropdown link
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
-              <a class="dropdown-item" href="#">Something else here</a>
+            <router-link class="nav-link dropdown-toggle" to="/organizations" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Organizations
+            </router-link>
+            <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdownMenuLink">
+              <router-link class="nav-link" to="/organizations/clients">Clients</router-link>
             </div>
           </li>
         </ul>

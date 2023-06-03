@@ -32,6 +32,18 @@ const routes = [
     path: '/gridchart',
     name: 'gridchart',
     component: () => import(/* webpackChunkName: "gridchart" */ '../views/GridChart.vue')
+  },
+  {
+    path: '/organizations',
+    name: 'organizations',
+    component: () => import(/* webpackChunkName: "organizations" */ '../views/organizations/OrganizationsHome.vue'),
+    children: [
+      {
+        path: 'clients',
+        name: 'clients',
+        component: () => import(/* webpackChunkName: "clients" */ '../views/organizations/ClientsOrg.vue')
+      }
+    ]
   }
 ]
 
