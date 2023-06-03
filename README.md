@@ -13,7 +13,7 @@ https://testdriven.io/blog/developing-a-single-page-app-with-flask-and-vuejs/
 -->
 
 
-
+sudo docker compose up --scale server=5 --env-file development_conf.env
 
 <!-- PROJECT SHIELDS -->
 <!--

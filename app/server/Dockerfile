@@ -8,7 +8,6 @@ WORKDIR /server
 COPY ./server /server
 COPY ./client/public /client/public
 
-
 # Prepare dependancies for mariadb-connector
 USER root
 
@@ -28,5 +27,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install Python dependencies
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-CMD ["python3", "app.py"]
-
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "wsgi:app"]

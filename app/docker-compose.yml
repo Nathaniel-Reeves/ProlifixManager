@@ -2,86 +2,121 @@ version: "3.9"
 
 services:
   # WORKS kinda, init_db is not connecting  (Unhealthy)
-  mariadb:
-    container_name: $DB_NAME
-    image: mariadb:10.6.4-focal
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: $ROOT_PASSWORD
-      MYSQL_USER: client
-      MYSQL_PASSWORD: clientPassword5!
-    volumes:
-      - '$DATA_DIR:/var/lib/mysql/'
-    ports:
-      - $DB_PORT:3306
-    networks:
-      - dev-network
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "$HOSTNAME", "--port", $DB_PORT, "-p$ROOT_PASSWORD"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+  # mariadb:
+  #   container_name: $DB_NAME
+  #   image: mariadb:10.6.4-focal
+  #   restart: always
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: $ROOT_PASSWORD
+  #     MYSQL_USER: client
+  #     MYSQL_PASSWORD: clientPassword5!
+  #   volumes:
+  #     - '$DATA_DIR:/var/lib/mysql/'
+  #   ports:
+  #     - $DB_PORT:3306
+  #   networks:
+  #     - mrp
+  #   healthcheck:
+  #      test: [
+  #       "CMD", 
+  #       "mysqladmin", 
+  #       "ping", 
+  #       "-h", 
+  #       "$HOSTNAME", 
+  #       "--port", 
+  #       $DB_PORT, 
+  #       "-p$ROOT_PASSWORD"
+  #       ]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 5
 
-  # WORKS!!
-  init_db:
-    container_name: init_db
-    environment:
-      ROOT_USERNAME: $ROOT_USERNAME
-      ROOT_PASSWORD: $ROOT_PASSWORD
-      HOSTNAME: $HOSTNAME
-      DB_PORT: $DB_PORT
-    restart: "no"
-    volumes:
-        - './db:/db'
-    build:
-      context: .
-      dockerfile: db/Dockerfile
-    networks:
-      - dev-network
-    depends_on:
-      mariadb:
-        condition: service_healthy
-    tty: true
+  # init_db:
+  #   container_name: init_db
+  #   environment:
+  #     ROOT_USERNAME: $ROOT_USERNAME
+  #     ROOT_PASSWORD: $ROOT_PASSWORD
+  #     HOSTNAME: $HOSTNAME
+  #     DB_PORT: $DB_PORT
+  #   restart: "no"
+  #   volumes:
+  #       - './db:/db'
+  #   build:
+  #     context: .
+  #     dockerfile: db/Dockerfile
+  #   networks:
+  #     - mrp
+  #   depends_on:
+  #     mariadb:
+  #       condition: service_healthy
+  #   tty: true
 
-  # BROKEN!!
   server:
-    container_name: $API_NAME
-    restart: always
+    restart: unless-stopped
     environment:
-      ROOT_USERNAME: $ROOT_USERNAME
-      ROOT_PASSWORD: $ROOT_PASSWORD
-      HOSTNAME: $HOSTNAME
-      DB_PORT: $DB_PORT
-      FLASK_DEBUG: $FLASK_DEBUG
-      API_PORT: $API_PORT
+      ROOT_USERNAME: 'root'
+      ROOT_PASSWORD: 'Newspaper5'
+      HOSTNAME: '209.33.207.141'
+      DB_PORT: '3307'
     build:
       context: .
       dockerfile: server/Dockerfile
     volumes:
         - './client/public:/client/public'
     ports:
-      - $API_PORT:5000
+      - "5000"
     networks:
-      - dev-network
-    depends_on:
-      mariadb:
-        condition: service_healthy
+      - mrp
+    # depends_on:
+    #   mariadb:
+    #     condition: service_healthy
     tty: true
 
-  # WORKS!!
-  client:
+  server-loadbalance:
+    container_name: server_loadbalance
+    image: nginx:latest
     restart: always
-    container_name: $CLIENT_NAME
-    build:
-      context: .
-      dockerfile: client/Dockerfile
-    ports:
-    - '$CLIENT_PORT:8080'
-    networks:
-      - dev-network
     volumes:
-      - './client/public:/public'
+     - ./server/nginx.conf:/etc/nginx/nginx.conf:ro
+     - './client/public:/public'
+    depends_on:
+      - server
+    ports:
+     - "5000:5000"
+    networks:
+      - mrp
+    tty: true
+
+  # client:
+  #   container_name: client
+  #   build:
+  #     context: .
+  #     dockerfile: client/Dockerfile
+  #   volumes:
+  #     - ./client
+  #     - './client/public:/public'
+  #   networks:
+  #     - mrp
+  #   ports:
+  #     - "8080:8080"
+  #   tty: true
+
+  #Nginx Service
+  webserver:
+    depends_on:
+      - server
+      # - client
+    image: nginx:latest
+    volumes:
+     - ./webserver/nginx.conf:/etc/nginx/nginx.conf:ro
+    container_name: webserver
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+    networks:
+      - mrp
 
 networks:
-  dev-network:
+  mrp:
     driver: bridge

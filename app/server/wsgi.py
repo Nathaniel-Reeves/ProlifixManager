@@ -1,29 +1,26 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 import os
+import socket
 
 # Database Config Settings
 HOST = os.environ.get('HOSTNAME')
 PORT = os.environ.get('DB_PORT')
 USER = os.environ.get('ROOT_USERNAME')
 PASSWORD = os.environ.get('ROOT_PASSWORD')
-API_PORT = int(os.environ.get('API_PORT'))
-DEBUG_MODE = bool(os.environ.get('API_PORT'))
 
 print('~~~ DATABASE CONFIG ~~~')
 print('    Host:         ', HOST)
 print('    Port:         ', PORT)
 print('    SQL User:     ', USER)
 print('    SQL Password: ', PASSWORD)
-print('    API_PORT:     ', API_PORT)
-print('    DEBUG_MODE:   ', DEBUG_MODE)
 print()
 
 
 """
 Config Settings for Flask App
 """
-app = Flask(__name__, instance_relative_config=True)
+app = Flask(__name__)
 
 CORS(app, resources={r'/*': {'origins': '*'}})
 
@@ -39,8 +36,12 @@ app.register_blueprint(organizations_bp)
 def ping_pong():
     return jsonify('pong!')
 
+# sanity check route
+@app.route('/server_id', methods=['GET'])
+def server_id():
+    return f"Container ID: {socket.gethostname()}"
+
 
 if __name__ == "__main__":
     print('~~~ SERVER START ~~~')
-    print()
-    app.run(debug=DEBUG_MODE, port=5000, host="0.0.0.0")
+    app.run(debug=True, port=5000, host="0.0.0.0")

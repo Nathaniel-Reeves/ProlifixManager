@@ -1,8 +1,8 @@
 # base image
-FROM node:18.16-alpine
+FROM node:18.16-alpine as build-stage
 
 # Set working directory
-WORKDIR /
+WORKDIR /client
 
 # install and cache client dependencies
 COPY ./client/*.js .
@@ -19,5 +19,12 @@ RUN npm install -g npm@9.6.7
 RUN npm install --omit=dev --force
 RUN npm install @vue/cli --force
 
-# start client
-CMD ["npm", "run", "serve"]
+# build client
+RUN npm run build
+
+# Start nginx to serve Vue client
+FROM nginx as production-stage
+EXPOSE 8080
+RUN mkdir /client
+COPY ./client/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build-stage /client /client
