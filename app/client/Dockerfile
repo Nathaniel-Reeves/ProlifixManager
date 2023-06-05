@@ -1,30 +1,30 @@
 # base image
-FROM node:18.16-alpine as build-stage
+FROM node:18.16-alpine as builder
 
 # Set working directory
-WORKDIR /client
+WORKDIR /client_build
 
-# install and cache client dependencies
-COPY ./client/*.js .
-COPY ./client/*.json .
-COPY ./client/public ./public
-COPY ./client/src ./src
-COPY ./client/tests ./tests
-COPY ./client/.editorconfig .
-
-# add `/client/node_modules/.bin` to $PATH
-# ENV PATH /app/client/node_modules/.bin:$PATH
+# Copy the package.json and install dependencies
+COPY ./client/package*.json .
 
 RUN npm install -g npm@9.6.7
 RUN npm install --omit=dev --force
 RUN npm install @vue/cli --force
 
+# install and cache client dependencies
+COPY ./client .
+
 # build client
 RUN npm run build
 
+
 # Start nginx to serve Vue client
-FROM nginx as production-stage
-EXPOSE 8080
-RUN mkdir /client
-COPY ./client/nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build-stage /client /client
+FROM nginx:stable-alpine as production-build
+
+COPY ./client/nginx.conf /etc/nginx/nginx.conf
+
+# Copy files from builder stage
+COPY --from=builder /client_build/dist /var/www
+
+EXPOSE 3000
+ENTRYPOINT ["nginx", "-g", "daemon off;"]

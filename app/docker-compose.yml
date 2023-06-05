@@ -1,49 +1,62 @@
 version: "3.9"
 
 services:
-  # WORKS kinda, init_db is not connecting  (Unhealthy)
-  # mariadb:
-  #   container_name: $DB_NAME
-  #   image: mariadb:10.6.4-focal
-  #   restart: always
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: $ROOT_PASSWORD
-  #     MYSQL_USER: client
-  #     MYSQL_PASSWORD: clientPassword5!
-  #   volumes:
-  #     - '$DATA_DIR:/var/lib/mysql/'
-  #   ports:
-  #     - $DB_PORT:3306
-  #   networks:
-  #     - mrp
-  #   healthcheck:
-  #      test: [
-  #       "CMD", 
-  #       "mysqladmin", 
-  #       "ping", 
-  #       "-h", 
-  #       "$HOSTNAME", 
-  #       "--port", 
-  #       $DB_PORT, 
-  #       "-p$ROOT_PASSWORD"
-  #       ]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 5
 
-  # init_db:
-  #   container_name: init_db
+  mariadb:
+    container_name: 'MariaDB'
+    image: mariadb:10.6.4-focal
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Newspaper5
+      MYSQL_USER: client
+      MYSQL_PASSWORD: clientPassword5!
+    volumes:
+      - './db/MariaDB_data/:/var/lib/mysql/'
+    ports:
+      - 3306:3306
+    networks:
+      mrp:
+        ipv4_address: 172.10.10.2
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "172.10.10.2", "--port", "3306", "-pNewspaper5"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  init_db:
+    container_name: init_db
+    environment:
+      ROOT_USERNAME: 'root'
+      ROOT_PASSWORD: 'Newspaper5'
+      HOSTNAME: '172.10.10.2'
+      DB_PORT: '3306'
+    restart: "no"
+    volumes:
+        - './db:/db'
+    build:
+      context: .
+      dockerfile: db/Dockerfile
+    networks:
+      - mrp
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    tty: true
+
+  # server:
+  #   restart: unless-stopped
   #   environment:
-  #     ROOT_USERNAME: $ROOT_USERNAME
-  #     ROOT_PASSWORD: $ROOT_PASSWORD
-  #     HOSTNAME: $HOSTNAME
-  #     DB_PORT: $DB_PORT
-  #   restart: "no"
-  #   volumes:
-  #       - './db:/db'
+  #     ROOT_USERNAME: 'root'
+  #     ROOT_PASSWORD: 'Newspaper5'
+  #     HOSTNAME: '172.10.10.2'
+  #     DB_PORT: '3306'
   #   build:
   #     context: .
-  #     dockerfile: db/Dockerfile
+  #     dockerfile: server/Dockerfile
+  #   volumes:
+  #       - './client/public:/client/public'
+  #   ports:
+  #     - "5000"
   #   networks:
   #     - mrp
   #   depends_on:
@@ -51,72 +64,58 @@ services:
   #       condition: service_healthy
   #   tty: true
 
-  server:
-    restart: unless-stopped
-    environment:
-      ROOT_USERNAME: 'root'
-      ROOT_PASSWORD: 'Newspaper5'
-      HOSTNAME: '209.33.207.141'
-      DB_PORT: '3307'
-    build:
-      context: .
-      dockerfile: server/Dockerfile
-    volumes:
-        - './client/public:/client/public'
-    ports:
-      - "5000"
-    networks:
-      - mrp
-    # depends_on:
-    #   mariadb:
-    #     condition: service_healthy
-    tty: true
-
-  server-loadbalance:
-    container_name: server_loadbalance
-    image: nginx:latest
-    restart: always
-    volumes:
-     - ./server/nginx.conf:/etc/nginx/nginx.conf:ro
-     - './client/public:/public'
-    depends_on:
-      - server
-    ports:
-     - "5000:5000"
-    networks:
-      - mrp
-    tty: true
+  # server-loadbalance:
+  #   container_name: server_loadbalance
+  #   image: nginx:latest
+  #   restart: always
+  #   volumes:
+  #    - ./server/nginx.conf:/etc/nginx/nginx.conf:ro
+  #    - './client/public:/public'
+  #   depends_on:
+  #     - server
+  #   ports:
+  #    - "5000:5000"
+  #   networks:
+  #     - mrp
+  #   tty: true
 
   # client:
+  #   stdin_open: true
+  #   restart: unless-stopped
   #   container_name: client
   #   build:
   #     context: .
   #     dockerfile: client/Dockerfile
-  #   volumes:
-  #     - ./client
-  #     - './client/public:/public'
+  #   # volumes:
+  #   #   - ./client
+  #   #   - './client/public:/public'
+  #   #   - '.client/nginx.conf:/etc/nginx/nginx.conf:ro'
   #   networks:
   #     - mrp
   #   ports:
-  #     - "8080:8080"
+  #     - "3000:3000"
   #   tty: true
 
-  #Nginx Service
-  webserver:
-    depends_on:
-      - server
-      # - client
-    image: nginx:latest
-    volumes:
-     - ./webserver/nginx.conf:/etc/nginx/nginx.conf:ro
-    container_name: webserver
-    restart: unless-stopped
-    tty: true
-    ports:
-      - "80:80"
-    networks:
-      - mrp
+  # #Nginx Service
+  # webserver:
+  #   container_name: webserver
+  #   depends_on:
+  #     - server
+  #     - client
+  #   image: nginx:latest
+  #   volumes:
+  #    - ./webserver/nginx.conf:/etc/nginx/nginx.conf:ro
+  #   restart: unless-stopped
+  #   tty: true
+  #   ports:
+  #     - "80:80"
+  #   networks:
+  #     - mrp
 
 networks:
   mrp:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.10.10.0/24
+          gateway: 172.10.10.1
