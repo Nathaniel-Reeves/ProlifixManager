@@ -1,0 +1,3 @@
+CREATE USER 'client'@'%' IDENTIFIED BY 'ClientPassword!5';
+GRANT ALL PRIVILEGES ON *.* TO 'client'@'%';
+FLUSH PRIVILEGES;
