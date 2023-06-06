@@ -7,9 +7,9 @@ services:
     image: mariadb:10.6.4-focal
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: Newspaper5
-      MYSQL_USER: client
-      MYSQL_PASSWORD: clientPassword5!
+      MARIADB_ROOT_PASSWORD: Newspaper5
+      MARIADB_ROOT_HOST: "%"
+      # MARIADB_ROOT_HOST: 172.10.10.2/255.255.255.224
     volumes:
       - './db/MariaDB_data/:/var/lib/mysql/'
     ports:
@@ -26,8 +26,8 @@ services:
   init_db:
     container_name: init_db
     environment:
-      ROOT_USERNAME: 'root'
-      ROOT_PASSWORD: 'Newspaper5'
+      ROOT_USERNAME: root
+      ROOT_PASSWORD: Newspaper5
       HOSTNAME: '172.10.10.2'
       DB_PORT: '3306'
     restart: "no"
