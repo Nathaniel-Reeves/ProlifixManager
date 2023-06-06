@@ -9,10 +9,10 @@ import csv
 import sys
 
 # Define the connection details
-HOST = os.environ.get('HOSTNAME')
+HOST = os.environ.get('DB_HOSTNAME')
 PORT = os.environ.get('DB_PORT')
-USER = os.environ.get('ROOT_USERNAME')
-PASSWORD = os.environ.get('ROOT_PASSWORD')
+USER = os.environ.get('DB_USERNAME')
+PASSWORD = os.environ.get('DB_PASSWORD')
 
 # Define the databases and their corresponding CSV files
 DATABASES = [
@@ -383,9 +383,9 @@ def main():
     file = open("init_db_flag_do_not_delete.txt", "w")
     file.close()
     print("\033[32mDatabase initialized successfully!\033[0m")
-    working_dir = os.getcwd()
-    print("Working Directory: ", working_dir)
-    print("ls :", os.listdir())
+    # working_dir = os.getcwd()
+    # print("Working Directory: ", working_dir)
+    # print("ls :", os.listdir())
     print()
     print("\033[31mExiting...\033[0m")
     sys.exit(0)

@@ -4,10 +4,10 @@ import os
 import socket
 
 # Database Config Settings
-HOST = os.environ.get('HOSTNAME')
+HOST = os.environ.get('DB_HOSTNAME')
 PORT = os.environ.get('DB_PORT')
-USER = os.environ.get('ROOT_USERNAME')
-PASSWORD = os.environ.get('ROOT_PASSWORD')
+USER = os.environ.get('DB_USERNAME')
+PASSWORD = os.environ.get('DB_PASSWORD')
 
 print('~~~ DATABASE CONFIG ~~~')
 print('    Host:         ', HOST)

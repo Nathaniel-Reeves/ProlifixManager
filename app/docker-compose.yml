@@ -25,9 +25,9 @@ services:
   init_db:
     container_name: init_db
     environment:
-      ROOT_USERNAME: client
-      ROOT_PASSWORD: ClientPassword!5
-      HOSTNAME: '172.10.10.2'
+      DB_USERNAME: client
+      DB_PASSWORD: ClientPassword!5
+      DB_HOSTNAME: '172.10.10.2'
       DB_PORT: '3306'
     restart: "no"
     volumes:
@@ -45,9 +45,9 @@ services:
   server:
     restart: unless-stopped
     environment:
-      ROOT_USERNAME: client
-      ROOT_PASSWORD: ClientPassword!5
-      HOSTNAME: '172.10.10.2'
+      DB_USERNAME: client
+      DB_PASSWORD: ClientPassword!5
+      DB_HOSTNAME: '172.10.10.2'
       DB_PORT: '3306'
     build:
       context: .
@@ -59,10 +59,11 @@ services:
     networks:
       - mrp
     depends_on:
-      mariadb:
-        condition: service_healthy
+      init_db:
+        condition: service_completed_successfully
     tty: true
 
+  #Nginx Service
   server-loadbalance:
     container_name: server_loadbalance
     image: nginx:latest
@@ -78,9 +79,10 @@ services:
       - mrp
     tty: true
 
+  #Nginx Service
   client:
     stdin_open: true
-    restart: unless-stopped
+    restart: always
     container_name: client
     build:
       context: .
@@ -91,6 +93,8 @@ services:
       - '.client/nginx.conf:/etc/nginx/nginx.conf:ro'
     networks:
       - mrp
+    depends_on:
+      - server-loadbalance
     ports:
       - "3000:3000"
     tty: true
@@ -99,12 +103,11 @@ services:
   webserver:
     container_name: webserver
     depends_on:
-      - server
       - client
     image: nginx:latest
     volumes:
      - ./webserver/nginx.conf:/etc/nginx/nginx.conf:ro
-    restart: unless-stopped
+    restart: always
     tty: true
     ports:
       - "80:80"
