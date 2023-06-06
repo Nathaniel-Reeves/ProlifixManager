@@ -3,6 +3,9 @@ from flask_cors import CORS
 import os
 import socket
 
+# Redis session store notes
+# https://testdriven.io/blog/flask-server-side-sessions/
+
 # Database Config Settings
 HOST = os.environ.get('DB_HOSTNAME')
 PORT = os.environ.get('DB_PORT')
