@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-from flask_cors import CORS
+# from flask_cors import CORS
 import os
 import socket
 
@@ -7,10 +7,22 @@ import socket
 # https://testdriven.io/blog/flask-server-side-sessions/
 
 # Database Config Settings
+
 HOST = os.environ.get('DB_HOSTNAME')
+if HOST is None:
+    HOST = 'pi-server'
+
 PORT = os.environ.get('DB_PORT')
+if PORT is None:
+    PORT = '3306'
+
 USER = os.environ.get('DB_USERNAME')
+if USER is None:
+    USER = 'client'
+
 PASSWORD = os.environ.get('DB_PASSWORD')
+if PASSWORD is None:
+    PASSWORD = "ClientPassword5!"
 
 print('~~~ DATABASE CONFIG ~~~')
 print('    Host:         ', HOST)
@@ -29,8 +41,8 @@ app.config['DB_PORT'] = PORT
 app.config['DB_USER'] = USER
 app.config['DB_PASSWORD'] = PASSWORD
 
-CORS(app, supports_credentials=True, allow_headers=[
-     "Content-Type", "Access-Control-Allow-Origin"])
+# CORS(app, supports_credentials=True, allow_headers=[
+#      "Content-Type", "Access-Control-Allow-Origin"])
 
 """
 Import Handlers

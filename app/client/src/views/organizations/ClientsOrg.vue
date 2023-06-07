@@ -1,5 +1,6 @@
 <template>
   <div class="clients">
+    <p>{{ org_data.message }}</p>
     <div v-for="org in org_data" :key="org.id">
       <p>{{ org.organization_name }}</p>
     </div>
@@ -19,20 +20,23 @@ export default {
       console.log(
         'GET ' +
         window.location.hostname +
-        ':5000' +
-        '/organizations'
+        '/api/organizations/test'
       )
-      fetch('http://' + window.location.hostname + ':5000' + '/organizations', {
+      fetch('http://' + window.location.hostname + '/api/organizations/test', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Credentials': true
+          'Access-Control-Allow-Origin': '*'
         }
       }).then(response => {
-        response.json().then(data => {
-          this.org_data = data
-        })
+        if (response.status === 200) {
+          response.json().then(data => {
+            this.org_data = data
+          })
+        } else {
+          console.log('Looks like there was a problem. Status Code:' + response.status)
+          console.log(response)
+        }
       })
     }
   },
