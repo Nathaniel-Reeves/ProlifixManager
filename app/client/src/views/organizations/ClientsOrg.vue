@@ -20,9 +20,10 @@ export default {
       console.log(
         'GET ' +
         window.location.hostname +
+        ':8080' +
         '/api/organizations/test'
       )
-      fetch('http://' + window.location.hostname + '/api/organizations/test', {
+      fetch('http://' + window.location.hostname + ':8080' + '/api/organizations/test', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
