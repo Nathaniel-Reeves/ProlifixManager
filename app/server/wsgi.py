@@ -19,13 +19,18 @@ print('    SQL User:     ', USER)
 print('    SQL Password: ', PASSWORD)
 print()
 
-
 """
 Config Settings for Flask App
 """
 app = Flask(__name__)
 
-CORS(app, resources={r'/*': {'origins': '*'}})
+app.config['DB_HOSTNAME'] = HOST
+app.config['DB_PORT'] = PORT
+app.config['DB_USER'] = USER
+app.config['DB_PASSWORD'] = PASSWORD
+
+CORS(app, supports_credentials=True, allow_headers=[
+     "Content-Type", "Access-Control-Allow-Origin"])
 
 """
 Import Handlers

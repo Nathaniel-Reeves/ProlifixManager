@@ -4,12 +4,13 @@ services:
 
   mariadb:
     container_name: mariadb
-    image: mariadb:10.6.4-focal
+    image: mariadb:10.11
     restart: always
     environment:
       MARIADB_ROOT_PASSWORD: Newspaper5
+      MARIADB_ROOT_HOST: '%'
     volumes:
-      - './db/MariaDB_data/:/var/lib/mysql/'
+      - './db/mariadb_data/:/var/lib/mysql/'
       - ./db/privileges.sql:/docker-entrypoint-initdb.d/0_init.sql
     ports:
       - 3306:3306
