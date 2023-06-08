@@ -50,6 +50,7 @@ services:
       DB_PASSWORD: ClientPassword!5
       DB_HOSTNAME: '172.10.10.2'
       DB_PORT: '3306'
+      API_PREFIX: 'True'
     build:
       context: .
       dockerfile: server/Dockerfile

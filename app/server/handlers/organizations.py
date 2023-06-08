@@ -12,7 +12,7 @@ from flask import (
 
 HOST = os.environ.get('DB_HOSTNAME')
 if HOST is None:
-    HOST = 'pi-server'
+    HOST = '127.0.0.1'
 
 PORT = os.environ.get('DB_PORT')
 if PORT is None:
@@ -24,13 +24,9 @@ if USER is None:
 
 PASSWORD = os.environ.get('DB_PASSWORD')
 if PASSWORD is None:
-    PASSWORD = "ClientPassword5!"
+    PASSWORD = "ClientPassword!5"
 
 bp = Blueprint('organizations', __name__, url_prefix='/organizations')
-
-@bp.route('/test', methods=['GET'])
-def get_test():
-    return jsonify({'message': 'test'})
 
 @bp.route('/', methods=['GET'])
 def get_organizations():

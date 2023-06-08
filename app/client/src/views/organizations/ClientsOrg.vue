@@ -17,12 +17,11 @@ export default {
   },
   methods: {
     getOrgData: function () {
+      var fetchRequest = window.origin + '/api/organizations'
       console.log(
-        'GET ' +
-        window.origin +
-        '/api/organizations'
+        'GET ' + fetchRequest
       )
-      fetch(window.origin + '/api/organizations', {
+      fetch(fetchRequest, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
