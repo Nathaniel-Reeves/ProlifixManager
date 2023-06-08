@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-# from flask_cors import CORS
+from flask_cors import CORS
 import os
 import socket
 
@@ -41,8 +41,8 @@ app.config['DB_PORT'] = PORT
 app.config['DB_USER'] = USER
 app.config['DB_PASSWORD'] = PASSWORD
 
-# CORS(app, supports_credentials=True, allow_headers=[
-#      "Content-Type", "Access-Control-Allow-Origin"])
+CORS(app, supports_credentials=True, allow_headers=[
+     "Content-Type", "Access-Control-Allow-Origin"])
 
 """
 Import Handlers

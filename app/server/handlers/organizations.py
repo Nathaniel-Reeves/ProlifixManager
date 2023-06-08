@@ -26,7 +26,7 @@ PASSWORD = os.environ.get('DB_PASSWORD')
 if PASSWORD is None:
     PASSWORD = "ClientPassword5!"
 
-bp = Blueprint('organizations', __name__, url_prefix='/api/organizations')
+bp = Blueprint('organizations', __name__, url_prefix='/organizations')
 
 @bp.route('/test', methods=['GET'])
 def get_test():

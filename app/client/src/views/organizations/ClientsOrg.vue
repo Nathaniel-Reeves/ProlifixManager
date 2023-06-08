@@ -19,11 +19,10 @@ export default {
     getOrgData: function () {
       console.log(
         'GET ' +
-        window.location.hostname +
-        ':8080' +
-        '/api/organizations/test'
+        window.origin +
+        '/api/organizations'
       )
-      fetch('http://' + window.location.hostname + ':8080' + '/api/organizations/test', {
+      fetch(window.origin + '/api/organizations', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
