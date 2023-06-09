@@ -6,7 +6,7 @@
 import Grid from 'gridjs-vue'
 
 export default {
-  name: 'OrgProductsChart',
+  name: 'ProductsGrid',
   components: {
     Grid
   },

@@ -13,7 +13,7 @@
 
         <div v-bind:id="'collapse' + org.organization_id" class="collapse" v-bind:aria-labelledby="'heading' + org.organization_id" data-parent="#accordionExample">
           <div class="card-body">
-            <ProductsOrg v-bind:products="org.products"></ProductsOrg>
+            <ProductsGrid v-bind:products="org.products"></ProductsGrid>
           </div>
         </div>
       </div>
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import ProductsOrg from '../../components/ProductsOrg.vue'
+import ProductsGrid from '../../components/ProductsGrid.vue'
 
 export default {
   name: 'ClientsOrg',
@@ -63,7 +63,7 @@ export default {
     msg: String
   },
   components: {
-    ProductsOrg
+    ProductsGrid
   }
 }
 </script>
