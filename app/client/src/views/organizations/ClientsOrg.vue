@@ -1,13 +1,30 @@
 <template>
   <div class="clients">
-    <p>{{ org_data.message }}</p>
-    <div v-for="org in org_data" :key="org.id">
-      <p>{{ org.organization_name }}</p>
+    <div class="accordion" id="accordionExample">
+
+      <div class="card" v-for="org in org_data" :key="org.organization_id">
+        <div class="card-header" v-bind:id="'heading' + org.organization_id">
+          <h2 class="mb-0">
+            <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" v-bind:data-target="'#collapse' + org.organization_id" aria-expanded="false" v-bind:aria-controls="'collapse' + org.organization_id">
+              {{ org.organization_name }}
+            </button>
+          </h2>
+        </div>
+
+        <div v-bind:id="'collapse' + org.organization_id" class="collapse" v-bind:aria-labelledby="'heading' + org.organization_id" data-parent="#accordionExample">
+          <div class="card-body">
+            <ProductsOrg v-bind:products="org.products"></ProductsOrg>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
 
 <script>
+import ProductsOrg from '../../components/ProductsOrg.vue'
+
 export default {
   name: 'ClientsOrg',
   data: function () {
@@ -17,7 +34,7 @@ export default {
   },
   methods: {
     getOrgData: function () {
-      var fetchRequest = window.origin + '/api/organizations'
+      var fetchRequest = window.origin + '/api/organizations?org-type=client&populate=products'
       console.log(
         'GET ' + fetchRequest
       )
@@ -44,6 +61,9 @@ export default {
   },
   props: {
     msg: String
+  },
+  components: {
+    ProductsOrg
   }
 }
 </script>
