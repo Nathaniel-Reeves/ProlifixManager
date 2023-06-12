@@ -52,17 +52,17 @@ CORS(app, supports_credentials=True, allow_headers=[
 #  Set the API prefix to a truthy (non-empty string) value
 #  to send/recive traffic using postman & production client.
 #  $ export API_PREFIX='True'
-API_PREFIX = bool(os.environ.get('API_PREFIX'))
+API_PREFIX = os.environ.get('API_PREFIX')
+if API_PREFIX == 'True':
+    url_prefix = '/'
+else:
+    url_prefix = '/api'
 
 print()
 print('~~~ API CONFIG ~~~')
 print('    API Prefix:   ', API_PREFIX)
 print()
 
-if API_PREFIX:
-    url_prefix = '/'
-else:
-    url_prefix = '/api'
 api_blueprint = Blueprint('api', __name__, url_prefix=url_prefix)
 
 
