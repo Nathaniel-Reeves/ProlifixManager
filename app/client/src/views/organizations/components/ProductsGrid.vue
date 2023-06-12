@@ -1,5 +1,5 @@
 <template>
-    <Grid :cols="cols" :rows="rows"></Grid>
+    <Grid :cols="cols" :rows="rows" :pagination="{'limit':5}" :sort="true"></Grid>
 </template>
 
 <script>
@@ -15,17 +15,19 @@ export default {
   },
   data () {
     return {
-      cols: ['Product Name', 'Type', 'Date Entered'],
+      cols: ['Product Name', 'Type'],
       product_data: Object.values(this.products),
-      rows: []
+      rows: [],
+      pagination: {
+        limit: 5
+      }
     }
   },
   created: function () {
     this.product_data.forEach(product => {
-      var row = [
+      const row = [
         product.product_name,
-        product.type,
-        product.date_entered
+        product.type
       ]
       this.rows.push(row)
     })

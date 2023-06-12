@@ -6,6 +6,7 @@ import 'bootstrap'
 import App from './App.vue'
 import router from './router'
 import jquery from 'jquery'
+import 'bootstrap-icons/font/bootstrap-icons.css'
 
 Vue.config.productionTip = false
 

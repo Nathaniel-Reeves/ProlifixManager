@@ -58,7 +58,8 @@ def get_organizations():
                 'other', a.`other`,
                 'doc', a.`doc`,
                 'notes', a.`notes`,
-                'organization_name', b.`organization_name`
+                'organization_name', b.`organization_name`,
+                'organization_initial', b.`organization_initial`
             )
         AS organization_objects
         FROM `Organizations`.`Organizations` a

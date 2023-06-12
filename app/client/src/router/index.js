@@ -37,11 +37,63 @@ const routes = [
     path: '/organizations',
     name: 'organizations',
     component: () => import(/* webpackChunkName: "organizations" */ '../views/organizations/OrganizationsHome.vue'),
+    props: {
+      labs_filter_prop: false,
+      suppliers_filter_prop: false,
+      clients_filter_prop: false
+    },
     children: [
       {
-        path: 'clients',
+        path: '/clients',
         name: 'clients',
-        component: () => import(/* webpackChunkName: "clients" */ '../views/organizations/ClientsOrg.vue')
+        component: () => import(/* webpackChunkName: "clients" */ '../views/organizations/OrganizationsHome.vue'),
+        props: {
+          labs_filter_prop: false,
+          suppliers_filter_prop: false,
+          clients_filter_prop: true
+        }
+      },
+      {
+        path: '/suppliers',
+        name: 'suppliers',
+        component: () => import(/* webpackChunkName: "suppliers" */ '../views/organizations/OrganizationsHome.vue'),
+        props: {
+          labs_filter_prop: false,
+          suppliers_filter_prop: true,
+          clients_filter_prop: false
+        }
+      },
+      {
+        path: '/labs',
+        name: 'labs',
+        component: () => import(/* webpackChunkName: "labs" */ '../views/organizations/OrganizationsHome.vue'),
+        props: {
+          labs_filter_prop: true,
+          suppliers_filter_prop: false,
+          clients_filter_prop: false
+        }
+      }
+    ]
+  },
+  {
+    path: '/orders',
+    name: 'orders',
+    component: () => import(/* webpackChunkName: "orders" */ '../views/orders/OrdersHome.vue'),
+    children: [
+      {
+        path: '/lot_numbers',
+        name: 'lot_numbers',
+        component: () => import(/* webpackChunkName: "lot_numbers" */ '../views/orders/OrdersHome.vue')
+      },
+      {
+        path: '/sales_orders',
+        name: 'sales_orders',
+        component: () => import(/* webpackChunkName: "sales_orders" */ '../views/orders/OrdersHome.vue')
+      },
+      {
+        path: '/purchase_orders',
+        name: 'puchase_orders',
+        component: () => import(/* webpackChunkName: "purchase_orders" */ '../views/orders/OrdersHome.vue')
       }
     ]
   }
