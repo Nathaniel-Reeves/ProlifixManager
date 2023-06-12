@@ -104,6 +104,12 @@
   </div>
 </template>
 
+<style scoped>
+.organizations {
+  width: 95%;
+}
+</style>
+
 <script>
 import FacilitiesGrid from './components/FacilitiesGrid.vue'
 import SalesOrdersGrid from './components/SalesOrdersGrid.vue'
