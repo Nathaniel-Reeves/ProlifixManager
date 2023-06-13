@@ -72,6 +72,9 @@ Import Handlers
 from handlers.organizations import bp as organizations_bp
 api_blueprint.register_blueprint(organizations_bp)
 
+from handlers.orders import bp as orders_bp
+api_blueprint.register_blueprint(orders_bp)
+
 # sanity check route
 @api_blueprint.route('/ping', methods=['GET'])
 def ping_pong():

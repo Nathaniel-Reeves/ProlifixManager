@@ -3,13 +3,13 @@
     <div class="card p-0 mt-2 mb-4 bg-image boarder-0">
       <div class="card-img custom-background-image m-0" v-bind:style="{'background-position-y':'bottom', 'background-image': 'url(' + require('../assets/supplements_stock_photo.jpg')+')'}">
         <div class="d-flex justify-content-center align-items-center" style="
-          background-color: rgb(255 255 255 / 0.6);
+          background-color: rgb(255 255 255 / 0.75);
           max-height: 10rem;
           width:100%;
           align-self:center;
           transform: translate(0%, 40%);
           backdrop-filter: blur(1)">
-          <img style="max-height: 10rem; align-self:center;" alt="Prolifix Nutrition Logo" src="../assets/Company Images/logos jpg/Prolifix Logo Cropped.jpg">
+          <img style="max-height: 10rem; align-self:center;" alt="Prolifix Nutrition Logo" src="../assets/Company Images/logos png/Transparent Logo.png">
         </div>
       </div>
     </div>
@@ -19,10 +19,10 @@
 
         <div class="custom-card card border-0">
           <div class="imgbox m-0">
-                <img class="image-blured m-0" alt="Prolifix Nutrition Logo" src="../assets/Production Flow Charts - New Manufacturing Flow Chart (POSTER).png">
-              </div>
+              <img class="image-blured m-0" alt="Supplements Manufacturing" src="../assets/supplements_manufacturing.jpg">
+            </div>
           <div class="specifies">
-            <h2>Production <br> <span>Tools</span></h2>
+            <h2>Production <br> <span>Lot# | History | BPRs</span></h2>
             <div class="price"><i class="bi bi-arrow-down"></i></div> <label>Tables</label>
             <ul>
                 <li>10MM</li>
@@ -31,7 +31,7 @@
                 <li>40MM</li>
                 <li>50MM</li>
             </ul> <label>Charts</label>
-            <ul class="colors">
+            <ul>
                 <li></li>
                 <li></li>
                 <li></li>
@@ -41,12 +41,12 @@
           </div>
         </div>
 
-        <div class="custom-card card ml-0 border-0">
+        <div class="custom-card card border-0">
           <div class="imgbox m-0">
-                <img class="image-blured m-0" alt="Prolifix Nutrition Logo" src="../assets/Production Flow Charts - New Manufacturing Flow Chart (POSTER).png">
-              </div>
+            <img class="image-blured m-0" alt="Supplements" src="../assets/supplements.jpg">
+          </div>
           <div class="specifies">
-            <h2>Production <br> <span>Tools</span></h2>
+            <h2>Products <br> <span>Formulas | Specs</span></h2>
             <div class="price"><i class="bi bi-arrow-down"></i></div> <label>Tables</label>
             <ul>
                 <li>10MM</li>
@@ -55,7 +55,7 @@
                 <li>40MM</li>
                 <li>50MM</li>
             </ul> <label>Charts</label>
-            <ul class="colors">
+            <ul>
                 <li></li>
                 <li></li>
                 <li></li>
@@ -65,12 +65,12 @@
           </div>
         </div>
 
-        <div class="custom-card card ml-0 border-0">
+        <div class="custom-card card border-0">
           <div class="imgbox m-0">
-                <img class="image-blured m-0" alt="Prolifix Nutrition Logo" src="../assets/Production Flow Charts - New Manufacturing Flow Chart (POSTER).png">
-              </div>
+            <img class="image-blured m-0" alt="Warehouse" src="../assets/inventory-warehouse-boxes.jpg">
+          </div>
           <div class="specifies">
-            <h2>Production <br> <span>Tools</span></h2>
+            <h2>Inventory <br> <span>Components | Products</span></h2>
             <div class="price"><i class="bi bi-arrow-down"></i></div> <label>Tables</label>
             <ul>
                 <li>10MM</li>
@@ -79,7 +79,7 @@
                 <li>40MM</li>
                 <li>50MM</li>
             </ul> <label>Charts</label>
-            <ul class="colors">
+            <ul>
                 <li></li>
                 <li></li>
                 <li></li>
@@ -89,12 +89,12 @@
           </div>
         </div>
 
-        <div class="custom-card card ml-0 border-0">
+        <div class="custom-card card border-0">
           <div class="imgbox m-0">
-                <img class="image-blured m-0" alt="Prolifix Nutrition Logo" src="../assets/Production Flow Charts - New Manufacturing Flow Chart (POSTER).png">
-              </div>
+            <img class="image-blured m-0" alt="Hand Shake" src="../assets/Hand-shake.png">
+          </div>
           <div class="specifies">
-            <h2>Production <br> <span>Tools</span></h2>
+            <h2>Organizations <br> <span>Clients | Suppliers | Labs</span></h2>
             <div class="price"><i class="bi bi-arrow-down"></i></div> <label>Tables</label>
             <ul>
                 <li>10MM</li>
@@ -103,7 +103,55 @@
                 <li>40MM</li>
                 <li>50MM</li>
             </ul> <label>Charts</label>
-            <ul class="colors">
+            <ul>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul> <button class="btn btn-light" style="width:100%;">Production Page</button>
+          </div>
+        </div>
+
+        <div class="custom-card card border-0">
+          <div class="imgbox m-0">
+            <img class="image-blured m-0" alt="Office Worker" src="../assets/orders.jpg">
+          </div>
+          <div class="specifies">
+            <h2>Orders <br> <span>POs | SOs</span></h2>
+            <div class="price"><i class="bi bi-arrow-down"></i></div> <label>Tables</label>
+            <ul>
+                <li>10MM</li>
+                <li>20MM</li>
+                <li>30MM</li>
+                <li>40MM</li>
+                <li>50MM</li>
+            </ul> <label>Charts</label>
+            <ul>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul> <button class="btn btn-light" style="width:100%;">Production Page</button>
+          </div>
+        </div>
+
+        <div class="custom-card card border-0">
+          <div class="imgbox m-0">
+                <img class="image-blured m-0" alt="Signing Documents" src="../assets/policy.jpg">
+              </div>
+          <div class="specifies">
+            <h2>Policies <br> <span>SOPs | GMPs</span></h2>
+            <div class="price"><i class="bi bi-arrow-down"></i></div> <label>Tables</label>
+            <ul>
+                <li>10MM</li>
+                <li>20MM</li>
+                <li>30MM</li>
+                <li>40MM</li>
+                <li>50MM</li>
+            </ul> <label>Charts</label>
+            <ul>
                 <li></li>
                 <li></li>
                 <li></li>
@@ -129,14 +177,25 @@
   background-repeat: no-repeat;
   background-size: cover;
 }
+
 .image-blured {
+  filter: blur(0px);
+  transition: 0.5s;
+  transform: scale(3) translate(0%, 30%);
+}
+
+.custom-card:hover .image-blured {
+  filter: blur(1px);
+  transition: 0.5s;
+}
+
+.tilted {
+  top: 50%;
+  left: 50%;
   max-width: 100%;
   max-height: 100%;
   transform: translate(-50%, -70%) rotate(9deg) scale(1.8);
-  filter: blur(1px);
   position: absolute;
-  top: 50%;
-  left: 50%;
 }
 
 .custom-card {
