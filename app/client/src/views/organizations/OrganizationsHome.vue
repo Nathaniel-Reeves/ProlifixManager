@@ -1,7 +1,7 @@
 <template>
   <div class="organizations">
     <div>
-      <b-sidebar id="sidebar-1" title="Filter Options" shadow>
+      <b-sidebar id="sidebar-right" title="Filter Options" :right="true" shadow :lazy="true" backdrop-variant="dark">
         <div class="px-3 py-2">
           <div class="input-group mb-3">
             <input v-model="search_query" type="text" class="form-control" placeholder="Search Organizations..."
@@ -42,7 +42,7 @@
       <div class="card-body">
         <div class="input-group d-flex justify-content-between">
           <h2 class="card-title mr-2">Organizations</h2>
-            <b-button v-b-toggle.sidebar-1 v-bind:class="['btn', 'my-2', filterActive ? 'btn-info' : 'btn-light']" type="button" id="button-addon2">
+            <b-button v-b-toggle.sidebar-right v-bind:class="['btn', 'my-2', filterActive ? 'btn-info' : 'btn-light']" type="button" id="button-addon2">
               <i class="bi bi-filter"></i>
             </b-button>
         </div>
