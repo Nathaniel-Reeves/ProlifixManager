@@ -492,32 +492,70 @@ def populate_products(cursor, org_id):
         products[product_id] = json_row
     return products
 
-def check_org_exists_levenshtein(cursor, search_name):
+@bp.route('/exists', methods=['POST'])
+def post_organization():
+    '''
+    Inserts a new organization into the database.
+    '''
+    names = request.json['names']
+    
+    primary_exists = False
+    levenshtein_results = []
+    for name in names:
+        if name["primary_name"]:
+            primary_exists = True
+        levenshtein_results += check_org_exists_levenshtein(
+            name["organization_name"]
+        )
+
+    # Execute Query
+    print(levenshtein_results)
+    print(primary_exists)
+
+    return jsonify(levenshtein_results)
+
+
+def check_org_exists_levenshtein(search_name):
     '''
     Checks likelyhood if Organization Name already exists
     in the Database.
     '''
     try:
+        # Test Connection
+        session = mariadb.connect(
+            host=HOST,
+            port=int(PORT),
+            user=USER,
+            password=PASSWORD
+        )
+        cursor = session.cursor()
+        
         # Build Query
         base_query = '''
         SELECT
-            `organization_id`,
-            `organization_name`,
-            sys.LEVENSHTEIN_RATIO(`organization_name`, %s) AS duplicate_probability_score
+            JSON_OBJECT(
+                'organization_id', `organization_id`,
+                'organization_name', `organization_name`,
+                'levenshtein_probability', CAST(sys.LEVENSHTEIN_RATIO(`organization_name`, ?) AS UNSIGNED INTEGER)
+            ) AS levenshtein_results
         FROM `Organizations`.`Organization_Names`
         WHERE
-            sys.LEVENSHTEIN_RATIO(`organization_name`, %s) > 50;
+            sys.LEVENSHTEIN_RATIO(`organization_name`, ?) > 50;
         '''
 
         # Execute Query
         cursor.execute(base_query, (search_name, search_name))
         result = cursor.fetchall()
 
-        # Return JSON
-        return jsonify(result)
+        # Return Facilities Dictionary
+        levensthein_results = []
+        for row in result:
+            json_row = json.loads(row[0])
+            levensthein_results.append(json_row)
+        return levensthein_results
 
     except mariadb.Error as error:
         # Error Handling
         print(error)
-        return jsonify(error=str(error))
+        return error
 

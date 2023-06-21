@@ -30,6 +30,8 @@ VOLUME ["/data"]
 # Define working directory.
 WORKDIR /data
 
+COPY ./redis/redis.conf /etc/redis/redis.conf
+
 # Define default command.
 CMD ["redis-server", "/etc/redis/redis.conf"]
 
