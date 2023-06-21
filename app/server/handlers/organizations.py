@@ -491,3 +491,33 @@ def populate_products(cursor, org_id):
         product_id = json_row['product_id']
         products[product_id] = json_row
     return products
+
+def check_org_exists_levenshtein(cursor, search_name):
+    '''
+    Checks likelyhood if Organization Name already exists
+    in the Database.
+    '''
+    try:
+        # Build Query
+        base_query = '''
+        SELECT
+            `organization_id`,
+            `organization_name`,
+            sys.LEVENSHTEIN_RATIO(`organization_name`, %s) AS duplicate_probability_score
+        FROM `Organizations`.`Organization_Names`
+        WHERE
+            sys.LEVENSHTEIN_RATIO(`organization_name`, %s) > 50;
+        '''
+
+        # Execute Query
+        cursor.execute(base_query, (search_name, search_name))
+        result = cursor.fetchall()
+
+        # Return JSON
+        return jsonify(result)
+
+    except mariadb.Error as error:
+        # Error Handling
+        print(error)
+        return jsonify(error=str(error))
+
