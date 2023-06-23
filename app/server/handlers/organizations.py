@@ -1,34 +1,20 @@
 '''
 Handle Organizations Data
 '''
-import os
 import json
 import mariadb
 from flask import (
     Blueprint,
     request,
-    jsonify
+    jsonify,
+    current_app as app
 )
-
-HOST = os.environ.get('DB_HOSTNAME')
-if HOST is None:
-    HOST = '127.0.0.1'
-
-PORT = os.environ.get('DB_PORT')
-if PORT is None:
-    PORT = '3306'
-
-USER = os.environ.get('DB_USERNAME')
-if USER is None:
-    USER = 'client'
-
-PASSWORD = os.environ.get('DB_PASSWORD')
-if PASSWORD is None:
-    PASSWORD = "ClientPassword!5"
+from .auth import authenticated_only
 
 bp = Blueprint('organizations', __name__, url_prefix='/organizations')
 
 @bp.route('/', methods=['GET'])
+@authenticated_only
 def get_organizations():
     '''
     Get all organizations
@@ -36,10 +22,10 @@ def get_organizations():
     try:
         # Test Connection
         session = mariadb.connect(
-            host=HOST,
-            port=int(PORT),
-            user=USER,
-            password=PASSWORD
+            host=app.config['DB_HOSTNAME'],
+            port=int(app.config['DB_PORT']),
+            user=app.config['DB_USER'],
+            password=app.config['DB_PASSWORD']
         )
 
         # Build Query
@@ -523,10 +509,10 @@ def check_org_exists_levenshtein(search_name):
     try:
         # Test Connection
         session = mariadb.connect(
-            host=HOST,
-            port=int(PORT),
-            user=USER,
-            password=PASSWORD
+            host=app.config['DB_HOSTNAME'],
+            port=int(app.config['DB_PORT']),
+            user=app.config['DB_USER'],
+            password=app.config['DB_PASSWORD']
         )
         cursor = session.cursor()
         

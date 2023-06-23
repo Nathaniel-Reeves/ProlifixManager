@@ -106,13 +106,15 @@ services:
     container_name: redis
     image: redis:latest
     restart: always
-    entrypoint: redis-server --appendonly yes --requirepass RedisPassword --maxmemory 512mb --maxmemory-policy allkeys-lru
+    command: ["redis-server", "/etc/redis/redis.conf"]
     ports:
       - "6379:6379"
     networks:
-        - mrp
+      mrp:
+        ipv4_address: 172.10.10.3
     volumes:
       - ./redis/data:/data
+      - ./redis/redis.conf:/etc/redis/redis.conf
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     depends_on:
