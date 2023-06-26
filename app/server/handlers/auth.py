@@ -10,12 +10,25 @@ from flask import (
     current_app as app,
     make_response
 )
+from flask_jwt_extended import (
+    create_access_token, 
+    create_refresh_token, 
+    set_access_cookies, 
+    set_refresh_cookies,
+    get_jwt,
+    jwt_required,
+    JWTManager
+)
 from werkzeug.security import (
     check_password_hash,
     generate_password_hash
 )
 from flask_socketio import disconnect
 from flask_login import current_user, UserMixin
+
+"""
+Configure flask_jws_extended
+"""
 
 class User(UserMixin):
 
@@ -106,6 +119,11 @@ def login():
             return make_response(jsonify({"error": "Incorrect Password"}), 401)
 
         # Create Session
+        access_token = create_access_token(identity=user_data['user_id'])
+        refresh_token = create_refresh_token(identity=user_data['user_id'])
+
+        set_access_cookies(response, access_token)
+        set_refresh_cookies(response, refresh_token)
         session = app.config['SESSION_REDIS']
         session.set(username, json.dumps(user_data))
         session.expire(username, int(app.config['SESSION_EXPIRE']))

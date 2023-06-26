@@ -1,7 +1,14 @@
+from datetime import timedelta
 from flask import (
     Flask, 
     jsonify, 
     Blueprint
+)
+from flask_jwt_extended import (
+    create_access_token,
+    get_jwt,
+    jwt_required,
+    JWTManager
 )
 from redis import Redis
 from flask_cors import CORS
@@ -68,6 +75,10 @@ Config Settings for Flask App
 """
 app = Flask(__name__)
 
+ACCESS_EXPIRES = timedelta(hours=1)
+
+app.config["JWT_SECRET_KEY"] = '0kgy23uJpIin346NeC7hUZ3Bak36S844NoeN1X35k4kY'
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = ACCESS_EXPIRES
 app.config['DB_HOSTNAME'] = HOST
 app.config['DB_PORT'] = PORT
 app.config['DB_USER'] = USER
@@ -86,7 +97,7 @@ CORS(app, supports_credentials=True, allow_headers=[
 
 app.secret_key = '0kgy23uJpIin346NeC7hUZ3Bak36S844NoeN1X35k4kY'
 login_manager = LoginManager(app)
-
+flask_jwt_conf = JWTManager(app)
 server_session = Session(app)
 socketio = SocketIO(app, manage_session=False)
 
