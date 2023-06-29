@@ -6,7 +6,7 @@
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <div class="collapse navbar-collapse justify-content-between" style="width:100%;" id="navbarNavDropdown">
           <ul class="navbar-nav">
             <li class="nav-item active">
               <router-link class="nav-link" to="/">Home<span class="sr-only">(current)</span></router-link>
@@ -32,6 +32,13 @@
               </div>
             </li>
           </ul>
+          <div class="navbar-nav">
+            <div class="nav-item">
+              <router-link class="nav-link px-0" to="/login">
+                Login
+              </router-link>
+            </div>
+          </div>
         </div>
       </nav>
       <div class="container-fluid">
