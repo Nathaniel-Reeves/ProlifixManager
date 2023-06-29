@@ -119,6 +119,7 @@ def login():
             return make_response(jsonify({"error": "Incorrect Password"}), 401)
 
         # Create Session
+        response = make_response(jsonify(user_data))
         access_token = create_access_token(identity=user_data['user_id'])
         refresh_token = create_refresh_token(identity=user_data['user_id'])
 
