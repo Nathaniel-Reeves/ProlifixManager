@@ -41,7 +41,8 @@ export default {
     return {
       username: '',
       password: '',
-      flash_errors: []
+      flash_errors: [],
+      userData: {}
     }
   },
   methods: {
@@ -57,6 +58,7 @@ export default {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*'
         },
+        credentials: 'include',
         body: JSON.stringify({
           username: this.username,
           password: this.password
@@ -65,7 +67,8 @@ export default {
         if (response.status === 200) {
           response.json().then(data => {
             console.log(data)
-            this.flash_errors.push(data.error)
+            this.userData = data
+            this.$emit('login', data)
           })
         } else {
           console.log(response)

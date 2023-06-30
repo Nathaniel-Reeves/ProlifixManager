@@ -34,9 +34,12 @@
           </ul>
           <div class="navbar-nav">
             <div class="nav-item">
-              <router-link class="nav-link px-0" to="/login">
+              <router-link v-if="!loggedIn" class="nav-link px-0" to="/login">
                 Login
               </router-link>
+              <div v-else class="nav-link px-0">
+                Logout
+              </div>
             </div>
           </div>
         </div>
@@ -44,7 +47,7 @@
       <div class="container-fluid">
         <div class="row justify-content-center">
           <!-- This is the link that vue uses to include other templates, Do not Delete! -->
-          <router-view/>
+          <router-view @login="updateUserData"/>
         </div>
       </div>
     </div>
@@ -81,6 +84,73 @@
     </div>
   </div>
 </template>
+
+<script>
+
+function getCookie (name) {
+  const value = `; ${document.cookie}`
+  const parts = value.split(`; ${name}=`)
+  if (parts.length === 2) return parts.pop().split(';').shift()
+}
+
+export default {
+  name: 'AppFrame',
+  data: function () {
+    return {
+      userData: {},
+      loggedInState: false
+    }
+  },
+  methods: {
+    updateUserData: function (userDataFromLogin) {
+      console.log('Update Login Status: ', userDataFromLogin)
+      this.userData = userDataFromLogin
+      this.loggedInState = true
+    },
+    getUser: function () {
+      // Get session cookie data
+      const sessionToken = getCookie('session')
+
+      // Get user data
+      const fetchRequest = window.origin + '/api/sessions?session-token=' + sessionToken
+      console.log(
+        'GET ' + fetchRequest
+      )
+      fetch(fetchRequest, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(data => {
+            this.userData = response.json()
+            this.loggedInState = true
+          })
+        } else {
+          console.log('Looks like there was a problem. Status Code:' + response.status)
+          console.log(response)
+          this.loggedInState = false
+        }
+      })
+    }
+  },
+  computed: {
+    loggedIn: function () {
+      if (this.loggedInState) {
+        return true
+      } else {
+        return false
+      }
+    }
+  },
+  created: function () {
+    this.getUser()
+  }
+}
+</script>
+
 <style>
 #wrapper {
   min-height: calc(100vh - 70px);

@@ -144,7 +144,8 @@ export default {
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*'
-        }
+        },
+        credentials: 'include'
       }).then(response => {
         if (response.status === 200) {
           response.json().then(data => {
@@ -166,7 +167,8 @@ export default {
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*'
-        }
+        },
+        credentials: 'include'
       }).then(response => {
         if (response.status === 200) {
           response.json().then(data => {

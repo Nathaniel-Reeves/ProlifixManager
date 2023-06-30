@@ -9,12 +9,12 @@ from flask import (
     jsonify,
     current_app as app
 )
-from .auth import authenticated_only
+from .auth import check_authenticated
 
 bp = Blueprint('organizations', __name__, url_prefix='/organizations')
 
 @bp.route('/', methods=['GET'])
-@authenticated_only
+@check_authenticated(authentication_required=True)
 def get_organizations():
     '''
     Get all organizations
@@ -479,6 +479,7 @@ def populate_products(cursor, org_id):
     return products
 
 @bp.route('/exists', methods=['POST'])
+@check_authenticated(authentication_required = True)
 def post_organization():
     '''
     Inserts a new organization into the database.

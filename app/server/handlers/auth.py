@@ -1,59 +1,85 @@
 import functools
 import json
-from redis import Redis
+import random
+import string
 import mariadb
 from flask import (
     Blueprint,
     request,
     jsonify,
-    request,
     current_app as app,
     make_response
-)
-from flask_jwt_extended import (
-    create_access_token, 
-    create_refresh_token, 
-    set_access_cookies, 
-    set_refresh_cookies,
-    get_jwt,
-    jwt_required,
-    JWTManager
 )
 from werkzeug.security import (
     check_password_hash,
     generate_password_hash
 )
 from flask_socketio import disconnect
-from flask_login import current_user, UserMixin
-
-"""
-Configure flask_jws_extended
-"""
-
-class User(UserMixin):
-
-    def __init__(self):
-        super(User, self).__init__()
-        
-    def get_id(self):
-        return self.id
 
 """
 Login & Authenication Wrapper Functions
 """
 
-def authenticated_only(f):
-    @functools.wraps(f)
-    def wrapped(*args, **kwargs):
-        # Check if user has a authenticated session
-        if current_user.is_authenticated:
-            return f(*args, **kwargs)
-        else:
-            return make_response(jsonify({
-                'message': 'You must be logged in to access this resource.'
-            }), 401)
-    return wrapped
+def check_authenticated(
+        authentication_required=False,
+        database_priveleges={}
+    ):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
 
+            # Check if user has a session token, Create one if not
+            session_token = request.cookies.get('session')
+            if session_token is None:
+                session_token = create_session()
+            session = app.config['SESSION_REDIS']
+            if not session.exists(session_token):
+                session_token = create_session()
+            session_data = json.loads(session.get(session_token))
+
+            # Check if User is Authenticated
+            user_authenticated = False
+            if session_data['user_id']:
+                user_authenticated = True
+
+            if authentication_required:
+                if not user_authenticated:
+                    response = make_response(
+                        jsonify({'success': False, 'message': 'User not authenticated'}), 401)
+                else:
+                    response = func(*args, **kwargs)
+            else:
+                response = func(*args, **kwargs)
+
+            response.set_cookie('session', session_token)
+            return response
+        return wrapper
+    return decorator
+
+def create_session():
+    # Create Session Template
+    user_data_template = {
+        "department": "",
+        "doc": {},
+        "first_name": "",
+        "job_description": "",
+        "last_name": "",
+        "organization_id": 0,
+        "person_id": 0,
+        "profile_picture": "",
+        "user_id": "",
+        "username": ""
+    }
+
+    # Generate Random Session token
+    session_token = ''.join(
+        [random.choice(string.ascii_letters + string.digits) for n in range(32)])
+
+    # Save Session to Redis
+    session = app.config['SESSION_REDIS']
+    session.set(session_token, json.dumps(user_data_template))
+    session.expire(session_token, int(app.config['SESSION_EXPIRE']))
+    return session_token
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -117,22 +143,30 @@ def login():
         # Handle Check Password
         if not check_password_hash(user_data['encrypted_password'], password):
             return make_response(jsonify({"error": "Incorrect Password"}), 401)
+        
+        # Remove Encrypted Password from user_data
+        user_data.pop("encrypted_password", None)
 
-        # Create Session
-        response = make_response(jsonify(user_data))
-        access_token = create_access_token(identity=user_data['user_id'])
-        refresh_token = create_refresh_token(identity=user_data['user_id'])
-
-        set_access_cookies(response, access_token)
-        set_refresh_cookies(response, refresh_token)
+        # Check if user has a session token, Create one if not
+        session_token = request.cookies.get('session')
+        if session_token is None:
+            session_token = create_session()
         session = app.config['SESSION_REDIS']
-        session.set(username, json.dumps(user_data))
-        session.expire(username, int(app.config['SESSION_EXPIRE']))
+        if not session.exists(session_token):
+            session_token = create_session()
+        session_data = json.loads(session.get(session_token))
 
-        # Send Cookie
-        response = make_response(jsonify(user_data))
-        response.set_cookie('session', username)
-        return response
+        # Update Session Data
+        session_data['user_id'] = user_data['user_id']
+        session_data['person_id'] = user_data['person_id']
+        session_data['username'] = user_data['username']
+        session_data['profile_picture'] = user_data['profile_picture']
+        session_data['doc'] = user_data['doc']
+        session_data['organization_id'] = user_data['organization_id']
+        session_data['first_name'] = user_data['first_name']
+        session.set(session_token, json.dumps(session_data))
+
+        return jsonify(user_data)
 
     except mariadb.Error as error:
         # Error Handling
@@ -142,3 +176,15 @@ def login():
     finally:
         if 'session' in locals():
             session.close()
+
+
+@bp.route('/sessions', methods=['GET'])
+def get_user_by_session_token():
+    session_token = request.args.get('session-token', default=None, type=str)
+
+    session = app.config['SESSION_REDIS']
+    if session.exists(session_token):
+        user_data = json.loads(session.get(session_token))
+        return jsonify(user_data)
+    else:
+        return make_response(jsonify({"error": "User not authenticated"}), 401)
