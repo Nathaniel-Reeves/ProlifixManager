@@ -479,7 +479,7 @@ def populate_products(cursor, org_id):
     return products
 
 @bp.route('/exists', methods=['POST'])
-@check_authenticated(authentication_required = True)
+@check_authenticated(authentication_required=True)
 def post_organization():
     '''
     Inserts a new organization into the database.

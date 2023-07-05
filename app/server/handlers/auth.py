@@ -10,6 +10,7 @@ from flask import (
     current_app as app,
     make_response
 )
+from redis import Redis
 from werkzeug.security import (
     check_password_hash,
     generate_password_hash
@@ -32,54 +33,75 @@ def check_authenticated(
             session_token = request.cookies.get('session')
             if session_token is None:
                 session_token = create_session()
-            session = app.config['SESSION_REDIS']
-            if not session.exists(session_token):
-                session_token = create_session()
-            session_data = json.loads(session.get(session_token))
+            
+            try: 
+                redis_connection = Redis(
+                    host=app.config['REDIS_HOST'],
+                    port=app.config['REDIS_PORT'],
+                    password=app.config['REDIS_PASSWORD'])
+                if not redis_connection.exists(session_token):
+                    session_token = create_session()
+                session_data = json.loads(redis_connection.get(session_token))
 
-            # Check if User is Authenticated
-            user_authenticated = False
-            if session_data['user_id']:
-                user_authenticated = True
+                # Check if User is Authenticated
+                user_authenticated = False
+                if session_data['user_id']:
+                    user_authenticated = True
 
-            if authentication_required:
-                if not user_authenticated:
-                    response = make_response(
-                        jsonify({'success': False, 'message': 'User not authenticated'}), 401)
+                if authentication_required:
+                    if not user_authenticated:
+                        response = make_response(
+                            jsonify({'success': False, 'message': 'User not authenticated'}), 401)
+                    else:
+                        response = func(*args, **kwargs)
                 else:
                     response = func(*args, **kwargs)
-            else:
-                response = func(*args, **kwargs)
 
-            response.set_cookie('session', session_token)
-            return response
+                response.set_cookie('session', session_token)
+                return response
+
+            except Redis.exceptions.ConnectionError as error:
+                # Redis Error Handling
+                print(error)
+                return jsonify(error=str(error))
+
         return wrapper
     return decorator
 
 def create_session():
-    # Create Session Template
-    user_data_template = {
-        "department": "",
-        "doc": {},
-        "first_name": "",
-        "job_description": "",
-        "last_name": "",
-        "organization_id": 0,
-        "person_id": 0,
-        "profile_picture": "",
-        "user_id": "",
-        "username": ""
-    }
+    
+    try:
+        # Create Session Template
+        user_data_template = {
+            "department": "",
+            "doc": {},
+            "first_name": "",
+            "job_description": "",
+            "last_name": "",
+            "organization_id": 0,
+            "person_id": 0,
+            "profile_picture": "",
+            "user_id": "",
+            "username": ""
+        }
 
-    # Generate Random Session token
-    session_token = ''.join(
-        [random.choice(string.ascii_letters + string.digits) for n in range(32)])
+        # Generate Random Session token
+        session_token = ''.join(
+            [random.choice(string.ascii_letters + string.digits) for n in range(32)])
 
-    # Save Session to Redis
-    session = app.config['SESSION_REDIS']
-    session.set(session_token, json.dumps(user_data_template))
-    session.expire(session_token, int(app.config['SESSION_EXPIRE']))
-    return session_token
+        # Save Session to Redis
+        redis_connection = Redis(
+            host=app.config['REDIS_HOST'],
+            port=app.config['REDIS_PORT'],
+            password=app.config['REDIS_PASSWORD'])
+        redis_connection.set(session_token, json.dumps(user_data_template))
+        redis_connection.expire(session_token, app.config['SESSION_EXPIRE'], nx=False, xx=False, gt=False, lt=False)
+        return session_token
+
+    except Redis.exceptions.ConnectionError as error:
+        # Redis Error Handling
+        print(error)
+        return jsonify(error=str(error))
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -151,10 +173,13 @@ def login():
         session_token = request.cookies.get('session')
         if session_token is None:
             session_token = create_session()
-        session = app.config['SESSION_REDIS']
-        if not session.exists(session_token):
+        redis_connection = Redis(
+            host=app.config['REDIS_HOST'],
+            port=app.config['REDIS_PORT'],
+            password=app.config['REDIS_PASSWORD'])
+        if not redis_connection.exists(session_token):
             session_token = create_session()
-        session_data = json.loads(session.get(session_token))
+        session_data = json.loads(redis_connection.get(session_token))
 
         # Update Session Data
         session_data['user_id'] = user_data['user_id']
@@ -164,12 +189,17 @@ def login():
         session_data['doc'] = user_data['doc']
         session_data['organization_id'] = user_data['organization_id']
         session_data['first_name'] = user_data['first_name']
-        session.set(session_token, json.dumps(session_data))
+        redis_connection.set(session_token, json.dumps(session_data))
 
         return jsonify(user_data)
 
     except mariadb.Error as error:
-        # Error Handling
+        # MariaDB Error Handling
+        print(error)
+        return jsonify(error=str(error))
+
+    except Redis.exceptions.ConnectionError as error:
+        # Redis Error Handling
         print(error)
         return jsonify(error=str(error))
 
@@ -181,10 +211,20 @@ def login():
 @bp.route('/sessions', methods=['GET'])
 def get_user_by_session_token():
     session_token = request.args.get('session-token', default=None, type=str)
+    
+    try:
 
-    session = app.config['SESSION_REDIS']
-    if session.exists(session_token):
-        user_data = json.loads(session.get(session_token))
-        return jsonify(user_data)
-    else:
-        return make_response(jsonify({"error": "User not authenticated"}), 401)
+        redis_connection = Redis(
+            host=app.config['REDIS_HOST'],
+            port=app.config['REDIS_PORT'],
+            password=app.config['REDIS_PASSWORD'])
+        if redis_connection.exists(session_token):
+            user_data = json.loads(redis_connection.get(session_token))
+            return jsonify(user_data)
+        else:
+            return make_response(jsonify({"error": "User not authenticated"}), 401)
+    
+    except Redis.exceptions.ConnectionError as error:
+        # Redis Error Handling
+        print(error)
+        return jsonify(error=str(error))

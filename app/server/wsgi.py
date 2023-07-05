@@ -4,16 +4,7 @@ from flask import (
     jsonify, 
     Blueprint
 )
-from flask_jwt_extended import (
-    create_access_token,
-    get_jwt,
-    jwt_required,
-    JWTManager
-)
-from redis import Redis
 from flask_cors import CORS
-from flask_login import LoginManager
-from flask_session import Session
 from flask_socketio import SocketIO
 import os
 import socket
@@ -22,28 +13,28 @@ import socket
 Database Connection Settings
 """
 
-HOST = os.environ.get('DB_HOSTNAME')
-if HOST is None:
-    HOST = '127.0.0.1'
+DB_HOST = os.environ.get('DB_HOSTNAME')
+if DB_HOST is None:
+    DB_HOST = '127.0.0.1'
 
-PORT = os.environ.get('DB_PORT')
-if PORT is None:
-    PORT = '3306'
+DB_PORT = os.environ.get('DB_PORT')
+if DB_PORT is None:
+    DB_PORT = '3306'
 
-USER = os.environ.get('DB_USERNAME')
-if USER is None:
-    USER = 'client'
+DB_USER = os.environ.get('DB_USERNAME')
+if DB_USER is None:
+    DB_USER = 'client'
 
-PASSWORD = os.environ.get('DB_PASSWORD')
-if PASSWORD is None:
-    PASSWORD = "ClientPassword!5"
+DB_PASSWORD = os.environ.get('DB_PASSWORD')
+if DB_PASSWORD is None:
+    DB_PASSWORD = "ClientPassword!5"
 
 print()
 print('~~~ DATABASE CONFIG ~~~')
-print('    Host:         ', HOST)
-print('    Port:         ', PORT)
-print('    SQL User:     ', USER)
-print('    SQL Password: ', PASSWORD)
+print('    Host:         ', DB_HOST)
+print('    Port:         ', DB_PORT)
+print('    SQL User:     ', DB_USER)
+print('    SQL Password: ', DB_PASSWORD)
 print()
 
 """
@@ -68,37 +59,30 @@ print('    Port:         ', REDIS_PORT)
 print('    Password:     ', REDIS_PASSWORD)
 print()
 
-redis = Redis(host=REDIS_HOST, port=REDIS_PORT, password=REDIS_PASSWORD)
-
 """
 Config Settings for Flask App
 """
 app = Flask(__name__)
 
-ACCESS_EXPIRES = timedelta(hours=1)
-
-app.config["JWT_SECRET_KEY"] = '0kgy23uJpIin346NeC7hUZ3Bak36S844NoeN1X35k4kY'
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = ACCESS_EXPIRES
-app.config['DB_HOSTNAME'] = HOST
-app.config['DB_PORT'] = PORT
-app.config['DB_USER'] = USER
-app.config['DB_PASSWORD'] = PASSWORD
+app.config['DB_HOSTNAME'] = DB_HOST
+app.config['DB_PORT'] = DB_PORT
+app.config['DB_USER'] = DB_USER
+app.config['DB_PASSWORD'] = DB_PASSWORD
 app.config['REDIS_HOST'] = REDIS_HOST
 app.config['REDIS_PORT'] = REDIS_PORT
 app.config['REDIS_PASSWORD'] = REDIS_PASSWORD
 app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_USE_SIGNER'] = True
-app.config['SESSION_REDIS'] = redis
-app.config['SESSION_EXPIRE'] = 3600
+app.config['SESSION_EXPIRE'] = timedelta(days=7)
 
 CORS(app, supports_credentials=True, allow_headers=[
      "Content-Type", "Access-Control-Allow-Origin"])
 
 app.secret_key = '0kgy23uJpIin346NeC7hUZ3Bak36S844NoeN1X35k4kY'
-login_manager = LoginManager(app)
-flask_jwt_conf = JWTManager(app)
-server_session = Session(app)
+# login_manager = LoginManager(app)
+# flask_jwt_conf = JWTManager(app)
+# server_session = Session(app)
 socketio = SocketIO(app, manage_session=False)
 
 #  Set the API prefix to a falsey (empty string) value to 
@@ -147,11 +131,11 @@ def ping_pong():
 def server_id():
     return f"Container ID: {socket.gethostname()}"
 
-@api_blueprint.route('/redis')
-def hello():
-    redis.incr('hits')
-    counter = str(redis.get('hits'), 'utf-8')
-    return "Welcome to this webpage!, This webpage has been viewed "+counter+" time(s)"
+# @api_blueprint.route('/redis')
+# def hello():
+#     redis.incr('hits')
+#     counter = str(redis.get('hits'), 'utf-8')
+#     return "Welcome to this webpage!, This webpage has been viewed "+counter+" time(s)"
 
 app.register_blueprint(api_blueprint)
 
