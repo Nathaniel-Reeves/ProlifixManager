@@ -10,18 +10,24 @@ from flask import (
     current_app as app
 )
 from .auth import check_authenticated
+from .response import (
+    MessageType, 
+    Message, 
+    FlashMessage, 
+    CustomResponse
+)
 
 bp = Blueprint('organizations', __name__, url_prefix='/organizations')
+
 
 @bp.route('/', methods=['GET'])
 @check_authenticated(authentication_required=True)
 def get_organizations():
-    '''
-    Get all organizations
-    '''
     try:
+        custom_response = CustomResponse()  # Create an instance of Response
+
         # Test Connection
-        session = mariadb.connect(
+        mariadb_connection = mariadb.connect(
             host=app.config['DB_HOSTNAME'],
             port=int(app.config['DB_PORT']),
             user=app.config['DB_USER'],
@@ -69,11 +75,11 @@ def get_organizations():
         populate = request.args.getlist('populate')
 
         # Execute Query
-        cursor = session.cursor()
+        cursor = mariadb_connection.cursor()
         cursor.execute(base_query)
         result = cursor.fetchall()
 
-        # Return JSON
+        # Process Organizations
         organizations = {}
         for row in result:
             json_row = json.loads(row[0])
@@ -83,56 +89,65 @@ def get_organizations():
             # Populate child resources
             if 'facilities' in populate:
                 facilities = populate_facilities(cursor, org_id)
-                if isinstance(facilities, (dict,)):
+                if isinstance(facilities, dict):
                     organizations[org_id]['facilities'] = facilities
                 else:
-                    return jsonify(error=str(facilities))
+                    custom_response.insert_flash_message(FlashMessage(
+                        message=str(facilities), message_type=MessageType.DANGER))
 
             if 'sales-orders' in populate:
                 sales_orders = populate_sales_orders(cursor, org_id)
-                if isinstance(sales_orders, (dict,)):
+                if isinstance(sales_orders, dict):
                     organizations[org_id]['sales_orders'] = sales_orders
                 else:
-                    return jsonify(error=str(sales_orders))
+                    custom_response.insert_flash_message(FlashMessage(
+                        message=str(sales_orders), message_type=MessageType.DANGER))
 
             if 'purchase-orders' in populate:
                 purchase_orders = populate_purchase_orders(cursor, org_id)
-                if isinstance(purchase_orders, (dict,)):
+                if isinstance(purchase_orders, dict):
                     organizations[org_id]['purchase_orders'] = purchase_orders
                 else:
-                    return jsonify(error=str(purchase_orders))
+                    custom_response.insert_flash_message(FlashMessage(message=str(
+                        purchase_orders), message_type=MessageType.DANGER))
 
             if 'people' in populate:
                 people = populate_people(cursor, org_id)
-                if isinstance(people, (dict,)):
+                if isinstance(people, dict):
                     organizations[org_id]['people'] = people
                 else:
-                    return jsonify(error=str(people))
+                   custom_response.insert_flash_message(FlashMessage(
+                       message=str(people), message_type=MessageType.DANGER))
 
             if 'components' in populate:
                 components = populate_components(cursor, org_id)
-                if isinstance(components, (dict,)):
+                if isinstance(components, dict):
                     organizations[org_id]['components'] = components
                 else:
-                    return jsonify(error=str(components))
+                    custom_response.insert_flash_message(FlashMessage(
+                        message=str(components), message_type=MessageType.DANGER))
 
             if 'products' in populate:
                 products = populate_products(cursor, org_id)
-                if isinstance(products, (dict,)):
+                if isinstance(products, dict):
                     organizations[org_id]['products'] = products
                 else:
-                    return jsonify(error=str(products))
+                    custom_response.insert_flash_message(FlashMessage(
+                        message=str(products), message_type=MessageType.DANGER))
 
-        return jsonify(organizations)
+        # Insert the processed organizations into the response
+        custom_response.insert_data(organizations)
+
+        return jsonify(custom_response.to_json())
 
     except mariadb.Error as error:
-        # Error Handling
-        print(error)
-        return jsonify(error=str(error))
+        custom_response.insert_flash_message(FlashMessage(
+            message=str(error), message_type=MessageType.DANGER))
+        return jsonify(custom_response.to_json()), 500
 
     finally:
-        if 'session' in locals():
-            session.close()
+        if 'mariadb_connection' in locals():
+            mariadb_connection.close()
 
 def populate_facilities(cursor, org_id):
     '''
@@ -478,28 +493,38 @@ def populate_products(cursor, org_id):
         products[product_id] = json_row
     return products
 
+
 @bp.route('/exists', methods=['POST'])
 @check_authenticated(authentication_required=True)
-def post_organization():
-    '''
-    Inserts a new organization into the database.
-    '''
+def organization_exists():
+    custom_response = CustomResponse()  # Create an instance of Response
+
     names = request.json['names']
-    
+
+    # Execute Querys
     primary_exists = False
     levenshtein_results = []
     for name in names:
         if name["primary_name"]:
             primary_exists = True
-        levenshtein_results += check_org_exists_levenshtein(
-            name["organization_name"]
-        )
+        results, levensthein_messages = check_org_exists_levenshtein(
+            name["organization_name"])
+        if type(results) != FlashMessage:
+            levenshtein_results += results
+        else: 
+            custom_response.insert_flash_message(results)
+        for m in levensthein_messages:
+            custom_response.insert_flash_message(m)
 
-    # Execute Query
-    print(levenshtein_results)
-    print(primary_exists)
+    # Handle Primary False
+    if not primary_exists:
+        error_message = FlashMessage(message="Primary Name not selected!", message_type=MessageType.WARNING)
+        custom_response.insert_flash_message(error_message)
 
-    return jsonify(levenshtein_results)
+    # Insert the levenshtein_results into the response
+    custom_response.insert_data(levenshtein_results)
+
+    return jsonify(custom_response.to_json())
 
 
 def check_org_exists_levenshtein(search_name):
@@ -509,14 +534,14 @@ def check_org_exists_levenshtein(search_name):
     '''
     try:
         # Test Connection
-        session = mariadb.connect(
+        mariadb_connection = mariadb.connect(
             host=app.config['DB_HOSTNAME'],
             port=int(app.config['DB_PORT']),
             user=app.config['DB_USER'],
             password=app.config['DB_PASSWORD']
         )
-        cursor = session.cursor()
-        
+        cursor = mariadb_connection.cursor()
+
         # Build Query
         base_query = '''
         SELECT
@@ -536,13 +561,26 @@ def check_org_exists_levenshtein(search_name):
 
         # Return Facilities Dictionary
         levensthein_results = []
+        levensthein_messages = []
         for row in result:
             json_row = json.loads(row[0])
             levensthein_results.append(json_row)
-        return levensthein_results
+            message_alert_heading = "Possible Duplicate Organization."
+            message = f"Possible duplicate organization between '{search_name}' and '{json_row['organization_name']}'."
+            message_detail = f"'{search_name}' is a {json_row['levenshtein_probability']} percent match for '{json_row['organization_name']}'.  Are they the same organization?"
+            message_link = f"/organizations/{json_row['organization_id']}"
+            messageObj = FlashMessage(
+                alert_heading=message_alert_heading,
+                message=message,
+                message_detail=message_detail,
+                link=message_link,
+                message_type=MessageType.WARNING
+            )
+            levensthein_messages.append(messageObj)
+        return levensthein_results, levensthein_messages
 
     except mariadb.Error as error:
         # Error Handling
         print(error)
-        return error
+        return FlashMessage(message=str(error), message_type=MessageType.DANGER)
 

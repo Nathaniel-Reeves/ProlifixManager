@@ -1,45 +1,39 @@
 '''
 Handle Orders Data
 '''
-import os
 import json
 import mariadb
 from flask import (
     Blueprint,
     request,
-    jsonify
+    jsonify,
+    current_app as app
 )
-
-HOST = os.environ.get('DB_HOSTNAME')
-if HOST is None:
-    HOST = '127.0.0.1'
-
-PORT = os.environ.get('DB_PORT')
-if PORT is None:
-    PORT = '3306'
-
-USER = os.environ.get('DB_USERNAME')
-if USER is None:
-    USER = 'client'
-
-PASSWORD = os.environ.get('DB_PASSWORD')
-if PASSWORD is None:
-    PASSWORD = "ClientPassword!5"
+from .auth import check_authenticated
+from .response import (
+    MessageType,
+    Message,
+    FlashMessage,
+    CustomResponse
+)
     
 bp = Blueprint('orders', __name__, url_prefix='/orders')
 
 @bp.route('/lot-numbers', methods=['GET'])
+@check_authenticated(authentication_required=True)
 def get_lot_numbers():
     '''
     Get all Lot Numbers
     '''
     try:
+        custom_response = CustomResponse()  # Create an instance of Response
+        
         # Test Connection
-        session = mariadb.connect(
-            host=HOST,
-            port=int(PORT),
-            user=USER,
-            password=PASSWORD
+        mariadb_connection = mariadb.connect(
+            host=app.config['DB_HOSTNAME'],
+            port=int(app.config['DB_PORT']),
+            user=app.config['DB_USER'],
+            password=app.config['DB_PASSWORD']
         )
 
         # Build Query
@@ -77,7 +71,7 @@ def get_lot_numbers():
         '''
 
         # Ececute Query
-        cursor = session.cursor()
+        cursor = mariadb_connection.cursor()
         cursor.execute(base_query)
         result = cursor.fetchall()
 
@@ -87,13 +81,15 @@ def get_lot_numbers():
             json_row = json.loads(row[0])
             orders.append(json_row)
 
-        return jsonify(orders)
+        custom_response.insert_data(orders)
+
+        return jsonify(custom_response.to_json())
 
     except mariadb.Error as error:
-        # Error Handling
-        print(error)
-        return jsonify(error=str(error))
+        custom_response.insert_flash_message(FlashMessage(
+            message=str(error), message_type=MessageType.DANGER))
+        return jsonify(custom_response.to_json()), 500
 
     finally:
-        if 'session' in locals():
-            session.close()
+        if 'mariadb_connection' in locals():
+            mariadb_connection.close()

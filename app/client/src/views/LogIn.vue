@@ -10,14 +10,16 @@
         <b-form @submit.stop.prevent>
             <b-form-group>
                 <label for="text-username">Username</label>
-                <b-form-input type="text" v-model="username" id="text-username" aria-describedby="username-help-block"></b-form-input>
-                <b-form-text id="username-help-block">
+                <b-form-input type="text" class="form-control" v-model="username" id="text-username"></b-form-input>
+                <b-form-text>
+                  {{ usernameMessages.message }}
                 </b-form-text>
             </b-form-group>
             <b-form-group>
                 <label for="text-password">Password</label>
-                <b-form-input type="password" v-model="password" id="text-password" aria-describedby="password-help-block"></b-form-input>
-                <b-form-text id="password-help-block">
+                <b-form-input type="password" class="form-control" v-model="password" id="text-password"></b-form-input>
+                <b-form-text>
+                  {{ usernameMessages.message }}
                 </b-form-text>
             </b-form-group>
             <b-form-group>
@@ -41,7 +43,7 @@ export default {
     return {
       username: '',
       password: '',
-      flash_errors: [],
+      form_messages: {},
       userData: {}
     }
   },
@@ -67,19 +69,31 @@ export default {
         if (response.status === 200) {
           response.json().then(data => {
             console.log(data)
-            this.userData = data
-            this.$emit('login', data)
+            this.userData = data.data
+            this.$emit('login', data.data)
           })
         } else {
-          console.log(response)
-          this.flash_errors.push(response.json().error)
-          console.log(this.flash_errors)
+          response.json().then(data => {
+            console.log(data)
+            this.form_messages = data.messages.form
+          })
         }
       }).catch(error => {
         console.log(error)
         this.flash_errors.push(error)
         console.log(this.flash_errors)
       })
+    }
+  },
+  computed: {
+    usernameMessages: function () {
+      if (Object.keys(this.form_messages).length === 0) {
+        return {
+          message: ''
+        }
+      } else {
+        return this.form_messages.username
+      }
     }
   }
 }

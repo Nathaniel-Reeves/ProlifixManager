@@ -15,32 +15,42 @@ from werkzeug.security import (
     check_password_hash,
     generate_password_hash
 )
+from .response import (
+    MessageType,
+    Message,
+    FlashMessage,
+    CustomResponse
+)
 from flask_socketio import disconnect
 
 """
 Login & Authenication Wrapper Functions
 """
 
-def check_authenticated(
-        authentication_required=False,
-        database_priveleges={}
-    ):
+
+def check_authenticated(authentication_required=False, database_priveleges={}):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
 
-            # Check if user has a session token, Create one if not
-            session_token = request.cookies.get('session')
-            if session_token is None:
-                session_token = create_session()
-            
-            try: 
+            try:
+                custom_response = CustomResponse()  # Create an instance of Response
+
+                # Check if user has a session token, Create one if not
+                session_token = request.cookies.get('session')
+                if session_token is None:
+                    session_token = create_session()
                 redis_connection = Redis(
                     host=app.config['REDIS_HOST'],
                     port=app.config['REDIS_PORT'],
                     password=app.config['REDIS_PASSWORD'])
                 if not redis_connection.exists(session_token):
                     session_token = create_session()
+
+                if isinstance(session_token, FlashMessage):
+                    custom_response.insert_flash_message(session_token)
+                    return jsonify(custom_response.to_json()), 500
+
                 session_data = json.loads(redis_connection.get(session_token))
 
                 # Check if User is Authenticated
@@ -50,58 +60,71 @@ def check_authenticated(
 
                 if authentication_required:
                     if not user_authenticated:
+                        custom_response.insert_flash_message(
+                            FlashMessage(
+                                message='User not authenticated',
+                                message_type=MessageType.DANGER
+                            )
+                        )
                         response = make_response(
-                            jsonify({'success': False, 'message': 'User not authenticated'}), 401)
-                    else:
-                        response = func(*args, **kwargs)
-                else:
-                    response = func(*args, **kwargs)
+                            jsonify(custom_response.to_json()), 401)
+                        response.set_cookie('session', session_token)
+                        return response
 
+                response_data = func(*args, **kwargs)
+                response = make_response(response_data)
                 response.set_cookie('session', session_token)
                 return response
 
             except Redis.exceptions.ConnectionError as error:
                 # Redis Error Handling
-                print(error)
-                return jsonify(error=str(error))
+                custom_response.insert_flash_message(
+                    FlashMessage(message=str(error),
+                                 message_type=MessageType.DANGER)
+                )
+                return jsonify(custom_response.to_json()), 500
 
         return wrapper
+
     return decorator
 
+
 def create_session():
-    
+
+    # Create Session Template
+    user_data_template = {
+        "department": "",
+        "doc": {},
+        "first_name": "",
+        "job_description": "",
+        "last_name": "",
+        "organization_id": 0,
+        "person_id": 0,
+        "profile_picture": "",
+        "user_id": "",
+        "username": ""
+    }
+
+    # Generate Random Session token
+    session_token = ''.join(
+        [random.choice(string.ascii_letters + string.digits) for n in range(32)])
+
+    # Save Session to Redis
     try:
-        # Create Session Template
-        user_data_template = {
-            "department": "",
-            "doc": {},
-            "first_name": "",
-            "job_description": "",
-            "last_name": "",
-            "organization_id": 0,
-            "person_id": 0,
-            "profile_picture": "",
-            "user_id": "",
-            "username": ""
-        }
-
-        # Generate Random Session token
-        session_token = ''.join(
-            [random.choice(string.ascii_letters + string.digits) for n in range(32)])
-
-        # Save Session to Redis
         redis_connection = Redis(
             host=app.config['REDIS_HOST'],
             port=app.config['REDIS_PORT'],
             password=app.config['REDIS_PASSWORD'])
         redis_connection.set(session_token, json.dumps(user_data_template))
-        redis_connection.expire(session_token, app.config['SESSION_EXPIRE'], nx=False, xx=False, gt=False, lt=False)
+        redis_connection.expire(
+            session_token, app.config['SESSION_EXPIRE'], nx=False, xx=False, gt=False, lt=False)
         return session_token
 
     except Redis.exceptions.ConnectionError as error:
         # Redis Error Handling
-        print(error)
-        return jsonify(error=str(error))
+        return FlashMessage(message=str(error),
+                            message_type=MessageType.DANGER)
+
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -109,9 +132,10 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 def login():
     """
     Checks if user exists in DB, if so login user
-    by creating a session and storing session in 
+    by creating a session and storing session in
     redis and sending cookie to user.
     """
+    custom_response = CustomResponse()  # Create an instance of Response
 
     # Get username and password
     username = request.json['username']
@@ -120,7 +144,7 @@ def login():
     # Check if user exists in DB
     try:
         # Test Connection
-        session = mariadb.connect(
+        mariadb_connection = mariadb.connect(
             host=app.config['DB_HOSTNAME'],
             port=int(app.config['DB_PORT']),
             user=app.config['DB_USER'],
@@ -151,7 +175,7 @@ def login():
         '''
 
         # Execute Query
-        cursor = session.cursor()
+        cursor = mariadb_connection.cursor()
         cursor.execute(base_query, (username,))
         result = cursor.fetchone()
 
@@ -160,12 +184,20 @@ def login():
         if result:
             user_data = json.loads(result[0])
         else:
-            return make_response(jsonify({"error": "User not found"}), 401)
+            custom_response.insert_form_message(
+                "username", Message(message="User not found",
+                             message_type=MessageType.DANGER)
+            )
+            return jsonify(custom_response.to_json()), 401
 
         # Handle Check Password
         if not check_password_hash(user_data['encrypted_password'], password):
-            return make_response(jsonify({"error": "Incorrect Password"}), 401)
-        
+            custom_response.insert_form_message(
+                "password", Message(message="Incorrect Password",
+                             message_type=MessageType.DANGER)
+            )
+            return jsonify(custom_response.to_json()), 401
+
         # Remove Encrypted Password from user_data
         user_data.pop("encrypted_password", None)
 
@@ -191,28 +223,34 @@ def login():
         session_data['first_name'] = user_data['first_name']
         redis_connection.set(session_token, json.dumps(session_data))
 
-        return jsonify(user_data)
+        # Insert the user_data into the response
+        custom_response.insert_data(user_data)
+
+        return jsonify(custom_response.to_json())
 
     except mariadb.Error as error:
         # MariaDB Error Handling
-        print(error)
-        return jsonify(error=str(error))
+        custom_response.insert_flash_message(FlashMessage(
+            message=str(error), message_type=MessageType.DANGER))
+        return jsonify(custom_response.to_json()), 500
 
     except Redis.exceptions.ConnectionError as error:
         # Redis Error Handling
-        print(error)
-        return jsonify(error=str(error))
+        custom_response.insert_flash_message(FlashMessage(
+            message=str(error), message_type=MessageType.DANGER))
+        return jsonify(custom_response.to_json()), 500
 
     finally:
-        if 'session' in locals():
-            session.close()
+        if 'mariadb_connection' in locals():
+            mariadb_connection.close()
 
 
 @bp.route('/sessions', methods=['GET'])
 def get_user_by_session_token():
     session_token = request.args.get('session-token', default=None, type=str)
-    
+
     try:
+        custom_response = CustomResponse()  # Create an instance of Response
 
         redis_connection = Redis(
             host=app.config['REDIS_HOST'],
@@ -220,11 +258,54 @@ def get_user_by_session_token():
             password=app.config['REDIS_PASSWORD'])
         if redis_connection.exists(session_token):
             user_data = json.loads(redis_connection.get(session_token))
-            return jsonify(user_data)
+            # Insert the user_data into the response
+            custom_response.insert_data(user_data)
+            return jsonify(custom_response.to_json())
         else:
-            return make_response(jsonify({"error": "User not authenticated"}), 401)
-    
+            custom_response.insert_flash_message(
+                FlashMessage(message="User not authenticated",
+                             message_type=MessageType.DANGER)
+            )
+            return jsonify(custom_response.to_json()), 401
+
     except Redis.exceptions.ConnectionError as error:
         # Redis Error Handling
-        print(error)
-        return jsonify(error=str(error))
+        custom_response.insert_flash_message(
+            FlashMessage(message=str(error), message_type=MessageType.DANGER)
+        )
+        return jsonify(custom_response.to_json()), 500
+    
+@bp.route('/sessions', methods=['DELETE'])
+@check_authenticated(authentication_required=True)
+def logout():
+    try:
+        session_token = request.cookies.get('session')
+        if session_token is not None:
+            redis_connection = Redis(
+                host=app.config['REDIS_HOST'],
+                port=app.config['REDIS_PORT'],
+                password=app.config['REDIS_PASSWORD'])
+            result = redis_connection.getdel(session_token)
+            custom_response = CustomResponse()
+            if result is not None:
+                    custom_response.insert_flash_message(FlashMessage(message="User successfully logged out",
+                                message_type=MessageType.SUCCESS))
+                    return jsonify(custom_response.to_json()), 200
+            else:
+                custom_response.insert_flash_message(
+                    FlashMessage(message="User not authenticated",
+                                message_type=MessageType.DANGER)
+                )
+                return jsonify(custom_response.to_json()), 401
+        else:
+            custom_response.insert_flash_message(
+                FlashMessage(message="User not authenticated",
+                            message_type=MessageType.DANGER)
+            )
+            return jsonify(custom_response.to_json()), 401
+    except Redis.exceptions.ConnectionError as error:
+        # Redis Error Handling
+        custom_response.insert_flash_message(
+            FlashMessage(message=str(error), message_type=MessageType.DANGER)
+        )
+        return jsonify(custom_response.to_json()), 500
