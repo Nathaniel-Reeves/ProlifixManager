@@ -48,8 +48,7 @@
         </div>
 
         <div v-show="!loaded">
-          <div class="d-flex justify-content-between">
-            <strong>Loading...</strong>
+          <div class="d-flex justify-content-center">
             <div class="spinner-border text-primary" role="status"></div>
           </div>
         </div>
@@ -149,7 +148,7 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           response.json().then(data => {
-            this.org_data[orgId] = Object.values(data)[0]
+            this.org_data[orgId] = Object.values(data.data[0])[0]
           })
         } else {
           console.log('Looks like there was a problem. Status Code:' + response.status)
@@ -172,7 +171,8 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           response.json().then(data => {
-            this.org_data = data
+            this.org_data = data.data[0]
+            console.log(this.org_data)
             this.loaded = true
           })
         } else {

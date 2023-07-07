@@ -44,6 +44,7 @@ export default {
       username: '',
       password: '',
       form_messages: {},
+      flash_errors: [],
       userData: {}
     }
   },

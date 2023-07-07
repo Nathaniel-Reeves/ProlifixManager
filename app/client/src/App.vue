@@ -34,16 +34,26 @@
           </ul>
           <div class="navbar-nav">
             <div class="nav-item">
-              <router-link v-if="!loggedIn" class="nav-link px-0" to="/login">
-                Login
-              </router-link>
-              <div v-else class="nav-link px-0">
-                Logout
-              </div>
+              <b-button class="btn btn-lg rounded-circle p-0 m-1" v-b-toggle.account-sidebar-right type="button" id="button-addon2">
+                <!-- <i class="bi bi-person-circle" style="font-size: 32px;"></i> -->
+                <b-avatar icon="person-circle" size="2.5rem"></b-avatar>
+              </b-button>
             </div>
           </div>
         </div>
       </nav>
+      <div>
+        <b-sidebar id="account-sidebar-right" title="Account Options" :right="true" shadow :lazy="true" backdrop-variant="dark">
+          <div class="px-3 py-2">
+            <router-link v-if="!loggedInState" class="nav-link px-0" to="/login">
+              Login
+            </router-link>
+            <div v-else class="nav-link px-0" v-on:click="logout">
+              Logout
+            </div>
+          </div>
+        </b-sidebar>
+      </div>
       <div class="container-fluid">
         <div class="row justify-content-center">
           <!-- This is the link that vue uses to include other templates, Do not Delete! -->
@@ -102,6 +112,28 @@ export default {
     }
   },
   methods: {
+    logout: function () {
+      const fetchRequest = window.origin + '/api/auth/sessions'
+      console.log(
+        'DELETE ' + fetchRequest
+      )
+      fetch(fetchRequest, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      }).then(response => {
+        if (response.status === 200) {
+          this.loggedInState = false
+          this.userData = {}
+        } else {
+          console.log(response)
+        }
+      }).catch(error => {
+        console.log(error)
+      })
+    },
     updateUserData: function (userDataFromLogin) {
       console.log('Update Login Status: ', userDataFromLogin)
       this.userData = userDataFromLogin
@@ -125,7 +157,7 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           response.json().then(data => {
-            this.userData = response.json()
+            this.userData = data.data[0]
             this.loggedInState = true
           })
         } else {
@@ -134,15 +166,6 @@ export default {
           this.loggedInState = false
         }
       })
-    }
-  },
-  computed: {
-    loggedIn: function () {
-      if (this.loggedInState) {
-        return true
-      } else {
-        return false
-      }
     }
   },
   created: function () {
