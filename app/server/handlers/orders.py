@@ -19,15 +19,17 @@ from .response import (
     
 bp = Blueprint('orders', __name__, url_prefix='/orders')
 
-@bp.route('/lot-numbers', methods=['GET'])
+@bp.route('/', methods=['GET'])
 @check_authenticated(authentication_required=True)
 def get_lot_numbers():
     '''
     Get all Lot Numbers
     '''
+    # TODO: Create adaptible query using where clause, see organizations.py
+    raise NotImplementedError
     try:
         custom_response = CustomResponse()  # Create an instance of Response
-        
+
         # Test Connection
         mariadb_connection = mariadb.connect(
             host=app.config['DB_HOSTNAME'],
@@ -58,19 +60,27 @@ def get_lot_numbers():
                 'date_entered', a.`date_entered`,
                 'exp_date', a.`exp_date`,
                 'exp_type', a.`exp_type`,
-                'product_name', b.`product_name`
+                'product_name', b.`product_name`,
+                'organization_id', b.`organization_id`
             )
         AS lot_number_objects
         FROM `Orders`.`Lot_Numbers` a
         LEFT JOIN `Products`.`Product_Master` b ON 
             a.`product_id` = b.`product_id`
+        -- WHERE a.`prolifix_lot_number` IN ('2301001')
+        WHERE b.`organization_id` IN (36, 38)
         ORDER BY 
             a.`year` DESC, 
             a.`month` DESC, 
             a.`sec_number` DESC;
         '''
 
-        # Ececute Query
+        # Build Query
+        lot_numbers = request.args.getlist('lot-numbers')
+        print(lot_numbers)
+        print(type(lot_numbers))
+
+        # Execute Query
         cursor = mariadb_connection.cursor()
         cursor.execute(base_query)
         result = cursor.fetchall()
