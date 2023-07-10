@@ -15,9 +15,9 @@
     </div>
 
     <div class="container-fluid p-0">
-      <div class="card-deck">
+      <div class="d-flex flex-wrap justify-content-start">
 
-        <div class="custom-card card border-0">
+        <div class="card custom-card">
           <div class="imgbox m-0">
               <img class="image-blured m-0" alt="Supplements Manufacturing" src="../assets/supplements_manufacturing.jpg">
             </div>
@@ -41,7 +41,7 @@
           </div>
         </div>
 
-        <div class="custom-card card border-0">
+        <div class="card custom-card">
           <div class="imgbox m-0">
             <img class="image-blured m-0" alt="Supplements" src="../assets/supplements.jpg">
           </div>
@@ -65,7 +65,7 @@
           </div>
         </div>
 
-        <div class="custom-card card border-0">
+        <div class="card custom-card">
           <div class="imgbox m-0">
             <img class="image-blured m-0" alt="Warehouse" src="../assets/inventory-warehouse-boxes.jpg">
           </div>
@@ -89,7 +89,7 @@
           </div>
         </div>
 
-        <div class="custom-card card border-0">
+        <div class="card custom-card">
           <div class="imgbox m-0">
             <img class="image-blured m-0" alt="Hand Shake" src="../assets/Hand-shake.png">
           </div>
@@ -113,7 +113,7 @@
           </div>
         </div>
 
-        <div class="custom-card card border-0">
+        <div class="card custom-card">
           <div class="imgbox m-0">
             <img class="image-blured m-0" alt="Office Worker" src="../assets/orders.jpg">
           </div>
@@ -137,7 +137,7 @@
           </div>
         </div>
 
-        <div class="custom-card card border-0">
+        <div class="card custom-card">
           <div class="imgbox m-0">
                 <img class="image-blured m-0" alt="Signing Documents" src="../assets/policy.jpg">
               </div>
@@ -203,6 +203,9 @@
   height: 400px;
   box-shadow: 0 20px 40px rgba(0,0,0,.2);
   border-radius: 5px;
+  border: 0;
+  margin-bottom: 24px;
+  margin-right: 24px;
   background:white;
   overflow: hidden
 }
@@ -276,5 +279,18 @@ ul li {
   font-size: 15px;
   font-style: normal;
   color: #ccc
+}
+
+@media (max-width: 700px) {
+  .custom-card {
+    width: 100%;
+    margin-right: 0px;
+  }
+
+  .custom-card .imgbox img {
+    display: block;
+    width: 110%;
+    margin: 10px auto 0;
+  }
 }
 </style>

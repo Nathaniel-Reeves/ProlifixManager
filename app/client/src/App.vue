@@ -1,47 +1,33 @@
 <template>
   <div id="app">
     <div id="wrapper">
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
-        <router-link class="navbar-brand" to="/">Prolifix Manager</router-link>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-between" style="width:100%;" id="navbarNavDropdown">
-          <ul class="navbar-nav">
-            <li class="nav-item active">
-              <router-link class="nav-link" to="/">Home<span class="sr-only">(current)</span></router-link>
-            </li>
-            <li class="nav-item dropdown">
-                <router-link class="nav-link dropdown-toggle" to="/orders" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Orders
-                </router-link>
-                <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdownMenuLink">
-                  <router-link class="nav-link" to="/orders/lot_numbers">Lot Numbers</router-link>
-                  <router-link class="nav-link" to="/orders/purchase_orders">Purchase Orders</router-link>
-                  <router-link class="nav-link" to="/orders/sales_orders">Sales Orders</router-link>
-                </div>
-              </li>
-            <li class="nav-item dropdown">
-              <router-link class="nav-link dropdown-toggle" to="/organizations" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Organizations
-              </router-link>
-              <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdownMenuLink">
-                <router-link class="nav-link" to="/organizations/clients">Clients</router-link>
-                <router-link class="nav-link" to="/organizations/suppliers">Suppliers</router-link>
-                <router-link class="nav-link" to="/organizations/labs">Labs</router-link>
-              </div>
-            </li>
-          </ul>
-          <div class="navbar-nav">
-            <div class="nav-item">
-              <b-button class="btn btn-lg rounded-circle p-0 m-1" v-b-toggle.account-sidebar-right type="button" id="button-addon2">
-                <!-- <i class="bi bi-person-circle" style="font-size: 32px;"></i> -->
-                <b-avatar icon="person-circle" size="2.5rem"></b-avatar>
-              </b-button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <b-navbar toggleable="lg" type="dark" variant="dark" sticky>
+        <b-navbar-brand to="/">Prolifix Manager</b-navbar-brand>
+        <b-collapse id="nav-collapse" is-nav>
+          <b-navbar-nav>
+            <b-nav-item to="/" active-class>Home</b-nav-item>
+            <b-nav-item-dropdown text="Orders" active-class>
+              <b-dropdown-item to="/orders">Orders List</b-dropdown-item>
+            </b-nav-item-dropdown>
+            <b-nav-item-dropdown text="Organizations" active-class>
+              <b-dropdown-item to="/organizations">Organizations List</b-dropdown-item>
+            </b-nav-item-dropdown>
+          </b-navbar-nav>
+        </b-collapse>
+        <b-navbar-toggle class="ml-auto mr-2 border-0" target="nav-collapse">
+          <template #default="{ expanded }">
+            <b-icon v-if="expanded" icon="chevron-bar-up"></b-icon>
+            <b-icon v-else icon="chevron-bar-down"></b-icon>
+          </template>
+        </b-navbar-toggle>
+        <b-navbar-nav>
+          <b-nav-item right>
+            <b-button class="btn rounded-circle p-0 m-1" v-b-toggle.account-sidebar-right type="button" id="button-addon2">
+              <b-avatar icon="person-circle" size="2.5rem"></b-avatar>
+            </b-button>
+          </b-nav-item>
+        </b-navbar-nav>
+      </b-navbar>
       <div>
         <b-sidebar id="account-sidebar-right" title="Account Options" :right="true" shadow :lazy="true" backdrop-variant="dark">
           <div class="px-3 py-2">
