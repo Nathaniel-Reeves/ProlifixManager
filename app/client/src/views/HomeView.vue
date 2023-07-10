@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <div class="card p-0 mt-2 mb-4 bg-image boarder-0">
+    <div class="card p-0 mt-2 mb-4 bg-image boarder-0" style="border:0px;">
       <div class="card-img custom-background-image m-0" v-bind:style="{'background-position-y':'bottom', 'background-image': 'url(' + require('../assets/supplements_stock_photo.jpg')+')'}">
         <div class="d-flex justify-content-center align-items-center" style="
           background-color: rgb(255 255 255 / 0.75);

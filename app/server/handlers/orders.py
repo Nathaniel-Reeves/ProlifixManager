@@ -25,8 +25,7 @@ def get_lot_numbers():
     '''
     Get all Lot Numbers
     '''
-    # TODO: Create adaptible query using where clause, see organizations.py
-    raise NotImplementedError
+
     try:
         custom_response = CustomResponse()  # Create an instance of Response
 
@@ -67,18 +66,35 @@ def get_lot_numbers():
         FROM `Orders`.`Lot_Numbers` a
         LEFT JOIN `Products`.`Product_Master` b ON 
             a.`product_id` = b.`product_id`
-        -- WHERE a.`prolifix_lot_number` IN ('2301001')
-        WHERE b.`organization_id` IN (36, 38)
-        ORDER BY 
-            a.`year` DESC, 
-            a.`month` DESC, 
-            a.`sec_number` DESC;
         '''
 
         # Build Query
         lot_numbers = request.args.getlist('lot-numbers')
-        print(lot_numbers)
-        print(type(lot_numbers))
+        org_ids = request.args.getlist('org-ids')
+        if lot_numbers or org_ids:
+            where_clause = 'WHERE \n'
+            if lot_numbers:
+                where_clause += f"""
+                    a.`prolifix_lot_number` IN ('{"', '".join(lot_numbers)}')
+                """
+                if org_ids:
+                    where_clause += f"""
+                        AND
+                        b.`organization_id` IN ('{"', '".join(org_ids)}')
+                    """
+            elif org_ids:
+                where_clause += f"""b.`organization_id` IN ('{"', '".join(org_ids)}')"""
+            base_query += where_clause
+
+
+        order_by = """
+        ORDER BY 
+            a.`year` DESC, 
+            a.`month` DESC, 
+            a.`sec_number` DESC;
+        """
+
+        base_query += order_by
 
         # Execute Query
         cursor = mariadb_connection.cursor()

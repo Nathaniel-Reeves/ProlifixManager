@@ -13,7 +13,7 @@ import socket
 Database Connection Settings
 """
 
-DB_HOST = os.environ.get('DB_HOSTNAME')
+DB_HOST = os.environ.get('DB_HOST')
 if DB_HOST is None:
     DB_HOST = '127.0.0.1'
 
