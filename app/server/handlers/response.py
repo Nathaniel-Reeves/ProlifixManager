@@ -251,13 +251,29 @@ class CustomResponse:
         """
         self.flash_messages.append(flash_message)
 
+    def insert_flash_messages(self, flash_messages):
+        """
+        Args:
+            flash_messages (list): List of FlashMessage Objects
+        """
+        self.flash_messages += flash_messages
+
     def insert_form_message(self, form_id, message):
         """
         Args:
             form_id (str): Form ID.
             message (FormMessage): Form message.
         """
+
         self.form_messages[form_id] = message
+
+    def insert_form_messages(self, form_messages):
+        """
+        Args:
+            form_messages (dict[str, FormMessage]): Dictionary of form messages.
+        """
+
+        self.form_messages.update(form_messages)
 
     def insert_data(self, data):
         """
@@ -271,14 +287,8 @@ class CustomResponse:
         Returns:
             dict: JSON response.
         """
-        flash_messages = [
-            message.to_json()
-            for message in self.flash_messages
-        ]
-        form_messages = {
-            form_id: message.to_json()
-            for form_id, message in self.form_messages.items()
-        }
+        flash_messages = [message.to_json() for message in self.flash_messages]
+        form_messages = {form_id: message.to_json() for form_id, message in self.form_messages.items()}
         return {
             "data": self.data,
             "messages": {

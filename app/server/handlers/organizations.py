@@ -207,7 +207,6 @@ def populate_facilities(cursor, org_id):
 
     except mariadb.Error as error:
         # Error Handling
-        print(error)
         return error
 
     # Return Facilities Dictionary
@@ -260,7 +259,6 @@ def populate_sales_orders(cursor, org_id):
 
     except mariadb.Error as error:
         # Error Handling
-        print(error)
         return error
 
     # Return Facilities Dictionary
@@ -316,7 +314,6 @@ def populate_purchase_orders(cursor, org_id):
 
     except mariadb.Error as error:
         # Error Handling
-        print(error)
         return error
 
     # Return Facilities Dictionary
@@ -377,7 +374,6 @@ def populate_people(cursor, org_id):
 
     except mariadb.Error as error:
         # Error Handling
-        print(error)
         return error
 
     # Return Facilities Dictionary
@@ -428,7 +424,6 @@ def populate_components(cursor, org_id):
 
     except mariadb.Error as error:
         # Error Handling
-        print(error)
         return error
 
     # Return Facilities Dictionary
@@ -485,7 +480,6 @@ def populate_products(cursor, org_id):
 
     except mariadb.Error as error:
         # Error Handling
-        print(error)
         return error
 
     # Return Facilities Dictionary
@@ -515,12 +509,11 @@ def organization_exists():
             primary_exists = True
         results, levensthein_messages = check_org_exists_levenshtein(
             name["organization_name"])
-        if isinstance(results, FlashMessage):
+        if not isinstance(results, FlashMessage):
             levenshtein_results += results
         else:
             custom_response.insert_flash_message(results)
-        for message in levensthein_messages:
-            custom_response.insert_flash_message(message)
+        custom_response.insert_flash_messages(levensthein_messages)
 
     # Handle Primary False
     if not primary_exists:
@@ -567,20 +560,21 @@ def check_org_exists_levenshtein(search_name):
         cursor.execute(base_query, (search_name, search_name))
         result = cursor.fetchall()
 
-        # Return Facilities Dictionary
+        # Return Results
         levensthein_results = []
         levensthein_messages = []
         for row in result:
+            # Save Data
             json_row = json.loads(row[0])
             levensthein_results.append(json_row)
+
+            # Create Message Components
             message_alert_heading = "Possible Duplicate Organization."
-            message = f"Possible duplicate organization between\
-            '{search_name}' and '{json_row['organization_name']}'."
-            message_detail = f"'{search_name}' is a \
-                {json_row['levenshtein_probability']} percent match for \
-                '{json_row['organization_name']}'.  \
-                Are they the same organization?"
-            message_link = f"/organizations/{json_row['organization_id']}"
+            message = f"Possible duplicate organization between '{search_name}' and '{json_row['organization_name']}'."
+            message_detail = f"'{search_name}' is a {json_row['levenshtein_probability']} percent match for '{json_row['organization_name']}'.  Are they the same organization?"
+            message_link = f"/api/organizations/?org-id={json_row['organization_id']}"
+
+            # Create Message Object using Components
             message_obj = FlashMessage(
                 alert_heading=message_alert_heading,
                 message=message,
@@ -589,9 +583,9 @@ def check_org_exists_levenshtein(search_name):
                 message_type=MessageType.WARNING
             )
             levensthein_messages.append(message_obj)
+
         return levensthein_results, levensthein_messages
 
     except mariadb.Error as error:
         # Error Handling
-        print(error)
         return FlashMessage(message=str(error), message_type=MessageType.DANGER)
