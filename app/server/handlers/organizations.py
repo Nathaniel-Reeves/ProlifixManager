@@ -11,9 +11,8 @@ from flask import (
 )
 from .auth import check_authenticated
 from .response import (
-    MessageType, 
-    Message, 
-    FlashMessage, 
+    MessageType,
+    FlashMessage,
     CustomResponse
 )
 
@@ -23,6 +22,11 @@ bp = Blueprint('organizations', __name__, url_prefix='/organizations')
 @bp.route('/', methods=['GET'])
 @check_authenticated(authentication_required=True)
 def get_organizations():
+    """
+    Fetch Organizaiton from the database.
+    Populate them and filter them if requested.
+    """
+
     try:
         custom_response = CustomResponse()  # Create an instance of Response
 
@@ -59,8 +63,7 @@ def get_organizations():
             a.`organization_id` = b.`organization_id`
         WHERE b.`primary_name` = true
         '''
-        org_id = request.args.get(
-            'org-id', default=None, type=int)
+        org_id = request.args.get('org-id', default=None, type=int)
         if org_id:
             base_query += f' AND a.`organization_id` = {org_id}'
 
@@ -116,8 +119,8 @@ def get_organizations():
                 if isinstance(people, dict):
                     organizations[org_id]['people'] = people
                 else:
-                   custom_response.insert_flash_message(FlashMessage(
-                       message=str(people), message_type=MessageType.DANGER))
+                    custom_response.insert_flash_message(
+                        FlashMessage(message=str(people), message_type=MessageType.DANGER))
 
             if 'components' in populate:
                 components = populate_components(cursor, org_id)
@@ -497,6 +500,9 @@ def populate_products(cursor, org_id):
 @bp.route('/exists', methods=['POST'])
 @check_authenticated(authentication_required=True)
 def organization_exists():
+    """
+    Check if an organization already exists by organization name.
+    """
     custom_response = CustomResponse()  # Create an instance of Response
 
     names = request.json['names']
@@ -509,16 +515,18 @@ def organization_exists():
             primary_exists = True
         results, levensthein_messages = check_org_exists_levenshtein(
             name["organization_name"])
-        if type(results) != FlashMessage:
+        if isinstance(results, FlashMessage):
             levenshtein_results += results
-        else: 
+        else:
             custom_response.insert_flash_message(results)
-        for m in levensthein_messages:
-            custom_response.insert_flash_message(m)
+        for message in levensthein_messages:
+            custom_response.insert_flash_message(message)
 
     # Handle Primary False
     if not primary_exists:
-        error_message = FlashMessage(message="Primary Name not selected!", message_type=MessageType.WARNING)
+        error_message = FlashMessage(
+            message="Primary Name not selected!",
+            message_type=MessageType.WARNING)
         custom_response.insert_flash_message(error_message)
 
     # Insert the levenshtein_results into the response
@@ -566,21 +574,24 @@ def check_org_exists_levenshtein(search_name):
             json_row = json.loads(row[0])
             levensthein_results.append(json_row)
             message_alert_heading = "Possible Duplicate Organization."
-            message = f"Possible duplicate organization between '{search_name}' and '{json_row['organization_name']}'."
-            message_detail = f"'{search_name}' is a {json_row['levenshtein_probability']} percent match for '{json_row['organization_name']}'.  Are they the same organization?"
+            message = f"Possible duplicate organization between\
+            '{search_name}' and '{json_row['organization_name']}'."
+            message_detail = f"'{search_name}' is a \
+                {json_row['levenshtein_probability']} percent match for \
+                '{json_row['organization_name']}'.  \
+                Are they the same organization?"
             message_link = f"/organizations/{json_row['organization_id']}"
-            messageObj = FlashMessage(
+            message_obj = FlashMessage(
                 alert_heading=message_alert_heading,
                 message=message,
                 message_detail=message_detail,
                 link=message_link,
                 message_type=MessageType.WARNING
             )
-            levensthein_messages.append(messageObj)
+            levensthein_messages.append(message_obj)
         return levensthein_results, levensthein_messages
 
     except mariadb.Error as error:
         # Error Handling
         print(error)
         return FlashMessage(message=str(error), message_type=MessageType.DANGER)
-

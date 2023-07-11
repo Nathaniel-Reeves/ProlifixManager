@@ -35,6 +35,9 @@ from enum import Enum
 
 
 class MessageType(Enum):
+    """
+    Message Type Enum
+    """
     PRIMARY = "primary"
     SECONDARY = "secondary"
     SUCCESS = "success"
@@ -46,6 +49,10 @@ class MessageType(Enum):
 
 
 class Message:
+    """
+    Message class
+    """
+
     def __init__(
         self,
         alert_heading=None,
@@ -55,6 +62,15 @@ class Message:
         debug_code="0",
         link="",
     ):
+        """
+        :param alert_heading:
+        :param message:
+        :param message_detail:
+        :param message_type:
+        :param debug_code:
+        :param link:
+        """
+
         self.alert_heading = alert_heading
         self.message = message
         self.message_detail = message_detail
@@ -67,6 +83,11 @@ class Message:
         self.set_message_type(message_type, debug_code)
 
     def set_message_type(self, message_type, debug_code):
+        """
+        :param message_type:
+        :param debug_code:
+        """
+
         if not isinstance(message_type, MessageType):
             raise ValueError("Invalid message type")
         self.message_type = message_type
@@ -75,12 +96,24 @@ class Message:
         self.set_debug_code(debug_code)
 
     def set_debug_code(self, debug_code):
+        """
+        :param debug_code:
+        """
+
         self.debug_code = debug_code
 
     def set_link(self, link):
+        """
+        :param link:
+        """
+
         self.link = link
 
     def set_icon(self, message_type):
+        """
+        :param message_type:
+        """
+
         if message_type == MessageType.PRIMARY:
             self.icon = "star-fill"
         elif message_type == MessageType.SECONDARY:
@@ -101,6 +134,10 @@ class Message:
             raise Exception("Unknown message type: " + str(message_type))
 
     def to_json(self):
+        """
+        Returns a JSON representation of the message
+        """
+
         return {
             "alert_heading": self.alert_heading,
             "message": self.message,
@@ -113,19 +150,39 @@ class Message:
         }
 
     def __str__(self):
+        """
+        Returns a string representation of the message
+        """
+
         return json.dumps(self.to_json())
 
     def __repr__(self):
+        """
+        Returns a string representation of the message
+        """
+
         return self.__str__()
 
     def __dict__(self):
+        """
+        Returns a dictionary representation of the message
+        """
+
         return self.to_json()
 
     def __hash__(self):
+        """
+        Returns a hash representation of the message
+        """
+
         return hash(self.to_json())
 
 
 class FlashMessage(Message):
+    """
+    FlashMessage class
+    """
+
     def __init__(
         self,
         alert_heading=None,
@@ -137,6 +194,17 @@ class FlashMessage(Message):
         dismissible=True,
         count_down=0
     ):
+        """
+        :param alert_heading:
+        :param message:
+        :param message_detail:
+        :param message_type:
+        :param debug_code:
+        :param link:
+        :param dismissible:
+        :param count_down:
+        """
+
         super().__init__(
             alert_heading,
             message,
@@ -149,6 +217,10 @@ class FlashMessage(Message):
         self.count_down = count_down
 
     def to_json(self):
+        """
+        Returns a JSON representation of the message
+        """
+
         message_obj = super().to_json()
         message_obj["dismissible"] = self.dismissible
         message_obj["count_down"] = self.count_down
@@ -156,23 +228,57 @@ class FlashMessage(Message):
 
 
 class CustomResponse:
+    """
+    CustomResponse is a wrapper class for a JSON response.
+    """
+
     def __init__(self, flash_messages=None, form_messages=None, data=None):
+        """
+        Args:
+            flash_messages (list[FlashMessage]): List of flash messages.
+            form_messages (dict[str, FormMessage]): Dictionary of form messages.
+            data (list): List of data.
+        """
+
         self.flash_messages = flash_messages or []
         self.form_messages = form_messages or {}
         self.data = data or []
 
     def insert_flash_message(self, flash_message):
+        """
+        Args:
+            flash_message (FlashMessage): Flash message.
+        """
         self.flash_messages.append(flash_message)
 
     def insert_form_message(self, form_id, message):
+        """
+        Args:
+            form_id (str): Form ID.
+            message (FormMessage): Form message.
+        """
         self.form_messages[form_id] = message
 
     def insert_data(self, data):
+        """
+        Args:
+            data (list): Data.
+        """
         self.data.append(data)
 
     def to_json(self):
-        flash_messages = [message.to_json() for message in self.flash_messages]
-        form_messages = {form_id: message.to_json() for form_id, message in self.form_messages.items()}
+        """
+        Returns:
+            dict: JSON response.
+        """
+        flash_messages = [
+            message.to_json()
+            for message in self.flash_messages
+        ]
+        form_messages = {
+            form_id: message.to_json()
+            for form_id, message in self.form_messages.items()
+        }
         return {
             "data": self.data,
             "messages": {
@@ -182,10 +288,22 @@ class CustomResponse:
         }
 
     def __str__(self):
+        """
+        Returns:
+            str: JSON response.
+        """
         return json.dumps(self.to_json())
 
     def __repr__(self):
+        """
+        Returns:
+            str: JSON response.
+        """
         return self.__str__()
 
     def __dict__(self):
+        """
+        Returns:
+            dict: JSON response.
+        """
         return self.to_json()

@@ -1,13 +1,16 @@
+"""
+Creates App
+"""
 from datetime import timedelta
+import socket
+import os
 from flask import (
-    Flask, 
-    jsonify, 
+    Flask,
+    jsonify,
     Blueprint
 )
 from flask_cors import CORS
 from flask_socketio import SocketIO
-import os
-import socket
 
 """
 Database Connection Settings
@@ -85,8 +88,8 @@ app.secret_key = '0kgy23uJpIin346NeC7hUZ3Bak36S844NoeN1X35k4kY'
 # server_session = Session(app)
 socketio = SocketIO(app, manage_session=False)
 
-#  Set the API prefix to a falsey (empty string) value to 
-#  send/recive traffic from the development client, 
+#  Set the API prefix to a falsey (empty string) value to
+#  send/recive traffic from the development client,
 #  $ export API_PREFIX=
 
 #  Set the API prefix to a truthy (non-empty string) value
@@ -94,9 +97,9 @@ socketio = SocketIO(app, manage_session=False)
 #  $ export API_PREFIX='True'
 API_PREFIX = os.environ.get('API_PREFIX')
 if API_PREFIX == 'True':
-    url_prefix = '/'
+    API_PREFIX = '/'
 else:
-    url_prefix = '/api'
+    API_PREFIX = '/api'
 
 print()
 print('~~~ API CONFIG ~~~')
@@ -104,7 +107,7 @@ print('    API Prefix:   ', API_PREFIX)
 print()
 
 
-api_blueprint = Blueprint('api', __name__, url_prefix=url_prefix)
+api_blueprint = Blueprint('api', __name__, url_prefix=API_PREFIX)
 
 
 """
@@ -125,10 +128,18 @@ sanity check routes
 
 @api_blueprint.route('/ping', methods=['GET'])
 def ping_pong():
+    """
+    ping pong route
+    """
+
     return jsonify('pong!')
 
 @api_blueprint.route('/server_id', methods=['GET'])
 def server_id():
+    """
+    server id route
+    """
+
     return f"Container ID: {socket.gethostname()}"
 
 # @api_blueprint.route('/redis')
@@ -138,9 +149,6 @@ def server_id():
 #     return "Welcome to this webpage!, This webpage has been viewed "+counter+" time(s)"
 
 app.register_blueprint(api_blueprint)
-
-
-
 
 if __name__ == "__main__":
     print('~~~ SERVER START ~~~')

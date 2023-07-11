@@ -12,11 +12,10 @@ from flask import (
 from .auth import check_authenticated
 from .response import (
     MessageType,
-    Message,
     FlashMessage,
     CustomResponse
 )
-    
+
 bp = Blueprint('orders', __name__, url_prefix='/orders')
 
 @bp.route('/', methods=['GET'])
@@ -71,21 +70,24 @@ def get_lot_numbers():
         # Build Query
         lot_numbers = request.args.getlist('lot-numbers')
         org_ids = request.args.getlist('org-ids')
+        inputs = None
         if lot_numbers or org_ids:
-            where_clause = 'WHERE \n'
+            where_clause = 'WHERE '
             if lot_numbers:
                 where_clause += f"""
-                    a.`prolifix_lot_number` IN ('{"', '".join(lot_numbers)}')
+                    a.`prolifix_lot_number` IN ({", ".join(["?"] * len(lot_numbers))})
                 """
+                inputs = tuple(lot_numbers)
                 if org_ids:
                     where_clause += f"""
                         AND
-                        b.`organization_id` IN ('{"', '".join(org_ids)}')
+                        b.`organization_id` IN ({", ".join(["?"] * len(org_ids))})
                     """
+                    inputs = tuple(lot_numbers + org_ids)
             elif org_ids:
-                where_clause += f"""b.`organization_id` IN ('{"', '".join(org_ids)}')"""
+                where_clause += f"""b.`organization_id` IN ({", ".join(["?"] * len(org_ids))})"""
+                inputs = tuple(org_ids)
             base_query += where_clause
-
 
         order_by = """
         ORDER BY 
@@ -93,12 +95,14 @@ def get_lot_numbers():
             a.`month` DESC, 
             a.`sec_number` DESC;
         """
+        print(inputs)
 
         base_query += order_by
+        print(base_query)
 
         # Execute Query
         cursor = mariadb_connection.cursor()
-        cursor.execute(base_query)
+        cursor.execute(base_query, inputs)
         result = cursor.fetchall()
 
         # Return JSON
