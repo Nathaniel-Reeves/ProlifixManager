@@ -12,6 +12,7 @@
             <b-nav-item-dropdown text="Organizations" active-class>
               <b-dropdown-item to="/organizations">Organizations List</b-dropdown-item>
             </b-nav-item-dropdown>
+            <b-nav-item to="/barcodereader" active-class>barcodereader</b-nav-item>
           </b-navbar-nav>
         </b-collapse>
         <b-navbar-toggle class="ml-auto mr-2 border-0" target="nav-collapse">

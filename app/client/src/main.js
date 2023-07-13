@@ -10,6 +10,9 @@ import jquery from 'jquery'
 import './plugins/bootstrap-vue'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
+// Qr Code Generator
+import VueQRCodeComponent from 'vue-qr-generator'
+
 Vue.config.productionTip = false
 
 new Vue({
@@ -18,3 +21,5 @@ new Vue({
   router,
   render: h => h(App)
 }).$mount('#app')
+
+Vue.component('qr-code', VueQRCodeComponent)

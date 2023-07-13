@@ -24,6 +24,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "barchart" */ '../views/BarChart.vue')
   },
   {
+    path: '/barcodereader',
+    name: 'barcodereader',
+    component: () => import(/* webpackChunkName: "barcodereader" */ '../views/BarcodeReader.vue')
+  },
+  {
     path: '/bootstrap',
     name: 'bootstrap',
     component: () => import(/* webpackChunkName: "bootstrap" */ '../views/BootstrapFour.vue')

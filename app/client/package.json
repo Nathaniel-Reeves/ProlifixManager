@@ -24,8 +24,10 @@
     "popper.js": "^1.16.1",
     "portal-vue": "^2.1.7",
     "vue": "^2.6.14",
+    "vue-barcode-reader": "^1.0.3",
     "vue-chartjs": "^5.2.0",
     "vue-cookies": "^1.8.3",
+    "vue-qr-generator": "^3.0.1",
     "vue-router": "^3.5.1"
   },
   "devDependencies": {
