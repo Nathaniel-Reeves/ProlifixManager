@@ -18,7 +18,7 @@ Database Connection Settings
 
 DB_HOST = os.environ.get('DB_HOST')
 if DB_HOST is None:
-    DB_HOST = '127.0.0.1'
+    DB_HOST = '172.10.10.2'
 
 DB_PORT = os.environ.get('DB_PORT')
 if DB_PORT is None:

@@ -142,7 +142,10 @@ export default {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
+          'Access-Control-Allow-Origin': [
+            'http://localhost:3000',
+            'http://127.0.0.1:3000'
+          ]
         },
         credentials: 'include'
       }).then(response => {
@@ -165,7 +168,10 @@ export default {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
+          'Access-Control-Allow-Origin': [
+            'http://localhost:5000',
+            'http://127.0.0.1:5000'
+          ]
         },
         credentials: 'include'
       }).then(response => {
