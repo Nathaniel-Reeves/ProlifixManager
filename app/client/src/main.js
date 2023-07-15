@@ -9,6 +9,7 @@ import jquery from 'jquery'
 // Import bootstrap components
 import './plugins/bootstrap-vue'
 import 'bootstrap-icons/font/bootstrap-icons.css'
+import 'bootstrap'
 
 // Qr Code Generator
 import VueQRCodeComponent from 'vue-qr-generator'

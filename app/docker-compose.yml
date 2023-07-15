@@ -65,7 +65,7 @@ services:
         condition: service_completed_successfully
     tty: true
 
-  #Nginx Service
+  # Nginx Service
   server-loadbalance:
     container_name: server_loadbalance
     image: nginx:latest
@@ -82,7 +82,7 @@ services:
         ipv4_address: 172.10.10.6
     tty: true
 
-  #Nginx Service
+  # Nginx Service
   client:
     stdin_open: true
     restart: always
