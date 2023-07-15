@@ -9,10 +9,21 @@ import csv
 import sys
 
 # Define the connection details
-HOST = os.environ.get('DB_HOSTNAME')
-PORT = os.environ.get('DB_PORT')
-USER = os.environ.get('DB_USERNAME')
-PASSWORD = os.environ.get('DB_PASSWORD')
+DB_HOST = os.environ.get('DB_HOST')
+if DB_HOST is None:
+    DB_HOST = '127.0.0.1'
+
+DB_PORT = os.environ.get('DB_PORT')
+if DB_PORT is None:
+    DB_PORT = '3306'
+
+DB_USER = os.environ.get('DB_USERNAME')
+if DB_USER is None:
+    DB_USER = 'client'
+
+DB_PASSWORD = os.environ.get('DB_PASSWORD')
+if DB_PASSWORD is None:
+    DB_PASSWORD = "ClientPassword!5"
 
 # Define the databases and their corresponding CSV files
 DATABASES = [
