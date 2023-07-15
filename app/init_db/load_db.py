@@ -280,10 +280,10 @@ def main():
 
     # Display the connection details
     print("\033[0mConnection Details:")
-    print("\033[0m    Host: {}".format(HOST))
-    print("\033[0m    Port: {}".format(PORT))
-    print("\033[0m    User: {}".format(USER))
-    print("\033[0m    Password: {}".format(PASSWORD))
+    print("\033[0m    Host: {}".format(DB_HOST))
+    print("\033[0m    Port: {}".format(DB_PORT))
+    print("\033[0m    User: {}".format(DB_USER))
+    print("\033[0m    Password: {}".format(DB_PASSWORD))
 
     # Comment this line for debugging connection
     # check = input("Are these credentials correct (Y/N)?\n")
@@ -298,10 +298,10 @@ def main():
     print("\033[0mConnecting to the database...")
     try:
         session = mariadb.connect(
-            host=HOST,
-            port=int(PORT),
-            user=USER,
-            password=PASSWORD
+            host=DB_HOST,
+            port=int(DB_PORT),
+            user=DB_USER,
+            password=DB_PASSWORD
         )
         print("\033[32mConnection Successful!\033[0m")
         print()
