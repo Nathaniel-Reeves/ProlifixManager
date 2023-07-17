@@ -32,6 +32,8 @@
 
 import json
 from enum import Enum
+import sys
+import os
 
 
 class MessageType(Enum):
@@ -317,3 +319,23 @@ class CustomResponse:
             dict: JSON response.
         """
         return self.to_json()
+
+
+def error_message():
+    """
+    Creates an error flash message object.
+    
+    Args:
+        None
+    Returns:
+        flash_message (FlashMessage)
+    """
+    exc_type, exc_obj, exc_tb = sys.exc_info()
+    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+    flash_message = FlashMessage(
+        message=str(exc_obj),
+        debug_code=(
+            f"Error:{exc_type} | File: {fname} | Line: {exc_tb.tb_lineno}"),
+        message_type=MessageType.DANGER
+    )
+    return flash_message

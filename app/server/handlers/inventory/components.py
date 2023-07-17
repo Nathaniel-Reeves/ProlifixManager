@@ -3,8 +3,6 @@ Handle Component Functions
 '''
 import json
 import mariadb
-import sys
-import os
 from flask import (
     Blueprint,
     request,
@@ -15,7 +13,8 @@ from ..auth import check_authenticated
 from ..response import (
     MessageType,
     FlashMessage,
-    CustomResponse
+    CustomResponse,
+    error_message
 )
 
 bp = Blueprint('components', __name__, url_prefix='/components')
@@ -138,7 +137,7 @@ def get_components():
                 message_type=MessageType.DANGER
             )
         )
-        return jsonify(custom_response.to_json())
+        return jsonify(custom_response.to_json()), 500
 
     finally:
         if 'mariadb_connection' in locals():
@@ -186,12 +185,5 @@ def populate_component_names(cursor, component_id):
 
         return names
 
-    except Exception:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        flash_message = FlashMessage(
-            message=str(exc_obj),
-            debug_code=(f"Error:{exc_type} | File: {fname} | Line: {exc_tb.tb_lineno}"),
-            message_type=MessageType.DANGER
-        )
-        return flash_message
+    except Exception as e:
+        return error_message()

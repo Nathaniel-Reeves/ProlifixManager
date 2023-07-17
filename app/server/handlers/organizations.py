@@ -3,8 +3,6 @@ Handle Organizations Data
 '''
 import json
 import mariadb
-import sys
-import os
 from flask import (
     Blueprint,
     request,
@@ -15,10 +13,21 @@ from .auth import check_authenticated
 from .response import (
     MessageType,
     FlashMessage,
-    CustomResponse
+    CustomResponse,
+    error_message
 )
 
 bp = Blueprint('organizations', __name__, url_prefix='/organizations')
+
+def only_integers(iterable):
+    '''
+    Only accept integers
+    '''
+    for item in iterable:
+        try:
+            yield int(item)
+        except ValueError:
+            pass
 
 
 @bp.route('/', methods=['GET'])
@@ -92,9 +101,13 @@ def get_organizations():
                 WHERE b.`primary_name` = true
             '''
 
-        org_id = request.args.get('org-id', default=None, type=int)
-        if org_id:
-            base_query += f' AND a.`organization_id` = {org_id}'
+        inputs = []
+
+        org_ids = request.args.getlist('org-id')
+        if org_ids:
+            cleaned_org_ids = list(only_integers(org_ids))
+            base_query += f''' AND a.`organization_id` IN ({", ".join(["?"] * len(cleaned_org_ids))})'''
+            inputs += cleaned_org_ids
 
         org_type = request.args.getlist('org-type')
         if 'client' in org_type:
@@ -104,12 +117,20 @@ def get_organizations():
         if 'lab' in org_type:
             base_query += ' AND a.`lab` = 1'
 
+        verbose = request.args.get("verbose", type=bool, default=False)
+
         populate = request.args.getlist('populate')
 
         # Execute Query
         cursor = mariadb_connection.cursor()
-        cursor.execute(base_query)
+        cursor.execute(base_query, tuple(inputs))
         result = cursor.fetchall()
+
+        if not result:
+            custom_response.insert_flash_message(FlashMessage(
+                message='No organizations found',
+                message_type=MessageType.WARNING))
+            return jsonify(custom_response.to_json()), 404
 
         # Process Organizations
         organizations = {}
@@ -120,80 +141,67 @@ def get_organizations():
 
             # Populate child resources
             if 'facilities' in populate:
-                facilities = populate_facilities(cursor, org_id)
-                if isinstance(facilities, dict):
-                    organizations[org_id]['facilities'] = facilities
-                else:
-                    custom_response.insert_flash_message(FlashMessage(
-                        message=str(facilities), message_type=MessageType.DANGER))
+                organizations, custom_response = populate_facilities(
+                                                 cursor, org_id,
+                                                 organizations, custom_response, verbose)
 
             if 'sales-orders' in populate:
-                sales_orders = populate_sales_orders(cursor, org_id)
-                if isinstance(sales_orders, dict):
-                    organizations[org_id]['sales_orders'] = sales_orders
-                else:
-                    custom_response.insert_flash_message(FlashMessage(
-                        message=str(sales_orders), message_type=MessageType.DANGER))
+                organizations, custom_response = populate_sales_orders(
+                                                 cursor, org_id,
+                                                 organizations,
+                                                 custom_response, verbose)
 
             if 'purchase-orders' in populate:
-                purchase_orders = populate_purchase_orders(cursor, org_id)
-                if isinstance(purchase_orders, dict):
-                    organizations[org_id]['purchase_orders'] = purchase_orders
-                else:
-                    custom_response.insert_flash_message(FlashMessage(message=str(
-                        purchase_orders), message_type=MessageType.DANGER))
+                organizations, custom_response = populate_purchase_orders(
+                                                 cursor, org_id,
+                                                 organizations,
+                                                 custom_response, verbose)
 
             if 'people' in populate:
-                people = populate_people(cursor, org_id)
-                if isinstance(people, dict):
-                    organizations[org_id]['people'] = people
-                else:
-                    custom_response.insert_flash_message(
-                        FlashMessage(message=str(people), message_type=MessageType.DANGER))
+                organizations, custom_response = populate_people(
+                                                 cursor, org_id,
+                                                 organizations,
+                                                 custom_response, verbose)
 
             if 'components' in populate:
-                components = populate_components(cursor, org_id)
-                if isinstance(components, dict):
-                    organizations[org_id]['components'] = components
-                else:
-                    custom_response.insert_flash_message(FlashMessage(
-                        message=str(components), message_type=MessageType.DANGER))
+                organizations, custom_response = populate_components(
+                                                 cursor, org_id,
+                                                 organizations,
+                                                 custom_response, verbose)
 
             if 'products' in populate:
-                products = populate_products(cursor, org_id)
-                if isinstance(products, dict):
-                    organizations[org_id]['products'] = products
-                else:
-                    custom_response.insert_flash_message(FlashMessage(
-                        message=str(products), message_type=MessageType.DANGER))
+                organizations, custom_response = populate_products(
+                                                 cursor, org_id,
+                                                 organizations,
+                                                 custom_response, verbose)
 
         # Insert the processed organizations into the response
         custom_response.insert_data(organizations)
 
-        return jsonify(custom_response.to_json())
+        return jsonify(custom_response.to_json()), 200
 
-    except mariadb.Error as error:
-        custom_response.insert_flash_message(FlashMessage(
-            message=str(error), message_type=MessageType.DANGER))
-        return jsonify(custom_response.to_json()), 500
+    except Exception:
+        return error_message().to_json(), 500
 
     finally:
         if 'mariadb_connection' in locals():
             mariadb_connection.close()
 
-def populate_facilities(cursor, org_id):
+def populate_facilities(cursor, org_id, organizations,
+                        custom_response, verbose):
     '''
-    Populate Organization with Facilities
+    Populate Facilities Resource for Organizations
 
-    Attributes:
-        cursor (MariaDB.cursor): Database cursor
+    Args:
+        cursor (mariadb.cursor): MariaDB Cursor
         org_id (int): Organization ID
+        organization (dict): Organizations Dictionary
+        custom_response (CustomResponse): Custom Response
+        verbose (bool): Verbose
 
     Returns:
-        facilities (dict): Dict of facilities
-
-    Raises:
-        Error as FlashMessage
+        organization (dict): Organizations Dictionary
+        custom_response (CustomResponse): Custom Response
     '''
 
     try:
@@ -234,38 +242,45 @@ def populate_facilities(cursor, org_id):
         cursor.execute(query, (org_id,))
         result = cursor.fetchall()
 
-        # Return Facilities Dictionary
+        # Create Facilities Dictionary
         facilites = {}
         for row in result:
             json_row = json.loads(row[0])
             facility_id = json_row['facility_id']
             facilites[facility_id] = json_row
-        return facilites
+
+        organizations[org_id]['facilities'] = facilites
+
+        # If facility resource is empty
+        if not facilites and verbose:
+            custom_response.insert_flash_message(
+                FlashMessage(
+                    message=f'No facilities found for organization {organizations[org_id]["organization_name"]} (ID: {org_id})',
+                    message_type=MessageType.WARNING)
+            )
+
+        return organizations, custom_response
 
     except Exception:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        flash_message = FlashMessage(
-            message=str(exc_obj),
-            debug_code=(
-                f"Error:{exc_type} | File: {fname} | Line: {exc_tb.tb_lineno}"),
-            message_type=MessageType.DANGER
-        )
-        return flash_message
+        error = error_message()
+        return organizations, custom_response.insert_flash_message(error)
 
-def populate_sales_orders(cursor, org_id):
+
+def populate_sales_orders(cursor, org_id, organizations,
+                          custom_response, verbose):
     '''
-    Populate Organization with Sales Orders
+    Populate Sales Orders Resource for Organizations
 
-    Attributes:
-        cursor (MariaDB.cursor): Database cursor
+    Args:
+        cursor (mariadb.cursor): MariaDB Cursor
         org_id (int): Organization ID
+        organization (dict): Organizations Dictionary
+        custom_response (CustomResponse): Custom Response
+        verbose (bool): Verbose
 
     Returns:
-        sales_orders (dict): Dict of Sales Orders
-
-    Raises:
-        Error as FlashMessage
+        organization (dict): Organizations Dictionary
+        custom_response (CustomResponse): Custom Response
     '''
 
     try:
@@ -293,7 +308,7 @@ def populate_sales_orders(cursor, org_id):
         cursor.execute(query, (org_id,))
         result = cursor.fetchall()
 
-        # Return Facilities Dictionary
+        # Create Sales Order Dictionary
         sales_orders = {}
         for row in result:
             json_row = json.loads(row[0])
@@ -303,32 +318,39 @@ def populate_sales_orders(cursor, org_id):
                 str(json_row['month']) + \
                 str(json_row['sec_number'])
             sales_orders[sales_order_id] = json_row
-        return sales_orders
+
+        organizations[org_id]['sales_orders'] = sales_orders
+
+        # If sales order resource is empty
+        if not sales_orders and verbose:
+            custom_response.insert_flash_message(
+                FlashMessage(
+                    message=f'No sales orders found for organization {organizations[org_id]["organization_name"]} (ID: {org_id})',
+                    message_type=MessageType.WARNING)
+            )
+
+        return organizations, custom_response
 
     except Exception:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        flash_message = FlashMessage(
-            message=str(exc_obj),
-            debug_code=(
-                f"Error:{exc_type} | File: {fname} | Line: {exc_tb.tb_lineno}"),
-            message_type=MessageType.DANGER
-        )
-        return flash_message
+        error = error_message()
+        return organizations, custom_response.insert_flash_message(error)
 
-def populate_purchase_orders(cursor, org_id):
+
+def populate_purchase_orders(cursor, org_id, organizations,
+                             custom_response, verbose):
     '''
-    Populate Organization with Purchase Orders
+    Populate Purchase Orders Resource for Organizations
 
-    Attributes:
-        cursor (MariaDB.cursor): Database cursor
+    Args:
+        cursor (mariadb.cursor): MariaDB Cursor
         org_id (int): Organization ID
+        organization (dict): Organizations Dictionary
+        custom_response (CustomResponse): Custom Response
+        verbose (bool): Verbose
 
     Returns:
-        purchase_orders (dict): Dict of Purchase Orders
-
-    Raises:
-        Error as FlashMessage
+        organization (dict): Organizations Dictionary
+        custom_response (CustomResponse): Custom Response
     '''
 
     try:
@@ -355,7 +377,7 @@ def populate_purchase_orders(cursor, org_id):
         cursor.execute(query, (org_id,))
         result = cursor.fetchall()
 
-        # Return Facilities Dictionary
+        # Create Purchase Order Dictionary
         purchase_orders = {}
         for row in result:
             json_row = json.loads(row[0])
@@ -365,32 +387,39 @@ def populate_purchase_orders(cursor, org_id):
                 str(json_row['month']) + \
                 str(json_row['sec_number'])
             purchase_orders[purchase_order_id] = json_row
-        return purchase_orders
+
+        organizations[org_id]['purchase_orders'] = purchase_orders
+
+        # If purchase order resource is empty
+        if not purchase_orders and verbose:
+            custom_response.insert_flash_message(
+                FlashMessage(
+                    message=f'No purchase orders found for organization {organizations[org_id]["organization_name"]} (ID: {org_id})',
+                    message_type=MessageType.WARNING)
+            )
+
+        return organizations, custom_response
 
     except Exception:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        flash_message = FlashMessage(
-            message=str(exc_obj),
-            debug_code=(
-                f"Error:{exc_type} | File: {fname} | Line: {exc_tb.tb_lineno}"),
-            message_type=MessageType.DANGER
-        )
-        return flash_message
+        error = error_message()
+        return organizations, custom_response.insert_flash_message(error)
 
-def populate_people(cursor, org_id):
+
+def populate_people(cursor, org_id, organizations,
+                    custom_response, verbose):
     '''
-    Populate Organization with People
+    Populate People Resource for Organizations
 
-    Attributes:
-        cursor (MariaDB.cursor): Database cursor
+    Args:
+        cursor (mariadb.cursor): MariaDB Cursor
         org_id (int): Organization ID
+        organization (dict): Organizations Dictionary
+        custom_response (CustomResponse): Custom Response
+        verbose (bool): Verbose
 
     Returns:
-        people (dict): Dict of People
-
-    Raises:
-        Error as FlashMessage
+        organization (dict): Organizations Dictionary
+        custom_response (CustomResponse): Custom Response
     '''
 
     try:
@@ -422,38 +451,45 @@ def populate_people(cursor, org_id):
         cursor.execute(query, (org_id,))
         result = cursor.fetchall()
 
-        # Return Facilities Dictionary
+        # Create People Dictionary
         people = {}
         for row in result:
             json_row = json.loads(row[0])
             person_id = json_row['person_id']
             people[person_id] = json_row
-        return people
+
+        organizations[org_id]['people'] = people
+
+        # If people resource is empty
+        if not people and verbose:
+            custom_response.insert_flash_message(
+                FlashMessage(
+                    message=f'No people found for organization {organizations[org_id]["organization_name"]} (ID: {org_id})',
+                    message_type=MessageType.WARNING)
+            )
+
+        return organizations, custom_response
 
     except Exception:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        flash_message = FlashMessage(
-            message=str(exc_obj),
-            debug_code=(
-                f"Error:{exc_type} | File: {fname} | Line: {exc_tb.tb_lineno}"),
-            message_type=MessageType.DANGER
-        )
-        return flash_message
+        error = error_message()
+        return organizations, custom_response.insert_flash_message(error)
 
-def populate_components(cursor, org_id):
+
+def populate_components(cursor, org_id, organizations,
+                        custom_response, verbose):
     '''
-    Populate Organization with Components
+    Populate Components Resource for Organizations
 
-    Attributes:
-        cursor (MariaDB.cursor): Database cursor
+    Args:
+        cursor (mariadb.cursor): MariaDB Cursor
         org_id (int): Organization ID
+        organization (dict): Organizations Dictionary
+        custom_response (CustomResponse): Custom Response
+        verbose (bool): Verbose
 
     Returns:
-        components (dict): Dict of Components
-
-    Raises:
-        Error as FlashMessage
+        organization (dict): Organizations Dictionary
+        custom_response (CustomResponse): Custom Response
     '''
 
     try:
@@ -479,38 +515,45 @@ def populate_components(cursor, org_id):
         cursor.execute(query, (org_id,))
         result = cursor.fetchall()
 
-        # Return Facilities Dictionary
+        # Create Components Dictionary
         components = {}
         for row in result:
             json_row = json.loads(row[0])
             component_id = json_row['component_id']
             components[component_id] = json_row
-        return components
+
+        organizations[org_id]['components'] = components
+
+        # If components resource is empty
+        if not components and verbose:
+            custom_response.insert_flash_message(
+                FlashMessage(
+                    message=f'No components found for organization {organizations[org_id]["organization_name"]} (ID: {org_id})',
+                    message_type=MessageType.WARNING)
+            )
+
+        return organizations, custom_response
 
     except Exception:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        flash_message = FlashMessage(
-            message=str(exc_obj),
-            debug_code=(
-                f"Error:{exc_type} | File: {fname} | Line: {exc_tb.tb_lineno}"),
-            message_type=MessageType.DANGER
-        )
-        return flash_message
+        error = error_message()
+        return organizations, custom_response.insert_flash_message(error)
 
-def populate_products(cursor, org_id):
+
+def populate_products(cursor, org_id, organizations,
+                      custom_response, verbose):
     '''
-    Populate Organization with Products
+    Populate Products for Organizations
 
-    Attributes:
-        cursor (MariaDB.cursor): Database cursor
+    Args:
+        cursor (mariadb.cursor): MariaDB Cursor
         org_id (int): Organization ID
+        organization (dict): Organizations Dictionary
+        custom_response (CustomResponse): Custom Response
+        verbose (bool): Verbose
 
     Returns:
-        products (dict): Dict of Products
-
-    Raises:
-        Error as FlashMessage
+        organization (dict): Organizations Dictionary
+        custom_response (CustomResponse): Custom Response
     '''
 
     try:
@@ -542,24 +585,28 @@ def populate_products(cursor, org_id):
         cursor.execute(query, (org_id,))
         result = cursor.fetchall()
 
-        # Return Facilities Dictionary
+        # Create Products Dictionary
         products = {}
         for row in result:
             json_row = json.loads(row[0])
             product_id = json_row['product_id']
             products[product_id] = json_row
-        return products
+
+        organizations[org_id]['products'] = products
+
+        # If products resource is empty
+        if not products and verbose:
+            custom_response.insert_flash_message(
+                FlashMessage(
+                    message=f'No products found for organization {organizations[org_id]["organization_name"]} (ID: {org_id})',
+                    message_type=MessageType.WARNING)
+            )
+
+        return organizations, custom_response
 
     except Exception:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        flash_message = FlashMessage(
-            message=str(exc_obj),
-            debug_code=(
-                f"Error:{exc_type} | File: {fname} | Line: {exc_tb.tb_lineno}"),
-            message_type=MessageType.DANGER
-        )
-        return flash_message
+        error = error_message()
+        return organizations, custom_response.insert_flash_message(error)
 
 
 @bp.route('/exists', methods=['POST'])
@@ -588,10 +635,10 @@ def organization_exists():
 
     # Handle Primary False
     if not primary_exists:
-        error_message = FlashMessage(
+        e_message = FlashMessage(
             message="Primary Name not selected!",
             message_type=MessageType.WARNING)
-        custom_response.insert_flash_message(error_message)
+        custom_response.insert_flash_message(e_message)
 
     # Insert the levenshtein_results into the response
     custom_response.insert_data(levenshtein_results)
@@ -658,11 +705,4 @@ def check_org_exists_levenshtein(search_name):
         return levensthein_results, levensthein_messages
 
     except Exception:
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        flash_message = FlashMessage(
-            message=str(exc_obj),
-            debug_code=(f"Error:{exc_type} | File: {fname} | Line: {exc_tb.tb_lineno}"),
-            message_type=MessageType.DANGER
-        )
-        return flash_message
+        return error_message()
