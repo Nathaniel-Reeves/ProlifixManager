@@ -21,7 +21,8 @@ bp = Blueprint('components', __name__, url_prefix='/components')
 
 def only_integers(iterable):
     '''
-    Only accept integers
+    Convets python list to python list
+    of integer values.
     '''
     for item in iterable:
         try:
@@ -82,6 +83,8 @@ def get_components():
             WHERE b.`primary_name` = true
             '''
 
+        verbose = request.args.get("verbose", type=bool, default=False)
+
         inputs = []
 
         org_ids = request.args.getlist('org-id')
@@ -93,7 +96,6 @@ def get_components():
         component_ids = request.args.getlist('component-id')
         if component_ids:
             cleaned_component_ids = list(only_integers(component_ids))
-            print(cleaned_component_ids)
             base_query += f''' AND a.`component_id` IN ({", ".join(["?"] * len(cleaned_component_ids))})'''
             inputs += cleaned_component_ids
 
@@ -117,18 +119,16 @@ def get_components():
 
             # Populate child resources
             if 'names' in populate:
-                names = populate_component_names(cursor, component_id)
-                if isinstance(names, list):
-                    components[component_id]['names'] = names
-                else:
-                    custom_response.insert_flash_message(names)
+                components, custom_response = populate_component_names(
+                                                cursor, component_id, 
+                                                components, custom_response, 
+                                                verbose)
 
         # Insert the processed component data into the response
         custom_response.insert_data(components)
-        if components:
-            return jsonify(custom_response.to_json()), 200
-        else:
+        if not components:
             return jsonify(custom_response.to_json()), 404
+        return jsonify(custom_response.to_json()), 200
 
     except Exception as error:
         custom_response.insert_flash_message(
@@ -143,7 +143,10 @@ def get_components():
         if 'mariadb_connection' in locals():
             mariadb_connection.close()
 
-def populate_component_names(cursor, component_id):
+
+def populate_component_names(cursor, component_id,
+                             components, custom_response,
+                             verbose):
     """
     Populates Component Objects with their
     alias names.
@@ -151,6 +154,9 @@ def populate_component_names(cursor, component_id):
     Attributes:
         cursor (MaraDB.cursor): Database cursor
         component_id (int): Component Id
+        components (dict): Dictionary of Component Objects
+        custom_response (CustomResponse): Custom Response
+        verbose (bool): Verbose Flag
 
     Returns:
         names (list of dicts): List of alias name dicts
@@ -183,7 +189,14 @@ def populate_component_names(cursor, component_id):
         for row in results:
             names.append(json.loads(row[0]))
 
-        return names
+        components[component_id]['names'] = names
+        if not names and verbose:
+            not_found = FlashMessage(
+                message=f'No names found for component (ID: {component_id}).'
+            )
+            return components, custom_response.insert_flash_message(not_found)
+        return components, custom_response
 
-    except Exception as e:
-        return error_message()
+    except Exception:
+        error=error_message()
+        return components, custom_response.insert_flash_message(error)

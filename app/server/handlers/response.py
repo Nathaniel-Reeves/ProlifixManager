@@ -324,7 +324,7 @@ class CustomResponse:
 def error_message():
     """
     Creates an error flash message object.
-    
+
     Args:
         None
     Returns:

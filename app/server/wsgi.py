@@ -122,7 +122,7 @@ api_blueprint.register_blueprint(orders_bp)
 from handlers.auth import bp as auth_bp
 api_blueprint.register_blueprint(auth_bp)
 
-from handlers.inventory import inventory_bp
+from handlers.inventory import bp as inventory_bp
 api_blueprint.register_blueprint(inventory_bp)
 
 """
