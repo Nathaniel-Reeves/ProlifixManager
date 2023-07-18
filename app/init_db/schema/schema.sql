@@ -90,6 +90,14 @@ CREATE TABLE IF NOT EXISTS `Products`.`Product_Master` (
   `exp_type` ENUM('Best By', 'Exp'),
   `exp_use_oldest_ingredient` BOOL,
   `default_formula_id` INT DEFAULT NULL,
+  `certified_usda_organic` BOOL,
+  `certified_halal` BOOL,
+  `certified_kosher` BOOL,
+  `certified_gluten_free` BOOL,
+  `certified_national_sanitation_foundation` BOOL,
+  `certified_us_pharmacopeia` BOOL,
+  `certified_non_gmo` BOOL,
+  `certified_vegan` BOOL,
   `doc` json DEFAULT (CONCAT('{
     "_id":',`product_id`,',
     "lab_specs": {
@@ -448,6 +456,7 @@ CREATE TABLE IF NOT EXISTS `Products`.`Product_Master` (
 CREATE TABLE IF NOT EXISTS `Inventory`.`Components` (
   `component_id` INT,
   `component_type` ENUM('powder', 'liquid', 'container', 'pouch', 'shrink_band', 'lid', 'label', 'capsule', 'misc', 'scoop', 'desiccant', 'box', 'carton', 'packaging_material'),
+  `units` ENUM("grams", "kilograms", "units", "boxes", "pallets", "liters", "rolls"),
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `owner_id` INT,
   `doc` json DEFAULT (CONCAT('{
@@ -801,6 +810,14 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Components` (
         }
     }
 }')),
+  `certified_usda_organic` BOOL,
+  `certified_halal` BOOL,
+  `certified_kosher` BOOL,
+  `certified_gluten_free` BOOL,
+  `certified_national_sanitation_foundation` BOOL,
+  `certified_us_pharmacopeia` BOOL,
+  `certified_non_gmo` BOOL,
+  `certified_vegan` BOOL,
   PRIMARY KEY (`component_id`),
   FOREIGN KEY (`owner_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
@@ -821,7 +838,6 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Inventory` (
   `actual_inventory` DECIMAL(16,4),
   `theoretical_inventory` DECIMAL(16,4),
   `recent_cycle_count_id` INT,
-  `organic` ENUM('organic', 'non-organic', 'n/a'),
   `brand_id` INT,
   PRIMARY KEY (`inv_id`),
   FOREIGN KEY (`item_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
@@ -879,18 +895,28 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Cycle_Counts_Log` (
 );
 
 CREATE TABLE IF NOT EXISTS `Inventory`.`Check-in_Log` (
-  `check_in_id` INT AUTO_INCREMENT,
+  `check_in_id` INT,
   `inv_id` INT,
   `amount` DECIMAL(16,4),
-  `status` JSON,
   `user_id` INT,
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `date_modified` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
   `po_detail_id` INT DEFAULT NULL,
+  `doc` json DEFAULT (CONCAT('{
+    "_id":"',`check_in_id`,'",
+    "files":[],
+    "status_history":[
+        {
+            "status": "', `current_status`, '",
+            "date": "', `date_entered` ,'"
+        }
+      ]
+   }')),
+  `current_status` ENUM('Ordered', 'Shipping Soon', 'In Transit', 'Arrived', 'Revived', 'Quarantined') DEFAULT 'Ordered',
   PRIMARY KEY (`check_in_id`),
   FOREIGN KEY (`inv_id`) REFERENCES `Inventory`.`Inventory`(`inv_id`),
   FOREIGN KEY (`user_id`) REFERENCES `Organizations`.`Users`(`user_id`),
-  FOREIGN KEY (`po_detail_id`) REFERENCES `Orders`.`Purchase_Order_Detail`(`po_detail_id`)
+  FOREIGN KEY (`po_detail_id`) REFERENCES `Orders`.`Purchase_Order_Detail` (`po_detail_id`)
 );
 
 CREATE TABLE IF NOT EXISTS `Products`.`Manufacturing_Process` (

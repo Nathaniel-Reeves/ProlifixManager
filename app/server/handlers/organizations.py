@@ -16,19 +16,11 @@ from .response import (
     CustomResponse,
     error_message
 )
+from .helper import (
+    only_integers
+)
 
 bp = Blueprint('organizations', __name__, url_prefix='/organizations')
-
-def only_integers(iterable):
-    '''
-    Only accept integers
-    '''
-    for item in iterable:
-        try:
-            yield int(item)
-        except ValueError:
-            pass
-
 
 @bp.route('/', methods=['GET'])
 @check_authenticated(authentication_required=True)

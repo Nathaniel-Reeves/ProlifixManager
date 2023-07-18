@@ -78,6 +78,8 @@ app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_USE_SIGNER'] = True
 app.config['SESSION_EXPIRE'] = timedelta(days=7)
+app.config['UPLOAD_FOLDER'] = '/mnt/c/Users/Nathaniel Reeves/Documents/Github/Material-Requirements-Planning-System/app/db/files/'
+app.config['ALLOWED_EXTENSIONS'] = (".pdf")
 
 CORS(app, supports_credentials=True, allow_headers=[
      "Content-Type", "Access-Control-Allow-Origin"])

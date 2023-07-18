@@ -25,7 +25,8 @@ from .response import (
     MessageType,
     Message,
     FlashMessage,
-    CustomResponse
+    CustomResponse,
+    error_message
 )
 
 # Login & Authenication Wrapper Functions
@@ -236,16 +237,9 @@ def login():
 
         return jsonify(custom_response.to_json())
 
-    except mariadb.Error as error:
-        # MariaDB Error Handling
-        custom_response.insert_flash_message(FlashMessage(
-            message=str(error), message_type=MessageType.DANGER))
-        return jsonify(custom_response.to_json()), 500
-
-    except RedisError as error:
-        # Redis Error Handling
-        custom_response.insert_flash_message(FlashMessage(
-            message=str(error), message_type=MessageType.DANGER))
+    except Exception:
+        error = error_message()
+        custom_response.insert_flash_message(error)
         return jsonify(custom_response.to_json()), 500
 
     finally:
@@ -279,11 +273,9 @@ def get_user_by_session_token():
             status_code = 401
         return jsonify(custom_response.to_json()), status_code
 
-    except RedisError as error:
-        # Redis Error Handling
-        custom_response.insert_flash_message(
-            FlashMessage(message=str(error), message_type=MessageType.DANGER)
-        )
+    except Exception:
+        error = error_message()
+        custom_response.insert_flash_message(error)
         return jsonify(custom_response.to_json()), 500
 
 @bp.route('/sessions', methods=['DELETE'])
@@ -318,9 +310,7 @@ def logout():
                              message_type=MessageType.DANGER))
         return jsonify(custom_response.to_json()), status_code
 
-    except RedisError as error:
-        # Redis Error Handling
-        custom_response.insert_flash_message(
-            FlashMessage(message=str(error), message_type=MessageType.DANGER)
-        )
+    except Exception:
+        error = error_message()
+        custom_response.insert_flash_message(error)
         return jsonify(custom_response.to_json()), 500

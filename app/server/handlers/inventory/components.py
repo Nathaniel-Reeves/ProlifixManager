@@ -3,6 +3,7 @@ Handle Component Functions
 '''
 import json
 import mariadb
+import os
 from flask import (
     Blueprint,
     request,
@@ -16,19 +17,12 @@ from ..response import (
     CustomResponse,
     error_message
 )
+from ..helper import (
+    only_integers,
+    save_files
+)
 
 bp = Blueprint('components', __name__, url_prefix='/components')
-
-def only_integers(iterable):
-    '''
-    Convets python list to python list
-    of integer values.
-    '''
-    for item in iterable:
-        try:
-            yield int(item)
-        except ValueError:
-            pass
 
 @bp.route('/', methods=['GET'])
 @check_authenticated(authentication_required=True)
@@ -219,8 +213,8 @@ def checkin():
             password=app.config['DB_PASSWORD']
         )
 
-        # Get Checkin Data
-        component_checkin = request.json
+        # Get Data
+        form_data = dict(request.form)
 
         # Locate the component in the Inventory Table
         base_query = """
@@ -235,17 +229,33 @@ def checkin():
 
         # Execute Query
         cursor = mariadb_connection.cursor()
-        cursor.execute(base_query, (component_checkin['component_id'],))
+        cursor.execute(base_query, (form_data['component_id'],))
         result = cursor.fetchone()
 
-        # If component not found, return 404
+        # If component not found in inventory table, create record
         if not result:
-            message = FlashMessage(
-                            message=f'Component (ID: {component_checkin["component_id"]}) not found.',
-                            message_type=MessageType.DANGER
-                        )
-            custom_response.insert_flash_message(message)
-            return jsonify(custom_response.to_json()), 404
+            inv_id, custom_response = post_component_to_inventory(
+                form_data, custom_response)
+
+        if not inv_id:
+            return jsonify(custom_response.to_json()), 500
+
+        # Create checkin entry in log
+
+        # Get File Data
+        form_data = dict(request.form)
+        file_objects = dict(request.files)
+        if "doc" in form_data:
+            doc = json.loads(form_data["doc"])
+        else:
+            doc = []
+
+        location = os.path.join("components/powders/",
+                                form_data["component_id"])
+
+        # Save Files
+        doc, custom_response = save_files(
+            doc, file_objects, custom_response, location)
 
         message = FlashMessage(
             message="This Works!",
@@ -256,4 +266,29 @@ def checkin():
 
     except Exception:
         error = error_message()
-        return jsonify(custom_response.insert_flash_message(error).to_json())
+        custom_response.insert_flash_message(error)
+        return jsonify(custom_response.to_json()), 500
+
+
+def post_component_to_inventory(form_data, custom_response):
+    try:
+
+        # Build Insert Statement
+        base_query = """
+        
+        """
+
+        # Execute Statement
+        
+
+        # Process Statement Return
+        inv_id = None
+        
+
+        # Return New Inv_id
+        return inv_id, custom_response
+
+    except Exception:
+        error = error_message()
+        custom_response.insert_flash_message(error)
+        return None, custom_response
