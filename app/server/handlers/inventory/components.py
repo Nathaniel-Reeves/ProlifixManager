@@ -200,3 +200,60 @@ def populate_component_names(cursor, component_id,
     except Exception:
         error=error_message()
         return components, custom_response.insert_flash_message(error)
+
+
+@bp.route('/checkin', methods=['POST'])
+@check_authenticated(authentication_required=True)
+def checkin():
+    """
+    """
+
+    try:
+        custom_response = CustomResponse()  # create a custom response object
+
+        # Test DB Connection
+        mariadb_connection = mariadb.connect(
+            host=app.config['DB_HOSTNAME'],
+            port=int(app.config['DB_PORT']),
+            user=app.config['DB_USER'],
+            password=app.config['DB_PASSWORD']
+        )
+
+        # Get Checkin Data
+        component_checkin = request.json
+
+        # Locate the component in the Inventory Table
+        base_query = """
+            SELECT 
+                a.`inv_id`,
+                a.`item_id`
+            FROM `Inventory`.`Inventory` a
+            LEFT JOIN `Inventory`.`Components` b ON
+                a.`item_id` = b.`component_id`
+            WHERE b.`component_id` = ?
+        """
+
+        # Execute Query
+        cursor = mariadb_connection.cursor()
+        cursor.execute(base_query, (component_checkin['component_id'],))
+        result = cursor.fetchone()
+
+        # If component not found, return 404
+        if not result:
+            message = FlashMessage(
+                            message=f'Component (ID: {component_checkin["component_id"]}) not found.',
+                            message_type=MessageType.DANGER
+                        )
+            custom_response.insert_flash_message(message)
+            return jsonify(custom_response.to_json()), 404
+
+        message = FlashMessage(
+            message="This Works!",
+            message_type=MessageType.INFO
+        )
+        custom_response.insert_flash_message(message)
+        return jsonify(custom_response.to_json())
+
+    except Exception:
+        error = error_message()
+        return jsonify(custom_response.insert_flash_message(error).to_json())
