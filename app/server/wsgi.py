@@ -32,12 +32,17 @@ DB_PASSWORD = os.environ.get('DB_PASSWORD')
 if DB_PASSWORD is None:
     DB_PASSWORD = "ClientPassword!5"
 
+os.chdir("..")
+UPLOAD_FOLDER = os.path.join(os.getcwd(), 'db/files')
+os.chdir("server")
+
 print()
 print('~~~ DATABASE CONFIG ~~~')
 print('    Host:         ', DB_HOST)
 print('    Port:         ', DB_PORT)
 print('    SQL User:     ', DB_USER)
 print('    SQL Password: ', DB_PASSWORD)
+print('    Upload Folder: ', UPLOAD_FOLDER)
 print()
 
 """
@@ -78,7 +83,7 @@ app.config['SESSION_TYPE'] = 'redis'
 app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_USE_SIGNER'] = True
 app.config['SESSION_EXPIRE'] = timedelta(days=7)
-app.config['UPLOAD_FOLDER'] = '/mnt/c/Users/Nathaniel Reeves/Documents/Github/Material-Requirements-Planning-System/app/db/files/'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['ALLOWED_EXTENSIONS'] = (".pdf")
 
 CORS(app, supports_credentials=True, allow_headers=[

@@ -9,7 +9,7 @@ import csv
 import sys
 
 # Define the connection details
-DB_HOST = os.environ.get('DB_HOST')
+DB_HOST = os.environ.get('DB_HOSTNAME')
 if DB_HOST is None:
     DB_HOST = '127.0.0.1'
 
