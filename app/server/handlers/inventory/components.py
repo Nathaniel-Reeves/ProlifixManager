@@ -4,6 +4,7 @@ Handle Component Functions
 import json
 import mariadb
 import os
+import datetime
 from flask import (
     Blueprint,
     request,
@@ -16,6 +17,9 @@ from ..response import (
     FlashMessage,
     CustomResponse,
     error_message
+)
+from redis import (
+    Redis
 )
 from ..helper import (
     only_integers,
@@ -217,10 +221,11 @@ def checkin():
         form_data = dict(request.form)
 
         # Locate the component in the Inventory Table
-        base_query = """
+        base_query_1 = """
             SELECT 
                 a.`inv_id`,
-                a.`item_id`
+                a.`item_id`,
+                b.`component_type`
             FROM `Inventory`.`Inventory` a
             LEFT JOIN `Inventory`.`Components` b ON
                 a.`item_id` = b.`component_id`
@@ -229,13 +234,15 @@ def checkin():
 
         # Execute Query
         cursor = mariadb_connection.cursor()
-        cursor.execute(base_query, (form_data['component_id'],))
+        cursor.execute(base_query_1, (form_data['component_id'],))
         result = cursor.fetchone()
 
         # If component not found in inventory table, create record
         if not result:
-            inv_id, custom_response = post_component_to_inventory(
+            inv_id, custom_response = post_component_to_inventory(mariadb_connection,
                 form_data, custom_response)
+        else:
+            inv_id = result[0]
 
         if not inv_id:
             return jsonify(custom_response.to_json()), 500
@@ -250,40 +257,129 @@ def checkin():
         else:
             doc = []
 
-        location = os.path.join("components/powders/",
-                                form_data["component_id"])
+        location = os.path.join(
+            "components/",
+            result[2],
+            "component_id-" + str(form_data["component_id"]),
+            "inventory_id-" + str(inv_id),
+            "checkin_docs-" + str(
+                datetime.datetime.utcnow()
+            )
+        )
 
         # Save Files
         doc, custom_response = save_files(
             doc, file_objects, custom_response, location)
 
+        # Create Checkin Log
+        base_query_2 = """
+            INSERT INTO `Inventory`.`Check-in_Log` (
+                `inv_id`,
+                `amount`,
+                `user_id`,
+                `po_detail_id`,
+                `current_status`
+            ) VALUES (
+              ?, ?, ?, ?, ?
+            )
+        """
+
+        # Execute Statement
+        inputs_1 = []
+        inputs_1.append(inv_id)
+        inputs_1.append(form_data["amount"])
+
+        session_token = request.cookies.get('session')
+        redis_connection = Redis(
+            host=app.config['REDIS_HOST'],
+            port=app.config['REDIS_PORT'],
+            password=app.config['REDIS_PASSWORD'])
+        session_data = json.loads(redis_connection.get(session_token))
+        inputs_1.append(session_data["user_id"])
+
+        if form_data["po_detail_id"]:
+            inputs_1.append(form_data["po_detail_id"])
+        else:
+            inputs_1.append(None)
+
+        inputs_1.append(form_data["current_status"])
+
+        # Execute Statement
+        cursor.execute(base_query_1, tuple(inputs_1))
+        result = cursor.fetchone()
+
+        check_in_id = result[0]
+
+        if not check_in_id:
+            checkin_insert_fail = FlashMessage(
+                message="Failed to insert record in Checkin Log.",
+                message_type=MessageType.DANGER
+            )
+            custom_response.insert_flash_message(checkin_insert_fail)
+            mariadb_connection.rollback()
+            return jsonify(custom_response.to_json()), 500
+
+        # Update checkin record with documents
+        if doc:
+            base_query_3 = '''
+            UPDATE 
+                JSON_SET()
+            '''
+
+        # Update Inventory
+        # update_inventory(mariadb_connection, form_data, custom_response)
         message = FlashMessage(
-            message="This Works!",
+            message="Worked",
             message_type=MessageType.INFO
         )
         custom_response.insert_flash_message(message)
-        return jsonify(custom_response.to_json())
-
+        mariadb_connection.commit()
+        return jsonify(custom_response.to_json()), 200
+    
     except Exception:
         error = error_message()
         custom_response.insert_flash_message(error)
         return jsonify(custom_response.to_json()), 500
 
 
-def post_component_to_inventory(form_data, custom_response):
+def post_component_to_inventory(mariadb_connection, form_data, custom_response):
     try:
 
         # Build Insert Statement
         base_query = """
-        
+        INSERT INTO `Inventory`.`Inventory` (
+            `item_id`,
+            `actual_inventory`,
+            `theoretical_inventory`,
+            `recent_cycle_count_id`,
+            `brand_id`
+        ) VALUES (
+            ?, ?, ?, ?, ?
+        )
         """
 
+        inputs = []
+        inputs.append(form_data["component_id"])
+        inputs.append(0)
+        inputs.append(0)
+        inputs.append(None)
+        inputs.append(None)
+
         # Execute Statement
-        
+        cursor = mariadb_connection.cursor()
+        cursor.execute(base_query, tuple(inputs))
 
         # Process Statement Return
-        inv_id = None
-        
+        if cursor.lastrowid:
+            inv_id = cursor.lastrowid
+            mariadb_connection.commit()
+        else:
+            inv_id = None
+            custom_response.insert_flash_message(FlashMessage(
+                message="Could not create inventory record.",
+                message_type=MessageType.DANGER
+            ))
+            mariadb_connection.rollback()
 
         # Return New Inv_id
         return inv_id, custom_response

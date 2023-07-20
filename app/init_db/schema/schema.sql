@@ -912,7 +912,7 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Check-in_Log` (
         }
       ]
    }')),
-  `current_status` ENUM('Ordered', 'Shipping Soon', 'In Transit', 'Arrived', 'Revived', 'Quarantined') DEFAULT 'Ordered',
+  `current_status` ENUM('Ordered', 'Shipping Soon', 'In Transit', 'Arrived', 'Received', 'Quarantined') DEFAULT 'Ordered',
   PRIMARY KEY (`check_in_id`),
   FOREIGN KEY (`inv_id`) REFERENCES `Inventory`.`Inventory`(`inv_id`),
   FOREIGN KEY (`user_id`) REFERENCES `Organizations`.`Users`(`user_id`),
