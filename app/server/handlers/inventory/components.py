@@ -221,7 +221,7 @@ def checkin():
         form_data = dict(request.form)
 
         # Locate the component in the Inventory Table
-        base_query_1 = """
+        base_query_1a = """
             SELECT 
                 a.`inv_id`,
                 a.`item_id`,
@@ -234,17 +234,19 @@ def checkin():
 
         # Execute Query
         cursor = mariadb_connection.cursor()
-        cursor.execute(base_query_1, (form_data['component_id'],))
+        cursor.execute(base_query_1a, (form_data['component_id'],))
         result = cursor.fetchone()
 
         # If component not found in inventory table, create record
         if not result:
             inv_id, custom_response = post_component_to_inventory(mariadb_connection,
                 form_data, custom_response)
+            component_type, custom_response = get_component_type(mariadb_connection, form_data, custom_response)
         else:
             inv_id = result[0]
+            component_type = result[2]
 
-        if not inv_id:
+        if not inv_id or not component_type:
             return jsonify(custom_response.to_json()), 500
 
         # Create checkin entry in log
@@ -259,7 +261,7 @@ def checkin():
 
         location = os.path.join(
             "components/",
-            result[2],
+            component_type,
             "component_id-" + str(form_data["component_id"]),
             "inventory_id-" + str(inv_id),
             "checkin_docs-" + str(
@@ -272,21 +274,39 @@ def checkin():
             doc, file_objects, custom_response, location)
 
         # Create Checkin Log
-        base_query_2 = """
+        base_query_2b = """
             INSERT INTO `Inventory`.`Check-in_Log` (
+                `check_in_id`,
                 `inv_id`,
                 `amount`,
                 `user_id`,
                 `po_detail_id`,
-                `current_status`
+                `current_status`,
+                `doc`
             ) VALUES (
-              ?, ?, ?, ?, ?
+              ?, ?, ?, ?, ?, ?, ?
             )
         """
 
-        # Execute Statement
+        # Build Query
         inputs_1 = []
+
+        base_query_2a = '''
+            SELECT `check_in_id`
+            FROM `Inventory`.`Check-in_Log`
+            ORDER BY 
+                `check_in_id` DESC 
+            LIMIT 1
+        '''
+        cursor.execute(base_query_2a)
+        result = cursor.fetchone()
+        if not result:
+            result = [0]
+        check_in_id = result[0] + 1
+        inputs_1.append(check_in_id)
+
         inputs_1.append(inv_id)
+
         inputs_1.append(form_data["amount"])
 
         session_token = request.cookies.get('session')
@@ -304,27 +324,26 @@ def checkin():
 
         inputs_1.append(form_data["current_status"])
 
+        inputs_1.append(json.dumps({
+            "_id": check_in_id,
+            "files": doc,
+            "status_history": [
+                {
+                    "status": form_data["current_status"],
+                    "date": str(datetime.datetime.utcnow())
+                }
+            ]
+        }))
+
         # Execute Statement
-        cursor.execute(base_query_1, tuple(inputs_1))
-        result = cursor.fetchone()
-
-        check_in_id = result[0]
-
-        if not check_in_id:
-            checkin_insert_fail = FlashMessage(
-                message="Failed to insert record in Checkin Log.",
-                message_type=MessageType.DANGER
-            )
-            custom_response.insert_flash_message(checkin_insert_fail)
-            mariadb_connection.rollback()
-            return jsonify(custom_response.to_json()), 500
+        cursor.execute(base_query_2b, tuple(inputs_1))
 
         # Update checkin record with documents
-        if doc:
-            base_query_3 = '''
-            UPDATE 
-                JSON_SET()
-            '''
+        # if doc:
+        #     base_query_3 = '''
+        #     UPDATE 
+        #         JSON_SET()
+        #     '''
 
         # Update Inventory
         # update_inventory(mariadb_connection, form_data, custom_response)
@@ -335,11 +354,42 @@ def checkin():
         custom_response.insert_flash_message(message)
         mariadb_connection.commit()
         return jsonify(custom_response.to_json()), 200
-    
+
     except Exception:
         error = error_message()
         custom_response.insert_flash_message(error)
         return jsonify(custom_response.to_json()), 500
+
+
+def get_component_type(mariadb_connection, form_data, custom_response):
+    try:
+
+        # Build Insert Statement
+        base_query = """
+        SELECT
+            `component_type`
+        FROM 
+            `Inventory`.`Components`
+        WHERE
+            `component_id` = ?
+        LIMIT 1
+        """
+
+        inputs = []
+        inputs.append(form_data["component_id"])
+
+        # Execute Statement
+        cursor = mariadb_connection.cursor()
+        cursor.execute(base_query, tuple(inputs))
+        component_type = cursor.fetchone()[0]
+
+        # Return New Component_id
+        return component_type, custom_response
+
+    except Exception:
+        error = error_message()
+        custom_response.insert_flash_message(error)
+        return None, custom_response
 
 
 def post_component_to_inventory(mariadb_connection, form_data, custom_response):

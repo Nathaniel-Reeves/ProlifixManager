@@ -902,17 +902,8 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Check-in_Log` (
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `date_modified` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
   `po_detail_id` INT DEFAULT NULL,
-  `doc` json DEFAULT (CONCAT('{
-    "_id":"',`check_in_id`,'",
-    "files":[],
-    "status_history":[
-        {
-            "status": "', `current_status`, '",
-            "date": "', `date_entered` ,'"
-        }
-      ]
-   }')),
-  `current_status` ENUM('Ordered', 'Shipping Soon', 'In Transit', 'Arrived', 'Received', 'Quarantined') DEFAULT 'Ordered',
+  `doc` JSON,
+  `current_status` ENUM('Ordered', 'In Transit', 'Received', 'Quarantined', 'Canceled', 'Missing') DEFAULT 'Ordered',
   PRIMARY KEY (`check_in_id`),
   FOREIGN KEY (`inv_id`) REFERENCES `Inventory`.`Inventory`(`inv_id`),
   FOREIGN KEY (`user_id`) REFERENCES `Organizations`.`Users`(`user_id`),
