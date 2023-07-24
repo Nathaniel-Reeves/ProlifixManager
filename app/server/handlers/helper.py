@@ -51,12 +51,19 @@ def save_files(doc, file_objects, custom_response, location=""):
                 else:
                     # Create Directory if it doesn't already exist
                     if location != "":
-                        pathlib.Path(
+                        print("Creating Directory")
+                        directory = os.path.join(
                             app.config['UPLOAD_FOLDER'], location
+                        )
+                        print(directory)
+                        pathlib.Path(
+                            directory
                         ).mkdir(exist_ok=True, parents=True)
 
                     # Save file to directory
-                    filename = secure_filename(file_detail["filename"])
+                    filename = secure_filename(
+                                    file_detail["filename"]
+                                )
                     file_objects[file_detail["id"]].save(
                         os.path.join(
                             app.config['UPLOAD_FOLDER'], location, filename
@@ -76,3 +83,50 @@ def save_files(doc, file_objects, custom_response, location=""):
             error = error_message()
             custom_response.insert_flash_message(error)
             return doc, custom_response
+
+def validate_float_in_dict(dict, field, min=0, max=999999, equal_to=True):
+    '''
+    Validates that the value of a field in a dictionary
+    is a float.
+    '''
+    if field not in dict:
+        return False
+    try:
+        float(dict[field])
+    except ValueError:
+        return False
+    if equal_to:
+        if float(dict[field]) <= min:
+            return False
+        if float(dict[field]) >= max:
+            return False
+        return True
+    if float(dict[field]) < min:
+        return False
+    if float(dict[field]) > max:
+        return False
+    return True
+
+
+def validate_int_in_dict(dict, field, min=0, max=999999, equal_to=True):
+    '''
+    Validates that the value of a field in a dictionary
+    is a int.
+    '''
+    if field not in dict:
+        return False
+    try:
+        int(dict[field])
+    except ValueError:
+        return False
+    if equal_to:
+        if int(dict[field]) <= min:
+            return False
+        if int(dict[field]) >= max:
+            return False
+        return True
+    if int(dict[field]) < min:
+        return False
+    if int(dict[field]) > max:
+        return False
+    return True

@@ -810,14 +810,14 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Components` (
         }
     }
 }')),
-  `certified_usda_organic` BOOL,
-  `certified_halal` BOOL,
-  `certified_kosher` BOOL,
-  `certified_gluten_free` BOOL,
-  `certified_national_sanitation_foundation` BOOL,
-  `certified_us_pharmacopeia` BOOL,
-  `certified_non_gmo` BOOL,
-  `certified_vegan` BOOL,
+  `certified_usda_organic` BOOL DEFAULT FALSE,
+  `certified_halal` BOOL DEFAULT FALSE,
+  `certified_kosher` BOOL DEFAULT FALSE,
+  `certified_gluten_free` BOOL DEFAULT FALSE,
+  `certified_national_sanitation_foundation` BOOL DEFAULT FALSE,
+  `certified_us_pharmacopeia` BOOL DEFAULT FALSE,
+  `certified_non_gmo` BOOL DEFAULT FALSE,
+  `certified_vegan` BOOL DEFAULT FALSE,
   PRIMARY KEY (`component_id`),
   FOREIGN KEY (`owner_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
@@ -839,10 +839,12 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Inventory` (
   `theoretical_inventory` DECIMAL(16,4),
   `recent_cycle_count_id` INT,
   `brand_id` INT,
+  `owner_id` INT,
   PRIMARY KEY (`inv_id`),
   FOREIGN KEY (`item_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
   FOREIGN KEY (`item_id`) REFERENCES `Inventory`.`Components`(`component_id`),
-  FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
+  FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`),
+  FOREIGN KEY (`owner_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
 CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Orders` (
@@ -897,13 +899,17 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Cycle_Counts_Log` (
 CREATE TABLE IF NOT EXISTS `Inventory`.`Check-in_Log` (
   `check_in_id` INT,
   `inv_id` INT,
+  `supplier_item_id` VARCHAR(255),
+  `lot_number` VARCHAR(255),
+  `batch_number` VARCHAR(255),
   `amount` DECIMAL(16,4),
   `user_id` INT,
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `date_modified` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
   `po_detail_id` INT DEFAULT NULL,
   `doc` JSON,
-  `current_status` ENUM('Ordered', 'In Transit', 'Received', 'Quarantined', 'Canceled', 'Missing') DEFAULT 'Ordered',
+  `current_status` ENUM('Ordered', 'In Transit', 'Received', 'Quarantined', 'Canceled', 'Missing', 'Released from Q', 'Found') DEFAULT 'Ordered',
+  `current_status_notes` VARCHAR(255) DEFAULT NULL,
   PRIMARY KEY (`check_in_id`),
   FOREIGN KEY (`inv_id`) REFERENCES `Inventory`.`Inventory`(`inv_id`),
   FOREIGN KEY (`user_id`) REFERENCES `Organizations`.`Users`(`user_id`),

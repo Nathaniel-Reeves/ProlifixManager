@@ -1,3 +1,4 @@
 *.pyc
 app/client/node_modules/*
-app/db/MariaDB_data/*
+app/db/mariadb_data/*
+app/db/files/*
