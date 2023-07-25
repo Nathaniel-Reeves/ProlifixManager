@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `Organizations`.`Organizations` (
   PRIMARY KEY (`organization_id`)
 );
 
-CREATE TABLE `Organizations`.`Organization_Names` (
+CREATE TABLE IF NOT EXISTS `Organizations`.`Organization_Names` (
   `name_id` INT,
   `organization_id` INT,
   `organization_name` VARCHAR(200) NOT NULL,
@@ -908,7 +908,7 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Check-in_Log` (
   `date_modified` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
   `po_detail_id` INT DEFAULT NULL,
   `doc` JSON,
-  `current_status` ENUM('Ordered', 'In Transit', 'Received', 'Quarantined', 'Canceled', 'Missing', 'Released from Q', 'Found') DEFAULT 'Ordered',
+  `current_status` ENUM('Ordered', 'In Transit', 'Received', 'Quarantined', 'Canceled', 'Shipment Missing', 'Order Revised', 'Released from Quarantine', 'Found') DEFAULT 'Ordered',
   `current_status_notes` VARCHAR(255) DEFAULT NULL,
   PRIMARY KEY (`check_in_id`),
   FOREIGN KEY (`inv_id`) REFERENCES `Inventory`.`Inventory`(`inv_id`),
@@ -1016,6 +1016,29 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Lot_Numbers` (
   PRIMARY KEY (`prefix`, `year`, `month`, `sec_number`, `suffix`),
   FOREIGN KEY (`so_detail_id`) REFERENCES `Orders`.`Sale_Order_Detail`(`so_detail_id`),
   FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`)
+);
+
+
+CREATE TABLE IF NOT EXISTS `Inventory`.`Check-out_Log` (
+  `check_out_id` INT,
+  `prefix` VARCHAR(15),
+  `year` TINYINT,
+  `month` TINYINT,
+  `sec_number` SMALLINT,
+  `suffix` VARCHAR(15),
+  `inv_id` INT,
+  `lot_number` VARCHAR(255),
+  `amount` DECIMAL(16,4),
+  `user_id` INT,
+  `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `date_modified` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
+  `so_detail_id` INT DEFAULT NULL,
+  `doc` JSON,
+  `notes` VARCHAR(255) DEFAULT NULL,
+  PRIMARY KEY (`check_out_id`),
+  FOREIGN KEY (`inv_id`) REFERENCES `Inventory`.`Inventory`(`inv_id`),
+  FOREIGN KEY (`user_id`) REFERENCES `Organizations`.`Users`(`user_id`),
+  FOREIGN KEY (`prefix`, `year`, `month`, `sec_number`, `suffix`) REFERENCES `Orders`.`Lot_Numbers`(`prefix`, `year`, `month`, `sec_number`, `suffix`)
 );
 
 CREATE TABLE IF NOT EXISTS `Products`.`Components` (

@@ -288,13 +288,127 @@ def checkin():
             password=app.config['DB_PASSWORD']
         )
 
+        # Update Checkin Log
+        status, custom_response = update_checkin_log(mariadb_connection,
+                                                     form_data, custom_response)
+
         # Update Inventory Records
         status, custom_response = update_inventory(mariadb_connection,
                          form_data, custom_response)
 
+        if not status:
+            mariadb_connection.rollback()
+            return jsonify(custom_response.to_json()), 500
+        else:
+            mariadb_connection.commit()
+            return jsonify(custom_response.to_json()), 200
+
+    except Exception:
+        if 'mariadb_connection' in locals():
+            mariadb_connection.rollback()
+            mariadb_connection.close()
+        error = error_message()
+        custom_response.insert_flash_message(error)
+        return jsonify(custom_response.to_json()), 500
+
+    finally:
+        if 'mariadb_connection' in locals():
+            mariadb_connection.close()
+
+@bp.route('/checkout', methods=['POST'])
+@check_authenticated(authentication_required=True)
+def checkout():
+    """
+    """
+
+    try:
+        custom_response = CustomResponse()  # create a custom response object
+
+        # Get Data
+        form_data = dict(request.form)
+
+        # Validate form data
+        valid = True
+        if not validate_float_in_dict(form_data, 'amount'):
+            custom_response.insert_flash_message(
+                FlashMessage(
+                    message="Invalid amount",
+                    message_type=MessageType.DANGER
+                )
+            )
+            valid = False
+
+        if not validate_int_in_dict(form_data, 'component_id'):
+            custom_response.insert_flash_message(
+                FlashMessage(
+                    message="Invalid component_id",
+                    message_type=MessageType.DANGER
+                )
+            )
+            valid = False
+
+        if not validate_int_in_dict(form_data, 'check_in_id', equal_to=False):
+            custom_response.insert_flash_message(
+                FlashMessage(
+                    message="Invalid check_in_id",
+                    message_type=MessageType.DANGER
+                )
+            )
+            valid = False
+
+        if not validate_int_in_dict(form_data, 'owner_id', equal_to=False):
+            custom_response.insert_flash_message(
+                FlashMessage(
+                    message="Invalid owner_id",
+                    message_type=MessageType.DANGER
+                )
+            )
+            valid = False
+
+        if not validate_int_in_dict(form_data, 'brand_id', equal_to=False):
+            custom_response.insert_flash_message(
+                FlashMessage(
+                    message="Invalid brand_id",
+                    message_type=MessageType.DANGER
+                )
+            )
+            valid = False
+
+        if "current_status" not in form_data.keys() or \
+            form_data["current_status"] not in [
+            'Ordered',
+            'In Transit',
+            'Received',
+            'Released from Quarantine',
+            'Found'
+        ]:
+            custom_response.insert_flash_message(
+                FlashMessage(
+                    message="Invalid checkin status",
+                    message_type=MessageType.DANGER
+                )
+            )
+            valid = False
+
+        if not valid:
+            return jsonify(custom_response.to_json()), 400
+
+        # Test DB Connection
+        mariadb_connection = mariadb.connect(
+            host=app.config['DB_HOSTNAME'],
+            port=int(app.config['DB_PORT']),
+            user=app.config['DB_USER'],
+            password=app.config['DB_PASSWORD']
+        )
+
         # Update Checkin Log
-        status, custom_response = update_checkin_log(mariadb_connection,
-                                             form_data, custom_response)
+        status, inv_id, custom_response = update_checkin_log(mariadb_connection,
+                                                     form_data, custom_response)
+
+        # Update Inventory Records
+        status, custom_response = update_inventory(mariadb_connection,
+                                                   form_data, custom_response)
+
 
         if not status:
             mariadb_connection.rollback()
