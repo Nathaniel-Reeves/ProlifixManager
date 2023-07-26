@@ -90,14 +90,14 @@ CREATE TABLE IF NOT EXISTS `Products`.`Product_Master` (
   `exp_type` ENUM('Best By', 'Exp'),
   `exp_use_oldest_ingredient` BOOL,
   `default_formula_id` INT DEFAULT NULL,
-  `certified_usda_organic` BOOL,
-  `certified_halal` BOOL,
-  `certified_kosher` BOOL,
-  `certified_gluten_free` BOOL,
-  `certified_national_sanitation_foundation` BOOL,
-  `certified_us_pharmacopeia` BOOL,
-  `certified_non_gmo` BOOL,
-  `certified_vegan` BOOL,
+  `certified_usda_organic` BOOL DEFAULT FALSE,
+  `certified_halal` BOOL DEFAULT FALSE,
+  `certified_kosher` BOOL DEFAULT FALSE,
+  `certified_gluten_free` BOOL DEFAULT FALSE,
+  `certified_national_sanitation_foundation` BOOL DEFAULT FALSE,
+  `certified_us_pharmacopeia` BOOL DEFAULT FALSE,
+  `certified_non_gmo` BOOL DEFAULT FALSE,
+  `certified_vegan` BOOL DEFAULT FALSE,
   `doc` json DEFAULT (CONCAT('{
     "_id":',`product_id`,',
     "lab_specs": {
@@ -455,10 +455,35 @@ CREATE TABLE IF NOT EXISTS `Products`.`Product_Master` (
 
 CREATE TABLE IF NOT EXISTS `Inventory`.`Components` (
   `component_id` INT,
-  `component_type` ENUM('powder', 'liquid', 'container', 'pouch', 'shrink_band', 'lid', 'label', 'capsule', 'misc', 'scoop', 'desiccant', 'box', 'carton', 'packaging_material'),
-  `units` ENUM("grams", "kilograms", "units", "boxes", "pallets", "liters", "rolls"),
+  `component_type` ENUM(
+    'powder', 
+    'liquid', 
+    'container', 
+    'pouch', 
+    'shrink_band', 
+    'lid', 
+    'label', 
+    'capsule', 
+    'misc', 
+    'scoop', 
+    'desiccant', 
+    'box', 
+    'carton', 
+    'packaging_material'
+  ),
+  `units` ENUM(
+    "grams", 
+    "kilograms", 
+    "units", 
+    "boxes", 
+    "pallets", 
+    "liters", 
+    "rolls", 
+    "totes", 
+    "barrels", 
+    "pounds"
+  ),
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `owner_id` INT,
   `doc` json DEFAULT (CONCAT('{
     "_id":',`component_id`,',
     "lab_specs": {
@@ -809,7 +834,7 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Components` (
             "file_pointer": ""
         }
     }
-}')),
+  }')),
   `certified_usda_organic` BOOL DEFAULT FALSE,
   `certified_halal` BOOL DEFAULT FALSE,
   `certified_kosher` BOOL DEFAULT FALSE,
@@ -818,8 +843,7 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Components` (
   `certified_us_pharmacopeia` BOOL DEFAULT FALSE,
   `certified_non_gmo` BOOL DEFAULT FALSE,
   `certified_vegan` BOOL DEFAULT FALSE,
-  PRIMARY KEY (`component_id`),
-  FOREIGN KEY (`owner_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
+  PRIMARY KEY (`component_id`)
 );
 
 CREATE TABLE IF NOT EXISTS `Inventory`.`Component_Names` (
@@ -835,12 +859,14 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Component_Names` (
 CREATE TABLE IF NOT EXISTS `Inventory`.`Inventory` (
   `inv_id` INT AUTO_INCREMENT,
   `item_id` INT,
-  `actual_inventory` DECIMAL(16,4) UNSIGNED,
+  `owner_id` INT,
+  `is_component` BOOL,
+  `is_product` BOOL,
+  `actual_inventory` DECIMAL(16,4),
   `theoretical_inventory` DECIMAL(16,4),
   `recent_cycle_count_id` INT,
   `brand_id` INT,
-  `owner_id` INT,
-  PRIMARY KEY (`inv_id`),
+  PRIMARY KEY (`inv_id`, `owner_id`, `item_id`),
   FOREIGN KEY (`item_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
   FOREIGN KEY (`item_id`) REFERENCES `Inventory`.`Components`(`component_id`),
   FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`),
@@ -899,6 +925,10 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Cycle_Counts_Log` (
 CREATE TABLE IF NOT EXISTS `Inventory`.`Check-in_Log` (
   `check_in_id` INT,
   `inv_id` INT,
+  `owner_id` INT,
+  `item_id` INT,
+  `is_product` BOOL,
+  `is_component` BOOL,
   `supplier_item_id` VARCHAR(255),
   `lot_number` VARCHAR(255),
   `batch_number` VARCHAR(255),
@@ -908,10 +938,13 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Check-in_Log` (
   `date_modified` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
   `po_detail_id` INT,
   `doc` JSON,
-  `current_status` ENUM('Ordered', 'In Transit', 'Received', 'Quarantined', 'Canceled', 'Shipment Missing', 'Revised Order Decreased', 'Revised Order Increased', 'Released from Quarantine', 'Found') DEFAULT 'Ordered',
+  `current_status` ENUM('Ordered', 'In Transit', 'Received', 'Quarantined', 'Canceled', 'Shipment Missing', 'Revised Order Decreased', 'Revised Order Increased', 'Released from Quarantine', 'Found', 'Produced'),
   `current_status_notes` VARCHAR(255),
-  PRIMARY KEY (`check_in_id`),
+  PRIMARY KEY (`check_in_id`, `inv_id`, `owner_id`, `item_id`),
   FOREIGN KEY (`inv_id`) REFERENCES `Inventory`.`Inventory`(`inv_id`),
+  FOREIGN KEY (`owner_id`) REFERENCES `Inventory`.`Inventory`(`owner_id`),
+  FOREIGN KEY (`item_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
+  FOREIGN KEY (`item_id`) REFERENCES `Inventory`.`Components`(`component_id`),
   FOREIGN KEY (`user_id`) REFERENCES `Organizations`.`Users`(`user_id`),
   FOREIGN KEY (`po_detail_id`) REFERENCES `Orders`.`Purchase_Order_Detail` (`po_detail_id`)
 );
@@ -1017,7 +1050,6 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Lot_Numbers` (
   FOREIGN KEY (`so_detail_id`) REFERENCES `Orders`.`Sale_Order_Detail`(`so_detail_id`),
   FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`)
 );
-
 
 CREATE TABLE IF NOT EXISTS `Inventory`.`Check-out_Log` (
   `check_out_id` INT,

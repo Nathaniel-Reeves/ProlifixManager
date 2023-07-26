@@ -62,11 +62,12 @@ def checkin():
             )
             valid = False
 
-        if not validate_int_in_dict(form_data, 'component_id'):
+        if not validate_int_in_dict(form_data, 'component_id') or not validate_int_in_dict(form_data, 'product_id'):
             custom_response.insert_form_message(
                 form_id=1,
                 message=Message(
-                    message="Invalid component_id",
+                    message="Invalid item_id",
+                    message_detail="Item_id must be an int with the key of product_id or component_id",
                     message_type=MessageType.DANGER
                 )
             )
@@ -98,7 +99,8 @@ def checkin():
                 'Ordered',
                 'In Transit',
                 'Received',
-                'Found'
+                'Found',
+                'Produced'
             ]:
                 custom_response.insert_form_message(
                     form_id=4,
@@ -123,10 +125,12 @@ def checkin():
 
             if "current_status" not in form_data.keys() or \
                 form_data["current_status"] not in [
-                'Order Revised',
+                'Revised Order Increased',
+                'Revised Order Decreased',
                 'In Transit',
                 'Received',
-                'Received',
+                'Found',
+                'Produced',
                 'Missing Shipment',
                 'Canceled',
                 'Quarantined',
@@ -144,13 +148,25 @@ def checkin():
         if not valid:
             return jsonify(custom_response.to_json()), 400
 
-        # Test DB Connection
-        mariadb_connection = mariadb.connect(
-            host=app.config['DB_HOSTNAME'],
-            port=int(app.config['DB_PORT']),
-            user=app.config['DB_USER'],
-            password=app.config['DB_PASSWORD']
-        )
+        try:
+            # Test DB Connection
+            mariadb_connection = mariadb.connect(
+                host=app.config['DB_HOSTNAME'],
+                port=int(app.config['DB_PORT']),
+                user=app.config['DB_USER'],
+                password=app.config['DB_PASSWORD']
+            )
+
+        except mariadb.Error as e:
+            print(f"Error connecting to the database: {e}")
+            custom_response.insert_flash_message(
+                FlashMessage(
+                    message="Failed to connect to MariaDB",
+                    message_type=MessageType.DANGER
+                )
+            )
+            return jsonify(custom_response.to_json()), 500
+
         mariadb_connection.autocommit = False
 
         # Get Inventory Id, Create Inventory Id if None exists
@@ -282,7 +298,7 @@ def checkout():
                 valid = False
 
         if not valid:
-            return jsonify(custom_response.to_json()), 400
+            return None, custom_response
 
         # Test DB Connection
         mariadb_connection = mariadb.connect(
@@ -315,7 +331,6 @@ def checkout():
     except Exception:
         if 'mariadb_connection' in locals():
             mariadb_connection.rollback()
-            mariadb_connection.close()
         error = error_message()
         custom_response.insert_flash_message(error)
         return jsonify(custom_response.to_json()), 500
@@ -327,6 +342,7 @@ def checkout():
 def handle_check_in_log(mariadb_connection, inv_id, request, custom_response):
 
     try:
+
         cursor = mariadb_connection.cursor()
         form_data = dict(request.form)
 
@@ -343,6 +359,7 @@ def handle_check_in_log(mariadb_connection, inv_id, request, custom_response):
             cursor.execute(base_query_1, (form_data["check_in_id"],))
             result = cursor.fetchone()
 
+
             if not result:
                 custom_response.insert_flash_message(
                     FlashMessage(
@@ -350,6 +367,7 @@ def handle_check_in_log(mariadb_connection, inv_id, request, custom_response):
                         message_type=MessageType.DANGER
                     )
                 )
+
                 return None, custom_response
 
             check_in_id = form_data["check_in_id"]
@@ -357,6 +375,7 @@ def handle_check_in_log(mariadb_connection, inv_id, request, custom_response):
             updated_check_in_id, custom_response = update_check_in_log(
                 mariadb_connection, check_in_id,
                 inv_id, request, custom_response)
+
             if not updated_check_in_id:
                 return None, custom_response
             else:
@@ -380,6 +399,7 @@ def handle_check_in_log(mariadb_connection, inv_id, request, custom_response):
             inserted_check_in_id, custom_response = insert_check_in_log(
                 mariadb_connection, check_in_id,
                 inv_id, request, custom_response)
+
             if not inserted_check_in_id:
                 return None, custom_response
             else:
@@ -400,17 +420,16 @@ def get_inventory_id(mariadb_connection, request, custom_response):
         # Locate the component in the Inventory Table
         base_query_1 = """
             SELECT 
-                a.`inv_id`,
-                a.`item_id`
-            FROM `Inventory`.`Inventory` a
-            LEFT JOIN `Inventory`.`Components` b ON
-                a.`item_id` = b.`component_id`
-            WHERE b.`component_id` = ?
+                `inv_id`,
+                `item_id`,
+                `owner_id`
+            FROM `Inventory`.`Inventory`
+            WHERE `item_id` = ? AND `owner_id` = ?
         """
 
         # Execute Query
         cursor = mariadb_connection.cursor()
-        cursor.execute(base_query_1, (form_data['component_id'],))
+        cursor.execute(base_query_1, (form_data['component_id'], form_data['owner_id']))
         result = cursor.fetchone()
 
         # If component not found in inventory table, create record
@@ -438,27 +457,67 @@ def post_component_to_inventory(mariadb_connection, request, custom_response):
         base_query = """
         INSERT INTO `Inventory`.`Inventory` (
             `item_id`,
+            `owner_id`,
+            `is_component`,
+            `is_product`,
             `actual_inventory`,
             `theoretical_inventory`,
             `recent_cycle_count_id`,
-            `brand_id`,
-            `owner_id`
+            `brand_id`
         ) VALUES (
-            ?, ?, ?, ?, ?, ?
+            ?, ?, ?, ?, ?, ?, ?, ?
         )
         """
 
         inputs = []
-        inputs.append(form_data["component_id"])
-        inputs.append(0)
-        inputs.append(0)
-        inputs.append(None)
-        if "brand_id" in form_data.keys():
-            inputs.append(form_data["brand_id"])
+
+        # Item_id
+        if "component_id" in form_data.keys():
+            inputs.append(form_data["component_id"])
+        elif "product_id" in form_data.keys():
+            inputs.append(form_data["product_id"])
         else:
-            inputs.append(None)
+            custom_response.insert_form_message(
+                form_id=0,
+                message=Message(
+                    message="Invalid item_id Key",
+                    message_detail="Key must be component_id or product_id",
+                    message_type=MessageType.DANGER
+                )
+            )
+            return None, custom_response
+
+        # Owner_id
         if "owner_id" in form_data.keys():
             inputs.append(form_data["owner_id"])
+        else:
+            custom_response.insert_form_message(
+                form_id=1,
+                message=Message(
+                    message="Invalid owner_id",
+                    message_type=MessageType.DANGER
+                )
+            )
+            return None, custom_response
+
+        # is_component & is_product
+        if "component_id" in form_data.keys():
+            inputs.append(True)
+            inputs.append(False)
+        elif "product_id" in form_data.keys():
+            inputs.append(False)
+            inputs.append(True)
+        else:
+            inputs.append(False)
+            inputs.append(False)
+
+        inputs.append(0)  # Actual Inventory
+        inputs.append(0)  # Theoretical Inventory
+        inputs.append(None)  # recent_cycle_count_id
+
+        # Brand_id
+        if "brand_id" in form_data.keys():
+            inputs.append(form_data["brand_id"])
         else:
             inputs.append(None)
 
@@ -526,7 +585,8 @@ def insert_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
         component_type, custom_response = get_component_type(
             mariadb_connection,
             request,
-            custom_response)
+            custom_response
+        )
 
         # If the Component does not exist in the components table,
         # Fail the checkin and report to the user.
@@ -563,6 +623,10 @@ def insert_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
             INSERT INTO `Inventory`.`Check-in_Log` (
                 `check_in_id`,
                 `inv_id`,
+                `owner_id`,
+                `item_id`,
+                `is_product`,
+                `is_component`,
                 `supplier_item_id`,
                 `lot_number`,
                 `batch_number`,
@@ -573,7 +637,7 @@ def insert_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
                 `current_status_notes`,
                 `doc`
             ) VALUES (
-                ?,?,?,?,?,?,?,?,?,?,?
+                ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
             )
         '''
 
@@ -581,19 +645,62 @@ def insert_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
         inputs = []
         inputs.append(check_in_id)
         inputs.append(inv_id)
+
+        # owner_id
+        if 'owner_id' in form_data.keys():
+            inputs.append(form_data['owner_id'])
+        else:
+            custom_response.insert_form_message(
+                form_id=1,
+                message=Message(
+                    message="Invalid owner_id",
+                    message_type=MessageType.DANGER
+                )
+            )
+            return None, custom_response
+
+        # item_id
         if 'component_id' in form_data.keys():
             inputs.append(form_data["component_id"])
+        elif 'product_id' in form_data.keys():
+            inputs.append(form_data["product_id"])
         else:
-            inputs.append(None)
+            custom_response.insert_form_message(
+                form_id=0,
+                message=Message(
+                    message="Invalid item_id Key",
+                    message_detail="Key must be component_id or product_id",
+                    message_type=MessageType.DANGER
+                )
+            )
+            return None, custom_response
+
+        # is_component & is_product
+        if "component_id" in form_data.keys():
+            inputs.append(True)
+            inputs.append(False)
+        elif "product_id" in form_data.keys():
+            inputs.append(False)
+            inputs.append(True)
+        else:
+            inputs.append(False)
+            inputs.append(False)
+
+        # lot_number
         if 'lot_number' in form_data.keys():
             inputs.append(form_data["lot_number"])
         else:
             inputs.append(None)
+
+        # batch_number
         if 'batch_number' in form_data.keys():
             inputs.append(form_data["batch_number"])
         else:
             inputs.append(None)
-        inputs.append(form_data["amount"])
+
+        inputs.append(form_data["amount"]) # amount
+
+        # user_id
         session_token = request.cookies.get('session')
         redis_connection = Redis(
             host=app.config['REDIS_HOST'],
@@ -601,16 +708,23 @@ def insert_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
             password=app.config['REDIS_PASSWORD'])
         session_data = json.loads(redis_connection.get(session_token))
         inputs.append(session_data["user_id"])
+
+        # po_detail_id
         if 'po_detail_id' in form_data.keys():
             inputs.append(form_data["po_detail_id"])
         else:
             inputs.append(None)
-        inputs.append(form_data["current_status"])
+
+        inputs.append(form_data["current_status"]) # current status
+
+        # curent_status_notes
         if "current_status_notes" in form_data.keys():
             current_status_notes = form_data["current_status_notes"]
         else:
             current_status_notes = ""
         inputs.append(current_status_notes)
+
+        # doc
         inputs.append(json.dumps({
             "_id": check_in_id,
             "files": doc,
@@ -621,7 +735,10 @@ def insert_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
                         "%d-%m-%y %H-%M-%S"
                     ),
                     "status_notes": current_status_notes,
-                    "amount": form_data["amount"]
+                    "actual_before_change": 0,
+                    "theoretic_before_change": 0,
+                    "amount_changing": form_data["amount"],
+                    "previous_status": "NULL"
                 }
             ]
         }))
@@ -629,7 +746,7 @@ def insert_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
         # Execute Statement
         cursor.execute(base_query_3, tuple(inputs))
 
-        result = cursor.execute("SELECT `inv_id` FROM `Inventory`.`Inventory` WHERE `inv_id` =?;", (inv_id,))
+        result = cursor.execute("SELECT `inv_id` FROM `Inventory`.`Inventory` WHERE `inv_id` = ?;", (inv_id,))
         result = cursor.fetchone()
 
         if not result:
@@ -658,13 +775,15 @@ def insert_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
             "Ordered",
             "In Transit"
         ]:
-            inv_changed, custom_response = add_theoretic_inventory(mariadb_connection, inv_id, request, custom_response)
+            inv_changed, custom_response = add_theoretic_inventory(
+                mariadb_connection, inv_id, request, custom_response)
 
         if form_data["current_status"] in [
                 "Received",
                 "Found"
         ]:
-            inv_changed, custom_response = add_actual_inventory(mariadb_connection, inv_id, request, form_data)
+            inv_changed, custom_response = add_actual_inventory(
+                mariadb_connection, inv_id, request, custom_response)
 
         if form_data["current_status"] in [
                 "Received", 
@@ -717,18 +836,57 @@ def update_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
         base_query = '''
             SELECT
                 `check_in_id`,
+                `inv_id`,
+                `owner_id`,
+                `item_id`,
                 `current_status`
             FROM
                 `Inventory`.`Check-in_Log`
             WHERE
-                `check_in_id` = ?
+                `check_in_id` = ? AND 
+                `inv_id` = ? AND 
+                `owner_id` = ? AND 
+                `item_id` = ?
             LIMIT 1
         '''
 
-        cursor.execute(base_query, (check_in_id,))
+        inputs = []
+        inputs.append(check_in_id)
+        inputs.append(inv_id)
+
+        # owner_id
+        if 'owner_id' in form_data.keys():
+            inputs.append(form_data['owner_id'])
+        else:
+            custom_response.insert_form_message(
+                form_id=1,
+                message=Message(
+                    message="Invalid owner_id",
+                    message_type=MessageType.DANGER
+                )
+            )
+            return None, custom_response
+
+        # item_id
+        if 'component_id' in form_data.keys():
+            inputs.append(form_data["component_id"])
+        elif 'product_id' in form_data.keys():
+            inputs.append(form_data["product_id"])
+        else:
+            custom_response.insert_form_message(
+                form_id=0,
+                message=Message(
+                    message="Invalid item_id Key",
+                    message_detail="Key must be component_id or product_id",
+                    message_type=MessageType.DANGER
+                )
+            )
+            return None, custom_response
+
+        cursor.execute(base_query, tuple(inputs))
         result = cursor.fetchone()
         if result:
-            previous_status = result[1]
+            previous_status = result[4]
         else:
             custom_response.insert_flash_message(
                 FlashMessage(
@@ -740,6 +898,14 @@ def update_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
             return None, custom_response
         current_status = form_data["current_status"]
 
+        # Get Initial inventory before changes
+        inventory_row, custom_response = get_inventory_single_item(
+            mariadb_connection, inv_id, custom_response
+        )
+
+        if not inventory_row:
+            return None, custom_response
+
         ### Compare Previous and Current Status ###
         invalid_status_update_message = FlashMessage(
             message="Checkin status did not change.",
@@ -747,6 +913,9 @@ def update_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
             "', Current status: '" + current_status + "' is an invalid status update.",
             message_type=MessageType.DANGER
         )
+
+        inv_changed = False
+        required_inv_change = False
 
         if previous_status == "Ordered":
             if current_status not in [
@@ -771,14 +940,18 @@ def update_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
             ]:
                 inv_changed, custom_response = remove_theoretic_inventory(
                     mariadb_connection, inv_id, request, custom_response)
+                required_inv_change = True
             if current_status == "Revised Order Increased":
                 inv_changed, custom_response = add_theoretic_inventory(
                     mariadb_connection, inv_id, request, custom_response)
+                required_inv_change = True
             if current_status == "Received":
                 inv_changed, custom_response = add_actual_inventory(
                     mariadb_connection, inv_id, request, custom_response)
+                required_inv_change = True
 
-        elif previous_status == "Revised":
+        elif previous_status == "Revised Order Increased" or \
+        previous_status == "Revised Order Decreased":
             if current_status not in [
                 "Received",
                 "Missing Shipment",
@@ -798,9 +971,11 @@ def update_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
             ]:
                 inv_changed, custom_response = remove_theoretic_inventory(
                     mariadb_connection, inv_id, request, custom_response)
+                required_inv_change = True
             if current_status == "Received":
                 inv_changed, custom_response = add_actual_inventory(
                     mariadb_connection, inv_id, request, custom_response)
+                required_inv_change = True
 
         elif previous_status == "In Transit":
             if current_status not in [
@@ -824,8 +999,10 @@ def update_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
             if current_status == "Received":
                 inv_changed, custom_response = add_actual_inventory(
                     mariadb_connection, inv_id, request, custom_response)
+            required_inv_change = True
 
         elif previous_status == "Received":
+            required_inv_change = True
             if current_status == "Quarantined":
                 inv_changed, custom_response = remove_actual_inventory(
                     mariadb_connection, inv_id, request, custom_response)
@@ -853,8 +1030,10 @@ def update_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
             if current_status == "Received":
                 inv_changed, custom_response = add_actual_inventory(
                     mariadb_connection, inv_id, request, custom_response)
+            required_inv_change = True
 
-        elif previous_status == "Found":
+        elif previous_status == "Found" or previous_status == "Produced":
+            required_inv_change = True
             if current_status == "Quarantined":
                 inv_changed, custom_response = remove_actual_inventory(
                     mariadb_connection, inv_id, request, custom_response)
@@ -868,6 +1047,7 @@ def update_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
                 return None, custom_response
 
         elif previous_status == "Quarantined":
+            required_inv_change = True
             if current_status == "Released from Quarantine":
                 inv_changed, custom_response = add_actual_inventory(
                     mariadb_connection, inv_id, request, custom_response)
@@ -881,6 +1061,7 @@ def update_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
                 return None, custom_response
 
         elif previous_status == "Released from Quarantine":
+            required_inv_change = True
             if current_status == "Released from Quarantine":
                 inv_changed, custom_response = add_actual_inventory(
                     mariadb_connection, inv_id, request, custom_response)
@@ -905,14 +1086,23 @@ def update_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
             return None, custom_response
 
         if not inv_changed:
-            custom_response.insert_flash_message(
-                FlashMessage(
-                    message="No inventory changes were made.",
-                    message_detail="Updates to Inventory Failed. Contact IT Support to fix this issue.",
-                    message_type=MessageType.DANGER
+            if required_inv_change:
+                custom_response.insert_flash_message(
+                    FlashMessage(
+                        message="No inventory changes were made.",
+                        message_detail="Failed to make required inventory changes.",
+                        message_type=MessageType.DANGER
+                    )
                 )
-            )
-            return None, custom_response
+                return None, custom_response
+
+            else:
+                custom_response.insert_flash_message(
+                    FlashMessage(
+                        message="No inventory changes were made.",
+                        message_type=MessageType.INFO
+                    )
+                )
 
         # Get current doc from checkin log
         base_query_2 = '''
@@ -921,11 +1111,47 @@ def update_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
             FROM 
                 `Inventory`.`Check-in_Log`
             WHERE
-                `check_in_id` = ?
+                `check_in_id` = ? AND
+                `inv_id` = ? AND
+                `owner_id` = ? AND
+                `item_id` = ?
             LIMIT 1
         '''
 
-        cursor.execute(base_query_2, (check_in_id, ))
+        inputs = []
+        inputs.append(check_in_id)
+        inputs.append(inv_id)
+
+        # owner_id
+        if 'owner_id' in form_data.keys():
+            inputs.append(form_data['owner_id'])
+        else:
+            custom_response.insert_form_message(
+                form_id=1,
+                message=Message(
+                    message="Invalid owner_id",
+                    message_type=MessageType.DANGER
+                )
+            )
+            return None, custom_response
+
+        # item_id
+        if 'component_id' in form_data.keys():
+            inputs.append(form_data["component_id"])
+        elif 'product_id' in form_data.keys():
+            inputs.append(form_data["product_id"])
+        else:
+            custom_response.insert_form_message(
+                form_id=0,
+                message=Message(
+                    message="Invalid item_id Key",
+                    message_detail="Key must be component_id or product_id",
+                    message_type=MessageType.DANGER
+                )
+            )
+            return None, custom_response
+
+        cursor.execute(base_query_2, tuple(inputs))
         result = cursor.fetchone()
         if result:
             current_doc = json.loads(result[0])
@@ -968,12 +1194,12 @@ def update_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
         else:
             current_status_notes = ""
         current_doc["status_history"].append({
-            "status": form_data["current_status"],
-            "date": datetime.now(timezone.utc).strftime(
-                "%d-%m-%y %H-%M-%S"
-            ),
+            "current_status": current_status,
             "status_notes": current_status_notes,
-            "amount": form_data["amount"]
+            "actual_before_change": float(inventory_row[5]),
+            "theoretic_before_change": float(inventory_row[6]),
+            "amount_changing": form_data["amount"],
+            "previous_status": previous_status
         })
         new_doc = current_doc.copy()
         new_doc["files"] = new_doc_files
@@ -988,7 +1214,10 @@ def update_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
                 `current_status_notes` = ?,
                 `doc` = ?
             WHERE
-                `check_in_id` = ?
+                `check_in_id` = ? AND
+                `inv_id` = ? AND
+                `owner_id` = ? AND
+                `item_id` = ?
         '''
 
         # Gather Inputs
@@ -999,7 +1228,38 @@ def update_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
         else:
             inputs.append("")
         inputs.append(json.dumps(new_doc))
+
         inputs.append(check_in_id)
+        inputs.append(inv_id)
+
+        # owner_id
+        if 'owner_id' in form_data.keys():
+            inputs.append(form_data['owner_id'])
+        else:
+            custom_response.insert_form_message(
+                form_id=1,
+                message=Message(
+                    message="Invalid owner_id",
+                    message_type=MessageType.DANGER
+                )
+            )
+            return None, custom_response
+
+        # item_id
+        if 'component_id' in form_data.keys():
+            inputs.append(form_data["component_id"])
+        elif 'product_id' in form_data.keys():
+            inputs.append(form_data["product_id"])
+        else:
+            custom_response.insert_form_message(
+                form_id=0,
+                message=Message(
+                    message="Invalid item_id Key",
+                    message_detail="Key must be component_id or product_id",
+                    message_type=MessageType.DANGER
+                )
+            )
+            return None, custom_response
 
         # Execute Statement
         cursor.execute(base_query_3, tuple(inputs))
@@ -1042,21 +1302,46 @@ def add_actual_inventory(mariadb_connection, inv_id, request, custom_response):
             SET
                 `actual_inventory` = `actual_inventory` + ?
             WHERE
-                `inv_id` = ?
+                `inv_id` = ? AND `item_id` = ? AND `owner_id` = ?
         '''
         inputs = []
         inputs.append(float(request.form["amount"]))
         inputs.append(inv_id)
+
+        # Item_id
+        form_data = dict(request.form)
+        if "component_id" in form_data.keys():
+            inputs.append(form_data["component_id"])
+        elif "product_id" in form_data.keys():
+            inputs.append(form_data["product_id"])
+        else:
+            custom_response.insert_form_message(
+                form_id=0,
+                message=Message(
+                    message="Invalid item_id Key",
+                    message_detail="Key must be component_id or product_id",
+                    message_type=MessageType.DANGER
+                )
+            )
+            return False, custom_response
+
+        # Owner_id
+        if "owner_id" in form_data.keys():
+            inputs.append(form_data["owner_id"])
+        else:
+            custom_response.insert_form_message(
+                form_id=1,
+                message=Message(
+                    message="Invalid owner_id",
+                    message_type=MessageType.DANGER
+                )
+            )
+            return False, custom_response
         cursor = mariadb_connection.cursor()
         cursor.execute(base_query, tuple(inputs))
         return True, custom_response
 
     except Exception:
-        message = FlashMessage(
-            message="Failed to update inventory",
-            message_type=MessageType.DANGER
-        )
-        custom_response.insert_flash_message(message)
         error = error_message()
         custom_response.insert_flash_message(error)
         return False, custom_response
@@ -1068,21 +1353,46 @@ def remove_actual_inventory(mariadb_connection, inv_id, request, custom_response
             SET
                 `actual_inventory` = `actual_inventory` - ?
             WHERE
-                `inv_id` = ?
+                `inv_id` = ? AND `item_id` = ? AND `owner_id` = ?
         '''
         inputs = []
         inputs.append(float(request.form["amount"]))
         inputs.append(inv_id)
+
+        # Item_id
+        form_data = dict(request.form)
+        if "component_id" in form_data.keys():
+            inputs.append(form_data["component_id"])
+        elif "product_id" in form_data.keys():
+            inputs.append(form_data["product_id"])
+        else:
+            custom_response.insert_form_message(
+                form_id=0,
+                message=Message(
+                    message="Invalid item_id Key",
+                    message_detail="Key must be component_id or product_id",
+                    message_type=MessageType.DANGER
+                )
+            )
+            return False, custom_response
+
+        # Owner_id
+        if "owner_id" in form_data.keys():
+            inputs.append(form_data["owner_id"])
+        else:
+            custom_response.insert_form_message(
+                form_id=1,
+                message=Message(
+                    message="Invalid owner_id",
+                    message_type=MessageType.DANGER
+                )
+            )
+            return False, custom_response
         cursor = mariadb_connection.cursor()
         cursor.execute(base_query, tuple(inputs))
         return True, custom_response
 
     except Exception:
-        message = FlashMessage(
-            message="Failed to update inventory",
-            message_type=MessageType.DANGER
-        )
-        custom_response.insert_flash_message(message)
         error = error_message()
         custom_response.insert_flash_message(error)
         return False, custom_response
@@ -1094,21 +1404,46 @@ def add_theoretic_inventory(mariadb_connection, inv_id, request, custom_response
             SET
                 `theoretical_inventory` = `theoretical_inventory` + ?
             WHERE
-                `inv_id` = ?
+                `inv_id` = ? AND `item_id` = ? AND `owner_id` = ?
         '''
         inputs = []
         inputs.append(float(request.form["amount"]))
         inputs.append(inv_id)
+
+        # Item_id
+        form_data = dict(request.form)
+        if "component_id" in form_data.keys():
+            inputs.append(form_data["component_id"])
+        elif "product_id" in form_data.keys():
+            inputs.append(form_data["product_id"])
+        else:
+            custom_response.insert_form_message(
+                form_id=0,
+                message=Message(
+                    message="Invalid item_id Key",
+                    message_detail="Key must be component_id or product_id",
+                    message_type=MessageType.DANGER
+                )
+            )
+            return False, custom_response
+
+        # Owner_id
+        if "owner_id" in form_data.keys():
+            inputs.append(form_data["owner_id"])
+        else:
+            custom_response.insert_form_message(
+                form_id=1,
+                message=Message(
+                    message="Invalid owner_id",
+                    message_type=MessageType.DANGER
+                )
+            )
+            return False, custom_response
         cursor = mariadb_connection.cursor()
         cursor.execute(base_query, tuple(inputs))
         return True, custom_response
 
     except Exception:
-        message = FlashMessage(
-            message="Failed to update inventory",
-            message_type=MessageType.DANGER
-        )
-        custom_response.insert_flash_message(message)
         error = error_message()
         custom_response.insert_flash_message(error)
         return False, custom_response
@@ -1120,21 +1455,92 @@ def remove_theoretic_inventory(mariadb_connection, inv_id, request, custom_respo
             SET
                 `theoretical_inventory` = `theoretical_inventory` - ?
             WHERE
-                `inv_id` = ?
+                `inv_id` = ? AND `item_id` = ? AND `owner_id` = ?
         '''
         inputs = []
         inputs.append(float(request.form["amount"]))
         inputs.append(inv_id)
+
+        # Item_id
+        form_data = dict(request.form)
+        if "component_id" in form_data.keys():
+            inputs.append(form_data["component_id"])
+        elif "product_id" in form_data.keys():
+            inputs.append(form_data["product_id"])
+        else:
+            custom_response.insert_form_message(
+                form_id = 0,
+                message = Message(
+                    message="Invalid item_id Key",
+                    message_detail="Key must be component_id or product_id",
+                    message_type=MessageType.DANGER
+                )
+            )
+            return False, custom_response
+
+        # Owner_id
+        if "owner_id" in form_data.keys():
+            inputs.append(form_data["owner_id"])
+        else:
+            custom_response.insert_form_message(
+                form_id=1,
+                message=Message(
+                    message="Invalid owner_id",
+                    message_type=MessageType.DANGER
+                )
+            )
+            return False, custom_response
         cursor = mariadb_connection.cursor()
         cursor.execute(base_query, tuple(inputs))
         return True, custom_response
 
     except Exception:
-        message = FlashMessage(
-            message="Failed to update inventory",
-            message_type=MessageType.DANGER
-        )
-        custom_response.insert_flash_message(message)
         error = error_message()
         custom_response.insert_flash_message(error)
         return False, custom_response
+
+def get_inventory_single_item(mariadb_connection, inv_id, custom_response):
+    try:
+        # Build Query
+        if inv_id:
+            base_query = '''
+                SELECT
+                    `inv_id`,
+                    `item_id`,
+                    `owner_id`,
+                    `is_component`,
+                    `is_product`,
+                    `actual_inventory`,
+                    `theoretical_inventory`,
+                    `brand_id`
+                FROM `Inventory`.`Inventory`
+                WHERE
+                    `inv_id` = ?
+                LIMIT 1
+            '''
+
+            cursor = mariadb_connection.cursor()
+            cursor.execute(base_query, (inv_id,))
+            result = cursor.fetchone()
+            if not result:
+                custom_response.insert_flash_message(
+                    FlashMessage(
+                        message=f"Inv_id: {inv_id} does not exist in Inventory Table",
+                        message_type=MessageType.DANGER
+                    )
+                )
+                return None, custom_response
+            return result, custom_response
+        else:
+            custom_response.insert_flash_message(
+                FlashMessage(
+                    message="Inv_id was not provided.",
+                    message_type=MessageType.DANGER
+                )
+            )
+            return None, custom_response
+
+    except Exception:
+        error = error_message()
+        custom_response.insert_flash_message(error)
+        return None, custom_response
