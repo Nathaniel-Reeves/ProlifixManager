@@ -55,7 +55,6 @@ def save_files(doc, file_objects, custom_response, location=""):
                         directory = os.path.join(
                             app.config['UPLOAD_FOLDER'], location
                         )
-                        print(directory)
                         pathlib.Path(
                             directory
                         ).mkdir(exist_ok=True, parents=True)
@@ -64,6 +63,7 @@ def save_files(doc, file_objects, custom_response, location=""):
                     filename = secure_filename(
                                     file_detail["filename"]
                                 )
+                    print("Saving File")
                     file_objects[file_detail["id"]].save(
                         os.path.join(
                             app.config['UPLOAD_FOLDER'], location, filename
