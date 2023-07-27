@@ -37,6 +37,9 @@ bp = Blueprint('inventory', __name__, url_prefix='/inventory')
 from .components import bp as components_bp
 bp.register_blueprint(components_bp)
 
+from .products import bp as products_bp
+bp.register_blueprint(products_bp)
+
 
 @bp.route('/checkin', methods=['POST', 'PUT'])
 @check_authenticated(authentication_required=True)
