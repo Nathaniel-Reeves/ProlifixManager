@@ -151,7 +151,7 @@ def validate_float_in_dict(dict, field, min=0, max=999999, equal_to=True):
     return True
 
 
-def validate_int_in_dict(dict, field, min=0, max=999999, equal_to=True):
+def validate_int_in_dict(dict, field, min=0, max=99999999999, equal_to=True):
     '''
     Validates that the value of a field in a dictionary
     is a int.
@@ -163,13 +163,11 @@ def validate_int_in_dict(dict, field, min=0, max=999999, equal_to=True):
     except ValueError:
         return False
     if equal_to:
-        if int(dict[field]) <= min:
-            return False
-        if int(dict[field]) >= max:
-            return False
+        if int(dict[field]) >= min and \
+           int(dict[field]) < max:
+            return True
+        return False
+    if int(dict[field]) > min and \
+           int(dict[field]) < max:
         return True
-    if int(dict[field]) < min:
-        return False
-    if int(dict[field]) > max:
-        return False
-    return True
+    return False

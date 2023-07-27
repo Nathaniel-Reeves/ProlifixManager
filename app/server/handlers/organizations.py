@@ -56,6 +56,7 @@ def get_organizations():
                         'supplier', a.`supplier`,
                         'client', a.`client`,
                         'lab', a.`lab`,
+                        'courier', a.`courier`,
                         'other', a.`other`,
                         'notes', a.`notes`,
                         'organization_name', b.`organization_name`,
@@ -80,6 +81,7 @@ def get_organizations():
                         'supplier', a.`supplier`,
                         'client', a.`client`,
                         'lab', a.`lab`,
+                        'courier', a.`courier`,
                         'other', a.`other`,
                         'doc', a.`doc`,
                         'notes', a.`notes`,
@@ -108,6 +110,8 @@ def get_organizations():
             base_query += ' AND a.`supplier` = 1'
         if 'lab' in org_type:
             base_query += ' AND a.`lab` = 1'
+        if 'courier' in org_type:
+            base_query += ' AND a.`courier` = 1'
 
         verbose = request.args.get("verbose", type=bool, default=False)
 
@@ -255,7 +259,8 @@ def populate_facilities(cursor, org_id, organizations,
 
     except Exception:
         error = error_message()
-        return organizations, custom_response.insert_flash_message(error)
+        custom_response.insert_flash_message(error)
+        return organizations, custom_response
 
 
 def populate_sales_orders(cursor, org_id, organizations,
@@ -325,7 +330,8 @@ def populate_sales_orders(cursor, org_id, organizations,
 
     except Exception:
         error = error_message()
-        return organizations, custom_response.insert_flash_message(error)
+        custom_response.insert_flash_message(error)
+        return organizations, custom_response
 
 
 def populate_purchase_orders(cursor, org_id, organizations,
@@ -394,7 +400,8 @@ def populate_purchase_orders(cursor, org_id, organizations,
 
     except Exception:
         error = error_message()
-        return organizations, custom_response.insert_flash_message(error)
+        custom_response.insert_flash_message(error)
+        return organizations, custom_response
 
 
 def populate_people(cursor, org_id, organizations,
@@ -464,7 +471,8 @@ def populate_people(cursor, org_id, organizations,
 
     except Exception:
         error = error_message()
-        return organizations, custom_response.insert_flash_message(error)
+        custom_response.insert_flash_message(error)
+        return organizations, custom_response
 
 
 def populate_components(cursor, org_id, organizations,
@@ -489,17 +497,27 @@ def populate_components(cursor, org_id, organizations,
         SELECT 
             JSON_OBJECT(
                 'component_id', a.`component_id`,
+                'brand_id', a.`brand_id`,
                 'component_type', a.`component_type`,
-                'owner_id', a.`owner_id`,
+                'units', a.`units`,
+                'date_entered', a.`date_entered`,
                 'doc', a.`doc`,
-                'component_name', b.`component_name`
+                'component_name', b.`component_name`,
+                'certified_usda_organic', a.`certified_usda_organic`,
+                'certified_halal', a.`certified_halal`,
+                'certified_kosher', a.`certified_kosher`,
+                'certified_gluten_free', a.`certified_gluten_free`,
+                'certified_national_sanitation_foundation', a.`certified_national_sanitation_foundation`,
+                'certified_us_pharmacopeia', a.`certified_us_pharmacopeia`,
+                'certified_non_gmo', a.`certified_non_gmo`,
+                'certified_vegan', a.`certified_vegan`
             )
         AS components_objects
         FROM `Inventory`.`Components` a 
         LEFT JOIN `Inventory`.`Component_Names` b ON
             a.`component_id` = b.`component_id` 
         WHERE 
-            a.`owner_id` = ? AND 
+            a.`brand_id` = ? AND 
             b.`primary_name` = 1
         '''
 
@@ -528,7 +546,8 @@ def populate_components(cursor, org_id, organizations,
 
     except Exception:
         error = error_message()
-        return organizations, custom_response.insert_flash_message(error)
+        custom_response.insert_flash_message(error)
+        return organizations, custom_response
 
 
 def populate_products(cursor, org_id, organizations,
@@ -598,7 +617,8 @@ def populate_products(cursor, org_id, organizations,
 
     except Exception:
         error = error_message()
-        return organizations, custom_response.insert_flash_message(error)
+        custom_response.insert_flash_message(error)
+        return organizations, custom_response
 
 
 @bp.route('/exists', methods=['POST'])

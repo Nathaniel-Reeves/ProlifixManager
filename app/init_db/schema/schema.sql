@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS `Organizations`.`Organizations` (
   `supplier` BOOL DEFAULT false,
   `client` BOOL DEFAULT false,
   `lab` BOOL DEFAULT false,
+  `courier` BOOL DEFAULT false,
   `other` BOOL DEFAULT false,
   `doc` json DEFAULT (CONCAT('{"_id":"',`organization_id`,'","files":[]}')),
   `notes` VARCHAR(2500),
@@ -843,7 +844,9 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Components` (
   `certified_us_pharmacopeia` BOOL DEFAULT FALSE,
   `certified_non_gmo` BOOL DEFAULT FALSE,
   `certified_vegan` BOOL DEFAULT FALSE,
-  PRIMARY KEY (`component_id`)
+  `brand_id` INT,
+  PRIMARY KEY (`component_id`),
+  FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
 CREATE TABLE IF NOT EXISTS `Inventory`.`Component_Names` (
@@ -865,11 +868,9 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Inventory` (
   `actual_inventory` DECIMAL(16,4),
   `theoretical_inventory` DECIMAL(16,4),
   `recent_cycle_count_id` INT,
-  `brand_id` INT,
   PRIMARY KEY (`inv_id`, `owner_id`, `item_id`),
   FOREIGN KEY (`item_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
   FOREIGN KEY (`item_id`) REFERENCES `Inventory`.`Components`(`component_id`),
-  FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`),
   FOREIGN KEY (`owner_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
@@ -927,12 +928,14 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Check-in_Log` (
   `inv_id` INT,
   `owner_id` INT,
   `item_id` INT,
+  `courier_id` INT,
+  `facility_id` INT,
   `is_product` BOOL,
   `is_component` BOOL,
-  `supplier_item_id` VARCHAR(255),
+  `supplier_item_number` VARCHAR(255),
   `lot_number` VARCHAR(255),
   `batch_number` VARCHAR(255),
-  `amount` DECIMAL(16,4),
+  `current_status_qty` DECIMAL(16,4),
   `user_id` INT,
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `date_modified` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
@@ -946,7 +949,9 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Check-in_Log` (
   FOREIGN KEY (`item_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
   FOREIGN KEY (`item_id`) REFERENCES `Inventory`.`Components`(`component_id`),
   FOREIGN KEY (`user_id`) REFERENCES `Organizations`.`Users`(`user_id`),
-  FOREIGN KEY (`po_detail_id`) REFERENCES `Orders`.`Purchase_Order_Detail` (`po_detail_id`)
+  FOREIGN KEY (`po_detail_id`) REFERENCES `Orders`.`Purchase_Order_Detail` (`po_detail_id`),
+  FOREIGN KEY (`courier_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`),
+  FOREIGN KEY (`facility_id`) REFERENCES `Organizations`.`Facilities` (`facility_id`)
 );
 
 CREATE TABLE IF NOT EXISTS `Products`.`Manufacturing_Process` (
