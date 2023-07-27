@@ -1,6 +1,7 @@
 import pathlib
 import datetime
 import os
+import shutil
 from flask import (
     current_app as app
 )
@@ -30,6 +31,19 @@ def allowed_file(filename):
 
 
 def save_files(doc, file_objects, custom_response, location=""):
+    """
+    Saves files to the specified directory.
+
+    Parameters:
+        doc (list): List of files to save.
+        file_objects (dict): Dictionary of file objects.
+        custom_response (CustomResponse): CustomResponse object.
+        location (str): Location to save files. Default is "".
+
+    Returns:
+        doc (list): List of files to save.
+        custom_response (CustomResponse): CustomResponse object.
+    """
 
     NOT_FOUND = FlashMessage(
         message="No Files Uploaded",
@@ -51,7 +65,6 @@ def save_files(doc, file_objects, custom_response, location=""):
                 else:
                     # Create Directory if it doesn't already exist
                     if location != "":
-                        print("Creating Directory")
                         directory = os.path.join(
                             app.config['UPLOAD_FOLDER'], location
                         )
@@ -63,7 +76,7 @@ def save_files(doc, file_objects, custom_response, location=""):
                     filename = secure_filename(
                                     file_detail["filename"]
                                 )
-                    print("Saving File")
+
                     file_objects[file_detail["id"]].save(
                         os.path.join(
                             app.config['UPLOAD_FOLDER'], location, filename
@@ -83,6 +96,36 @@ def save_files(doc, file_objects, custom_response, location=""):
             error = error_message()
             custom_response.insert_flash_message(error)
             return doc, custom_response
+
+
+def delete_directory(location, custom_response, flash_message=None):
+    """
+    Deletes specified directory recursively.
+
+    Parameters:
+        location (str): Location to delete.
+        flash_message (FlashMessage): FlashMessage object.
+        custom_response (CustomResponse): CustomResponse object.
+
+    Returns:
+        custom_response (CustomResponse): CustomResponse object.
+    """
+
+    try:
+        # Delete Files
+        shutil.rmtree(
+            os.path.join(
+                app.config['UPLOAD_FOLDER'], location
+            )
+        )
+        if isinstance(flash_message, FlashMessage):
+            custom_response.insert_flash_message(flash_message)
+
+        return True, custom_response
+    except Exception:
+        error = error_message()
+        custom_response.insert_flash_message(error)
+        return False, custom_response
 
 def validate_float_in_dict(dict, field, min=0, max=999999, equal_to=True):
     '''
