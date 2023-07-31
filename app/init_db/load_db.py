@@ -53,6 +53,15 @@ DATABASES = [
         ]
     },
     {
+        "database": "Products",
+        "csv_files": [
+            {
+                "file": "./csv_data/Products/Products db - Product_Master.csv",
+                "table_name": "Product_Master"
+            }
+        ]
+    },
+    {
         "database": "Inventory",
         "csv_files": [
             {
@@ -62,15 +71,14 @@ DATABASES = [
             {
                 "file": "./csv_data/Inventory/Inventory - Component_Names.csv",
                 "table_name": "Component_Names"
-            }
-        ]
-    },
-    {
-        "database": "Products",
-        "csv_files": [
+            },
             {
-                "file": "./csv_data/Products/Products db - Product_Master.csv",
-                "table_name": "Product_Master"
+                "file": "./csv_data/Inventory/Inventory - Item_id.csv",
+                "table_name": "Item_id"
+            },
+            {
+                "file": "./csv_data/Inventory/Inventory - Inventory.csv",
+                "table_name": "Inventory"
             }
         ]
     },

@@ -177,7 +177,9 @@ def get_organizations():
         return jsonify(custom_response.to_json()), 200
 
     except Exception:
-        return error_message().to_json(), 500
+        error = error_message()
+        custom_response.insert_flashMessage(error)
+        return jsonify(custom_response.to_json()), 500
 
     finally:
         if 'mariadb_connection' in locals():

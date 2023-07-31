@@ -859,6 +859,15 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Component_Names` (
   INDEX ( `component_name` )
 );
 
+CREATE TABLE IF NOT EXISTS `Inventory`.`Item_id` (
+  `item_id` INT AUTO_INCREMENT,
+  `component_id` INT DEFAULT NULL,
+  `product_id` INT DEFAULT NULL,
+  PRIMARY KEY (`item_id`),
+  FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
+  FOREIGN KEY (`component_id`) REFERENCES `Inventory`.`Components`(`component_id`)
+);
+
 CREATE TABLE IF NOT EXISTS `Inventory`.`Inventory` (
   `inv_id` INT AUTO_INCREMENT,
   `item_id` INT,
@@ -869,8 +878,7 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Inventory` (
   `theoretical_inventory` DECIMAL(16,4),
   `recent_cycle_count_id` INT,
   PRIMARY KEY (`inv_id`, `owner_id`, `item_id`),
-  FOREIGN KEY (`item_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
-  FOREIGN KEY (`item_id`) REFERENCES `Inventory`.`Components`(`component_id`),
+  FOREIGN KEY (`item_id`) REFERENCES `Inventory`.`Item_id`(`item_id`),
   FOREIGN KEY (`owner_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
@@ -946,8 +954,7 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Check-in_Log` (
   PRIMARY KEY (`check_in_id`, `inv_id`, `owner_id`, `item_id`),
   FOREIGN KEY (`inv_id`) REFERENCES `Inventory`.`Inventory`(`inv_id`),
   FOREIGN KEY (`owner_id`) REFERENCES `Inventory`.`Inventory`(`owner_id`),
-  FOREIGN KEY (`item_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
-  FOREIGN KEY (`item_id`) REFERENCES `Inventory`.`Components`(`component_id`),
+  FOREIGN KEY (`item_id`) REFERENCES `Inventory`.`Item_id`(`item_id`),
   FOREIGN KEY (`user_id`) REFERENCES `Organizations`.`Users`(`user_id`),
   FOREIGN KEY (`po_detail_id`) REFERENCES `Orders`.`Purchase_Order_Detail` (`po_detail_id`),
   FOREIGN KEY (`courier_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`),

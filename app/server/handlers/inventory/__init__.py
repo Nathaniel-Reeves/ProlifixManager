@@ -29,7 +29,12 @@ from ..helper import (
     save_files,
     delete_directory,
     validate_float_in_dict,
-    validate_int_in_dict
+    validate_int_in_dict,
+    only_integers
+)
+from ..organizations import (
+    populate_components,
+    populate_products
 )
 
 bp = Blueprint('inventory', __name__, url_prefix='/inventory')
@@ -39,6 +44,310 @@ bp.register_blueprint(components_bp)
 
 from .products import bp as products_bp
 bp.register_blueprint(products_bp)
+
+@bp.route('/', methods=['GET'])
+@check_authenticated(authentication_required=True)
+def fetch_inventory():
+    """
+    Fetch Inventory from Database.
+    Populate and filter items as requested.
+    """
+
+    try:
+        custom_response = CustomResponse()
+
+        # Test Connection
+        mariadb_connection = mariadb.connect(
+            host=app.config['DB_HOSTNAME'],
+            port=int(app.config['DB_PORT']),
+            user=app.config['DB_USER'],
+            password=app.config['DB_PASSWORD']
+        )
+
+        # Build Query
+        base_query = '''
+            SELECT
+                JSON_OBJECT(
+                    'inv_id', a.`inv_id`, 
+                    'item_id', a.`item_id`,
+                    'owner_id', a.`owner_id`,
+                    'is_component', a.`is_component`,
+                    'is_product', a.`is_product`,
+                    'actual_inventory', a.`actual_inventory`,
+                    'theoretical_inventory', a.`theoretical_inventory`,
+                    'units', CASE WHEN a.`is_component` THEN c.`units` ELSE 'units' END,
+                    'recent_cycle_count_id', a.`recent_cycle_count_id`,
+                    'item_name', CASE WHEN a.`is_component` THEN d.`component_name` ELSE e.`product_name` END,
+                    'item_type', CASE WHEN a.`is_component` THEN c.`component_type` ELSE 'product' END
+                )
+            AS item_objects
+            FROM `Inventory`.`Inventory` a
+            JOIN `Inventory`.`Item_id` b ON
+                a.`item_id` = b.`item_id`
+            LEFT JOIN `Inventory`.`Components` c ON
+                b.`component_id` = c.`component_id`
+            LEFT JOIN `Inventory`.`Component_Names` d ON 
+                b.`component_id` = d.`component_id` AND
+                d.`primary_name` = true
+            LEFT JOIN `Products`.`Product_Master` e ON
+                b.`product_id` = e.`product_id`
+        '''
+
+        org_ids = request.args.getlist('org-id')
+        item_types = request.args.getlist('item-type')
+        if org_ids or item_types:
+            inputs = []
+            base_query += "WHERE "
+
+            if org_ids:
+                cleaned_org_ids = list(only_integers(org_ids))
+                base_query += f'''a.`organization_id` IN ({", ".join(["?"] * len(cleaned_org_ids))})'''
+                inputs += cleaned_org_ids
+
+            # Insert Item Type Filters
+            type_filter = []
+            valid_item_types = [
+                "powder",
+                "liquid",
+                "container",
+                "pouch",
+                "shrink_band",
+                "lid",
+                "label",
+                "capsule",
+                "misc",
+                "scoop",
+                "desiccant",
+                "box",
+                "carton",
+                "packaging_material"
+            ]
+            product_filter = False
+            component_filter = False
+            all = False
+            for item_type in item_types:
+                if item_type == "all":
+                    type_filter = valid_item_types.copy()
+                    all = True
+                    break
+                if item_type in valid_item_types:
+                    type_filter.append(item_type)
+                    component_filter = True
+                    continue
+                if item_type == "product":
+                    product_filter = True
+
+            if not all:
+                if component_filter:
+                    if org_ids:
+                        base_query += " AND "
+                    base_query += f''' c.`component_type` IN ({", ".join(["?"] * len(type_filter))})'''
+                    inputs += type_filter
+                if not product_filter:
+                    if org_ids:
+                        base_query += " AND "
+                    base_query += f'''a.`is_component` = false '''
+
+        verbose = request.args.get("verbose", type=bool, default=False)
+
+        populate = request.args.getlist('populate')
+
+        # Execute Query
+        cursor = mariadb_connection.cursor()
+        cursor.execute(base_query, tuple(inputs))
+        result = cursor.fetchall()
+
+        if not result:
+            custom_response.insert_flash_message(FlashMessage(
+                message='No items found',
+                message_type=MessageType.WARNING))
+            return jsonify(custom_response.to_json()), 404
+
+        # Process Items
+        items = {}
+        for row in result:
+            json_row = json.loads(row[0])
+            item_id = json_row['item_id']
+            items[item_id] = json_row
+
+            # Populate child resources
+            if 'checkins' in populate:
+                items, custom_response = populate_checkins(
+                    cursor, item_id,
+                    items, custom_response, verbose)
+
+            if 'checkouts' in populate:
+                items, custom_response = populate_checkouts(
+                    cursor, item_id,
+                    items,
+                    custom_response, verbose)
+
+            if 'cycle_counts' in populate:
+                items, custom_response = populate_cycle_counts(
+                    cursor, item_id,
+                    items,
+                    custom_response, verbose)
+
+            if 'owner' in populate:
+                items, custom_response = populate_owner(
+                    cursor, item_id,
+                    items,
+                    custom_response, verbose)
+
+            if 'components' in populate and row["is_comonent"]:
+                items, custom_response = populate_components(
+                    cursor, item_id,
+                    items,
+                    custom_response, verbose)
+
+            if 'products' in populate and row["is_product"]:
+                items, custom_response = populate_products(
+                    cursor, item_id,
+                    items,
+                    custom_response, verbose)
+
+        # Insert the processed items into the response
+        custom_response.insert_data(items)
+
+        return jsonify(custom_response.to_json()), 200
+
+    except Exception:
+        error = error_message()
+        custom_response.insert_flashMessage(error)
+        return jsonify(custom_response.to_json()), 500
+
+    finally:
+        if 'mariadb_connection' in locals():
+            mariadb_connection.close()
+
+def populate_checkins(
+                    cursor, item_id,
+                    items, custom_response, verbose):
+    '''
+    Populate Checkins Resource for Items
+
+    Args:
+        cursor (mariadb.cursor): MariaDB Cursor
+        item_id (int): Item ID
+        items (dict): Items Dictionary
+        custom_response (CustomResponse): Custom Response
+        verbose (bool): Verbose
+
+    Returns:
+        items (dict): Items Dictionary
+        custom_response (CustomResponse): Custom Response
+    '''
+
+    try:
+        query = '''
+        SELECT 
+            JSON_OBJECT(
+                'person_id', a.`person_id`,
+                'first_name', a.`first_name`,
+                'last_name', a.`last_name`,
+                'date_entered', a.`date_entered`,
+                'job_description', a.`job_description`,
+                'department', a.`department`,
+                'phone_number_primary', a.`phone_number_primary`,
+                'phone_number_secondary', a.`phone_number_secondary`,
+                'email_address_primary', a.`email_address_primary`,
+                'email_address_secondary', a.`email_address_secondary`,
+                'birthday', a.`birthday`,
+                'is_employee', a.`is_employee`,
+                'contract_date', a.`contract_date`,
+                'termination_date', a.`termination_date`,
+                'clock_number', a.`clock_number`
+            )
+        AS people_objects
+        FROM `Organizations`.`People` a 
+        WHERE a.`organization_id` = ?
+        '''
+
+        # Execute Query
+        cursor.execute(query, (item_id,))
+        result = cursor.fetchall()
+
+        # Create Checkins Dictionary
+        checkins = {}
+        for row in result:
+            json_row = json.loads(row[0])
+            check_in_id = json_row['check_in_id']
+            checkins[check_in_id] = json_row
+
+        items[item_id]['checkins'] = checkins
+
+        # If checkins resource is empty
+        if not checkins and verbose:
+            custom_response.insert_flash_message(
+                FlashMessage(
+                    message=f'No checkins found for item {items[item_id]["item_name"]} (ID: {item_id})',
+                    message_type=MessageType.WARNING)
+            )
+
+        return items, custom_response
+
+    except Exception:
+        error = error_message()
+        custom_response.insert_flash_message(error)
+        return items, custom_response
+
+
+def populate_checkouts(
+                    cursor, item_id,
+                    items, custom_response, verbose):
+    '''
+    Populate Checkouts Resource for Items
+
+    Args:
+        cursor (mariadb.cursor): MariaDB Cursor
+        item_id (int): Item ID
+        items (dict): Items Dictionary
+        custom_response (CustomResponse): Custom Response
+        verbose (bool): Verbose
+
+    Returns:
+        items (dict): Items Dictionary
+        custom_response (CustomResponse): Custom Response
+    '''
+    raise NotImplementedError
+
+def populate_cycle_counts(
+                    cursor, item_id,
+                    items, custom_response, verbose):
+    '''
+    Populate Cycle Counts Resource for Items
+
+    Args:
+        cursor (mariadb.cursor): MariaDB Cursor
+        item_id (int): Item ID
+        items (dict): Items Dictionary
+        custom_response (CustomResponse): Custom Response
+        verbose (bool): Verbose
+
+    Returns:
+        items (dict): Items Dictionary
+        custom_response (CustomResponse): Custom Response
+    '''
+    raise NotImplementedError
+
+def populate_owner(
+                    cursor, item_id,
+                    items, custom_response, verbose):
+    '''
+    Populate Item Owner Resource for Items
+
+    Args:
+        cursor (mariadb.cursor): MariaDB Cursor
+        item_id (int): Item ID
+        items (dict): Items Dictionary
+        custom_response (CustomResponse): Custom Response
+        verbose (bool): Verbose
+
+    Returns:
+        items (dict): Items Dictionary
+        custom_response (CustomResponse): Custom Response
+    '''
+    raise NotImplementedError
 
 @bp.route('/checkin', methods=['POST', 'PUT'])
 @check_authenticated(authentication_required=True)
@@ -526,7 +835,7 @@ def get_inventory_id(mariadb_connection, request, custom_response):
 
         # item_id
         item_id, item_id_dir, custom_response = get_item_id(
-            request, custom_response)
+            mariadb_connection, request, custom_response)
         if not item_id:
             raise ValueError
         inputs.append(item_id)
@@ -598,7 +907,7 @@ def post_item_to_inventory(mariadb_connection, request, custom_response):
 
         # item_id
         item_id, item_id_dir, custom_response = get_item_id(
-            request, custom_response)
+            mariadb_connection, request, custom_response)
         if not item_id:
             raise ValueError
         inputs.append(item_id)
@@ -697,7 +1006,7 @@ def get_item_type(mariadb_connection, request, custom_response):
             SELECT
                 `product_id`
             FROM 
-                `Products`.`Products_Master`
+                `Products`.`Product_Master`
             WHERE
                 `product_id` = ?
             LIMIT 1
@@ -793,7 +1102,7 @@ def insert_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
 
         # Create a location link for files related to this checkin
         item_id, item_id_dir, custom_response = get_item_id(
-            request, custom_response)
+            mariadb_connection, request, custom_response)
         if not item_id:
             raise ValueError
         location = \
@@ -1104,7 +1413,7 @@ def update_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
 
         # item_id
         item_id, item_id_dir, custom_response = get_item_id(
-            request, custom_response)
+            mariadb_connection, request, custom_response)
         if not item_id:
             raise ValueError
         inputs.append(item_id)
@@ -1155,7 +1464,6 @@ def update_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
                 "Received",
                 "Missing Shipment",
                 "Canceled",
-                "Quarantined",
                 "In Transit",
                 "Revised Order Decreased",
                 "Revised Order Increased"
@@ -1168,7 +1476,6 @@ def update_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
                 "Received",
                 "Missing Shipment",
                 "Canceled",
-                "Quarantined",
                 "Revised Order Decreased"
             ]:
                 inv_changed, custom_response = remove_theoretic_inventory(
@@ -1189,7 +1496,6 @@ def update_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
                 "Received",
                 "Missing Shipment",
                 "Canceled",
-                "Quarantined",
                 "In Transit"
             ]:
                 custom_response.insert_flash_message(
@@ -1199,8 +1505,7 @@ def update_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
             if current_status in [
                 "Received",
                 "Missing Shipment",
-                "Canceled",
-                "Quarantined"
+                "Canceled"
             ]:
                 inv_changed, custom_response = remove_theoretic_inventory(
                     mariadb_connection, inv_id, request, custom_response)
@@ -1214,8 +1519,7 @@ def update_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
             if current_status not in [
                 "Received",
                 "Missing Shipment",
-                "Canceled",
-                "Quarantined"
+                "Canceled"
             ]:
                 custom_response.insert_flash_message(
                     invalid_status_update_message
@@ -1224,8 +1528,7 @@ def update_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
             if current_status in [
                 "Received",
                 "Missing Shipment",
-                "Canceled",
-                "Quarantined"
+                "Canceled"
             ]:
                 inv_changed, custom_response = remove_theoretic_inventory(
                     mariadb_connection, inv_id, request, custom_response)
@@ -1253,8 +1556,7 @@ def update_check_in_log(mariadb_connection, check_in_id, inv_id, request, custom
         elif previous_status == "Missing Shipment":
             if current_status not in [
                 "Received",
-                "Canceled",
-                "Quarantined"
+                "Canceled"
             ]:
                 custom_response.insert_flash_message(
                     invalid_status_update_message
@@ -1570,7 +1872,7 @@ def add_actual_inventory(mariadb_connection, inv_id, request, custom_response):
 
         # item_id
         item_id, item_id_dir, custom_response = get_item_id(
-            request, custom_response)
+            mariadb_connection, request, custom_response)
         if not item_id:
             raise ValueError
         inputs.append(item_id)
@@ -1621,22 +1923,10 @@ def remove_actual_inventory(mariadb_connection, inv_id, request, custom_response
         form_data = dict(request.form)
 
         # item_id
-        if "component_id" in form_data.keys():
-            item_id = form_data["component_id"]
-            item_id_dir = "component_id-" + str(item_id)
-        elif "product_id" in form_data.keys():
-            item_id = form_data["product_id"]
-            item_id_dir = "product_id-" + str(item_id)
-        else:
-            custom_response.insert_form_message(
-                form_id=0,
-                message=Message(
-                    message="Invalid item_id Key",
-                    message_detail="Key must be component_id or product_id",
-                    message_type=MessageType.DANGER
-                )
-            )
-            return False, custom_response
+        item_id, item_id_dir, custom_response = get_item_id(
+            mariadb_connection, request, custom_response)
+        if not item_id:
+            raise ValueError
         inputs.append(item_id)
 
         # owner_id
@@ -1685,22 +1975,10 @@ def add_theoretic_inventory(mariadb_connection, inv_id, request, custom_response
         form_data = dict(request.form)
 
         # item_id
-        if "component_id" in form_data.keys():
-            item_id = form_data["component_id"]
-            item_id_dir = "component_id-" + str(item_id)
-        elif "product_id" in form_data.keys():
-            item_id = form_data["product_id"]
-            item_id_dir = "product_id-" + str(item_id)
-        else:
-            custom_response.insert_form_message(
-                form_id=0,
-                message=Message(
-                    message="Invalid item_id Key",
-                    message_detail="Key must be component_id or product_id",
-                    message_type=MessageType.DANGER
-                )
-            )
-            return False, custom_response
+        item_id, item_id_dir, custom_response = get_item_id(
+            mariadb_connection, request, custom_response)
+        if not item_id:
+            raise ValueError
         inputs.append(item_id)
 
         # owner_id
@@ -1750,7 +2028,7 @@ def remove_theoretic_inventory(mariadb_connection, inv_id, request, custom_respo
 
         # item_id
         item_id, item_id_dir, custom_response = get_item_id(
-            request, custom_response)
+            mariadb_connection, request, custom_response)
         if not item_id:
             raise ValueError
         inputs.append(item_id)
@@ -1837,11 +2115,13 @@ def get_inventory_for_single_record(mariadb_connection, inv_id, custom_response)
         custom_response.insert_flash_message(error)
         return None, custom_response
 
-def get_item_id(request, custom_response):
+def get_item_id(mariadb_connection, request, custom_response):
     """
-    Gets the item_id from the request.
+    Gets the item_id from `Inventory`.`Item_id, Atempts to create
+    a new item_id if one doesn't already exist in the table.
 
     Parameters:
+        mariadb_connection (object): MariaDB connection object
         request (object): Flask Request Object
         custom_response (object): Custom Response Object
 
@@ -1855,25 +2135,83 @@ def get_item_id(request, custom_response):
         updating custom_responce object with error messages
     """
 
-    form_data = dict(request.form)
+    try:
 
-    if "component_id" in form_data.keys():
-        item_id = form_data["component_id"]
-        item_id_dir = "component_id-" + str(item_id)
-        return item_id, item_id_dir, custom_response
-    elif "product_id" in form_data.keys():
-        item_id = form_data["product_id"]
-        item_id_dir = "product_id-" + str(item_id)
-        return item_id, item_id_dir, custom_response
-    else:
-        custom_response.insert_form_message(
-            form_id=0,
-            message=Message(
-                message="Invalid item_id Key",
-                message_detail="Key must be component_id or product_id",
+        form_data = dict(request.form)
+
+        if "component_id" in form_data.keys():
+            id = form_data["component_id"]
+            id_col = "component_id"
+        elif "product_id" in form_data.keys():
+            id = form_data["product_id"]
+            id_col = "product_id"
+        else:
+            custom_response.insert_form_message(
+                form_id=0,
+                message=Message(
+                    message="Invalid item_id Key",
+                    message_detail="Key must be component_id or product_id",
+                    message_type=MessageType.DANGER
+                )
+            )
+            return None, None, custom_response
+
+        # Build Query
+        base_query = """
+        SELECT
+            `item_id`
+        FROM
+            `Inventory`.`Item_id`
+        """
+
+        base_query += "WHERE `" + id_col + "` = ? LIMIT 1"
+
+        cursor = mariadb_connection.cursor()
+        cursor.execute(base_query, (id, ))
+        result = cursor.fetchone()
+
+        if result:
+            id_dir = id_col + "-" + str(id) + "__item_id-" + str(result[0])
+            return result[0], id_dir, custom_response
+
+        # Insert and get a new item_id if one doesn't exist
+        insert_query = """
+            INSERT INTO `Inventory`.`Item_id` (
+                `product_id`,
+                `component_id`
+            )
+            VALUES (
+                ?, ?
+            )
+        """
+        inputs = []
+        if "component_id" in form_data.keys():
+            inputs.append(None)
+            inputs.append(id)
+        else:
+            inputs.append(id)
+            inputs.append(None)
+
+        cursor.execute(insert_query, tuple(inputs))
+        item_id = cursor.lastrowid
+
+        if item_id:
+            id_dir = id_col + "-" + str(id) + "__item_id-" + str(item_id)
+            mariadb_connection.commit()
+            return item_id, id_dir, custom_response
+        else:
+            message = FlashMessage(
+                message="Failed to fetch/create item_id",
                 message_type=MessageType.DANGER
             )
-        )
+            mariadb_connection.rollback()
+            custom_response.insert_flash_message(message)
+            return None, None, custom_response
+
+    except Exception:
+        error = error_message()
+        custom_response.insert_flash_message(error)
+        mariadb_connection.rollback()
         return None, None, custom_response
 
 def check_facility_id_related_org_id(org_id, facility_id, custom_response):
