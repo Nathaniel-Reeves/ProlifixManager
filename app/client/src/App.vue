@@ -9,6 +9,11 @@
             <b-nav-item-dropdown text="Orders" active-class>
               <b-dropdown-item to="/orders">Orders List</b-dropdown-item>
             </b-nav-item-dropdown>
+            <b-nav-item-dropdown text="Inventory" active-class>
+                <b-dropdown-item to="/inventory">Inventory</b-dropdown-item>
+                <b-dropdown-item to="/inventory/checkins">checkins</b-dropdown-item>
+                <b-dropdown-item to="/inventory/checkouts">checkouts</b-dropdown-item>
+              </b-nav-item-dropdown>
             <b-nav-item-dropdown text="Organizations" active-class>
               <b-dropdown-item to="/organizations">Organizations List</b-dropdown-item>
             </b-nav-item-dropdown>

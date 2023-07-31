@@ -39,6 +39,23 @@ const routes = [
     component: () => import(/* webpackChunkName: "gridchart" */ '../views/GridChart.vue')
   },
   {
+    path: '/inventory',
+    name: 'inventory',
+    component: () => import(/* webpackChunkName: "inventory" */ '../views/inventory/InventoryHome.vue'),
+    children: [
+      {
+        path: '/checkins',
+        name: 'checkins',
+        component: () => import(/* webpackChunkName: "checkins" */ '../views/inventory/InventoryHome.vue')
+      },
+      {
+        path: '/checkouts',
+        name: 'checkouts',
+        component: () => import(/* webpackChunkName: "checkouts" */ '../views/inventory/InventoryHome.vue')
+      }
+    ]
+  },
+  {
     path: '/organizations',
     name: 'organizations',
     component: () => import(/* webpackChunkName: "organizations" */ '../views/organizations/OrganizationsHome.vue'),
