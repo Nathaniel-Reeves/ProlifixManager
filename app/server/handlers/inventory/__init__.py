@@ -818,42 +818,160 @@ def checkin():
 @bp.route('/checkout', methods=['POST', 'PUT'])
 @check_authenticated(authentication_required=True)
 def checkout():
-    raise NotImplementedError
     """
+    Handle Checkout
+
+    The request body must contain the following
+    fields in the form-data.
+
+    form-data:
+        (One or the other, not both)
+        component_id: (int)
+        product_id: (int)
+
+        courier_id: (int) This key field is required, but can be set to 0
+        facility_id: (int) This key field is required, but can be set to 0,
+                    facility_id must be > 0 if courier_id is > 0
+        owner_id: (int)
+        supplier_item_number: (str) (optional)
+        lot_number: (str) (optional)
+        batch_number: (str) (optional)
+        current_status_qty: (int or float)
+        po_detail_id: (int) (optional)
+        current_status: (str)
+           ENUM: (
+               'Ordered',  (POST ONLY)
+               'In Transit',
+               'Received',
+               'Quarantined',
+               'Canceled',
+               'Shipment Missing',
+               'Revised Order Decreased',
+               'Revised Order Increased',
+               'Released from Quarantine',
+               'Found',  (POST ONLY)
+               'Produced'  (POST ONLY)
+            )
+        status_notes: (str) (optional)
+        doc: (list of document detail objects)
+             (required if files are uploaded)
+            document detail object template: {
+                "id": "file_#",
+                "filename": "test_doc.pdf",
+                "name": "test_doc",
+                "extention": ".pdf",
+                "description": "This is a test document",
+                "document_type": "testing"
+            }
+        file_#: (file)
+                (required if files are uploaded)
     """
 
     try:
         custom_response = CustomResponse()  # create a custom response object
 
-        # Get Data
+        ### Validate Form Data ###
         form_data = dict(request.form)
+        valid, custom_response = validate_checkin_form(
+            request, custom_response)
+        if not valid:
+            return jsonify(custom_response.to_json()), 400
 
-        # Test DB Connection
-        mariadb_connection = mariadb.connect(
-            host=app.config['DB_HOSTNAME'],
-            port=int(app.config['DB_PORT']),
-            user=app.config['DB_USER'],
-            password=app.config['DB_PASSWORD']
-        )
+        ### Connect to MariaDB ###
+        try:
+            # Test DB Connection
+            mariadb_connection = mariadb.connect(
+                host=app.config['DB_HOSTNAME'],
+                port=int(app.config['DB_PORT']),
+                user=app.config['DB_USER'],
+                password=app.config['DB_PASSWORD']
+            )
 
-        # Get Inventory Id, Create Inventory Id if None exists
-        inv_id = 0
+        except mariadb.Error as mariadb_error:
+            print(f"Error connecting to the database: {mariadb_error}")
+            custom_response.insert_flash_message(
+                FlashMessage(
+                    message="Failed to connect to MariaDB",
+                    message_type=MessageType.DANGER
+                )
+            )
+            return jsonify(custom_response.to_json()), 500
 
+        mariadb_connection.autocommit = False  # Begin Transaction
+
+        ### Get inv_id, Create inv_id if None exists ###
+        inv_id, custom_response = get_inventory_id(
+            mariadb_connection, request, custom_response)
         if not inv_id:
             mariadb_connection.rollback()
             return jsonify(custom_response.to_json()), 500
 
-        # Update Checkin Log
-        check_out_id, custom_response = handle_check_in_log(mariadb_connection,
-                                                            inv_id, request,
-                                                            custom_response)
+        ### Update `Inventory`.`Check-in_Log` Table ###
+        cursor = mariadb_connection.cursor()
 
-        if not check_out_id:
+        # Get check_in_id, Create check_in_id if None exists
+        inserted_check_in_id = None
+        updated_check_in_id = None
+        if request.method == 'POST':
+            # Create Checkin id
+            base_query_1a = '''
+                SELECT `check_in_id`
+                FROM `Inventory`.`Check-in_Log`
+                ORDER BY
+                    `check_in_id` DESC
+                LIMIT 1
+            '''
+            cursor.execute(base_query_1a)
+            result = cursor.fetchone()
+            if not result:
+                result = [0]
+            check_in_id = result[0] + 1
+
+            # This function creates directories and saves files
+            # if the request contains file objects.  It will delete
+            # the entire directory if the transaction fails.
+            inserted_check_in_id, custom_response = insert_check_in_log(
+                mariadb_connection, check_in_id,
+                inv_id, request, custom_response)
+
+        else:
+            # Validate check_in_id
+            base_query_1b = '''
+                SELECT `check_in_id`
+                FROM `Inventory`.`Check-in_Log`
+                WHERE `check_in_id` = ?
+                LIMIT 1
+            '''
+            cursor.execute(base_query_1b, (form_data["check_in_id"],))
+            result = cursor.fetchone()
+
+            if not result:
+                custom_response.insert_flash_message(
+                    FlashMessage(
+                        message="Invalid check_in_id",
+                        message_type=MessageType.DANGER
+                    )
+                )
+                return jsonify(custom_response.to_json()), 400
+
+            # The PUT method must have a check_in_id field
+            check_in_id = form_data["check_in_id"]
+
+            # This function creates directories and saves files
+            # if the request contains file objects.  It will delete
+            # the entire directory if the transaction fails.
+            updated_check_in_id, custom_response = update_check_in_log(
+                mariadb_connection, check_in_id,
+                inv_id, request, custom_response)
+
+            if not updated_check_in_id:
+                return jsonify(custom_response.to_json()), 400
+
+        if not (inserted_check_in_id or updated_check_in_id):
             mariadb_connection.rollback()
             return jsonify(custom_response.to_json()), 500
-        else:
-            mariadb_connection.commit()
-            return jsonify(custom_response.to_json()), 200
+        mariadb_connection.commit()
+        return jsonify(custom_response.to_json()), 200
 
     except Exception:
         if 'mariadb_connection' in locals():
