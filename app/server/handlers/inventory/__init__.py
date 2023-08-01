@@ -32,10 +32,6 @@ from ..helper import (
     validate_int_in_dict,
     only_integers
 )
-from ..organizations import (
-    populate_components,
-    populate_products
-)
 
 bp = Blueprint('inventory', __name__, url_prefix='/inventory')
 
@@ -78,7 +74,9 @@ def fetch_inventory():
                     'units', CASE WHEN a.`is_component` THEN c.`units` ELSE 'units' END,
                     'recent_cycle_count_id', a.`recent_cycle_count_id`,
                     'item_name', CASE WHEN a.`is_component` THEN d.`component_name` ELSE e.`product_name` END,
-                    'item_type', CASE WHEN a.`is_component` THEN c.`component_type` ELSE 'product' END
+                    'item_type', CASE WHEN a.`is_component` THEN c.`component_type` ELSE 'product' END,
+                    'component_id', b.`component_id`,
+                    'product_id', b.`product_id`
                 )
             AS item_objects
             FROM `Inventory`.`Inventory` a
@@ -93,60 +91,45 @@ def fetch_inventory():
                 b.`product_id` = e.`product_id`
         '''
 
-        org_ids = request.args.getlist('org-id')
+        owner_id = request.args.getlist('owner-id')
         item_types = request.args.getlist('item-type')
-        if org_ids or item_types:
-            inputs = []
+        inputs = []
+        if owner_id or (item_types and 'all' not in item_types):
             base_query += "WHERE "
 
-            if org_ids:
-                cleaned_org_ids = list(only_integers(org_ids))
-                base_query += f'''a.`organization_id` IN ({", ".join(["?"] * len(cleaned_org_ids))})'''
-                inputs += cleaned_org_ids
+            if owner_id:
+                cleaned_owner_id = list(only_integers(owner_id))
+                base_query += f'''a.`owner_id` IN ({", ".join(["?"] * len(cleaned_owner_id))})'''
+                inputs += cleaned_owner_id
 
             # Insert Item Type Filters
             type_filter = []
-            valid_item_types = [
-                "powder",
-                "liquid",
-                "container",
-                "pouch",
-                "shrink_band",
-                "lid",
-                "label",
-                "capsule",
-                "misc",
-                "scoop",
-                "desiccant",
-                "box",
-                "carton",
-                "packaging_material"
-            ]
+            valid_component_types = ['powder','liquid','container','pouch','shrink_band','lid','label','capsule','misc','scoop','desiccant','box','carton','packaging_material']
             product_filter = False
             component_filter = False
-            all = False
+
             for item_type in item_types:
-                if item_type == "all":
-                    type_filter = valid_item_types.copy()
-                    all = True
-                    break
-                if item_type in valid_item_types:
+                if item_type in valid_component_types:
                     type_filter.append(item_type)
                     component_filter = True
                     continue
                 if item_type == "product":
                     product_filter = True
 
-            if not all:
-                if component_filter:
-                    if org_ids:
-                        base_query += " AND "
-                    base_query += f''' c.`component_type` IN ({", ".join(["?"] * len(type_filter))})'''
-                    inputs += type_filter
-                if not product_filter:
-                    if org_ids:
-                        base_query += " AND "
-                    base_query += f'''a.`is_component` = false '''
+            if component_filter:
+                if owner_id:
+                    base_query += " AND "
+                base_query += f''' c.`component_type` IN ({", ".join(["?"] * len(type_filter))})'''
+                inputs += type_filter
+
+            if not product_filter:
+                if owner_id or component_filter:
+                    base_query += " AND "
+                base_query += f'''a.`is_component` = true '''
+            else:
+                if owner_id or component_filter:
+                    base_query += " OR "
+                base_query += f'''a.`is_product` = true '''
 
         verbose = request.args.get("verbose", type=bool, default=False)
 
@@ -159,61 +142,68 @@ def fetch_inventory():
 
         if not result:
             custom_response.insert_flash_message(FlashMessage(
-                message='No items found',
+                message='No inventory found',
                 message_type=MessageType.WARNING))
             return jsonify(custom_response.to_json()), 404
 
-        # Process Items
-        items = {}
+        # Process inventory
+        inventory = {}
         for row in result:
             json_row = json.loads(row[0])
             item_id = json_row['item_id']
-            items[item_id] = json_row
+            inv_id = json_row['inv_id']
+            recent_cycle_count_id = json_row['recent_cycle_count_id']
+            owner_id = json_row['owner_id']
+            component_id = json_row['component_id']
+            product_id = json_row['product_id']
 
             # Populate child resources
             if 'checkins' in populate:
-                items, custom_response = populate_checkins(
-                    cursor, item_id,
-                    items, custom_response, verbose)
+                json_row, custom_response = populate_checkins(
+                    cursor, item_id, inv_id, owner_id,
+                    json_row, custom_response, verbose)
 
             if 'checkouts' in populate:
-                items, custom_response = populate_checkouts(
-                    cursor, item_id,
-                    items,
+                json_row, custom_response = populate_checkouts(
+                    cursor, inv_id,
+                    json_row,
                     custom_response, verbose)
 
             if 'cycle_counts' in populate:
-                items, custom_response = populate_cycle_counts(
-                    cursor, item_id,
-                    items,
+                json_row, custom_response = populate_cycle_count(
+                    cursor, recent_cycle_count_id,
+                    json_row,
                     custom_response, verbose)
 
-            if 'owner' in populate:
-                items, custom_response = populate_owner(
-                    cursor, item_id,
-                    items,
+            if 'owners' in populate:
+                json_row, custom_response = populate_owner(
+                    cursor, owner_id,
+                    json_row,
                     custom_response, verbose)
 
-            if 'components' in populate and row["is_comonent"]:
-                items, custom_response = populate_components(
-                    cursor, item_id,
-                    items,
+            if 'components' in populate and json_row["is_component"]:
+                json_row, custom_response = populate_component(
+                    cursor, component_id,
+                    json_row,
                     custom_response, verbose)
 
-            if 'products' in populate and row["is_product"]:
-                items, custom_response = populate_products(
-                    cursor, item_id,
-                    items,
+            if 'products' in populate and json_row["is_product"]:
+                json_row, custom_response = populate_product(
+                    cursor, product_id,
+                    json_row,
                     custom_response, verbose)
 
-        # Insert the processed items into the response
-        custom_response.insert_data(items)
+            inventory[inv_id] = json_row
+
+
+        # Insert the processed inventory into the response
+        custom_response.insert_data(inventory)
 
         return jsonify(custom_response.to_json()), 200
 
     except Exception:
         error = error_message()
-        custom_response.insert_flashMessage(error)
+        custom_response.insert_flash_message(error)
         return jsonify(custom_response.to_json()), 500
 
     finally:
@@ -221,20 +211,22 @@ def fetch_inventory():
             mariadb_connection.close()
 
 def populate_checkins(
-                    cursor, item_id,
-                    items, custom_response, verbose):
+                    cursor, item_id, inv_id, owner_id,
+                    json_row, custom_response, verbose):
     '''
-    Populate Checkins Resource for Items
+    Populate checkins resources for Inventory Items
 
     Args:
         cursor (mariadb.cursor): MariaDB Cursor
-        item_id (int): Item ID
-        items (dict): Items Dictionary
+        item_id (int): item ID
+        inv_id (int): inventory ID
+        owner_id (int): owner ID
+        json_row (dict): Row Dictionary
         custom_response (CustomResponse): Custom Response
         verbose (bool): Verbose
 
     Returns:
-        items (dict): Items Dictionary
+        json_row (dict): Row Dictionary
         custom_response (CustomResponse): Custom Response
     '''
 
@@ -242,112 +234,418 @@ def populate_checkins(
         query = '''
         SELECT 
             JSON_OBJECT(
-                'person_id', a.`person_id`,
-                'first_name', a.`first_name`,
-                'last_name', a.`last_name`,
+                'check_in_id', a.`check_in_id`,
+                'inv_id', a.`inv_id`,
+                'owner_id', a.`owner_id`,
+                'item_id', a.`item_id`,
+                'courier_id', a.`courier_id`,
+                'facility_id', a.`facility_id`,
+                'is_product', a.`is_product`,
+                'is_component', a.`is_component`,
+                'supplier_item_number', a.`supplier_item_number`,
+                'lot_number', a.`lot_number`,
+                'batch_number', a.`batch_number`,
+                'current_status_qty', a.`current_status_qty`,
+                'user_id', a.`user_id`,
                 'date_entered', a.`date_entered`,
-                'job_description', a.`job_description`,
-                'department', a.`department`,
-                'phone_number_primary', a.`phone_number_primary`,
-                'phone_number_secondary', a.`phone_number_secondary`,
-                'email_address_primary', a.`email_address_primary`,
-                'email_address_secondary', a.`email_address_secondary`,
-                'birthday', a.`birthday`,
-                'is_employee', a.`is_employee`,
-                'contract_date', a.`contract_date`,
-                'termination_date', a.`termination_date`,
-                'clock_number', a.`clock_number`
+                'date_modified', a.`date_modified`,
+                'po_detail_id', a.`po_detail_id`,
+                'current_status', a.`current_status`
             )
-        AS people_objects
-        FROM `Organizations`.`People` a 
-        WHERE a.`organization_id` = ?
+        AS check_in_objects
+        FROM `Inventory`.`Check-in_Log` a
+        WHERE 
+            a.`item_id` = ? AND
+            a.`inv_id` = ? AND
+            a.`owner_id` = ?
         '''
 
         # Execute Query
-        cursor.execute(query, (item_id,))
+        cursor.execute(query, (item_id, inv_id, owner_id))
         result = cursor.fetchall()
 
         # Create Checkins Dictionary
         checkins = {}
         for row in result:
-            json_row = json.loads(row[0])
-            check_in_id = json_row['check_in_id']
-            checkins[check_in_id] = json_row
+            checkin_json_row = json.loads(row[0])
+            check_in_id = checkin_json_row['check_in_id']
+            checkins[check_in_id] = checkin_json_row
 
-        items[item_id]['checkins'] = checkins
+        json_row['checkins'] = checkins
 
         # If checkins resource is empty
         if not checkins and verbose:
             custom_response.insert_flash_message(
                 FlashMessage(
-                    message=f'No checkins found for item {items[item_id]["item_name"]} (ID: {item_id})',
+                    message=f'No checkins found for inventory item {json_row["item_name"]} (inventory ID: {inv_id} item ID: {item_id})',
                     message_type=MessageType.WARNING)
             )
 
-        return items, custom_response
+        return json_row, custom_response
 
     except Exception:
         error = error_message()
         custom_response.insert_flash_message(error)
-        return items, custom_response
-
+        return json_row, custom_response
 
 def populate_checkouts(
-                    cursor, item_id,
-                    items, custom_response, verbose):
+        cursor, inv_id,
+        json_row, custom_response, verbose):
     '''
-    Populate Checkouts Resource for Items
+    Populate checkins resources for Inventory Items
 
     Args:
         cursor (mariadb.cursor): MariaDB Cursor
-        item_id (int): Item ID
-        items (dict): Items Dictionary
+        item_id (int): item ID
+        inv_id (int): inventory ID
+        owner_id (int): owner ID
+        json_row (dict): Row Dictionary
         custom_response (CustomResponse): Custom Response
         verbose (bool): Verbose
 
     Returns:
-        items (dict): Items Dictionary
+        json_row (dict): Row Dictionary
         custom_response (CustomResponse): Custom Response
     '''
-    raise NotImplementedError
 
-def populate_cycle_counts(
-                    cursor, item_id,
-                    items, custom_response, verbose):
+    try:
+        query = '''
+        SELECT 
+            JSON_OBJECT(
+                'check_out_id', a.`check_out_id`,
+                'prefix', a.`prefix`,
+                'year', a.`year`,
+                'month', a.`month`,
+                'sec_number', a.`sec_number`,
+                'suffix', a.`suffix`,
+                'inv_id', a.`inv_id`,
+                'lot_number', a.`lot_number`,
+                'amount', a.`amount`,
+                'user_id', a.`user_id`,
+                'date_entered', a.`date_entered`,
+                'date_modified', a.`date_modified`,
+                'so_detail_id', a.`so_detail_id`,
+                'notes', a.`notes`
+            )
+        AS check_in_objects
+        FROM `Inventory`.`Check-out_Log` a
+        WHERE 
+            a.`inv_id` = ?
+        '''
+
+        # Execute Query
+        cursor.execute(query, (inv_id,))
+        result = cursor.fetchall()
+
+        # Create Checkouts Dictionary
+        checkouts = {}
+        for row in result:
+            checkout_json_row = json.loads(row[0])
+            check_out_id = json_row['check_out_id']
+            checkouts[check_out_id] = checkout_json_row
+
+        json_row['checkouts'] = checkouts
+
+        # If checkouts resource is empty
+        if not checkouts and verbose:
+            custom_response.insert_flash_message(
+                FlashMessage(
+                    message=f'No checkouts found for inventory item {json_row["item_name"]} (inventory ID: {inv_id})',
+                    message_type=MessageType.WARNING)
+            )
+
+        return json_row, custom_response
+
+    except Exception:
+        error = error_message()
+        custom_response.insert_flash_message(error)
+        return json_row, custom_response
+
+def populate_cycle_count(cursor, recent_cycle_count_id,
+                         json_row,
+                         custom_response, verbose):
     '''
-    Populate Cycle Counts Resource for Items
+    Populate Owner Resource for Inventory Items
 
     Args:
         cursor (mariadb.cursor): MariaDB Cursor
-        item_id (int): Item ID
-        items (dict): Items Dictionary
+        recent_cycle_count_id (int): recent_cycle_count_id
+        json_row (dict): Item Dictionary
         custom_response (CustomResponse): Custom Response
         verbose (bool): Verbose
 
     Returns:
-        items (dict): Items Dictionary
+        json_row (dict): Item Dictionary
         custom_response (CustomResponse): Custom Response
     '''
-    raise NotImplementedError
 
-def populate_owner(
-                    cursor, item_id,
-                    items, custom_response, verbose):
+    try:
+        if not recent_cycle_count_id:
+            if verbose:
+                custom_response.insert_flash_message(
+                    FlashMessage(
+                        message=f'This item has not been cycle counted',
+                        message_type=MessageType.INFO)
+                )
+            return json_row, custom_response
+
+        query = '''
+        SELECT 
+            JSON_OBJECT(
+                'actual_inventory_precheck', a.`actual_inventory_precheck`,
+                'cycle_count_date', a.`cycle_count_date`,
+                'amount_counted', a.`amount_counted`,
+                'cycle_count_grade', a.`cycle_count_grade`,
+                'cycle_counter_user_id', a.`user_id`,
+                'fixed_actual_inventory', a.`fixed_actual_inventory`,
+                'cycle_count_notes', a.`notes`,
+                'cycle_counter_username', b.`username`,
+                'cycle_counter_person_id', c.`person_id`,
+                'cycle_counter_first_name', c.`first_name`,
+                'cycle_counter_last_name', c.`last_name`
+            )
+        AS cycle_count_object
+        FROM `Inventory`.`Cycle_Counts_Log` a
+        LEFT JOIN `Organizations`.`Users` b ON
+            a.`user_id` = b.`user_id`
+        LEFT JOIN `Organizations`.`People` c ON
+            b.`person_id` = c.`person_id`
+        WHERE 
+            a.`cycle_count_id` = ?
+        LIMIT 1
+        '''
+
+        # Execute Query
+        cursor.execute(query, (recent_cycle_count_id,))
+        result = cursor.fetchone()
+
+        # If owner resource is empty
+        if not result and verbose:
+            custom_response.insert_flash_message(
+                FlashMessage(
+                    message=f'Most cycle count record not found (ID: {json_row["recent_cycle_count_id"]})',
+                    message_type=MessageType.WARNING)
+            )
+        else:
+            # Unpack both dicts (** Operator) and merge them together
+            json_row = {**json_row, **json.loads(result[0])}
+
+        return json_row, custom_response
+
+    except Exception:
+        error = error_message()
+        custom_response.insert_flash_message(error)
+        return json_row, custom_response
+
+def populate_owner(cursor, owner_id, json_row,
+                   custom_response, verbose):
     '''
-    Populate Item Owner Resource for Items
+    Populate Owner Resource for Inventory Items
 
     Args:
         cursor (mariadb.cursor): MariaDB Cursor
-        item_id (int): Item ID
-        items (dict): Items Dictionary
+        owner_id (int): Component ID
+        json_row (dict): Item Dictionary
         custom_response (CustomResponse): Custom Response
         verbose (bool): Verbose
 
     Returns:
-        items (dict): Items Dictionary
+        json_row (dict): Item Dictionary
         custom_response (CustomResponse): Custom Response
     '''
-    raise NotImplementedError
+
+    try:
+        query = '''
+        SELECT 
+            JSON_OBJECT(
+                'organization_id', a.`organization_id`, 
+                'date_entered', a.`date_entered`,
+                'website_url', a.`website_url`,
+                'vetted', a.`vetted`,
+                'date_vetted', a.`date_vetted`,
+                'risk_level', a.`risk_level`,
+                'supplier', a.`supplier`,
+                'client', a.`client`,
+                'lab', a.`lab`,
+                'courier', a.`courier`,
+                'other', a.`other`,
+                'notes', a.`notes`,
+                'organization_name', b.`organization_name`,
+                'organization_initial', b.`organization_initial`
+            )
+        AS organizaiton_object
+        FROM `Organizations`.`Organizations` a
+        LEFT JOIN `Organizations`.`Organization_Names` b ON
+            a.`organization_id` = b.`organization_id`
+        WHERE 
+            a.`organization_id` = ?
+        LIMIT 1
+        '''
+
+        # Execute Query
+        cursor.execute(query, (owner_id,))
+        result = cursor.fetchone()
+
+        # If owner resource is empty
+        if not result and verbose:
+            custom_response.insert_flash_message(
+                FlashMessage(
+                    message=f'Owner not found (ID: {json_row["owner_id"]})',
+                    message_type=MessageType.WARNING)
+            )
+        else:
+            # Unpack both dicts (** Operator) and merge them together
+            json_row = {**json_row, **json.loads(result[0])}
+
+        return json_row, custom_response
+
+    except Exception:
+        error = error_message()
+        custom_response.insert_flash_message(error)
+        return json_row, custom_response
+
+def populate_component(cursor, component_id, json_row,
+                        custom_response, verbose):
+    '''
+    Populate Components Resource for Inventory Items
+
+    Args:
+        cursor (mariadb.cursor): MariaDB Cursor
+        component_id (int): Component ID
+        json_row (dict): Item Dictionary
+        custom_response (CustomResponse): Custom Response
+        verbose (bool): Verbose
+
+    Returns:
+        json_row (dict): Item Dictionary
+        custom_response (CustomResponse): Custom Response
+    '''
+
+    try:
+        query = '''
+        SELECT 
+            JSON_OBJECT(
+                'brand_id', a.`brand_id`,
+                'component_type', a.`component_type`,
+                'units', a.`units`,
+                'date_entered', a.`date_entered`,
+                'certified_usda_organic', a.`certified_usda_organic`,
+                'certified_halal', a.`certified_halal`,
+                'certified_kosher', a.`certified_kosher`,
+                'certified_gluten_free', a.`certified_gluten_free`,
+                'certified_national_sanitation_foundation', a.`certified_national_sanitation_foundation`,
+                'certified_us_pharmacopeia', a.`certified_us_pharmacopeia`,
+                'certified_non_gmo', a.`certified_non_gmo`,
+                'certified_vegan', a.`certified_vegan`,
+                'brand_name', c.`organization_name`,
+                'brand_initial', c.`organization_initial`,
+                'brand_website', b.`website_url`
+            )
+        AS component_object
+        FROM `Inventory`.`Components` a
+        LEFT JOIN `Organizations`.`Organizations` b ON
+            a.`brand_id` = b.`organization_id`
+        LEFT JOIN `Organizations`.`Organization_Names` c ON
+            a.`brand_id` = c.`organization_id`
+        WHERE 
+            a.`component_id` = ?
+        LIMIT 1
+        '''
+
+        # Execute Query
+        cursor.execute(query, (component_id,))
+        result = cursor.fetchone()
+
+        # If components resource is empty
+        if not result and verbose:
+            custom_response.insert_flash_message(
+                FlashMessage(
+                    message=f'Component not found (ID: {json_row["component_id"]})',
+                    message_type=MessageType.WARNING)
+            )
+        else:
+            # Unpack both dicts (** Operator) and merge them together
+            json_row = {**json_row, **json.loads(result[0])}
+
+        return json_row, custom_response
+
+    except Exception:
+        error = error_message()
+        custom_response.insert_flash_message(error)
+        return json_row, custom_response
+
+def populate_product(cursor, product_id, json_row,
+                        custom_response, verbose):
+    '''
+    Populate Components Resource for Inventory Items
+
+    Args:
+        cursor (mariadb.cursor): MariaDB Cursor
+        product_id (int): Product ID
+        json_row (dict): Item Dictionary
+        custom_response (CustomResponse): Custom Response
+        verbose (bool): Verbose
+
+    Returns:
+        json_row (dict): Item Dictionary
+        custom_response (CustomResponse): Custom Response
+    '''
+
+    try:
+        query='''
+        SELECT
+            JSON_OBJECT(
+                'product_type', a.`type`,
+                'current_product', a.`current_product`,
+                'date_entered', a.`date_entered`,
+                'spec_issue_date', a.`spec_issue_date`,
+                'spec_revise_date', a.`spec_revise_date`,
+                'exp_time_frame', a.`exp_time_frame`,
+                'exp_unit', a.`exp_unit`,
+                'exp_type', a.`exp_type`,
+                'exp_use_oldest_ingredient', a.`exp_use_oldest_ingredient`,
+                'default_formula_id', a.`default_formula_id`,
+                'certified_usda_organic', a.`certified_usda_organic`,
+                'certified_halal', a.`certified_halal`,
+                'certified_kosher', a.`certified_kosher`,
+                'certified_gluten_free', a.`certified_gluten_free`,
+                'certified_national_sanitation_foundation', a.`certified_national_sanitation_foundation`,
+                'certified_us_pharmacopeia', a.`certified_us_pharmacopeia`,
+                'certified_non_gmo', a.`certified_non_gmo`,
+                'certified_vegan', a.`certified_vegan`
+            )
+        AS product_object
+        FROM `Products`.`Product_Master` a
+        LEFT JOIN `Organizations`.`Organizations` b ON
+            a.`organization_id` = b.`organization_id`
+        LEFT JOIN `Organizations`.`Organization_Names` c ON
+            a.`organization_id` = c.`organization_id`
+        WHERE
+            a.`product_id` = ?
+        LIMIT 1
+        '''
+
+        # Execute Query
+        cursor.execute(query, (product_id,))
+        result=cursor.fetchone()[0]
+
+        # If components resource is empty
+        if not result and verbose:
+            custom_response.insert_flash_message(
+                FlashMessage(
+                    message=f'Product not found (ID: {json_row["product_id"]})',
+                    message_type=MessageType.WARNING)
+            )
+        else:
+            # Unpack both dicts (** Operator) and merge them together
+            json_row = {**json_row, **json.loads(result[0])}
+
+        return json_row, custom_response
+
+    except Exception:
+        error = error_message()
+        custom_response.insert_flash_message(error)
+        return json_row, custom_response
 
 @bp.route('/checkin', methods=['POST', 'PUT'])
 @check_authenticated(authentication_required=True)

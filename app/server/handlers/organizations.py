@@ -623,7 +623,7 @@ def populate_products(cursor, org_id, organizations,
         return organizations, custom_response
 
 
-@bp.route('/exists', methods=['POST'])
+@bp.route('/exists', methods=['GET'])
 @check_authenticated(authentication_required=True)
 def organization_exists():
     """
