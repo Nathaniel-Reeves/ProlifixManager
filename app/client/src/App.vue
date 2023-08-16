@@ -134,28 +134,32 @@ export default {
     getUser: function () {
       // Get session cookie data
       const sessionToken = getCookie('session')
+      console.log('Saved Session Token: ', sessionToken)
 
       // Get user data
-      const fetchRequest = window.origin + '/api/sessions?session-token=' + sessionToken
+      const fetchRequest = window.origin + '/api/auth/sessions?session-token=' + sessionToken
       console.log(
         'GET ' + fetchRequest
       )
       fetch(fetchRequest, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        },
         credentials: 'include'
       }).then(response => {
-        if (response.status === 200) {
-          response.json().then(data => {
-            this.userData = data.data[0]
+        if (response.ok) {
+          response.json().then(jsonData => {
+            this.userData = jsonData.data[0]
             this.loggedInState = true
+            const sessionToken = getCookie('session')
+            console.log('New Session Token: ', sessionToken)
           })
         } else {
           console.log('Looks like there was a problem. Status Code:' + response.status)
-          console.log(response)
-          this.loggedInState = false
+          response.json().then(jsonData => {
+            console.log(jsonData)
+            this.loggedInState = false
+            const sessionToken = getCookie('session')
+            console.log('New Session Token: ', sessionToken)
+          })
         }
       })
     }
