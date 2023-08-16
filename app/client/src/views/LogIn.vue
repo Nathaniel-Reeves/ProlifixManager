@@ -61,24 +61,17 @@ export default {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*'
         },
-        credentials: 'include',
+        credentials: 'same-origin',
         body: JSON.stringify({
           username: this.username,
           password: this.password
         })
       }).then(response => {
-        if (response.status === 200) {
-          response.json().then(data => {
-            console.log(data)
-            this.userData = data.data
-            this.$emit('login', data.data)
-          })
-        } else {
-          response.json().then(data => {
-            console.log(data)
-            this.form_messages = data.messages.form
-          })
-        }
+        response.json().then(jsonData => {
+          console.log(jsonData)
+          this.userData = jsonData
+          this.$emit('login', jsonData)
+        })
       }).catch(error => {
         console.log(error)
         this.flash_errors.push(error)

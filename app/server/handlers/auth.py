@@ -42,45 +42,45 @@ def check_authenticated(authentication_required=False, database_priveleges=None)
             try:
                 custom_response = CustomResponse()  # Create an instance of Response
 
-                # Check if user has a session token, Create one if not
-                session_token = request.cookies.get('session')
-                if session_token is None:
-                    session_token = create_session()
                 redis_connection = Redis(
                     host=app.config['REDIS_HOST'],
                     port=app.config['REDIS_PORT'],
                     password=app.config['REDIS_PASSWORD'])
-                if not redis_connection.exists(session_token):
-                    session_token = create_session()
 
-                if isinstance(session_token, FlashMessage):
-                    custom_response.insert_flash_message(session_token)
-                    return jsonify(custom_response.to_json()), 500
+                # Check if user has a session token, Create one if not
+                session_token = request.cookies.get('session')
+                print("Session Token: ", session_token)
+                if (session_token is None) or (not redis_connection.exists(session_token)):
+                    session_token = create_session()
+                    if isinstance(session_token, FlashMessage):
+                        custom_response.insert_flash_message(session_token)
+                        return jsonify(custom_response.to_json()), 500
+
+                    else:
+                        message = FlashMessage(
+                            message='New Session Token Created',
+                            message_type=MessageType.SUCCESS
+                        )
+                        custom_response.insert_flash_message(message)
 
                 session_data = json.loads(redis_connection.get(session_token))
 
                 # Check if User is Authenticated
-                user_authenticated = False
-                if session_data['user_id']:
-                    user_authenticated = True
-
-                if authentication_required:
-                    if not user_authenticated:
-                        custom_response.insert_flash_message(
-                            FlashMessage(
-                                message='User not authenticated',
-                                message_type=MessageType.DANGER
-                            )
+                if authentication_required and not session_data['user_id']:
+                    custom_response.insert_flash_message(
+                        FlashMessage(
+                            message='User not authenticated',
+                            message_type=MessageType.DANGER
                         )
-                        response = make_response(
-                            jsonify(custom_response.to_json()), 401)
-                        response.set_cookie('session', session_token)
-                        return response
+                    )
+                    response = make_response(
+                        jsonify(custom_response.to_json()), 401)
+                    response.set_cookie('session', session_token)
+                    return response
 
-                response_data = func(*args, **kwargs)
-                response = make_response(response_data)
+                response, code = func(*args, **kwargs)
                 response.set_cookie('session', session_token)
-                return response
+                return response, code
 
             except RedisError as error:
                 # Redis Error Handling
@@ -141,7 +141,7 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 def login():
     """
     Checks if user exists in DB, if so login user
-    by creating a session and storing session in
+    by updating the session cookie and storing session in
     redis and sending cookie to user.
     """
     custom_response = CustomResponse()  # Create an instance of Response
@@ -212,14 +212,17 @@ def login():
 
         # Check if user has a session token, Create one if not
         session_token = request.cookies.get('session')
-        if session_token is None:
-            session_token = create_session()
         redis_connection = Redis(
             host=app.config['REDIS_HOST'],
             port=app.config['REDIS_PORT'],
-            password=app.config['REDIS_PASSWORD'])
-        if not redis_connection.exists(session_token):
+            password=app.config['REDIS_PASSWORD']
+        )
+        if (session_token is None) or (not redis_connection.exists(session_token)):
             session_token = create_session()
+            if isinstance(session_token, FlashMessage):
+                custom_response.insert_flash_message(session_token)
+                return jsonify(custom_response.to_json()), 500
+
         session_data = json.loads(redis_connection.get(session_token))
 
         # Update Session Data
@@ -231,11 +234,14 @@ def login():
         session_data['organization_id'] = user_data['organization_id']
         session_data['first_name'] = user_data['first_name']
         redis_connection.set(session_token, json.dumps(session_data))
+        redis_connection.expire(
+            session_token, app.config['SESSION_EXPIRE'], nx=False, xx=False, gt=False, lt=False)
 
-        # Insert the user_data into the response
-        custom_response.insert_data(user_data)
-
-        return jsonify(custom_response.to_json())
+        # Insert the user_data & cookie into the response
+        response = make_response(
+            jsonify(custom_response.insert_data(user_data)), 200)
+        response.set_cookie('session', session_token)
+        return response
 
     except Exception:
         error = error_message()
@@ -250,9 +256,8 @@ def login():
 @bp.route('/sessions', methods=['GET'])
 def get_user_by_session_token():
     """
-    Get User by the Sesstion Token from Redis
+    Get User by the Session Token from Redis
     """
-
     session_token = request.args.get('session-token', default=None, type=str)
 
     try:
@@ -271,7 +276,10 @@ def get_user_by_session_token():
                 FlashMessage(message="User not authenticated",
                              message_type=MessageType.DANGER))
             status_code = 401
-        return jsonify(custom_response.to_json()), status_code
+            new_session_token = create_session()
+            response = make_response(jsonify(custom_response.to_json()), status_code)
+            response.set_cookie('session', new_session_token)
+        return response
 
     except Exception:
         error = error_message()

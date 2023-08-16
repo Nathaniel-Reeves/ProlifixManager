@@ -147,7 +147,7 @@ export default {
         return this.filters ? this.productTypeSelected.length === this.filters.length : false
       },
       set: function (value) {
-        var productTypeSelected = []
+        const productTypeSelected = []
 
         if (value) {
           this.filters.forEach(function (filter) {
