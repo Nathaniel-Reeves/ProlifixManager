@@ -8,7 +8,7 @@ CREATE DATABASE IF NOT EXISTS `Orders`;
 CREATE DATABASE IF NOT EXISTS `Formulas`;
 
 CREATE TABLE IF NOT EXISTS `Organizations`.`Users` (
-  `user_id` INT,
+  `user_id` INT(11) UNSIGNED UNIQUE NOT NULL,
   `person_id` INT,
   `username` VARCHAR(100) UNIQUE NOT NULL,
   `encrypted_password` VARCHAR(250) NOT NULL,

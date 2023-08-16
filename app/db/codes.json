@@ -1,0 +1,17 @@
+{
+    "0001": {
+        "database_name": "Formulas",
+        "tables": {
+            "0001": {
+                "table_name": "Formula_Detail",
+                "columns": {
+                    "formula_ingredient_id": {
+                        "primary_key": true,
+                        "data_type": "int",
+                        "security_clearance_group": ""
+                    }
+                }
+            }
+        }
+    }
+}

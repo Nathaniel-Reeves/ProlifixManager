@@ -1,0 +1,298 @@
+name: ProlifixManager
+services:
+  client:
+    build:
+      context: /home/nathanr/GitHub/Material-Requirements-Planning-System/app
+      dockerfile: client/Dockerfile
+    container_name: client
+    depends_on:
+      server-loadbalance:
+        condition: service_started
+    ports:
+      - mode: ingress
+        target: 3000
+        published: "3000"
+        protocol: tcp
+    restart: always
+    stdin_open: true
+    tty: true
+    volumes:
+      - type: bind
+        source: /storage_array/files
+        target: /db/files
+        bind:
+          create_host_path: true
+    devices: []
+    cap_add: []
+    command: []
+    image: null
+    environment: []
+    networks:
+      - prolifix_manager_network
+    privileged: false
+    cpu_shares: 90
+    deploy:
+      resources:
+        limits:
+          memory: 128560M
+  init_db:
+    build:
+      context: /home/nathanr/GitHub/Material-Requirements-Planning-System/app
+      dockerfile: init_db/Dockerfile
+    container_name: init_db
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    environment:
+      - DB_HOSTNAME=172.10.10.2
+      - DB_PASSWORD=ClientPassword!5
+      - DB_PORT=3306
+      - DB_USERNAME=client
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - type: bind
+        source: /home/nathanr/GitHub/Material-Requirements-Planning-System/app/init_db
+        target: /init_db
+        bind:
+          create_host_path: true
+    ports: []
+    devices: []
+    cap_add: []
+    command: []
+    image: null
+    networks:
+      - prolifix_manager_network
+    privileged: false
+    cpu_shares: 90
+    deploy:
+      resources:
+        limits:
+          memory: 128560M
+  mariadb:
+    container_name: mariadb
+    environment:
+      - MARIADB_ROOT_HOST=%
+      - MARIADB_ROOT_PASSWORD=Newspaper5
+    healthcheck:
+      test:
+        - CMD
+        - mysqladmin
+        - ping
+        - -h
+        - 172.10.10.2
+        - --port
+        - "3306"
+        - -pNewspaper5
+      timeout: 10s
+      interval: 30s
+      retries: 5
+    image: mariadb:10.11
+    ports:
+      - mode: ingress
+        target: 3306
+        published: "3306"
+        protocol: tcp
+    restart: always
+    volumes:
+      - type: bind
+        source: /storage_array/mariadb_data
+        target: /var/lib/mysql
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /home/nathanr/GitHub/Material-Requirements-Planning-System/app/db/privileges.sql
+        target: /docker-entrypoint-initdb.d/0_init.sql
+        bind:
+          create_host_path: true
+    devices: []
+    cap_add: []
+    command: []
+    networks:
+      - prolifix_manager_network
+    privileged: false
+    cpu_shares: 90
+    deploy:
+      resources:
+        limits:
+          memory: 128560M
+  redis:
+    command:
+      - redis-server
+      - /etc/redis/redis.conf
+    container_name: redis
+    depends_on:
+      server-loadbalance:
+        condition: service_started
+    image: redis:latest
+    ports:
+      - mode: ingress
+        target: 6379
+        published: "6379"
+        protocol: tcp
+    restart: always
+    volumes:
+      - type: bind
+        source: /home/nathanr/GitHub/Material-Requirements-Planning-System/app/redis/data
+        target: /data
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /home/nathanr/GitHub/Material-Requirements-Planning-System/app/redis/redis.conf
+        target: /etc/redis/redis.conf
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /etc/timezone
+        target: /etc/timezone
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /etc/localtime
+        target: /etc/localtime
+        read_only: true
+        bind:
+          create_host_path: true
+    devices: []
+    cap_add: []
+    environment: []
+    networks:
+      - prolifix_manager_network
+    privileged: false
+    cpu_shares: 90
+    deploy:
+      resources:
+        limits:
+          memory: 128560M
+  server:
+    build:
+      context: /home/nathanr/GitHub/Material-Requirements-Planning-System/app
+      dockerfile: server/Dockerfile
+    depends_on:
+      init_db:
+        condition: service_completed_successfully
+    environment:
+      - API_PREFIX=False
+      - DB_HOSTNAME=172.10.10.2
+      - DB_PASSWORD=ClientPassword!5
+      - DB_PORT=3306
+      - DB_USERNAME=client
+    ports:
+      - mode: ingress
+        target: 5000
+        protocol: tcp
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - type: bind
+        source: /home/nathanr/GitHub/Material-Requirements-Planning-System/app/client/public
+        target: /client/public
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /storage_array/files
+        target: /db/files
+        bind:
+          create_host_path: true
+    devices: []
+    cap_add: []
+    command: []
+    image: null
+    networks:
+      - prolifix_manager_network
+    privileged: false
+    container_name: ""
+    cpu_shares: 90
+    deploy:
+      resources:
+        limits:
+          memory: 128560M
+  server-loadbalance:
+    container_name: server_loadbalance
+    depends_on:
+      server:
+        condition: service_started
+    image: nginx:latest
+    ports:
+      - mode: ingress
+        target: 5000
+        published: "5000"
+        protocol: tcp
+    restart: always
+    tty: true
+    volumes:
+      - type: bind
+        source: /home/nathanr/GitHub/Material-Requirements-Planning-System/app/server/nginx.conf
+        target: /etc/nginx/nginx.conf
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /home/nathanr/GitHub/Material-Requirements-Planning-System/app/client/public
+        target: /public
+        bind:
+          create_host_path: true
+    devices: []
+    cap_add: []
+    command: []
+    environment: []
+    networks:
+      - prolifix_manager_network
+    privileged: false
+    cpu_shares: 90
+    deploy:
+      resources:
+        limits:
+          memory: 128560M
+  web-server:
+    container_name: web_server
+    depends_on:
+      client:
+        condition: service_started
+    image: nginx:latest
+    ports:
+      - mode: ingress
+        target: 80
+        published: "80"
+        protocol: tcp
+    restart: always
+    tty: true
+    volumes:
+      - type: bind
+        source: /home/nathanr/GitHub/Material-Requirements-Planning-System/app/webserver/nginx.conf
+        target: /etc/nginx/nginx.conf
+        read_only: true
+        bind:
+          create_host_path: true
+    devices: []
+    cap_add: []
+    command: []
+    environment: []
+    networks:
+      - prolifix_manager_network
+    privileged: false
+    cpu_shares: 90
+    deploy:
+      resources:
+        limits:
+          memory: 128560M
+networks:
+  prolifix_manager_network:
+    name: prolifix_manager_network
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.10.10.0/16
+          gateway: 172.10.10.1
+          ip_range: 172.10.11.0/26
+x-casaos:
+  hostname: "prolifixmanager.com"
+  scheme: http
+  index: /
+  port_map: ""
+  author: self
+  category: self
+  icon: home/nathanr/GitHub/Material-Requirements-Planning-System/app/client/src/assets/Company Images/icon logo ico/Medium Icon Logo Transparent.ico
+  title:
+    custom: ""
