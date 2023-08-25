@@ -67,41 +67,6 @@ print('    Port:         ', REDIS_PORT)
 print('    Password:     ', REDIS_PASSWORD)
 print()
 
-"""
-Config Settings for Flask App
-"""
-app = Flask(__name__)
-
-app.config['DB_HOSTNAME'] = DB_HOST
-app.config['DB_PORT'] = DB_PORT
-app.config['DB_USER'] = DB_USER
-app.config['DB_PASSWORD'] = DB_PASSWORD
-app.config['REDIS_HOST'] = REDIS_HOST
-app.config['REDIS_PORT'] = REDIS_PORT
-app.config['REDIS_PASSWORD'] = REDIS_PASSWORD
-app.config['SESSION_TYPE'] = 'redis'
-app.config['SESSION_PERMANENT'] = False
-app.config['SESSION_USE_SIGNER'] = True
-app.config['SESSION_EXPIRE'] = timedelta(days=7)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['ALLOWED_EXTENSIONS'] = (".pdf")
-
-CORS(app, supports_credentials=True, allow_headers=[
-     "Content-Type", "Access-Control-Allow-Origin"])
-
-app.secret_key = '0kgy23uJpIin346NeC7hUZ3Bak36S844NoeN1X35k4kY'
-# login_manager = LoginManager(app)
-# flask_jwt_conf = JWTManager(app)
-# server_session = Session(app)
-socketio = SocketIO(app, manage_session=False)
-
-#  Set the API prefix to a falsey (empty string) value to
-#  send/recive traffic from the development client,
-#  $ export API_PREFIX=
-
-#  Set the API prefix to a truthy (non-empty string) value
-#  to send/recive traffic using postman & production client.
-#  $ export API_PREFIX='True'
 API_PREFIX = os.environ.get('API_PREFIX')
 if API_PREFIX == 'True':
     API_PREFIX = '/'
@@ -113,53 +78,102 @@ print('~~~ API CONFIG ~~~')
 print('    API Prefix:   ', API_PREFIX)
 print()
 
-
-api_blueprint = Blueprint('api', __name__, url_prefix=API_PREFIX)
-
-
 """
-Import Handlers
-"""
-from handlers.organizations import bp as organizations_bp
-api_blueprint.register_blueprint(organizations_bp)
-
-from handlers.orders import bp as orders_bp
-api_blueprint.register_blueprint(orders_bp)
-
-from handlers.auth import bp as auth_bp
-api_blueprint.register_blueprint(auth_bp)
-
-from handlers.inventory import bp as inventory_bp
-api_blueprint.register_blueprint(inventory_bp)
-
-"""
-sanity check routes
+Config Settings for Flask App
 """
 
-@api_blueprint.route('/ping', methods=['GET'])
-def ping_pong():
+
+def create_app(
+        DB_HOST=DB_HOST, 
+        DB_PORT=DB_PORT, 
+        DB_USER=DB_USER, 
+        DB_PASSWORD=DB_PASSWORD, 
+        REDIS_HOST=REDIS_HOST, 
+        REDIS_PORT=REDIS_PORT, 
+        REDIS_PASSWORD=REDIS_PASSWORD, 
+        UPLOAD_FOLDER=UPLOAD_FOLDER,
+        API_PREFIX=API_PREFIX
+    ):
+
+    app = Flask(__name__)
+
+    app.config['DB_HOSTNAME'] = DB_HOST
+    app.config['DB_PORT'] = DB_PORT
+    app.config['DB_USER'] = DB_USER
+    app.config['DB_PASSWORD'] = DB_PASSWORD
+    app.config['REDIS_HOST'] = REDIS_HOST
+    app.config['REDIS_PORT'] = REDIS_PORT
+    app.config['REDIS_PASSWORD'] = REDIS_PASSWORD
+    app.config['SESSION_TYPE'] = 'redis'
+    app.config['SESSION_PERMANENT'] = False
+    app.config['SESSION_USE_SIGNER'] = True
+    app.config['SESSION_EXPIRE'] = timedelta(days=7)
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    app.config['ALLOWED_EXTENSIONS'] = (".pdf")
+
+    CORS(app, supports_credentials=True, allow_headers=[
+        "Content-Type", "Access-Control-Allow-Origin"])
+
+    app.secret_key = '0kgy23uJpIin346NeC7hUZ3Bak36S844NoeN1X35k4kY'
+
+
+    # login_manager = LoginManager(app)
+    # flask_jwt_conf = JWTManager(app)
+    # server_session = Session(app)
+    socketio = SocketIO(app, manage_session=False)
+
+    #  Set the API prefix to a falsey (empty string) value to
+    #  send/recive traffic from the development client,
+    #  $ export API_PREFIX=
+
+
+    api_blueprint = Blueprint('api', __name__, url_prefix=API_PREFIX)
+
+
     """
-    ping pong route
+    Import Handlers
+    """
+    from handlers.organizations import bp as organizations_bp
+    api_blueprint.register_blueprint(organizations_bp)
+
+    from handlers.orders import bp as orders_bp
+    api_blueprint.register_blueprint(orders_bp)
+
+    from handlers.auth import bp as auth_bp
+    api_blueprint.register_blueprint(auth_bp)
+
+    from handlers.inventory import bp as inventory_bp
+    api_blueprint.register_blueprint(inventory_bp)
+
+    """
+    sanity check routes
     """
 
-    return jsonify('pong!')
+    @api_blueprint.route('/ping', methods=['GET'])
+    def ping_pong():
+        """
+        ping pong route
+        """
 
-@api_blueprint.route('/server_id', methods=['GET'])
-def server_id():
-    """
-    server id route
-    """
+        return jsonify('pong!')
 
-    return f"Container ID: {socket.gethostname()}"
+    @api_blueprint.route('/server_id', methods=['GET'])
+    def server_id():
+        """
+        server id route
+        """
 
-# @api_blueprint.route('/redis')
-# def hello():
-#     redis.incr('hits')
-#     counter = str(redis.get('hits'), 'utf-8')
-#     return "Welcome to this webpage!, This webpage has been viewed "+counter+" time(s)"
+        return f"Container ID: {socket.gethostname()}"
 
-app.register_blueprint(api_blueprint)
+    # @api_blueprint.route('/redis')
+    # def hello():
+    #     redis.incr('hits')
+    #     counter = str(redis.get('hits'), 'utf-8')
+    #     return "Welcome to this webpage!, This webpage has been viewed "+counter+" time(s)"
+
+    app.register_blueprint(api_blueprint)
 
 if __name__ == "__main__":
+    app = create_app()
     print('~~~ SERVER START ~~~')
     app.run(debug=True, port=5000, host="0.0.0.0")

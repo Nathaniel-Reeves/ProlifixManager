@@ -207,7 +207,6 @@ def execute_from_sql(file_name, session):
 
     return flag
 
-
 def refresh_database_schema(session):
     """
     Refreshes a single database schema by dropping existing tables, recreating them,
@@ -261,12 +260,47 @@ def refresh_database_schema(session):
     return flag
 
 
-def main():
+def delete_database_schema(session):
+    """
+    Drops all databasess.
+
+    Args:
+    session: An instance of a database session.
+
+    Returns:
+    bool: True if successful, False otherwise.
+    """
+    flag = True
+
+    # Print working directory to console
+    working_dir = os.getcwd()
+    print("Working Directory: ", working_dir)
+    print("ls :", os.listdir())
+
+    if flag:
+        # Load the SQL drop_order from the file
+        print("\033[0mDropping existing tables...")
+        flag = execute_from_sql("./schema/drop_order.sql", session)
+        print()
+
+    if flag:
+        print("\033[32mDrop all databases successful!")
+
+    else:
+        print("\033[31mDrop all databases failed.")
+    print()
+
+    return flag
+
+def main(force=False, drop_databases=False):
     
     print("\033[0mStarting Program...")
     # Handle Force Run Overide Argument
     try:
-        force = sys.argv[1] == "force"
+        if not force:
+            force = sys.argv[1] == "force"
+        else:
+            force = True
     except IndexError: 
         force = False
 
@@ -283,6 +317,7 @@ def main():
             print("Continueing...")
     else:
         print("Database Refresh Forced!")
+        print("I hope you know what you are doing...")
 
     # Reload the database
 
@@ -319,6 +354,19 @@ def main():
         print(e)
         print()
         sys.exit(1)
+
+    # Delete the database if drop_database is True
+    if drop_databases:
+        flag = delete_database_schema(session)
+        if flag:
+            print("\033[32mDropped databases successfully!\033[0m")
+            print()
+        else:
+            print("\033[31mDropping databases failed!\033[0m")
+            print()
+        print("\033[31mExiting...\033[0m")
+        session.close()
+        sys.exit(0)
 
     # Refresh the database schema
     flag = refresh_database_schema(session)
