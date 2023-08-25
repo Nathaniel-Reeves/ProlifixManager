@@ -147,7 +147,7 @@ export default {
             'http://127.0.0.1:3000'
           ]
         },
-        credentials: 'same-origin'
+        credentials: 'include'
       }).then(response => {
         if (response.status === 200) {
           response.json().then(data => {
