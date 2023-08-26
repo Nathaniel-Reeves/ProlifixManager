@@ -4,6 +4,7 @@ Creates App
 from datetime import timedelta
 import socket
 import os
+import sys
 from flask import (
     Flask,
     jsonify,
@@ -11,6 +12,13 @@ from flask import (
 )
 from flask_cors import CORS
 from flask_socketio import SocketIO
+
+
+# Get the parent directory
+parent_dir = os.path.dirname(os.path.realpath(__file__))
+
+# Add the parent directory to sys.path
+sys.path.append(parent_dir)
 
 """
 Database Connection Settings
@@ -32,9 +40,9 @@ DB_PASSWORD = os.environ.get('DB_PASSWORD')
 if DB_PASSWORD is None:
     DB_PASSWORD = "ClientPassword!5"
 
-os.chdir("..")
-UPLOAD_FOLDER = os.path.join(os.getcwd(), 'db/files')
-os.chdir("server")
+# print current working directory
+
+UPLOAD_FOLDER = os.path.join(os.getcwd().strip("/server"), 'db/files')
 
 print()
 print('~~~ DATABASE CONFIG ~~~')
@@ -172,6 +180,8 @@ def create_app(
     #     return "Welcome to this webpage!, This webpage has been viewed "+counter+" time(s)"
 
     app.register_blueprint(api_blueprint)
+
+    return app
 
 if __name__ == "__main__":
     app = create_app()
