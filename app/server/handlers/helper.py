@@ -15,7 +15,7 @@ from werkzeug.utils import secure_filename
 
 def only_integers(iterable):
     '''
-    Convets python list to python list
+    Converts python list to python list
     of integer values.
     '''
     for item in iterable:
@@ -151,23 +151,21 @@ def validate_float_in_dict(dict, field, min=0, max=999999, equal_to=True):
     return True
 
 
-def validate_int_in_dict(dict, field, min=0, max=99999999999, equal_to=True):
+def validate_int_in_dict(dict, field, min_v=0, max_v=99999999999, equal_to=True):
     '''
     Validates that the value of a field in a dictionary
     is a int.
     '''
     if field not in dict:
         return False
-    try:
-        int(dict[field])
-    except ValueError:
-        return False
-    if equal_to:
-        if int(dict[field]) >= min and \
-           int(dict[field]) < max:
+    if isinstance(dict[field], int):
+        if equal_to:
+            if int(dict[field]) >= min_v and \
+            int(dict[field]) < max_v:
+                return True
+            return False
+        if int(dict[field]) > min_v and \
+            int(dict[field]) < max_v:
             return True
         return False
-    if int(dict[field]) > min and \
-           int(dict[field]) < max:
-        return True
     return False
