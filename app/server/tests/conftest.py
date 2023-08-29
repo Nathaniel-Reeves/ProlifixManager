@@ -9,7 +9,7 @@ def app():
     """
     Database Connection Settings
     """
-    SERVER_IP = '192.168.1.136'
+    SERVER_IP = '192.168.1.133'
     # SERVER_IP = '127.0.0.1'
     os.environ["DB_HOST"] = SERVER_IP
     os.environ["DB_PORT"] = '3306'
@@ -21,7 +21,11 @@ def app():
     """
     Setup Database
     """
+    os.chdir('app')
+    os.chdir('init_db')
     load_db(force=True, drop_databases=False)
+    os.chdir('..')
+    os.chdir('..')
 
     """
     Redis Connection Settings
@@ -47,7 +51,11 @@ def app():
     """
 
     # Drop all databases
+    os.chdir('app')
+    os.chdir('init_db')
     load_db(force=True, drop_databases=True)
+    os.chdir('..')
+    os.chdir('..')
 
     # Delete all uploaded test files
 

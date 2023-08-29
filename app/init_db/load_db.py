@@ -11,7 +11,8 @@ import sys
 # Define the connection details
 DB_HOST = os.environ.get('DB_HOST')
 if DB_HOST is None:
-    DB_HOST = '127.0.0.1'
+    # DB_HOST = '127.0.0.1'
+    DB_HOST = '192.168.1.133'
 
 DB_PORT = os.environ.get('DB_PORT')
 if DB_PORT is None:
@@ -367,14 +368,14 @@ def main(force=False, drop_databases=False):
             print()
         print("\033[31mExiting...\033[0m")
         session.close()
-        sys.exit(0)
+        return
 
     # Refresh the database schema
     flag = refresh_database_schema(session)
     if not flag:
         print("\033[31mExiting...\033[0m")
         session.close()
-        sys.exit(0)
+        return
     else:
         print("loading fresh data into new databases...\033[0m")
         print()
@@ -456,7 +457,6 @@ def main(force=False, drop_databases=False):
     # print("ls :", os.listdir())
     print()
     print("\033[31mExiting...\033[0m")
-    sys.exit(0)
 
 
 if __name__ == "__main__":
