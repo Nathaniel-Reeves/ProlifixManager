@@ -1,6 +1,6 @@
 import os
 import pytest
-# from ...init_db.load_db import main as load_db
+from init_db.load_db import main as load_db
 from server.wsgi import create_app
 
 
@@ -9,7 +9,9 @@ def app():
     """
     Database Connection Settings
     """
-    os.environ["DB_HOST"] = '127.0.0.1'
+    SERVER_IP = '192.168.1.136'
+    # SERVER_IP = '127.0.0.1'
+    os.environ["DB_HOST"] = SERVER_IP
     os.environ["DB_PORT"] = '3306'
     os.environ["DB_USER"] = 'client'
     os.environ["DB_PASSWORD"] = "ClientPassword!5"
@@ -19,12 +21,13 @@ def app():
     """
     Setup Database
     """
+    load_db(force=True, drop_databases=False)
 
     """
     Redis Connection Settings
     """
 
-    os.environ["REDIS_HOST"] = "127.0.0.1"
+    os.environ["REDIS_HOST"] = SERVER_IP
     os.environ["REDIS_PORT"] = '6379'
     os.environ["REDIS_PASSWORD"] = "Am ^ 7qq?% QgedcLn"
 
@@ -44,6 +47,7 @@ def app():
     """
 
     # Drop all databases
+    load_db(force=True, drop_databases=True)
 
     # Delete all uploaded test files
 

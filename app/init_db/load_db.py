@@ -9,7 +9,7 @@ import csv
 import sys
 
 # Define the connection details
-DB_HOST = os.environ.get('DB_HOSTNAME')
+DB_HOST = os.environ.get('DB_HOST')
 if DB_HOST is None:
     DB_HOST = '127.0.0.1'
 
@@ -296,13 +296,14 @@ def main(force=False, drop_databases=False):
     
     print("\033[0mStarting Program...")
     # Handle Force Run Overide Argument
-    try:
-        if not force:
-            force = sys.argv[1] == "force"
-        else:
-            force = True
-    except IndexError: 
-        force = False
+    if not force:
+        try:
+            if not force:
+                force = sys.argv[1] == "force"
+            else:
+                force = True
+        except IndexError: 
+            force = False
 
     if not force:
         file_exists = exists(

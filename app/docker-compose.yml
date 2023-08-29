@@ -28,7 +28,7 @@ services:
     environment:
       DB_USERNAME: client
       DB_PASSWORD: ClientPassword!5
-      DB_HOSTNAME: '172.10.10.2'
+      DB_HOST: '172.10.10.2'
       DB_PORT: '3306'
     restart: "no"
     volumes:
@@ -48,7 +48,7 @@ services:
     environment:
       DB_USERNAME: client
       DB_PASSWORD: ClientPassword!5
-      DB_HOSTNAME: '172.10.10.2'
+      DB_HOST: '172.10.10.2'
       DB_PORT: '3306'
       API_PREFIX: 'False'
     build:
