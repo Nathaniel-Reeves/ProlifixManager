@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y apt-transport-https
 RUN apt-get update && apt-get install -y wget
 RUN wget https://dlm.mariadb.com/3/MariaDB/mariadb_repo_setup
 RUN chmod +x mariadb_repo_setup
-RUN ./mariadb_repo_setup --os-type=debian --mariadb-server-version="mariadb-10.11"
+RUN ./mariadb_repo_setup --mariadb-server-version="mariadb-10.11"
 RUN apt-get update && apt-get install -y mariadb-client
 RUN apt-get update && apt-get install -y python3-pip
 RUN apt-get update && apt-get install -y --no-install-recommends \
