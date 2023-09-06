@@ -11,7 +11,7 @@ services:
       MARIADB_ROOT_HOST: '%'
     volumes:
       - './db/mariadb_data/:/var/lib/mysql/'
-      - ./db/privileges.sql:/docker-entrypoint-initdb.d/0_init.sql
+      - ./db:/docker-entrypoint-initdb.d
     ports:
       - 3306:3306
     networks:
