@@ -73,7 +73,6 @@ class MyMixin(object):
             """
         return {c.name: str(getattr(self, c.name)) for c in self.__table__.columns}
 
-
 class Organizations(Base, MyMixin):
     __tablename__ = 'Organizations'
 
@@ -93,10 +92,14 @@ class Organizations(Base, MyMixin):
         nullable=True
     )
 
-    vetted = Column(
+    vetted = ACR_Column(
         Boolean,
         nullable=False,
-        default=False
+        default=False,
+        select_acr=[ACR.ADMIN, ACR.QC_MANAGER],
+        update_acr=[ACR.ADMIN, ACR.QC_MANAGER],
+        insert_acr=[ACR.ADMIN, ACR.QC_MANAGER],
+        delete_acr=[ACR.ADMIN, ACR.QC_MANAGER]
     )
 
     date_vetted = ACR_Column(
@@ -221,20 +224,17 @@ class Organization_Names(Base, MyMixin):
 
 
 user = 'root'
-# user_roles = [ACR.ADMIN]
+user_roles = [ACR.ADMIN]
 password = 'Newspaper5'
 host = '192.168.1.133'
 port = '3306'
 database = 'Organizations'
 
 # user = 'client'
-user_roles = [ACR.USER]
+# user_roles = [ACR.USER]
 # password = 'ClientPassword!5'
 
 engine = create_engine(f'mysql+pymysql://{user}:{password}@{host}:{port}/{database}')
-
-Session = sessionmaker(bind=engine)
-session = Session()
 
 def check_acr(user_roles, tables=[], action="select"):
     query_col = []
@@ -256,10 +256,20 @@ def check_acr(user_roles, tables=[], action="select"):
     return query_col, col_names
 
 out, names = check_acr(user_roles, tables=[Organizations, Organization_Names])
-print(*names)
+# print(*names)
 
-data = session.query(*out).where(Organization_Names.primary_name == True).all()
+statment = select(*out).join_from(
+    Organizations,
+    Organization_Names
+    ).where(
+        Organizations.supplier == True
+        ).where(
+            Organization_Names.primary_name == True)
+
+with engine.connect() as conn:
+    data = conn.execute(statment)
 
 organizations = [row._asdict() for row in data]
 print(organizations)
+
 
