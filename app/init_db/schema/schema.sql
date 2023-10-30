@@ -1037,10 +1037,7 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Sales_Orders_Payments` (
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `doc` json DEFAULT (CONCAT('{"_id":"',`prefix`, `year`, `month`, `sec_number`,'","files":[]}')),
   PRIMARY KEY (`prefix`, `year`, `month`, `sec_number`),
-  FOREIGN KEY (`month`) REFERENCES `Orders`.`Sales_Orders`(`month`),
-  FOREIGN KEY (`sec_number`) REFERENCES `Orders`.`Sales_Orders`(`sec_number`),
-  FOREIGN KEY (`year`) REFERENCES `Orders`.`Sales_Orders`(`year`),
-  FOREIGN KEY (`prefix`) REFERENCES `Orders`.`Sales_Orders`(`prefix`)
+  FOREIGN KEY (`prefix`, `year`, `month`, `sec_number`) REFERENCES `Orders`.`Sales_Orders`(`prefix`, `year`, `month`, `sec_number`)
 );
 
 CREATE TABLE IF NOT EXISTS `Orders`.`Sale_Order_Detail` (
