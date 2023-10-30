@@ -1015,8 +1015,32 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Sales_Orders` (
   `completion_date` DATE,
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `doc` json DEFAULT (CONCAT('{"_id":"',`prefix`, `year`, `month`, `sec_number`,'","files":[]}')),
+  `billed_date` DATE,
+  `closed_date` DATE,
+  `down_payment_actual` DOUBLE,
+  `theoretical_po_amount` DOUBLE,
+  `total_paid` DOUBLE,
   PRIMARY KEY (`prefix`, `year`, `month`, `sec_number`),
   FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
+);
+
+CREATE TABLE IF NOT EXISTS `Orders`.`Sales_Orders_Payments` (
+  `prefix` VARCHAR(10),
+  `year` TINYINT,
+  `month` TINYINT,
+  `sec_number` SMALLINT,
+  `organization_id` INT,
+  `payment_amount` DOUBLE,
+  `payment_date` DATE,
+  `payment_type` ENUM("down_payment", "other", "final_payment"),
+  `payment_notes` VARCHAR(2500),
+  `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `doc` json DEFAULT (CONCAT('{"_id":"',`prefix`, `year`, `month`, `sec_number`,'","files":[]}')),
+  PRIMARY KEY (`prefix`, `year`, `month`, `sec_number`),
+  FOREIGN KEY (`month`) REFERENCES `Orders`.`Sales_Orders`(`month`),
+  FOREIGN KEY (`sec_number`) REFERENCES `Orders`.`Sales_Orders`(`sec_number`),
+  FOREIGN KEY (`year`) REFERENCES `Orders`.`Sales_Orders`(`year`),
+  FOREIGN KEY (`prefix`) REFERENCES `Orders`.`Sales_Orders`(`prefix`)
 );
 
 CREATE TABLE IF NOT EXISTS `Orders`.`Sale_Order_Detail` (
