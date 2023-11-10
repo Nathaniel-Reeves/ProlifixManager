@@ -12,8 +12,8 @@ import sys
 DB_HOST = os.environ.get('DB_HOST')
 if DB_HOST is None:
     # Change Host for testing purposes
-    DB_HOST = '127.0.0.1'
-    # DB_HOST = '192.168.1.133'
+    #DB_HOST = '127.0.0.1'
+    DB_HOST = '192.168.1.133'
 
 DB_PORT = os.environ.get('DB_PORT')
 if DB_PORT is None:
