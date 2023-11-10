@@ -13,6 +13,8 @@ from flask import (
 from flask_cors import CORS
 from flask_socketio import SocketIO
 
+from sqlalchemy_test import *
+
 
 # Get the parent directory
 parent_dir = os.path.dirname(os.path.realpath(__file__))
@@ -156,6 +158,15 @@ def create_app(
     """
     sanity check routes
     """
+
+    @api_blueprint.route('/sqlalchemytest', methods=['GET'])
+    def sqlalchemytest():
+        """
+        ping pong route
+        """
+        organizations = sqlalchemy_test()
+
+        return jsonify(organizations)
 
     @api_blueprint.route('/ping', methods=['GET'])
     def ping_pong():
