@@ -307,6 +307,15 @@ def main(force=False, drop_databases=False):
         except IndexError: 
             force = False
 
+    if not drop_databases:
+        try:
+            if not drop_databases:
+                drop_databases = sys.argv[2] == "drop_databases"
+            else:
+                drop_databases = True
+        except IndexError: 
+            drop_databases = False
+
     if not force:
         file_exists = exists(
             "init_db_flag_do_not_delete.txt")

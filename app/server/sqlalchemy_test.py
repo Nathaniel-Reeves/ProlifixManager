@@ -221,12 +221,12 @@ class Organization_Names(Base, MyMixin):
 
 def sqlalchemy_test():
 
-    user = 'root'
-    # user_roles = [ACR.ADMIN]
-    password = 'Newspaper5'
-    host = '192.168.1.133'
-    port = '3306'
-    database = 'Organizations'
+user = 'root'
+user_roles = [ACR.ADMIN]
+password = 'Newspaper5'
+host = '127.0.0.1'
+port = '3306'
+database = 'Organizations'
 
     # user = 'client'
     user_roles = [ACR.USER]

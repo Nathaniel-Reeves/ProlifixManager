@@ -1,6 +1,6 @@
 organization_id,date_entered,website_url,vetted,date_vetted,risk_level,supplier,client,lab,courier,other,notes
-1,2020-07-01,www.prolifixnutrition.com,1,NULL,No Risk,1,1,0,0,0,NULL
-2,2022-02-17,balchem.com,0,2022-02-17,No Risk,0,0,1,0,0,Data from survey
+1,2020-07-01,www.prolifixnutrition.com,1,NULL,No_Risk,1,1,0,0,0,NULL
+2,2022-02-17,balchem.com,0,2022-02-17,No_Risk,0,0,1,0,0,Data from survey
 3,2022-01-19,https://alohamedicinals.com/,0,2022-01-19,UNKNOWN,1,0,0,0,0,Data from survey
 4,2022-02-09,www.aunutra.com,0,2022-02-09,UNKNOWN,1,0,0,0,0,Data from survey
 5,2022-02-22,https://www.azurestandard.com/,0,2022-02-22,UNKNOWN,1,0,0,0,0,Data from survey
@@ -205,25 +205,25 @@ organization_id,date_entered,website_url,vetted,date_vetted,risk_level,supplier,
 204,NULL,NULL,0,NULL,UNKNOWN,1,0,0,0,0,Data from Powders Inventory
 205,NULL,NULL,0,NULL,UNKNOWN,1,0,0,0,0,Data from Powders Inventory
 206,NULL,NULL,0,NULL,UNKNOWN,1,0,0,0,0,Data from Powders Inventory
-207,NULL,NULL,0,NULL,No Risk,1,0,0,0,0,Data from Items Inventory
-208,NULL,NULL,0,NULL,No Risk,1,0,0,0,0,Data from Items Inventory
-209,NULL,NULL,0,NULL,No Risk,1,0,0,0,0,Data from Items Inventory
-210,NULL,NULL,0,NULL,No Risk,1,0,0,0,0,Data from Items Inventory
-211,NULL,NULL,0,NULL,No Risk,1,0,0,0,0,Data from Items Inventory
-212,NULL,NULL,0,NULL,No Risk,1,0,0,0,0,Data from Items Inventory
-213,NULL,NULL,0,NULL,No Risk,1,0,0,0,0,Data from Items Inventory
-214,NULL,NULL,0,NULL,No Risk,1,0,0,0,0,Data from Items Inventory
-215,NULL,NULL,0,NULL,No Risk,1,0,0,0,0,Data from Items Inventory
-216,NULL,NULL,0,NULL,No Risk,1,0,0,0,0,Data from Items Inventory
-217,NULL,NULL,0,NULL,No Risk,1,0,0,0,0,Data from Items Inventory
-218,NULL,NULL,0,NULL,No Risk,1,0,0,0,0,Data from Items Inventory
-219,NULL,NULL,0,NULL,No Risk,1,0,0,0,0,Data from Items Inventory
-220,NULL,NULL,0,NULL,No Risk,1,0,0,0,0,Data from Items Inventory
-221,NULL,NULL,0,NULL,No Risk,1,0,0,0,0,Data from Items Inventory
-222,NULL,NULL,0,NULL,No Risk,1,0,0,0,0,Data from Items Inventory
-223,NULL,NULL,0,NULL,No Risk,1,0,0,0,0,Data from Items Inventory
-224,NULL,NULL,0,NULL,No Risk,1,0,0,0,0,Data from Items Inventory
-225,NULL,NULL,0,NULL,No Risk,1,0,0,0,0,Data from Items Inventory
-226,NULL,NULL,0,NULL,No Risk,1,0,0,0,0,Data from Items Inventory
-227,NULL,NULL,0,NULL,No Risk,1,0,0,0,0,Data from Items Inventory
-228,NULL,NULL,0,NULL,No Risk,1,0,0,0,0,Data from Items Inventory
+207,NULL,NULL,0,NULL,No_Risk,1,0,0,0,0,Data from Items Inventory
+208,NULL,NULL,0,NULL,No_Risk,1,0,0,0,0,Data from Items Inventory
+209,NULL,NULL,0,NULL,No_Risk,1,0,0,0,0,Data from Items Inventory
+210,NULL,NULL,0,NULL,No_Risk,1,0,0,0,0,Data from Items Inventory
+211,NULL,NULL,0,NULL,No_Risk,1,0,0,0,0,Data from Items Inventory
+212,NULL,NULL,0,NULL,No_Risk,1,0,0,0,0,Data from Items Inventory
+213,NULL,NULL,0,NULL,No_Risk,1,0,0,0,0,Data from Items Inventory
+214,NULL,NULL,0,NULL,No_Risk,1,0,0,0,0,Data from Items Inventory
+215,NULL,NULL,0,NULL,No_Risk,1,0,0,0,0,Data from Items Inventory
+216,NULL,NULL,0,NULL,No_Risk,1,0,0,0,0,Data from Items Inventory
+217,NULL,NULL,0,NULL,No_Risk,1,0,0,0,0,Data from Items Inventory
+218,NULL,NULL,0,NULL,No_Risk,1,0,0,0,0,Data from Items Inventory
+219,NULL,NULL,0,NULL,No_Risk,1,0,0,0,0,Data from Items Inventory
+220,NULL,NULL,0,NULL,No_Risk,1,0,0,0,0,Data from Items Inventory
+221,NULL,NULL,0,NULL,No_Risk,1,0,0,0,0,Data from Items Inventory
+222,NULL,NULL,0,NULL,No_Risk,1,0,0,0,0,Data from Items Inventory
+223,NULL,NULL,0,NULL,No_Risk,1,0,0,0,0,Data from Items Inventory
+224,NULL,NULL,0,NULL,No_Risk,1,0,0,0,0,Data from Items Inventory
+225,NULL,NULL,0,NULL,No_Risk,1,0,0,0,0,Data from Items Inventory
+226,NULL,NULL,0,NULL,No_Risk,1,0,0,0,0,Data from Items Inventory
+227,NULL,NULL,0,NULL,No_Risk,1,0,0,0,0,Data from Items Inventory
+228,NULL,NULL,0,NULL,No_Risk,1,0,0,0,0,Data from Items Inventory
