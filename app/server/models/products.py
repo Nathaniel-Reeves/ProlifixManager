@@ -80,3 +80,9 @@ class Components(Base):
     # Relationships
     materials_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'))
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
+
+class Manufacturing_Process(Base):
+    __tablename__ = 'Manufacturing_Process'
+    __table_args__ = {'schema': 'Manufacturing'}
+    
+    #TODO: add columns to this table

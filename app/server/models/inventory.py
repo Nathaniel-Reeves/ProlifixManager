@@ -19,7 +19,30 @@ from connector import Base
 class Components(Base):
     __tablename__ = 'Inventory'
     __table_args__ = {'schema': 'Inventory'}
+    
+    # TODO: add columns to this table
 
-class ComponentNames(Base):
-    __tablename__ = 'ComponentNames'
+class Component_Names(Base):
+    __tablename__ = 'Component_Names'
     __table_args__ = {'schema': 'Inventory'}
+    
+    # TODO: add columns to this table
+
+class Item_id(Base):
+    __tablename__ = 'Item_id'
+    __table_args__ = {'schema': 'Inventory'}
+    
+    # TODO: add columns to this table
+    
+class Inventory(Base):
+    __tablename__ = 'Inventory'
+    __table_args__ = {'schema': 'Inventory'}
+    
+    # TODO: add columns to this table
+    
+class Inventory_Log(Base):
+    __tablename__ = 'Inventory_Log'
+    __table_args__ = {'schema': 'Inventory'}
+    
+    # TODO: add columns to this table
+
