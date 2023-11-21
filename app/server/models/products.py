@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, List
+from typing import Any, List, Literal, get_args
 
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer, Enum
@@ -16,23 +16,11 @@ import enum
 
 from connector import Base
 
-from inv_orders import Lot_Numbers, Item_id
-from formulas import Formula_Master
+ProductTypes = Literal["Powder", "Capsule", "Liquid", "Other"]
 
-class ProductTypes(enum.Enum):
-    Powder = "Powder"
-    Capsule = "Capsule"
-    Liquid = "Liquid"
-    Other = "Other"
+TimeUnits = Literal["Years", "Months", "Days"]
 
-class TimeUnits(enum.Enum):
-    Years = "Years"
-    Months = "Months"
-    Days = "Days"
-    
-class ExpirationTypes(enum.Enum):
-    Best_By = "Best_By"
-    Exp = "Exp"
+ExpirationTypes = Literal["Best_By", "Exp"]
 
 class Product_Master(Base):
     __tablename__ = 'Product_Master'
@@ -42,10 +30,28 @@ class Product_Master(Base):
     product_id: Mapped[int] = mapped_column(primary_key=True)
     organization_id: Mapped[int] = mapped_column(ForeignKey('Organizations.organization_id'))
     product_name: Mapped[str] = mapped_column()
+    type: Mapped[ProductTypes] = mapped_column(Enum(
+        *get_args(ProductTypes),
+        name="ProductTypes",
+        create_constraint=True,
+        validate_strings=True,
+        ))
     current_product: Mapped[bool] = mapped_column()
     date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     spec_issue_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     spec_revise_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    exp_unit: Mapped[TimeUnits] = mapped_column(Enum(
+        *get_args(TimeUnits),
+        name="TimeUnits",
+        create_constraint=True,
+        validate_strings=True,
+        ))
+    exp_type: Mapped[ExpirationTypes] = mapped_column(Enum(
+        *get_args(ExpirationTypes),
+        name="ExpirationTypes",
+        create_constraint=True,
+        validate_strings=True,
+        ))
     exp_time_frame: Mapped[int] = mapped_column()
     exp_use_oldest_ingredient: Mapped[bool] = mapped_column(default=False)
     default_formula_id: Mapped[int] = mapped_column(ForeignKey('Formula_Master.formula_id'))
@@ -58,24 +64,21 @@ class Product_Master(Base):
     certified_non_gmo: Mapped[bool] = mapped_column(default=False)
     certified_vegan: Mapped[bool] = mapped_column(default=False)
     
-    type = Column(Enum(ProductTypes))
     doc = Column(MutableDict.as_mutable(JSON))
-    exp_unit = Column(Enum(TimeUnits))
-    exp_type = Column(Enum(ExpirationTypes)) 
 
     # Relationships
-    components: Mapped[List["Components"]] = relationship()
-    formulas: Mapped[List["Formula_Master"]] = relationship()
-    lot_numbers: Mapped[List["Lot_Numbers"]] = relationship()
-    items: Mapped[List["Item_id"]] = relationship()
+    components: Mapped[List["ProductComponents"]] = relationship()
+    # formulas: Mapped[List["Formula_Master"]] = relationship()
+    # lot_numbers: Mapped[List["Lot_Numbers"]] = relationship()
+    # items: Mapped[List["Item_id"]] = relationship()
     
-class Components(Base):
+class ProductComponents(Base):
     __tablename__ = 'Components'
     __table_args__ = {'schema': 'Products'}
     
     # Table Columns
     component_id: Mapped[int] = mapped_column(primary_key=True)
-    material_qty_per_unit: Mapped[float] = mapped_column(default=0.0, Nullable=False)
+    material_qty_per_unit: Mapped[float] = mapped_column(default=0.0)
     current_default_component: Mapped[bool] = mapped_column(default=False)
     component_list_version: Mapped[int] = mapped_column(default=0)
     date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
@@ -93,7 +96,6 @@ class Components(Base):
     
     def __repr__(self):
         return f'<Components id:{self.component_id} date_entered:{self.date_entered}>'
-        
 
 class Manufacturing_Process(Base):
     __tablename__ = 'Manufacturing_Process'

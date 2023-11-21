@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List
+from typing import List, Literal, get_args
 
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer, Enum
@@ -15,11 +15,8 @@ import datetime
 import enum
 
 from connector import Base
-
-class StatusTypes(enum.Enum):
-    Working_Order = "Working_Order"
-    Broken = "Broken"
-    Removed = "Removed"
+    
+StatusTypes = Literal["Working_Order", "Broken", "Removed"]
 
 class Equipment(Base):
     __tablename__ = 'Equipment'
@@ -29,7 +26,12 @@ class Equipment(Base):
     equipment_id: Mapped[int] = mapped_column(primary_key=True)
     process_id: Mapped[int] = mapped_column(ForeignKey('Manufacturing.Processes.process_id'))
     equipment_sn: Mapped[str] = mapped_column()
-    status: Mapped[Enum(StatusTypes)] = mapped_column(default=StatusTypes.Working_Order)
+    status: Mapped[StatusTypes] = mapped_column(Enum(
+        *get_args(StatusTypes),
+        name="StatusTypes",
+        create_constraint=True,
+        validate_strings=True,
+        ))
     date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     date_modified: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime)
     

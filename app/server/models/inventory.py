@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, List
+from typing import List, Literal, get_args
 
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer, Enum
@@ -16,41 +16,34 @@ import enum
 
 from connector import Base
 
-class ComponentTypes(enum.Enum):
-    powder = 'powder'
-    liquid = 'liquid'
-    container = 'container'
-    pouch = 'pouch'
-    shrink_band = 'shrink_band'
-    lid = 'lid'
-    label = 'label'
-    capsule = 'capsule'
-    misc = 'misc'
-    scoop = 'scoop'
-    desiccant = 'desiccant'
-    box = 'box'
-    carton = 'carton'
-    packaging_material = 'packaging_material'
+ExpirationTypes = Literal["Best_By", "Exp"]
 
-class UnitTypes(enum.Enum):
-    grams = 'grams'
-    kilograms = 'kilograms'
-    units = 'units'
-    boxes = 'boxes'
-    pallets = 'pallets'
-    liters = 'liters'
-    rolls = 'rolls'
-    totes = 'totes'
-    barrels = 'barrels'
-    pounds = 'pounds'
+ComponentTypes = Literal['powder', 'liquid', 'container', 'pouch','shrink_band', 'lid', 'label', 'capsule','misc','scoop', 'desiccant','box', 'carton', 'packaging_material']
 
-class Components(Base):
-    __tablename__ = 'Inventory'
+UnitTypes = Literal['grams', 'kilograms', 'units', 'boxes', 'pallets', 'liters', 'rolls', 'totes', 'barrels', 'pounds']
+
+class InventoryComponents(Base):
+    __tablename__ = 'Components'
     __table_args__ = {'schema': 'Inventory'}
     
-    # Table Columns
+    # Primary Key
     component_id: Mapped[int] = mapped_column(primary_key=True)
-    component_type: Mapped[Enum(ComponentTypes)] = mapped_column()
+    
+    # Relationsips
+    item_id: Mapped[List["Item_id"]] = relationship()
+    component_names: Mapped[List["Component_Names"]] = relationship()
+    # formula_detail: Mapped[List["Formula_Detail"]] = relationship()
+    # purchase_order_detail: Mapped[List["Purchase_Order_Detail"]] = relationship()
+    # formula_master: Mapped[List["Formula_Master"]] = relationship()
+    # components: Mapped[List["ProductComponents"]] = relationship()
+    
+    # Table Columns
+    component_type: Mapped[ComponentTypes] = mapped_column(Enum(
+        *get_args(ComponentTypes),
+        name="ComponentTypes",
+        create_constraint=True,
+        validate_strings=True,
+        ))
     certified_usda_organic: Mapped[bool] = mapped_column(default=False)
     certified_halal: Mapped[bool] = mapped_column(default=False)
     certified_kosher: Mapped[bool] = mapped_column(default=False)
@@ -60,18 +53,15 @@ class Components(Base):
     certified_non_gmo: Mapped[bool] = mapped_column(default=False)
     certified_vegan: Mapped[bool] = mapped_column(default=False)
     date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    brand_id: Mapped[int] = mapped_column(foreign_key=ForeignKey('Organizations.Organizations.organization_id'))
-    units: Mapped[Enum(UnitTypes)] = mapped_column(default=UnitTypes.kilograms)
+    brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
+    units: Mapped[UnitTypes] = mapped_column(Enum(
+        *get_args(UnitTypes),
+        name="UnitTypes",
+        create_constraint=True,
+        validate_strings=True,
+        ))
     
     doc = Column(JSON, nullable=True)
-    
-    # Relationsips
-    item_id: Mapped[List["Item_id"]] = relationship()
-    components: Mapped[List["Components"]] = relationship()
-    component_names: Mapped[List["Component_Names"]] = relationship()
-    formula_detail: Mapped[List["Formula_Detail"]] = relationship()
-    purchase_order_detail: Mapped[List["Purchase_Order_Detail"]] = relationship()
-    formula_master: Mapped[List["Formula_Master"]] = relationship()
     
     def __init__(self, component_id, component_type, certified_usda_organic, certified_halal, certified_kosher, certified_gluten_free, certified_national_sanitation_foundation, certified_us_pharmacopeia, certified_non_gmo, certified_vegan, date_entered, brand_id, units, doc):
         self.component_id = component_id
@@ -120,7 +110,7 @@ class Item_id(Base):
     
     # Table Columns
     item_id: Mapped[int] = mapped_column(primary_key=True)
-    component_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Component_Names.component_id'))
+    component_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'))
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
     
     # Relationships
@@ -162,29 +152,8 @@ class Inventory(Base):
         
     def __repr__(self):
         return f'<Inventory.Inventory inv_id:{self.inv_id} item_id:{self.item_id} actual_inv:{self.actual_inventory} theoretical_inv:{self.theoretical_inventory}>'
- 
-class InventoryStates(enum.Enum):
-    Ordered = 'Ordered'
-    Revised_Order_Decreased = 'Revised_Order_Decreased'
-    Revised_Order_Increased = 'Revised_Order_Increased'
-    In_Transit = 'In_Transit'
-    Back_Order = 'Back_Order'
-    Checkin_Quarantine = 'Checkin_Quarantine'
-    Received = 'Received'
-    Produced = 'Produced'
-    Cycle_Count = 'Cycle_Count'
-    Released = 'Released'
-    Returned = 'Returned'
-    Allocated = 'Allocated'
-    Batched = 'Batched'
-    Used = 'Used'
-    Quarantined = 'Quarantined'
-    Lost = 'Lost'
-    Expired = 'Expired'
-    Wasted = 'Wasted'
-    Damaged = 'Damaged'
-    Destroyed = 'Destroyed'
-    Shipped = 'Shipped'
+
+InventoryStates = Literal["Ordered", "Revised_Order_Decreased", "Revised_Order_Increased", "InTransit", "Back_Order", "Checkin_Quarantine", "Received", "Produced", "CycleCount", "Released", "Returned", "Allocated", "Batched", "Used", "Quarantined", "Lost", "Expired", "Wasted", "Damaged", "Destroyed", "Shipped"]
     
 class Inventory_Log(Base):
     __tablename__ = 'Inventory_Log'
@@ -209,7 +178,12 @@ class Inventory_Log(Base):
     lot_number: Mapped[str] = mapped_column(default=None)
     batch_number: Mapped[str] = mapped_column(default=None)
     date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    state: Mapped[Enum(InventoryStates)] = mapped_column()
+    state: Mapped[InventoryStates] = mapped_column(Enum(
+        *get_args(InventoryStates),
+        name="InventoryStates",
+        create_constraint=True,
+        validate_strings=True,
+        ))
     state_notes: Mapped[str] = mapped_column(default=None)
     
     doc = Column(JSON, nullable=True)
@@ -243,4 +217,3 @@ class Inventory_Log(Base):
         return f'<Inventory_Log log_id:{self.log_id} inv_id:{self.inv_id} state:{self.state}>'
         
     
-

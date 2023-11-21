@@ -1,8 +1,8 @@
 from __future__ import annotations
-from typing import Any, List
+from typing import Any, List, Literal, get_args
 
 from sqlalchemy import ForeignKey
-from sqlalchemy import Integer
+from sqlalchemy import Integer, Enum
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
@@ -100,10 +100,12 @@ class Formula_Detail(Base):
     def __repr__(self):
         return f'<id:{self.formula_detail_id} formula_id:{self.formula_id} percent:{self.percent}>'
 
-class OrganicSpecTypes(enum.Enum):
-    organic = 'organic'
-    non_organic = 'non_organic'
-    any = 'any'
+# class OrganicSpecTypes(enum.Enum):
+#     organic = 'organic'
+#     non_organic = 'non_organic'
+#     any = 'any'
+    
+OrganicSpecTypes = Literal['organic', 'non_organic', 'any']
 
 class Client_Spec_Group(Base):
     __tablename__ = 'Client_Spec_Group'
@@ -113,7 +115,13 @@ class Client_Spec_Group(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     formula_ingredient_id: Mapped[int] = mapped_column(ForeignKey('Formulas.Formula_Detail.formula_detail_id'))
     brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
-    organic_spec: Mapped[ENUM(OrganicSpecTypes)] = mapped_column(default=OrganicSpecTypes.non_organic)
+    organic_spec: Mapped[OrganicSpecTypes] = mapped_column(Enum(
+        *get_args(OrganicSpecTypes),
+        name="OrganicSpecTypes",
+        create_constraint=True,
+        validate_strings=True,
+        )
+    )
     
     # Relationships
     
@@ -134,7 +142,13 @@ class Primary_Group(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     formula_ingredient_id: Mapped[int] = mapped_column(ForeignKey('Formulas.Formula_Detail.formula_detail_id'))
     brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
-    organic_spec: Mapped[ENUM(OrganicSpecTypes)] = mapped_column(default=OrganicSpecTypes.non_organic)
+    organic_spec: Mapped[OrganicSpecTypes] = mapped_column(Enum(
+        *get_args(OrganicSpecTypes),
+        name="OrganicSpecTypes",
+        create_constraint=True,
+        validate_strings=True,
+        )
+    )
     
     # Relationships
     
@@ -155,7 +169,13 @@ class Secondary_Group(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     formula_ingredient_id: Mapped[int] = mapped_column(ForeignKey('Formulas.Formula_Detail.formula_detail_id'))
     brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
-    organic_spec: Mapped[ENUM(OrganicSpecTypes)] = mapped_column(default=OrganicSpecTypes.non_organic)
+    organic_spec: Mapped[OrganicSpecTypes] = mapped_column(Enum(
+        *get_args(OrganicSpecTypes),
+        name="OrganicSpecTypes",
+        create_constraint=True,
+        validate_strings=True,
+        )
+    )
     
     # Relationships
     
@@ -176,7 +196,13 @@ class Tertiary_Group(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     formula_ingredient_id: Mapped[int] = mapped_column(ForeignKey('Formulas.Formula_Detail.formula_detail_id'))
     brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
-    organic_spec: Mapped[ENUM(OrganicSpecTypes)] = mapped_column(default=OrganicSpecTypes.non_organic)
+    organic_spec: Mapped[OrganicSpecTypes] = mapped_column(Enum(
+        *get_args(OrganicSpecTypes),
+        name="OrganicSpecTypes",
+        create_constraint=True,
+        validate_strings=True,
+        )
+    )
     
     # Relationships
     
@@ -197,7 +223,13 @@ class Quaternary_Group(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     formula_ingredient_id: Mapped[int] = mapped_column(ForeignKey('Formulas.Formula_Detail.formula_detail_id'))
     brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
-    organic_spec: Mapped[ENUM(OrganicSpecTypes)] = mapped_column(default=OrganicSpecTypes.non_organic)
+    organic_spec: Mapped[OrganicSpecTypes] = mapped_column(Enum(
+        *get_args(OrganicSpecTypes),
+        name="OrganicSpecTypes",
+        create_constraint=True,
+        validate_strings=True,
+        )
+    )
     
     # Relationships
     
