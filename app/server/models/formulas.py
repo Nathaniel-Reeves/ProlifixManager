@@ -2,14 +2,14 @@ from __future__ import annotations
 from typing import Any, List
 
 from sqlalchemy import ForeignKey
-from sqlalchemy import Integer, Enum
+from sqlalchemy import Integer
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 
 from sqlalchemy import Column
 from sqlalchemy.ext.mutable import MutableDict
-from sqlalchemy.dialects.mysql import JSON
+from sqlalchemy.dialects.mysql import JSON, ENUM
 
 import datetime
 import enum
@@ -37,6 +37,9 @@ class Formula_Master(Base):
     
     # Relationships
     formula_detail: Mapped[List["Formula_Detail"]] = relationship()
+    
+    # Formula Versioning
+    __mapper_args__ = {"version_id_col": formulation_version}
     
     def __init__(self, formula_id, product_id, date_entered, formulation_version, notes, capsule_size, empty_capsule_mg, total_grams_per_unit, total_capsules_per_unit, total_milliliters_per_unit, fill_min, fill_max, label_id):
         self.formula_id = formula_id
@@ -110,7 +113,7 @@ class Client_Spec_Group(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     formula_ingredient_id: Mapped[int] = mapped_column(ForeignKey('Formulas.Formula_Detail.formula_detail_id'))
     brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
-    organic_spec: Mapped[Enum(OrganicSpecTypes)] = mapped_column(default=OrganicSpecTypes.non_organic)
+    organic_spec: Mapped[ENUM(OrganicSpecTypes)] = mapped_column(default=OrganicSpecTypes.non_organic)
     
     # Relationships
     
@@ -131,7 +134,7 @@ class Primary_Group(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     formula_ingredient_id: Mapped[int] = mapped_column(ForeignKey('Formulas.Formula_Detail.formula_detail_id'))
     brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
-    organic_spec: Mapped[Enum(OrganicSpecTypes)] = mapped_column(default=OrganicSpecTypes.non_organic)
+    organic_spec: Mapped[ENUM(OrganicSpecTypes)] = mapped_column(default=OrganicSpecTypes.non_organic)
     
     # Relationships
     
@@ -152,7 +155,7 @@ class Secondary_Group(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     formula_ingredient_id: Mapped[int] = mapped_column(ForeignKey('Formulas.Formula_Detail.formula_detail_id'))
     brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
-    organic_spec: Mapped[Enum(OrganicSpecTypes)] = mapped_column(default=OrganicSpecTypes.non_organic)
+    organic_spec: Mapped[ENUM(OrganicSpecTypes)] = mapped_column(default=OrganicSpecTypes.non_organic)
     
     # Relationships
     
@@ -173,7 +176,7 @@ class Tertiary_Group(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     formula_ingredient_id: Mapped[int] = mapped_column(ForeignKey('Formulas.Formula_Detail.formula_detail_id'))
     brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
-    organic_spec: Mapped[Enum(OrganicSpecTypes)] = mapped_column(default=OrganicSpecTypes.non_organic)
+    organic_spec: Mapped[ENUM(OrganicSpecTypes)] = mapped_column(default=OrganicSpecTypes.non_organic)
     
     # Relationships
     
@@ -194,7 +197,7 @@ class Quaternary_Group(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     formula_ingredient_id: Mapped[int] = mapped_column(ForeignKey('Formulas.Formula_Detail.formula_detail_id'))
     brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
-    organic_spec: Mapped[Enum(OrganicSpecTypes)] = mapped_column(default=OrganicSpecTypes.non_organic)
+    organic_spec: Mapped[ENUM(OrganicSpecTypes)] = mapped_column(default=OrganicSpecTypes.non_organic)
     
     # Relationships
     
