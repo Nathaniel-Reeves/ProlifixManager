@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List
+from typing import Any, List
 
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer, Enum
@@ -15,6 +15,9 @@ import datetime
 import enum
 
 from connector import Base
+
+from inv_orders import Lot_Numbers, Item_id
+from formulas import Formula_Master
 
 class ProductTypes(enum.Enum):
     Powder = "Powder"
@@ -80,9 +83,38 @@ class Components(Base):
     # Relationships
     materials_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'))
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
+    
+    def __init__(self, component_id, material_qty_per_unit, current_default_component, component_list_version, date_entered):
+        self.component_id = component_id
+        self.material_qty_per_unit = material_qty_per_unit
+        self.current_default_component = current_default_component
+        self.component_list_version = component_list_version
+        self.date_entered = date_entered
+    
+    def __repr__(self):
+        return f'<Components id:{self.component_id} date_entered:{self.date_entered}>'
+        
 
 class Manufacturing_Process(Base):
     __tablename__ = 'Manufacturing_Process'
     __table_args__ = {'schema': 'Manufacturing'}
     
-    #TODO: add columns to this table
+    # Table Columns
+    process_spec_id: Mapped[int] = mapped_column(primary_key=True)
+    product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
+    date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    date_modified: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime)
+    
+    doc = Column(MutableDict.as_mutable(JSON))
+
+    # Relationships
+    
+    def __init__(self, process_spec_id, product_id, date_entered, date_modified, doc):
+        self.process_spec_id = process_spec_id
+        self.product_id = product_id
+        self.date_entered = date_entered
+        self.date_modified = date_modified
+        self.doc = doc
+        
+    def __repr__(self):
+        return f'<Manufacturing_Process id:{self.process_spec_id} product_id:{self.product_id}>'

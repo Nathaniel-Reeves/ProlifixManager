@@ -1,9 +1,11 @@
 from connector import *
 from organizations import *
+# from orders import *
+# from inventory import *
+from inv_orders import *
 from products import *
-from components import *
-from orders import *
 from formulas import *
+from manufacturing import *
 
 from sqlalchemy import select
 from connector import get_session
