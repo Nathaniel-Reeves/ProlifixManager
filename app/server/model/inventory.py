@@ -1,20 +1,16 @@
 from __future__ import annotations
-from typing import List, Literal, get_args
+from typing import List, Literal, get_args, Optional
 
-from sqlalchemy import ForeignKey
-from sqlalchemy import Integer, Enum
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
-
-from sqlalchemy import Column
+from sqlalchemy import Integer, Enum, ForeignKey, Column
+from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column, relationship
 from sqlalchemy.ext.mutable import MutableDict
-from sqlalchemy.dialects.mysql import JSON
+from sqlalchemy.dialects.mysql import JSON, ENUM
 
 import datetime
 import enum
 
-from connector import Base
+class Base(DeclarativeBase):
+    pass
 
 ExpirationTypes = Literal["Best_By", "Exp"]
 
@@ -158,15 +154,19 @@ class Inventory_Log(Base):
     __tablename__ = 'Inventory_Log'
     __table_args__ = {'schema': 'Inventory'}
     
-    # Table Columns
+    # Primary Key
     log_id: Mapped[int] = mapped_column(primary_key=True)
+    
+    # Relationships
     inv_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Inventory.inv_id'))
     courier_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
     facility_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Facilities.facility_id'))
     user_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Users.user_id'))
     po_detail_id: Mapped[int] = mapped_column(ForeignKey('Orders.Purchase_Order_Detail.po_detail_id'))
-    so_detail_id: Mapped[int] = mapped_column(ForeignKey('Orders.Sales_Order_Detail.so_detail_id'))
-    previous_log_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Inventory_Log.log_id'))
+    so_detail_id: Mapped[int] = mapped_column(ForeignKey('Orders.Sale_Order_Detail.so_detail_id'))
+    previous_log_id: Mapped[int] = mapped_column(default=None)
+    
+    # Table Columns
     pre_change_actual_inventory: Mapped[float] = mapped_column(default=0.0)
     post_change_actual_inventory: Mapped[float] = mapped_column(default=0.0)
     pre_change_theoretical_inventory: Mapped[float] = mapped_column(default=0.0)
@@ -187,7 +187,6 @@ class Inventory_Log(Base):
     
     doc = Column(JSON, nullable=True)
     
-    # Relationships
     
     def __init__(self, log_id, inv_id, courier_id, facility_id, user_id, po_detail_id, so_detail_id, previous_log_id, pre_change_actual_inventory, post_change_actual_inventory, pre_change_theoretical_inventory, post_change_theoretical_inventory, cycle_count_grade, archived_tree, supplier_item_id, lot_number, batch_number, date_entered, doc, state, state_notes):
         self.log_id = log_id

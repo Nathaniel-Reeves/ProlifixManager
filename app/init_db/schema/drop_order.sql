@@ -7,6 +7,7 @@ DROP TABLE IF EXISTS `Formulas`.`Primary_Group`;
 DROP TABLE IF EXISTS `Formulas`.`Secondary_Group`;
 DROP TABLE IF EXISTS `Formulas`.`Tertiary_Group`;
 DROP TABLE IF EXISTS `Formulas`.`Quaternary_Group`;
+DROP TABLE IF EXISTS `Formulas`.`Client_Spec_Group`;
 DROP TABLE IF EXISTS `Formulas`.`Formula_Detail`;
 DROP TABLE IF EXISTS `Formulas`.`Formula_Master`;
 DROP TABLE IF EXISTS `Orders`.`Purchase_Order_Detail`;

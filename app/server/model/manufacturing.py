@@ -1,20 +1,16 @@
 from __future__ import annotations
-from typing import List, Literal, get_args
+from typing import List, Literal, get_args, Optional
 
-from sqlalchemy import ForeignKey
-from sqlalchemy import Integer, Enum
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
-
-from sqlalchemy import Column
+from sqlalchemy import Integer, Enum, ForeignKey, Column
+from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column, relationship
 from sqlalchemy.ext.mutable import MutableDict
-from sqlalchemy.dialects.mysql import JSON
+from sqlalchemy.dialects.mysql import JSON, ENUM
 
 import datetime
 import enum
 
-from connector import Base
+class Base(DeclarativeBase):
+    pass
     
 StatusTypes = Literal["Working_Order", "Broken", "Removed"]
 

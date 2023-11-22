@@ -1,20 +1,16 @@
 from __future__ import annotations
-from typing import List, Literal, get_args
+from typing import List, Literal, get_args, Optional
 
-from sqlalchemy import ForeignKey, ForeignKeyConstraint
-from sqlalchemy import Integer, Enum, String
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
-
-from sqlalchemy import Column
+from sqlalchemy import Integer, Enum, ForeignKey, Column, ForeignKeyConstraint
+from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column, relationship
 from sqlalchemy.ext.mutable import MutableDict
-from sqlalchemy.dialects.mysql import JSON
+from sqlalchemy.dialects.mysql import JSON, ENUM
 
 import datetime
 import enum
 
-from connector import Base
+class Base(DeclarativeBase):
+    pass
 
 ExpirationTypes = Literal["Best_By", "Exp"]
 
@@ -67,7 +63,7 @@ class Sales_Orders(Base):
         return f'<Sales_Order SO#{self.prefix}{self.year}~{self.month}~{self.sec_number}>'
 
 class Sale_Order_Detail(Base):
-    __tablename__ = 'Sales_Order_Detail'
+    __tablename__ = 'Sale_Order_Detail'
     __table_args__ = {'schema': 'Orders'}
     
     # Primary Key
@@ -97,10 +93,10 @@ class Sale_Order_Detail(Base):
     __table_args__ = (fk_constraint, {
         'schema': 'Orders'
     })
+    product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
     
     
     # Table Columns
-    product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
     unit_order_qty: Mapped[int] = mapped_column(default=None)
     kilos_order_qty: Mapped[float] = mapped_column(default=None)
     special_instructions: Mapped[str] = mapped_column(default=None)
@@ -199,7 +195,7 @@ class Lot_Numbers(Base):
     sec_number: Mapped[int] = mapped_column(primary_key=True)
     suffix: Mapped[str] = mapped_column(primary_key=True)
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
-    so_detail_id: Mapped[int] = mapped_column(ForeignKey('Orders.Sales_Order_Detail.so_detail_id'))
+    so_detail_id: Mapped[int] = mapped_column(ForeignKey('Orders.Sale_Order_Detail.so_detail_id'))
     target_unit_yield: Mapped[int] = mapped_column(default=None)
     actual_unit_yield: Mapped[int] = mapped_column(default=None)
     retentions: Mapped[int] = mapped_column(default=None)

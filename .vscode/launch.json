@@ -20,6 +20,14 @@
             ],
             "jinja": true,
             "justMyCode": true
+        },
+        {
+            "name": "Python: SQLAlchemy",
+            "type": "python",
+            "request": "launch",
+            "program": "app/server/models/__init__.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
         }
     ]
 }

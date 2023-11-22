@@ -1,20 +1,16 @@
 from __future__ import annotations
 from typing import List, Literal, get_args, Optional
 
-from sqlalchemy import ForeignKey
-from sqlalchemy import Integer, Enum
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy.orm import relationship
-
-from sqlalchemy import Column
+from sqlalchemy import Integer, Enum, ForeignKey, Column
+from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column, relationship
 from sqlalchemy.ext.mutable import MutableDict
-from sqlalchemy.dialects.mysql import JSON
+from sqlalchemy.dialects.mysql import JSON, ENUM
 
 import datetime
 import enum
 
-from connector import Base
+class Base(DeclarativeBase):
+    pass
 
 RiskLevels = Literal["UNKNOWN", "No_Risk", "Low_Risk", "Medium_Risk", "High_Risk"]
 
@@ -50,12 +46,42 @@ class Organizations(Base):
     
     doc = Column(MutableDict.as_mutable(JSON))
 
-    def __init__(self, organization_id, website_url):
+    def __init__(self, organization_id, website_url, vetted, date_vetted, date_entered, risk_level, supplier, client, lab, courier, other, doc):
         self.organization_id = organization_id
         self.website_url = website_url
+        self.vetted = vetted
+        self.date_vetted = date_vetted
+        self.date_entered = date_entered
+        self.risk_level = risk_level
+        self.supplier = supplier
+        self.client = client
+        self.lab = lab
+        self.courier = courier
+        self.other = other
+        self.doc = doc
+        
 
     def __repr__(self):
         return f'<Organization {self.organization_id, self.website_url}>'
+    
+    def to_dict(self):
+        return {
+            'organization_id': self.organization_id,
+            'website_url': self.website_url,
+            'vetted': self.vetted,
+            'date_vetted': self.date_vetted,
+            'date_entered': self.date_entered,
+            'risk_level': self.risk_level,
+            'supplier': self.supplier,
+            'client': self.client,
+            'lab': self.lab,
+            'courier': self.courier,
+            'other': self.other,
+            'doc': self.doc
+        }
+    
+    def get_id(self):
+        return self.organization_id
 
 class Organization_Names(Base):
     __tablename__ = 'Organization_Names'
@@ -82,6 +108,18 @@ class Organization_Names(Base):
     
     def __repr__(self):
         return f'<Organization_Name {self.name_id}, {self.organization_id}, {self.organization_name}>'
+    
+    def to_dict(self):
+        return {
+            'name_id': self.name_id,
+            'organization_id': self.organization_id,
+            'organization_name': self.organization_name,
+            'organization_initial': self.organization_initial,
+            'primary_name': self.primary_name
+        }
+    
+    def get_id(self):
+        return self.name_id
 
 class People(Base):
     __tablename__ = 'People'
@@ -97,7 +135,7 @@ class People(Base):
         )
 
     # 1 to 1
-    user_id: Mapped[int] = mapped_column(ForeignKey('Organization.Users.user_id'))
+    # user_id: Mapped[int] = mapped_column(ForeignKey('Organization.Users.user_id'))
     
     # Table Columns
     first_name: Mapped[str] = mapped_column(default=None)
@@ -134,6 +172,25 @@ class People(Base):
 
     def __repr__(self):
         return f'<Person {self.person_id}, {self.first_name}, {self.last_name}>'
+    
+    def to_dict(self):
+        return {
+            'person_id': self.person_id,
+            'organization_id': self.organization_id,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'job_description': self.job_description,
+            'department': self.department,
+            'phone_number_primary': self.phone_number_primary,
+            'phone_number_secondary': self.phone_number_secondary,
+            'email_address_primary': self.email_address_primary,
+            'email_address_secondary': self.email_address_secondary,
+            'birthday': self.birthday,
+            'is_employee': self.is_employee,
+            'contract_date': self.contract_date,
+            'termination_date': self.termination_date,
+            'clock_number': self.clock_number
+        }
     
     def getName(self):
         return f'{self.first_name} {self.last_name}'

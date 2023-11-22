@@ -13,7 +13,7 @@ from flask import (
 from flask_cors import CORS
 from flask_socketio import SocketIO
 
-from sqlalchemy_test import *
+import model as db
 
 
 # Get the parent directory
@@ -141,32 +141,29 @@ def create_app(
 
 
     """
-    Import Handlers
+    Import controler
     """
-    from handlers.organizations import bp as organizations_bp
-    api_blueprint.register_blueprint(organizations_bp)
+    # from old_controler.organizations import bp as organizations_bp
+    # api_blueprint.register_blueprint(organizations_bp)
 
-    from handlers.orders import bp as orders_bp
+    from old_controler.orders import bp as orders_bp
     api_blueprint.register_blueprint(orders_bp)
 
-    from handlers.auth import bp as auth_bp
+    from view.auth import bp as auth_bp
     api_blueprint.register_blueprint(auth_bp)
 
-    from handlers.inventory import bp as inventory_bp
+    from old_controler.inventory import bp as inventory_bp
     api_blueprint.register_blueprint(inventory_bp)
+    
+    """
+    Import Views
+    """
+    from view.organizations import bp as organizations_bp
+    api_blueprint.register_blueprint(organizations_bp)
 
     """
     sanity check routes
     """
-
-    @api_blueprint.route('/sqlalchemytest', methods=['GET'])
-    def sqlalchemytest():
-        """
-        ping pong route
-        """
-        organizations = sqlalchemy_test()
-
-        return jsonify(organizations)
 
     @api_blueprint.route('/ping', methods=['GET'])
     def ping_pong():
