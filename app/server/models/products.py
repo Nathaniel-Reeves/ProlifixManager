@@ -28,7 +28,7 @@ class Product_Master(Base):
     
     # Table Columns
     product_id: Mapped[int] = mapped_column(primary_key=True)
-    organization_id: Mapped[int] = mapped_column(ForeignKey('Organizations.organization_id'))
+    organization_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
     product_name: Mapped[str] = mapped_column()
     type: Mapped[ProductTypes] = mapped_column(Enum(
         *get_args(ProductTypes),
@@ -71,6 +71,32 @@ class Product_Master(Base):
     # formulas: Mapped[List["Formula_Master"]] = relationship()
     # lot_numbers: Mapped[List["Lot_Numbers"]] = relationship()
     # items: Mapped[List["Item_id"]] = relationship()
+    
+    def __init__(self, organization_id, product_name, type, current_product, date_entered, spec_issue_date, spec_revise_date, exp_unit, exp_type, exp_time_frame, exp_use_oldest_ingredient, default_formula_id, certified_usda_organic, certified_halal, certified_kosher, certified_gluten_free, certified_national_sanitation_foundation,certified_us_pharmacopeia, certified_non_gmo, certified_vegan, doc):
+        self.organization_id = organization_id
+        self.product_name = product_name
+        self.type = type
+        self.current_product = current_product
+        self.date_entered = date_entered
+        self.spec_issue_date = spec_issue_date
+        self.spec_revise_date = spec_revise_date
+        self.exp_unit = exp_unit
+        self.exp_type = exp_type
+        self.exp_time_frame = exp_time_frame
+        self.exp_use_oldest_ingredient = exp_use_oldest_ingredient 
+        self.default_formula_id = default_formula_id
+        self.certified_usda_organic = certified_usda_organic
+        self.certified_halal = certified_halal
+        self.certified_kosher = certified_kosher 
+        self.certified_gluten_free = certified_gluten_free
+        self.certified_national_sanitation_foundation = certified_national_sanitation_foundation
+        self.certified_us_pharmacopeia = certified_us_pharmacopeia
+        self.certified_non_gmo = certified_non_gmo
+        self.certified_vegan = certified_vegan
+        self.doc = doc
+    
+    def __repr__(self):
+        return f'<Product_Master id:{self.product_id} org_id:{self.organization_id} {self.product_name}>'
     
 class ProductComponents(Base):
     __tablename__ = 'Components'

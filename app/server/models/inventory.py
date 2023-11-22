@@ -22,7 +22,7 @@ ComponentTypes = Literal['powder', 'liquid', 'container', 'pouch','shrink_band',
 
 UnitTypes = Literal['grams', 'kilograms', 'units', 'boxes', 'pallets', 'liters', 'rolls', 'totes', 'barrels', 'pounds']
 
-class InventoryComponents(Base):
+class Inventory_Components(Base):
     __tablename__ = 'Components'
     __table_args__ = {'schema': 'Inventory'}
     
@@ -81,7 +81,6 @@ class InventoryComponents(Base):
     
     def __repr__(self):
         return f'<Inventory.Component component_id:{self.component_id} {self.component_type} brand:{self.brand_id}>'
-    
 
 class Component_Names(Base):
     __tablename__ = 'Component_Names'
@@ -89,8 +88,8 @@ class Component_Names(Base):
     
     # Table Columns
     name_id: Mapped[int] = mapped_column(primary_key=True)
-    component_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Component_Names.component_id'))
-    Component_name: Mapped[str] = mapped_column()
+    component_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'))
+    component_name: Mapped[str] = mapped_column()
     primary_name: Mapped[bool] = mapped_column(default=False)
     
     # Relationships

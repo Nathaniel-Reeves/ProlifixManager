@@ -1,8 +1,8 @@
 from __future__ import annotations
 from typing import List, Literal, get_args
 
-from sqlalchemy import ForeignKey
-from sqlalchemy import Integer, Enum
+from sqlalchemy import ForeignKey, ForeignKeyConstraint
+from sqlalchemy import Integer, Enum, String
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
@@ -70,12 +70,36 @@ class Sale_Order_Detail(Base):
     __tablename__ = 'Sales_Order_Detail'
     __table_args__ = {'schema': 'Orders'}
     
-    # Table Columns
+    # Primary Key
     so_detail_id: Mapped[int] = mapped_column(primary_key=True)
-    prefix: Mapped[str] = mapped_column(ForeignKey('Orders.Sales_Orders.prefix'))
-    year: Mapped[int] = mapped_column(ForeignKey('Orders.Sales_Orders.year'))
-    month: Mapped[str] = mapped_column(ForeignKey('Orders.Sales_Orders.month'))
-    sec_number: Mapped[int] = mapped_column(ForeignKey('Orders.Sales_Orders.sec_number'))
+    
+    # Relationships
+    lot_numbers: Mapped[List["Lot_Numbers"]] = relationship()
+    prefix: Mapped[str] = mapped_column(nullable=False)
+    year: Mapped[int] = mapped_column(nullable=False)
+    month: Mapped[int] = mapped_column(nullable=False)
+    sec_number: Mapped[int] = mapped_column(nullable=False)
+    fk_constraint = ForeignKeyConstraint( 
+                    [
+                        prefix, 
+                        year, 
+                        month, 
+                        sec_number
+                    ], 
+                    [
+                        "Orders.Sales_Orders.prefix", 
+                        "Orders.Sales_Orders.year", 
+                        "Orders.Sales_Orders.month", 
+                        "Orders.Sales_Orders.sec_number"
+                    ], 
+                    name="Sales_Order_Number_fk"
+                )
+    __table_args__ = (fk_constraint, {
+        'schema': 'Orders'
+    })
+    
+    
+    # Table Columns
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
     unit_order_qty: Mapped[int] = mapped_column(default=None)
     kilos_order_qty: Mapped[float] = mapped_column(default=None)
@@ -86,9 +110,6 @@ class Sale_Order_Detail(Base):
     
     doc = Column(MutableDict.as_mutable(JSON))
     
-    # Relationships
-    lot_numbers: Mapped[List["Lot_Numbers"]] = relationship()
-    # inventory_log: Mapped[List["Inventory_Log"]] = relationship()
     
     def __init__(self, so_detail_id, prefix, year, month, sec_number, product_id, unit_order_qty, kilos_order_qty, special_instructions, date_entered, bit_price_per_unit, final_ship_date, doc):
         self.so_detail_id = so_detail_id
@@ -114,12 +135,34 @@ class Sales_Orders_Payments(Base):
     __tablename__ = 'Sales_Order_Payments'
     __table_args__ = {'schema': 'Orders'}
     
+    # Primay Key
+    payment_id: Mapped[int] = mapped_column(primary_key=True)
+    
+    # Relationships
+    prefix: Mapped[str] = mapped_column(nullable=False)
+    year: Mapped[int] = mapped_column(nullable=False)
+    month: Mapped[int] = mapped_column(nullable=False)
+    sec_number: Mapped[int] = mapped_column(nullable=False)
+    fk_constraint = ForeignKeyConstraint( 
+                    [
+                        prefix, 
+                        year, 
+                        month, 
+                        sec_number
+                    ], 
+                    [
+                        "Orders.Sales_Orders.prefix", 
+                        "Orders.Sales_Orders.year", 
+                        "Orders.Sales_Orders.month", 
+                        "Orders.Sales_Orders.sec_number"
+                    ], 
+                    name="Sales_Order_Number_fk"
+                )
+    __table_args__ = (fk_constraint, {
+        'schema': 'Orders'
+    })
+    
     # Table Columns
-    so_detail_id: Mapped[int] = mapped_column(primary_key=True)
-    prefix: Mapped[str] = mapped_column(ForeignKey('Orders.Sales_Orders.prefix'), nullable=False)
-    year: Mapped[int] = mapped_column(ForeignKey('Orders.Sales_Orders.year'), nullable=False)
-    month: Mapped[str] = mapped_column(ForeignKey('Orders.Sales_Orders.month'), nullable=False)
-    sec_number: Mapped[int] = mapped_column(ForeignKey('Orders.Sales_Orders.sec_number'), nullable=False)
     payment_amount: Mapped[float] = mapped_column(default=None)
     payment_type: Mapped[PaymentTypes] = mapped_column(Enum(
         *get_args(PaymentTypes),
@@ -130,8 +173,6 @@ class Sales_Orders_Payments(Base):
     date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     
     doc = Column(MutableDict.as_mutable(JSON))
-
-    # Relationships
     
     def __init__(self, so_detail_id, prefix, year, month, sec_number, payment_amount, payment_type, date_entered, doc):
         self.so_detail_id = so_detail_id
@@ -154,7 +195,7 @@ class Lot_Numbers(Base):
     # Table Columns
     prefix: Mapped[str] = mapped_column(primary_key=True)
     year: Mapped[int] = mapped_column(primary_key=True)
-    month: Mapped[str] = mapped_column(primary_key=True)
+    month: Mapped[int] = mapped_column(primary_key=True)
     sec_number: Mapped[int] = mapped_column(primary_key=True)
     suffix: Mapped[str] = mapped_column(primary_key=True)
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
@@ -237,13 +278,38 @@ class Purchase_Order_Detail(Base):
     __tablename__ = 'Purchase_Order_Detail'
     __table_args__ = {'schema': 'Orders'}
     
-    # Table Columns
+    # Primary Key
     po_detail_id: Mapped[int] = mapped_column(primary_key=True)
-    prefix: Mapped[str] = mapped_column(ForeignKey('Orders.Purchase_Orders.prefix'))
-    year: Mapped[int] = mapped_column(ForeignKey('Orders.Purchase_Orders.year'))
-    month: Mapped[int] = mapped_column(ForeignKey('Orders.Purchase_Orders.month'))
-    sec_number: Mapped[int] = mapped_column(ForeignKey('Orders.Purchase_Orders.sec_number'))
-    component_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'))
+    
+    # Relationships
+    po_detail_id: Mapped[int] = mapped_column(primary_key=True)
+    prefix: Mapped[str] = mapped_column(nullable=False)
+    year: Mapped[int] = mapped_column(nullable=False)
+    month: Mapped[int] = mapped_column(nullable=False)
+    sec_number: Mapped[int] = mapped_column(nullable=False)
+    fk_constraint = ForeignKeyConstraint( 
+                    [
+                        prefix, 
+                        year, 
+                        month, 
+                        sec_number
+                    ], 
+                    [
+                        "Orders.Purchase_Orders.prefix", 
+                        "Orders.Purchase_Orders.year", 
+                        "Orders.Purchase_Orders.month", 
+                        "Orders.Purchase_Orders.sec_number"
+                    ], 
+                    name="Purchase_Order_Number_fk"
+                )
+    __table_args__ = (fk_constraint, {
+        'schema': 'Orders'
+    })
+    
+
+    component_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'), nullable=False)
+    
+    # Table Columns
     unit_order_qty: Mapped[int] = mapped_column(default=None)
     kilos_order_qty: Mapped[float] = mapped_column(default=None)
     special_instructions: Mapped[str] = mapped_column(default=None)
@@ -252,9 +318,6 @@ class Purchase_Order_Detail(Base):
     bid_price_per_kilo: Mapped[float] = mapped_column(default=None)
     
     doc = Column(MutableDict.as_mutable(JSON))
-    
-    # Relationships
-    # inventory_log: Mapped[List["Inventory_Log"]] = relationship()
     
     def __init__(self, po_detail_id, prefix, year, month, sec_number, component_id, unit_order_qty, kilos_order_qty, special_instructions, datetime_entered, bid_price_per_unit, bid_price_per_kilo, doc):
         self.po_detail_id = po_detail_id
