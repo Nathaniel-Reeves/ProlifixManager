@@ -1129,7 +1129,7 @@ CREATE TABLE IF NOT EXISTS `Formulas`.`Formula_Detail` (
   `mg_per_capsule` DOUBLE,
   `ml_per_unit` DOUBLE,
   `grams_per_unit` DOUBLE,
-  `organic_spec` ENUM('organic', 'non-organic', 'any'),
+  `organic_spec` ENUM('organic', 'non_organic', 'cut_and_sifted', 'organic_or_wildcrafted', 'wildcrafted', 'any'),
   `ingredient_id` INT UNSIGNED,
   `notes` VARCHAR(1000),
   `brand_specific` BOOL,
@@ -1155,7 +1155,7 @@ CREATE TABLE IF NOT EXISTS `Formulas`.`Client_Spec_Group` (
   `id` INT AUTO_INCREMENT,
   `formula_ingredient_id` INT UNSIGNED,
   `brand_id` INT UNSIGNED,
-  `organic_spec` ENUM('organic', 'non_organic', 'any'),
+  `organic_spec` ENUM('organic', 'non_organic', 'cut_and_sifted', 'organic_or_wildcrafted', 'wildcrafted', 'any'),
   PRIMARY KEY (`id`),
   FOREIGN KEY (`formula_ingredient_id`) REFERENCES `Formulas`.`Formula_Detail`(`formula_ingredient_id`),
   FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
@@ -1165,7 +1165,7 @@ CREATE TABLE IF NOT EXISTS `Formulas`.`Quaternary_Group` (
   `id` INT AUTO_INCREMENT,
   `formula_id` INT UNSIGNED,
   `brand_id` INT UNSIGNED,
-  `organic_spec` ENUM('organic', 'non_organic', 'any'),
+  `organic_spec` ENUM('organic', 'non_organic', 'cut_and_sifted', 'organic_or_wildcrafted', 'wildcrafted', 'any'),
   PRIMARY KEY (`id`),
   FOREIGN KEY (`formula_id`) REFERENCES `Formulas`.`Formula_Detail`(`formula_ingredient_id`),
   FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
@@ -1175,7 +1175,7 @@ CREATE TABLE IF NOT EXISTS `Formulas`.`Tertiary_Group` (
   `id` INT AUTO_INCREMENT,
   `formula_ingredient_id` INT UNSIGNED,
   `brand_id` INT UNSIGNED,
-  `organic_spec` ENUM('organic', 'non_organic', 'any'),
+  `organic_spec` ENUM('organic', 'non_organic', 'cut_and_sifted', 'organic_or_wildcrafted', 'wildcrafted', 'any'),
   PRIMARY KEY (`id`),
   FOREIGN KEY (`formula_ingredient_id`) REFERENCES `Formulas`.`Formula_Detail`(`formula_ingredient_id`),
   FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
@@ -1185,7 +1185,7 @@ CREATE TABLE IF NOT EXISTS `Formulas`.`Secondary_Group` (
   `id` INT AUTO_INCREMENT,
   `formula_ingredient_id` INT UNSIGNED,
   `brand_id` INT UNSIGNED,
-  `organic_spec` ENUM('organic', 'non_organic', 'any'),
+  `organic_spec` ENUM('organic', 'non_organic', 'cut_and_sifted', 'organic_or_wildcrafted', 'wildcrafted', 'any'),
   PRIMARY KEY (`id`),
   FOREIGN KEY (`formula_ingredient_id`) REFERENCES `Formulas`.`Formula_Detail`(`formula_ingredient_id`),
   FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
@@ -1195,7 +1195,7 @@ CREATE TABLE IF NOT EXISTS `Formulas`.`Primary_Group` (
   `id` INT AUTO_INCREMENT,
   `formula_ingredient_id` INT UNSIGNED,
   `brand_id` INT UNSIGNED,
-  `organic_spec` ENUM('organic', 'non_organic', 'any'),
+  `organic_spec` ENUM('organic', 'non_organic', 'cut_and_sifted', 'organic_or_wildcrafted', 'wildcrafted', 'any'),
   PRIMARY KEY (`id`),
   FOREIGN KEY (`formula_ingredient_id`) REFERENCES `Formulas`.`Formula_Detail`(`formula_ingredient_id`),
   FOREIGN KEY (`brand_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)

@@ -26,7 +26,8 @@ class Components(Base):
     
     # Relationsips
     item_id: Mapped[List["Item_id"]] = relationship()
-    component_names: Mapped[List["Component_Names"]] = relationship()
+    brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
+    # component_names: Mapped[List["Component_Names"]] = relationship()
     # formula_detail: Mapped[List["Formula_Detail"]] = relationship()
     # purchase_order_detail: Mapped[List["Purchase_Order_Detail"]] = relationship()
     # formula_master: Mapped[List["Formula_Master"]] = relationship()
@@ -48,7 +49,6 @@ class Components(Base):
     certified_non_gmo: Mapped[bool] = mapped_column(default=False)
     certified_vegan: Mapped[bool] = mapped_column(default=False)
     date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
     units: Mapped[UnitTypes] = mapped_column(Enum(
         *get_args(UnitTypes),
         name="UnitTypes",
@@ -58,78 +58,130 @@ class Components(Base):
     
     doc = Column(JSON, nullable=True)
     
+    # Common Methods
     def __repr__(self):
         return f'<Inventory.Component component_id:{self.component_id} {self.component_type} brand:{self.brand_id}>'
+    
+    def to_dict(self):
+        return {
+            "component_id": self.component_id,
+            "component_type": self.component_type,
+            "certified_usda_organic": self.certified_usda_organic,
+            "certified_halal": self.certified_halal,
+            "certified_kosher": self.certified_kosher,
+            "certified_gluten_free": self.certified_gluten_free,
+            "certified_national_sanitation_foundation": self.certified_national_sanitation_foundation,
+            "certified_us_pharmacopeia": self.certified_us_pharmacopeia,
+            "certified_non_gmo": self.certified_non_gmo,
+            "certified_vegan": self.certified_vegan,
+            "date_entered": self.date_entered,
+            "units": self.units,
+            "doc": self.doc
+        }
 
 class Component_Names(Base):
     __tablename__ = 'Component_Names'
     __table_args__ = {'schema': 'Inventory'}
     
-    # Table Columns
+    # Primary Key
     name_id: Mapped[int] = mapped_column(primary_key=True)
+    
+    # Relationships
     component_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'))
+    
+    # Table Columns
     component_name: Mapped[str] = mapped_column()
     primary_name: Mapped[bool] = mapped_column(default=False)
     
-    # Relationships
-    
-    def __init__(self, name_id, component_id, Component_name, primary_name):
-        self.name_id = name_id
-        self.component_id = component_id
-        self.Component_name = Component_name
-        self.primary_name = primary_name
-        
+    # Common Methods   
     def __repr__(self):
         return f'<Inventory.Component_Names name_id:{self.name_id} component_id:{self.component_id} Component_name:{self.Component_name}>'
+    
+    def to_dict(self):
+        return {
+            "name_id": self.name_id,
+            "component_id": self.component_id,
+            "component_name": self.component_name,
+            "primary_name": self.primary_name
+        }
+    
+    def get_id(self):
+        return self.name_id
+    
+    def get_id_name(self):
+        return "name_id"
 
 class Item_id(Base):
     __tablename__ = 'Item_id'
     __table_args__ = {'schema': 'Inventory'}
     
-    # Table Columns
+    # Primary Key
     item_id: Mapped[int] = mapped_column(primary_key=True)
-    component_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'))
-    product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
     
     # Relationships
+    component_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'))
+    product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
     inventory: Mapped[List["Inventory"]] = relationship()
     
-    def __init__(self, item_id, component_id, product_id):
-        self.item_id = item_id
-        self.component_id = component_id
-        self.product_id = product_id
-        
+    # Table Columns
+    
+    # Common Methods
     def __repr__(self):
         return f'<Inventory.Item_id item_id:{self.item_id} component_id:{self.component_id} product_id:{self.product_id}>'
+    
+    def to_dict(self):
+        return {
+            "item_id": self.item_id,
+            "component_id": self.component_id,
+            "product_id": self.product_id
+        }
+        
+    def get_id(self):
+        return self.item_id
+    
+    def get_id_name(self):
+        return "item_id"
     
 class Inventory(Base):
     __tablename__ = 'Inventory'
     __table_args__ = {'schema': 'Inventory'}
     
-    # Table Columns
+    # Primary Key
     inv_id: Mapped[int] = mapped_column(primary_key=True)
+    
+    # Relationships
     item_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Item_id.item_id'), primary_key=True)
     owner_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'), primary_key=True)
+    recent_cycle_count_id: Mapped[int] = mapped_column(default=0)
+    inventory_log: Mapped[List["Inventory_Log"]] = relationship()
+    
+    # Table Columns
     is_component: Mapped[bool] = mapped_column(default=False)
     is_product: Mapped[bool] = mapped_column(default=False)
     actual_inventory: Mapped[float] = mapped_column(default=0.0)
     theoretical_inventory: Mapped[float] = mapped_column(default=0.0)
-    recent_cycle_count_id: Mapped[int] = mapped_column(default=0)
-    
-    # Relationships
-    inventory_log: Mapped[List["Inventory_Log"]] = relationship()
-    
-    def __init__(self, item_id, owner_id, is_component, is_product, actual_inventory, theoretical_inventory, recent_cycle_count_id):
-        self.item_id = item_id
-        self.owner_id = owner_id
-        self.is_component = is_component
-        self.is_product = is_product
-        self.actual_inventory = actual_inventory
-        self.theoretical_inventory = theoretical_inventory
-        self.recent_cycle_count_id = recent_cycle_count_id
-        
+
+    # Common Methods
     def __repr__(self):
         return f'<Inventory.Inventory inv_id:{self.inv_id} item_id:{self.item_id} actual_inv:{self.actual_inventory} theoretical_inv:{self.theoretical_inventory}>'
+    
+    def to_dict(self):
+        return {
+            "inv_id": self.inv_id,
+            "item_id": self.item_id,
+            "owner_id": self.owner_id,
+            "recent_cycle_count_id": self.recent_cycle_count_id,
+            "is_component": self.is_component,
+            "is_product": self.is_product,
+            "actual_inventory": self.actual_inventory,
+            "theoretical_inventory": self.theoretical_inventory
+        }
+        
+    def get_id(self):
+        return self.inv_id
+    
+    def get_id_name(self):
+        return "inv_id"
 
 InventoryStates = Literal["Ordered", "Revised_Order_Decreased", "Revised_Order_Increased", "InTransit", "Back_Order", "Checkin_Quarantine", "Received", "Produced", "CycleCount", "Released", "Returned", "Allocated", "Batched", "Used", "Quarantined", "Lost", "Expired", "Wasted", "Damaged", "Destroyed", "Shipped"]
     
@@ -170,31 +222,39 @@ class Inventory_Log(Base):
     
     doc = Column(JSON, nullable=True)
     
-    
-    def __init__(self, log_id, inv_id, courier_id, facility_id, user_id, po_detail_id, so_detail_id, previous_log_id, pre_change_actual_inventory, post_change_actual_inventory, pre_change_theoretical_inventory, post_change_theoretical_inventory, cycle_count_grade, archived_tree, supplier_item_id, lot_number, batch_number, date_entered, doc, state, state_notes):
-        self.log_id = log_id
-        self.inv_id = inv_id
-        self.courier_id = courier_id
-        self.facility_id = facility_id
-        self.user_id = user_id
-        self.po_detail_id = po_detail_id 
-        self.so_detail_id = so_detail_id 
-        self.previous_log_id = previous_log_id 
-        self.pre_change_actual_inventory = pre_change_actual_inventory
-        self.post_change_actual_inventory = post_change_actual_inventory
-        self.pre_change_theoretical_inventory = pre_change_theoretical_inventory
-        self.post_change_theoretical_inventory = post_change_theoretical_inventory
-        self.cycle_count_grade = cycle_count_grade
-        self.archived_tree = archived_tree
-        self.supplier_item_id = supplier_item_id
-        self.lot_number = lot_number
-        self.batch_number = batch_number
-        self.date_entered = date_entered
-        self.doc = doc
-        self.state = state
-        self.state_notes = state_notes
-    
+    # Common Methods
     def __repr__(self):
         return f'<Inventory_Log log_id:{self.log_id} inv_id:{self.inv_id} state:{self.state}>'
+    
+    def to_dict(self):
+        return {
+            "log_id": self.log_id,
+            "inv_id": self.inv_id,
+            "courier_id": self.courier_id,
+            "facility_id": self.facility_id,
+            "user_id": self.user_id,
+            "po_detail_id": self.po_detail_id,
+            "so_detail_id": self.so_detail_id,
+            "previous_log_id": self.previous_log_id,
+            "pre_change_actual_inventory": self.pre_change_actual_inventory,
+            "post_change_actual_inventory": self.post_change_actual_inventory,
+            "pre_change_theoretical_inventory": self.pre_change_theoretical_inventory,
+            "post_change_theoretical_inventory": self.post_change_theoretical_inventory,
+            "cycle_count_grade": self.cycle_count_grade,
+            "archived_tree": self.archived_tree,
+            "supplier_item_id": self.supplier_item_id,
+            "lot_number": self.lot_number,
+            "batch_number": self.batch_number,
+            "date_entered": self.date_entered,
+            "state": self.state,
+            "state_notes": self.state_notes,
+            "doc": self.doc
+        }
+        
+    def get_id(self):
+        return self.log_id
+    
+    def get_id_name(self):
+        return "log_id"
         
     

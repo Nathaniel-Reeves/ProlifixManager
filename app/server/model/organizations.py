@@ -21,7 +21,6 @@ class Organizations(Base):
     organization_id: Mapped[int] = mapped_column(primary_key=True)
     
     # Relationships
-    # 1 to M
     organization_names: Mapped[List["Organization_Names"]] = relationship()
     people: Mapped[Optional["People"]] = relationship()
     facilities: Mapped[Optional["Facilities"]] = relationship()
@@ -45,6 +44,7 @@ class Organizations(Base):
     
     doc = Column(MutableDict.as_mutable(JSON))
 
+    # Common Methods
     def __repr__(self):
         return f'<Organization {self.organization_id, self.website_url}>'
     
@@ -78,7 +78,6 @@ class Organization_Names(Base):
     name_id: Mapped[int] = mapped_column(primary_key=True)
     
     # Relationships
-    # M to 1
     organization_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
     
     # Table Columns
@@ -86,6 +85,7 @@ class Organization_Names(Base):
     organization_initial: Mapped[str] = mapped_column(default=None)
     primary_name: Mapped[bool] = mapped_column(default=False)
     
+    # Common Methods
     def __repr__(self):
         return f'<Organization_Name {self.name_id}, {self.organization_id}, {self.organization_name}>'
     
@@ -112,12 +112,9 @@ class People(Base):
     person_id: Mapped[int] = mapped_column(primary_key=True)
     
     # Relationships
-    # M to 1
     organization_id: Mapped[int] = mapped_column(
             ForeignKey('Organizations.Organizations.organization_id')
         )
-
-    # 1 to 1
     # user_id: Mapped[int] = mapped_column(ForeignKey('Organization.Users.user_id'))
     
     # Table Columns
@@ -136,6 +133,7 @@ class People(Base):
     termination_date: Mapped[datetime.datetime] = mapped_column()
     clock_number: Mapped[str] = mapped_column(default=None)
     
+    # Common Methods
     def __repr__(self):
         return f'<Person {self.person_id}, {self.first_name}, {self.last_name}>'
     
@@ -158,14 +156,15 @@ class People(Base):
             'clock_number': self.clock_number
         }
     
-    def getName(self):
-        return f'{self.first_name} {self.last_name}'
-    
     def get_id(self):
         return self.person_id
     
     def get_id_name(self):
         return "person_id"
+    
+    # Table Specific Methods
+    def getName(self):
+        return f'{self.first_name} {self.last_name}'
 
 
 ColorThemes = Literal["Light", "Dark"]
@@ -178,7 +177,6 @@ class Users(Base):
     user_id: Mapped[int] = mapped_column(primary_key=True)
     
     # Relationships
-    # 1 to 1
     person_id: Mapped[int] = mapped_column(ForeignKey('People.People.person_id'))
     
     # Table Columns
@@ -194,11 +192,26 @@ class Users(Base):
     
     doc = Column(MutableDict.as_mutable(JSON))
     
+    # Common Methods
     def __repr__(self):
         return f'<User {self.user_id}, {self.username}>'
     
+    def to_dict(self):
+        return {
+            'user_id': self.user_id,
+            'person_id': self.person_id,
+            'username': self.username,
+            'encrypted_password': self.encrypted_password,
+            'profile_picture': self.profile_picture,
+            'color_theme': self.color_theme,
+            'doc': self.doc
+        }
+    
     def get_id(self):
         return self.user_id
+    
+    def get_id_name(self):
+        return "user_id"
 
 BuildingTypes = Literal["Head_Office", "Office", "Distribution_Warehouse", "Manufacture_Facility", "Storefront"]
 
@@ -212,7 +225,6 @@ class Facilities(Base):
     facility_id: Mapped[int] = mapped_column(primary_key=True)
     
     # Relationships
-    # M to 1
     organization_id: Mapped[int] = mapped_column(
             ForeignKey('Organizations.Organizations.organization_id')
         )
