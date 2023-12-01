@@ -15,11 +15,14 @@ mapper_registry = registry()
 
 # Connect Modules/Databases
 
-# InventoryComponents
-Inventory_Components.formula_detail = relationship(Formula_Detail, primaryjoin=Inventory_Components.component_id == Formula_Detail.ingredient_id)
-Inventory_Components.purchase_order_detail = relationship(Purchase_Order_Detail, primaryjoin=Inventory_Components.component_id == Purchase_Order_Detail.component_id)
-Inventory_Components.formula_master = relationship(Formula_Master, primaryjoin=Inventory_Components.component_id == Formula_Master.label_id)
-Inventory_Components.product_components = relationship(ProductComponents, primaryjoin=Inventory_Components.component_id == ProductComponents.materials_id)
+# Organizations
+
+
+# Components
+Components.formula_detail = relationship(Formula_Detail, primaryjoin=Components.component_id == Formula_Detail.ingredient_id)
+Components.purchase_order_detail = relationship(Purchase_Order_Detail, primaryjoin=Components.component_id == Purchase_Order_Detail.component_id)
+Components.formula_master = relationship(Formula_Master, primaryjoin=Components.component_id == Formula_Master.label_id)
+Components.product_materials = relationship(Materials, primaryjoin=Components.component_id == Materials.component_id)
 
 # Product_Master
 Product_Master.formula_master = relationship(Formula_Master, primaryjoin=Product_Master.product_id == Formula_Master.product_id)
@@ -47,6 +50,10 @@ if __name__ == '__main__':
         .join(Organizations)\
         .join(Organization_Names)\
         .where(Organization_Names.organization_name == "Markus")
+    
+    # stm = select(Organizations, Organization_Names)\
+    #       .join(Organization_Names)\
+    #       .where(Organization_Names.organization_name == "Markus")
     
     print(stm)
 

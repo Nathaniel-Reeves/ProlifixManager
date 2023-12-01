@@ -2,15 +2,14 @@ from __future__ import annotations
 from typing import List, Literal, get_args, Optional
 
 from sqlalchemy import Integer, Enum, ForeignKey, Column, ForeignKeyConstraint
-from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.dialects.mysql import JSON, ENUM
 
+from .base import Base
+
 import datetime
 import enum
-
-class Base(DeclarativeBase):
-    pass
 
 ExpirationTypes = Literal["Best_By", "Exp"]
 
@@ -23,6 +22,7 @@ class Sales_Orders(Base):
     year: Mapped[int] = mapped_column(primary_key=True)
     month: Mapped[int] = mapped_column(primary_key=True)
     sec_number: Mapped[int] = mapped_column(primary_key=True)
+    suffix: Mapped[str] = mapped_column(primary_key=True)
     organization_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
     client_po_num: Mapped[str] = mapped_column(default=None)
     order_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
@@ -41,26 +41,35 @@ class Sales_Orders(Base):
     sales_orders_payments: Mapped[List["Sales_Orders_Payments"]] = relationship()
     sale_order_detail: Mapped[List["Sale_Order_Detail"]] = relationship()
     
-    def __init__(self, prefix, year, month, sec_number, organization_id, client_po_num, order_date, target_completion_date, completion_date, date_entered, billed_date, closed_date, down_payment_actual, theoretical_po_amount, total_paid, doc):
-        self.prefix = prefix
-        self.year = year
-        self.month = month
-        self.sec_number = sec_number
-        self.organization_id = organization_id
-        self.client_po_num = client_po_num
-        self.order_date = order_date
-        self.target_completion_date = target_completion_date
-        self.completion_date = completion_date
-        self.date_entered = date_entered
-        self.billed_date = billed_date
-        self.closed_date = closed_date
-        self.down_payment_actual = down_payment_actual
-        self.theoretical_po_amount = theoretical_po_amount
-        self.total_paid = total_paid
-        self.doc = doc
-    
     def __repr__(self):
-        return f'<Sales_Order SO#{self.prefix}{self.year}~{self.month}~{self.sec_number}>'
+        return f'<Sales_Order SO#{self.prefix}{self.year}~{self.month}~{self.sec_number}{self.suffix}>'
+    
+    def to_dict(self):
+        return {
+            'prefix': self.prefix,
+            'year': self.year,
+            'month': self.month,
+            'sec_number': self.sec_number,
+            'suffix': self.suffix,
+            'organization_id': self.organization_id,
+            'client_po_num': self.client_po_num,
+            'order_date': self.order_date,
+            'target_completion_date': self.target_completion_date,
+            'completion_date': self.completion_date,
+            'date_entered': self.date_entered,
+            'billed_date': self.billed_date,
+            'closed_date': self.closed_date,
+            'down_payment_actual': self.down_payment_actual,
+            'theoretical_po_amount': self.theoretical_po_amount,
+            'total_paid': self.total_paid,
+            'doc': self.doc
+        }
+    
+    def get_id(self):
+        return str(self.prefix) + str(self.year) + str(self.month) + str(self.sec_number)
+    
+    def get_id_name(self):
+        return "prefix"
 
 class Sale_Order_Detail(Base):
     __tablename__ = 'Sale_Order_Detail'
@@ -75,18 +84,21 @@ class Sale_Order_Detail(Base):
     year: Mapped[int] = mapped_column(nullable=False)
     month: Mapped[int] = mapped_column(nullable=False)
     sec_number: Mapped[int] = mapped_column(nullable=False)
+    suffix: Mapped[str] = mapped_column(nullable=False)
     fk_constraint = ForeignKeyConstraint( 
                     [
                         prefix, 
                         year, 
                         month, 
-                        sec_number
+                        sec_number,
+                        suffix
                     ], 
                     [
                         "Orders.Sales_Orders.prefix", 
                         "Orders.Sales_Orders.year", 
                         "Orders.Sales_Orders.month", 
-                        "Orders.Sales_Orders.sec_number"
+                        "Orders.Sales_Orders.sec_number",
+                        "Orders.Sales_Orders.suffix"
                     ], 
                     name="Sales_Order_Number_fk"
                 )
@@ -106,24 +118,8 @@ class Sale_Order_Detail(Base):
     
     doc = Column(MutableDict.as_mutable(JSON))
     
-    
-    def __init__(self, so_detail_id, prefix, year, month, sec_number, product_id, unit_order_qty, kilos_order_qty, special_instructions, date_entered, bit_price_per_unit, final_ship_date, doc):
-        self.so_detail_id = so_detail_id
-        self.prefix = prefix
-        self.year = year
-        self.month = month
-        self.sec_number = sec_number
-        self.product_id = product_id
-        self.unit_order_qty = unit_order_qty
-        self.kilos_order_qty = kilos_order_qty
-        self.special_instructions = special_instructions
-        self.date_entered = date_entered
-        self.bit_price_per_unit = bit_price_per_unit
-        self.final_ship_date = final_ship_date
-        self.doc = doc
-    
     def __repr__(self):
-        return f'<Sales_Order_Detail SO#{self.prefix}{self.year}~{self.month}~{self.sec_number} Product_id:{self.product_id} Qty:{self.unit_order_qty}{self.kilos_order_qty}>'
+        return f'<Sales_Order_Detail SO#{self.prefix}{self.year}~{self.month}~{self.sec_number} Product_id:{self.product_id} Qty:{self.unit_order_qty}{self.kilos_order_qty}{self.suffix}>'
     
 PaymentTypes = Literal["down_payment", "other", "final_payment"]
     
@@ -139,18 +135,21 @@ class Sales_Orders_Payments(Base):
     year: Mapped[int] = mapped_column(nullable=False)
     month: Mapped[int] = mapped_column(nullable=False)
     sec_number: Mapped[int] = mapped_column(nullable=False)
+    suffix: Mapped[str] = mapped_column(nullable=False)
     fk_constraint = ForeignKeyConstraint( 
                     [
                         prefix, 
                         year, 
                         month, 
-                        sec_number
+                        sec_number,
+                        suffix
                     ], 
                     [
                         "Orders.Sales_Orders.prefix", 
                         "Orders.Sales_Orders.year", 
                         "Orders.Sales_Orders.month", 
-                        "Orders.Sales_Orders.sec_number"
+                        "Orders.Sales_Orders.sec_number",
+                        "Orders.Sales_Orders.suffix"
                     ], 
                     name="Sales_Order_Number_fk"
                 )
@@ -169,20 +168,9 @@ class Sales_Orders_Payments(Base):
     date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     
     doc = Column(MutableDict.as_mutable(JSON))
-    
-    def __init__(self, so_detail_id, prefix, year, month, sec_number, payment_amount, payment_type, date_entered, doc):
-        self.so_detail_id = so_detail_id
-        self.prefix = prefix
-        self.year = year
-        self.month = month
-        self.sec_number = sec_number
-        self.payment_amount = payment_amount
-        self.payment_type = payment_type
-        self.date_entered = date_entered
-        self.doc = doc
         
     def __repr__(self):
-        return f'<Sales_Order_Payments SO#{self.prefix}{self.year}~{self.month}~{self.sec_number} Type:{self.payment_type} Amount:{self.payment_amount}>'
+        return f'<Sales_Order_Payments SO#{self.prefix}{self.year}~{self.month}~{self.sec_number} Type:{self.payment_type} Amount:{self.payment_amount}{self.suffix}>'
     
 class Lot_Numbers(Base):
     __tablename__ = 'Lot_Numbers'
@@ -213,25 +201,6 @@ class Lot_Numbers(Base):
     
     doc = Column(MutableDict.as_mutable(JSON))
     
-    def __init__(self, prefix, year, month, sec_number, suffix, product_id, so_detail_id, target_unit_yield, actual_unit_yield, retentions, total_shippable_product, batch_printed, bpr_printed, date_entered, exp_date, exp_type, doc):
-        self.prefix = prefix
-        self.year = year
-        self.month = month
-        self.sec_number = sec_number
-        self.suffix = suffix
-        self.product_id = product_id
-        self.so_detail_id = so_detail_id
-        self.target_unit_yield = target_unit_yield
-        self.actual_unit_yield = actual_unit_yield
-        self.retentions = retentions
-        self.total_shippable_product = total_shippable_product
-        self.batch_printed = batch_printed
-        self.bpr_printed = bpr_printed
-        self.date_entered = date_entered
-        self.exp_date = exp_date
-        self.exp_type = exp_type
-        self.doc = doc
-    
     def __repr__(self):
         return f'<Lot_Numbers Lot#:{self.prefix} {self.year}{self.month}{self.sec_number} {self.suffix} Product_id:{self.product_id} >'
     
@@ -244,6 +213,7 @@ class Purchase_Orders(Base):
     year: Mapped[int] = mapped_column(primary_key=True)
     month: Mapped[int] = mapped_column(primary_key=True)
     sec_number: Mapped[int] = mapped_column(primary_key=True)
+    suffix: Mapped[str] = mapped_column(primary_key=True)
     organization_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
     supplier_so_num: Mapped[str] = mapped_column(default=None)
     order_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
@@ -255,20 +225,28 @@ class Purchase_Orders(Base):
     # Relationships
     purchase_order_details: Mapped[List["Purchase_Order_Detail"]] = relationship()
     
-    def __init__(self, prefix, year, month, sec_number, organization_id, supplier_so_num, order_date, eta_date, date_entered, doc):
-        self.prefix = prefix
-        self.year = year
-        self.month = month
-        self.sec_number = sec_number
-        self.organization_id = organization_id
-        self.supplier_so_num = supplier_so_num
-        self.order_date = order_date
-        self.eta_date = eta_date
-        self.date_entered = date_entered
-        self.doc = doc
-    
     def __repr__(self):
         return f'<Purchase_Orders PO#:{self.prefix} {self.year}{self.month}{self.sec_number} >'
+    
+    def to_dict(self):
+        return {
+            'prefix': self.prefix,
+            'year': self.year,
+            'month': self.month,
+            'sec_number': self.sec_number,
+            'organization_id': self.organization_id,
+            'supplier_so_num': self.supplier_so_num,
+            'order_date': self.order_date,
+            'eta_date': self.eta_date,
+            'date_entered': self.date_entered,
+            'doc': self.doc
+        }
+    
+    def get_id(self):
+        return str(self.prefix) + str(self.year) + str(self.month) + str(self.sec_number)
+    
+    def get_id_name(self):
+        return "prefix"
 
 class Purchase_Order_Detail(Base):
     __tablename__ = 'Purchase_Order_Detail'
@@ -282,6 +260,7 @@ class Purchase_Order_Detail(Base):
     prefix: Mapped[str] = mapped_column(nullable=False)
     year: Mapped[int] = mapped_column(nullable=False)
     month: Mapped[int] = mapped_column(nullable=False)
+    suffix: Mapped[str] = mapped_column(nullable=False)
     sec_number: Mapped[int] = mapped_column(nullable=False)
     fk_constraint = ForeignKeyConstraint( 
                     [

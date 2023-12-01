@@ -13,7 +13,7 @@ from view.response import (
 from flask import (
     jsonify
 )
-def get_organizations(custom_response, org_ids, org_type, populate):
+def get_organizations(custom_response, org_ids, org_type, populate, doc):
     """
     Fetch Organizaiton from the database.
     Populate them and filter them if requested.
@@ -31,49 +31,25 @@ def get_organizations(custom_response, org_ids, org_type, populate):
     if 'people' in populate:
         tables.append(db.People)
     if 'components' in populate:
-        tables.append(db.Inventory_Components)
+        tables.append(db.Components)
     if 'products' in populate:
         tables.append(db.Product_Master)
 
     stm = select(*tables)\
-        .join(db.Organization_Names)
-    
-    def handle_join_error():
-        error = error_message()
-        custom_response.insert_flash_message(error)
-        custom_response.set_status_code(500)
-        return custom_response
+          .join(db.Organization_Names, isouter=True)
             
     if 'facilities' in populate:
-        try:
-            stm.join(db.Facilities)
-        except Exception:
-            return handle_join_error()
+        stm = stm.join(db.Facilities, db.Organizations.organization_id == db.Facilities.organization_id, isouter=True)
     if 'sales-orders' in populate:
-        try:
-            stm.join(db.Sales_Orders)
-        except Exception:
-            return handle_join_error()
+        stm = stm.join(db.Sales_Orders, db.Organizations.organization_id == db.Sales_Orders.organization_id, isouter=True)
     if 'purchase-orders' in populate:
-        try:
-            stm.join(db.Purchase_Orders)
-        except Exception:
-            return handle_join_error()
+        stm = stm.join(db.Purchase_Orders, db.Organizations.organization_id == db.Purchase_Orders.organization_id, isouter=True)
     if 'people' in populate:
-        try:
-            stm.join(db.People)
-        except Exception:
-            return handle_join_error()
+        stm = stm.join(db.People, db.Organizations.organization_id == db.People.organization_id, isouter=True)
     if 'components' in populate:
-        try:
-            stm.join(db.Inventory_Components)
-        except Exception:
-            return handle_join_error()
+        stm = stm.join(db.Components, db.Organizations.organization_id == db.Components.brand_id, isouter=True)
     if 'products' in populate:
-        try:
-            stm.join(db.Product_Master)
-        except Exception:
-            return handle_join_error()
+        stm = stm.join(db.Product_Master, db.Organizations.organization_id == db.Product_Master.organization_id, isouter=True)
         
     stm = stm.where(db.Organization_Names.primary_name == True)
     
@@ -112,17 +88,55 @@ def get_organizations(custom_response, org_ids, org_type, populate):
     session.close()
     
     # Process and Package the data
-    data = {}
-    for row in raw_data:
-        table_obj = list(row)
-        parent_key = table_obj[0].get_id()
-        data[parent_key] = table_obj[0].to_dict()
-        table_obj.pop(0)
-        
-        if table_obj:
-            for table in table_obj:
-                data[parent_key][table.__tablename__] = table.to_dict()
+    data, custom_response = package_data(raw_data, doc, custom_response)
     custom_response.insert_data(data)
     return custom_response
     
     
+def package_data(raw_data, doc, custom_response):
+    try:
+        data = {}
+        for i, row in enumerate(raw_data):
+            parent_key = row[0].get_id()
+            
+            if i == 0 or parent_key != raw_data[i - 1][0].get_id():
+                d = row[0].to_dict()
+                if not doc and ("doc" in list(d.keys())):
+                    d["doc"] = {}
+                data[parent_key] = d
+            
+            
+            if len(row) > 1:
+                for j, table in enumerate(row, 0):
+                    if j == 0:
+                        continue
+                    if table == None:
+                        continue
+
+                    if table.__tablename__ not in data[parent_key]:
+                        data[parent_key][table.__tablename__] = []
+                        
+
+                    entered_keys = []
+                    for d in data[parent_key][table.__tablename__]:
+                        if isinstance(table.get_id(), int):
+                            entered_keys.append(d[table.get_id_name()])
+                        else:
+                            entered_keys.append((
+                                d["prefix"],
+                                d["year"],
+                                d["month"],
+                                d["sec_number"],
+                                d["suffix"]
+                            ))
+                            
+                    if table.get_id() not in entered_keys:
+                        d = table.to_dict()
+                        if not doc and ("doc" in list(d.keys())):
+                            d["doc"] = {}
+                        data[parent_key][table.__tablename__].append(d)
+    except Exception:
+        error = error_message()
+        custom_response.insert_flash_message(error)
+        custom_response.set_status_code(500)
+    return data, custom_response

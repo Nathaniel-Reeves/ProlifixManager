@@ -883,26 +883,28 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Inventory` (
 );
 
 CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Orders` (
-  `prefix` VARCHAR(10),
+  `prefix` VARCHAR(10) DEFAULT "",
   `year` TINYINT,
   `month` TINYINT,
   `sec_number` SMALLINT,
+  `suffix` VARCHAR(10) DEFAULT "",
   `organization_id` INT UNSIGNED,
   `supplier_so_num` VARCHAR(30),
   `order_date` DATE,
   `eta_date` DATE,
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `doc` json DEFAULT (CONCAT('{"_id":"',`prefix`, `year`, `month`, `sec_number`,'","files":[]}')),
-  PRIMARY KEY (`prefix`, `year`, `month`, `sec_number`),
+  `doc` json DEFAULT (CONCAT('{"_id":"',`prefix`, `year`, `month`, `sec_number`, `suffix`,'","files":[]}')),
+  PRIMARY KEY (`prefix`, `year`, `month`, `sec_number`, `suffix`),
   FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
 CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Order_Detail` (
   `po_detail_id` INT UNSIGNED,
-  `prefix` VARCHAR(10),
+  `prefix` VARCHAR(10) DEFAULT "",
   `year` TINYINT,
   `month` TINYINT,
   `sec_number` SMALLINT,
+  `suffix` VARCHAR(10) DEFAULT "",
   `component_id` INT UNSIGNED,
   `unit_order_qty` INT,
   `kilos_order_qty` DECIMAL(16,4),
@@ -912,7 +914,7 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Purchase_Order_Detail` (
   `bid_price_per_kilo` DECIMAL(16,4),
   `doc` json DEFAULT (CONCAT('{"_id":"',`po_detail_id`,'","files":[]}')),
   PRIMARY KEY (`po_detail_id`),
-  FOREIGN KEY (`prefix`, `year`, `month`, `sec_number`) REFERENCES `Orders`.`Purchase_Orders`(`prefix`, `year`, `month`, `sec_number`),
+  FOREIGN KEY (`prefix`, `year`, `month`, `sec_number`, `suffix`) REFERENCES `Orders`.`Purchase_Orders`(`prefix`, `year`, `month`, `sec_number`, `suffix`),
   FOREIGN KEY (`component_id`) REFERENCES `Inventory`.`Components`(`component_id`)
 );
 
@@ -959,48 +961,51 @@ CREATE TABLE IF NOT EXISTS `Organizations`.`People` (
 );
 
 CREATE TABLE IF NOT EXISTS `Orders`.`Sales_Orders` (
-  `prefix` VARCHAR(10),
+  `prefix` VARCHAR(10) DEFAULT "",
   `year` TINYINT,
   `month` TINYINT,
   `sec_number` SMALLINT,
+  `suffix` VARCHAR(10) DEFAULT "",
   `organization_id` INT UNSIGNED,
   `client_po_num` VARCHAR(30),
   `order_date` DATE,
   `target_completion_date` DATE,
   `completion_date` DATE,
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `doc` json DEFAULT (CONCAT('{"_id":"',`prefix`, `year`, `month`, `sec_number`,'","files":[]}')),
+  `doc` json DEFAULT (CONCAT('{"_id":"',`prefix`, `year`, `month`, `sec_number`, `suffix`, '","files":[]}')),
   `billed_date` DATE,
   `closed_date` DATE,
   `down_payment_actual` DOUBLE,
   `theoretical_po_amount` DOUBLE,
   `total_paid` DOUBLE,
-  PRIMARY KEY (`prefix`, `year`, `month`, `sec_number`),
+  PRIMARY KEY (`prefix`, `year`, `month`, `sec_number`, `suffix`),
   FOREIGN KEY (`organization_id`) REFERENCES `Organizations`.`Organizations`(`organization_id`)
 );
 
 CREATE TABLE IF NOT EXISTS `Orders`.`Sales_Orders_Payments` (
-  `prefix` VARCHAR(10),
+  `prefix` VARCHAR(10) DEFAULT "",
   `year` TINYINT,
   `month` TINYINT,
   `sec_number` SMALLINT,
+  `suffix` VARCHAR(10) DEFAULT "",
   `organization_id` INT,
   `payment_amount` DOUBLE,
   `payment_date` DATE,
   `payment_type` ENUM("down_payment", "other", "final_payment"),
   `payment_notes` VARCHAR(2500),
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `doc` json DEFAULT (CONCAT('{"_id":"',`prefix`, `year`, `month`, `sec_number`,'","files":[]}')),
-  PRIMARY KEY (`prefix`, `year`, `month`, `sec_number`),
-  FOREIGN KEY (`prefix`, `year`, `month`, `sec_number`) REFERENCES `Orders`.`Sales_Orders`(`prefix`, `year`, `month`, `sec_number`)
+  `doc` json DEFAULT (CONCAT('{"_id":"',`prefix`, `year`, `month`, `sec_number`, `suffix`, '","files":[]}')),
+  PRIMARY KEY (`prefix`, `year`, `month`, `sec_number`, `suffix`),
+  FOREIGN KEY (`prefix`, `year`, `month`, `sec_number`, `suffix`) REFERENCES `Orders`.`Sales_Orders`(`prefix`, `year`, `month`, `sec_number`, `suffix`)
 );
 
 CREATE TABLE IF NOT EXISTS `Orders`.`Sale_Order_Detail` (
   `so_detail_id` INT UNSIGNED,
-  `prefix` VARCHAR(10),
+  `prefix` VARCHAR(10) DEFAULT "",
   `year` TINYINT,
   `month` TINYINT,
   `sec_number` SMALLINT,
+  `suffix` VARCHAR(10) DEFAULT "",
   `product_id` INT UNSIGNED,
   `unit_order_qty` INT,
   `kilos_order_qty` DECIMAL(16,4),
@@ -1011,30 +1016,31 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Sale_Order_Detail` (
   `doc` json DEFAULT (CONCAT('{"_id":"',`so_detail_id`,'","files":[]}')),
   PRIMARY KEY (`so_detail_id`),
   FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
-  FOREIGN KEY (`prefix`, `year`, `month`, `sec_number`) REFERENCES `Orders`.`Sales_Orders`(`prefix`, `year`, `month`, `sec_number`)
+  FOREIGN KEY (`prefix`, `year`, `month`, `sec_number`, `suffix`) REFERENCES `Orders`.`Sales_Orders`(`prefix`, `year`, `month`, `sec_number`, `suffix`)
 );
 
 CREATE TABLE IF NOT EXISTS `Orders`.`Sales_Orders_Payments` (
   `payment_id` INT UNSIGNED AUTO_INCREMENT,
-  `prefix` VARCHAR(10),
+  `prefix` VARCHAR(10) DEFAULT "",
   `year` TINYINT,
   `month` TINYINT,
   `sec_number` SMALLINT,
+  `suffix` VARCHAR(10) DEFAULT "",
   `payment_amount` DOUBLE,
   `payment_type` ENUM("down_payment", "other", "final_payment"),
   `payment_notes` VARCHAR(2500),
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `doc` JSON,
   PRIMARY KEY (`payment_id`),
-  FOREIGN KEY (`prefix`, `year`, `month`, `sec_number`) REFERENCES `Orders`.`Sales_Orders`(`prefix`, `year`, `month`, `sec_number`)
+  FOREIGN KEY (`prefix`, `year`, `month`, `sec_number`, `suffix`) REFERENCES `Orders`.`Sales_Orders`(`prefix`, `year`, `month`, `sec_number`, `suffix`)
 );
 
 CREATE TABLE IF NOT EXISTS `Orders`.`Lot_Numbers` (
-  `prefix` VARCHAR(15),
+  `prefix` VARCHAR(15) DEFAULT NULL,
   `year` TINYINT,
   `month` TINYINT,
   `sec_number` SMALLINT,
-  `suffix` VARCHAR(15),
+  `suffix` VARCHAR(15) DEFAULT NULL,
   `product_id` INT UNSIGNED,
   `prolifix_lot_number` VARCHAR(20) DEFAULT (CONCAT(`prefix`, LPAD(`year`,2,"0"), LPAD(`month`,2,"0"), LPAD(`sec_number`,3,"0"), `suffix`)),
   `so_detail_id` INT UNSIGNED,
@@ -1053,17 +1059,17 @@ CREATE TABLE IF NOT EXISTS `Orders`.`Lot_Numbers` (
   FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`)
 );
 
-CREATE TABLE IF NOT EXISTS `Products`.`Components` (
-  `component_id` INT UNSIGNED AUTO_INCREMENT,
-  `materials_id` INT UNSIGNED,
+CREATE TABLE IF NOT EXISTS `Products`.`Materials` (
+  `material_id` INT UNSIGNED AUTO_INCREMENT,
+  `component_id` INT UNSIGNED,
   `product_id` INT UNSIGNED,
   `material_qty_per_unit` INT NOT NULL,
   `current_default_component` BOOL NOT NULL,
   `component_list_version` SMALLINT NOT NULL,
   `date_entered` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`component_id`),
+  PRIMARY KEY (`material_id`),
   FOREIGN KEY (`product_id`) REFERENCES `Products`.`Product_Master`(`product_id`),
-  FOREIGN KEY (`materials_id`) REFERENCES `Inventory`.`Components`(`component_id`)
+  FOREIGN KEY (`component_id`) REFERENCES `Inventory`.`Components`(`component_id`)
 );
 
 CREATE TABLE IF NOT EXISTS `Inventory`.`Inventory_Log` (

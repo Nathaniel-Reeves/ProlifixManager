@@ -51,6 +51,12 @@ def get_organizations():
         populate.append('components')
     if 'products' in populate_request:
         populate.append('products')
+        
+    document = request.args.get('doc')
+    if document == None:
+        doc = False
+    else:
+        doc = True
 
     # Get Organizations from the database
     custom_response = CustomResponse()
@@ -58,7 +64,8 @@ def get_organizations():
         custom_response, 
         org_ids, 
         org_types, 
-        populate
+        populate,
+        doc
     )
     
     return jsonify(custom_response.to_json()), custom_response.get_status_code()

@@ -2,15 +2,14 @@ from __future__ import annotations
 from typing import List, Literal, get_args, Optional
 
 from sqlalchemy import Integer, Enum, ForeignKey, Column
-from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.dialects.mysql import JSON, ENUM
 
+from .base import Base
+
 import datetime
 import enum
-
-class Base(DeclarativeBase):
-    pass
 
 ProductTypes = Literal["Powder", "Capsule", "Liquid", "Other"]
 
@@ -63,61 +62,78 @@ class Product_Master(Base):
     doc = Column(MutableDict.as_mutable(JSON))
 
     # Relationships
-    components: Mapped[List["ProductComponents"]] = relationship()
+    components: Mapped[List["Materials"]] = relationship()
     # formulas: Mapped[List["Formula_Master"]] = relationship()
     # lot_numbers: Mapped[List["Lot_Numbers"]] = relationship()
     # items: Mapped[List["Item_id"]] = relationship()
     
-    def __init__(self, organization_id, product_name, type, current_product, date_entered, spec_issue_date, spec_revise_date, exp_unit, exp_type, exp_time_frame, exp_use_oldest_ingredient, default_formula_id, certified_usda_organic, certified_halal, certified_kosher, certified_gluten_free, certified_national_sanitation_foundation,certified_us_pharmacopeia, certified_non_gmo, certified_vegan, doc):
-        self.organization_id = organization_id
-        self.product_name = product_name
-        self.type = type
-        self.current_product = current_product
-        self.date_entered = date_entered
-        self.spec_issue_date = spec_issue_date
-        self.spec_revise_date = spec_revise_date
-        self.exp_unit = exp_unit
-        self.exp_type = exp_type
-        self.exp_time_frame = exp_time_frame
-        self.exp_use_oldest_ingredient = exp_use_oldest_ingredient 
-        self.default_formula_id = default_formula_id
-        self.certified_usda_organic = certified_usda_organic
-        self.certified_halal = certified_halal
-        self.certified_kosher = certified_kosher 
-        self.certified_gluten_free = certified_gluten_free
-        self.certified_national_sanitation_foundation = certified_national_sanitation_foundation
-        self.certified_us_pharmacopeia = certified_us_pharmacopeia
-        self.certified_non_gmo = certified_non_gmo
-        self.certified_vegan = certified_vegan
-        self.doc = doc
-    
     def __repr__(self):
         return f'<Product_Master id:{self.product_id} org_id:{self.organization_id} {self.product_name}>'
     
-class ProductComponents(Base):
-    __tablename__ = 'Components'
+    def to_dict(self):
+        return {
+            'product_id': self.product_id,
+            'organization_id': self.organization_id,
+            'product_name': self.product_name,
+            'type': self.type,
+            'current_product': self.current_product,
+            'date_entered': self.date_entered,
+            'exp_unit': self.exp_unit,
+            'exp_type': self.exp_type,
+            'exp_time_frame': self.exp_time_frame,
+            'exp_use_oldest_ingredient': self.exp_use_oldest_ingredient,
+            'default_formula_id': self.default_formula_id,
+            'certified_usda_organic': self.certified_usda_organic,
+            'certified_halal': self.certified_halal,
+            'certified_kosher': self.certified_kosher,
+            'certified_gluten_free': self.certified_gluten_free,
+            'certified_national_sanitation_foundation': self.certified_national_sanitation_foundation,
+            'certified_us_pharmacopeia': self.certified_us_pharmacopeia,
+            'certified_non_gmo': self.certified_non_gmo,
+            'certified_vegan': self.certified_vegan,
+            'doc': self.doc
+        }
+    
+    def get_id(self):
+        return self.product_id
+
+    def get_id_name(self):
+        return "product_id"
+    
+class Materials(Base):
+    __tablename__ = 'Materials'
     __table_args__ = {'schema': 'Products'}
     
     # Table Columns
-    component_id: Mapped[int] = mapped_column(primary_key=True)
+    material_id: Mapped[int] = mapped_column(primary_key=True)
     material_qty_per_unit: Mapped[float] = mapped_column(default=0.0)
     current_default_component: Mapped[bool] = mapped_column(default=False)
     component_list_version: Mapped[int] = mapped_column(default=0)
     date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     
     # Relationships
-    materials_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'))
+    component_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'))
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
-    
-    def __init__(self, component_id, material_qty_per_unit, current_default_component, component_list_version, date_entered):
-        self.component_id = component_id
-        self.material_qty_per_unit = material_qty_per_unit
-        self.current_default_component = current_default_component
-        self.component_list_version = component_list_version
-        self.date_entered = date_entered
     
     def __repr__(self):
         return f'<Components id:{self.component_id} date_entered:{self.date_entered}>'
+    
+    def to_dict(self):
+        return {
+          'material_id': self.material_id,
+          'material_qty_per_unit': self.material_qty_per_unit,
+            'current_default_component': self.current_default_component,
+            'component_list_version': self.component_list_version,
+            'date_entered': self.date_entered,
+            'component_id': self.component_id,
+            'product_id': self.product_id
+        }
+    
+    def get_id(self):
+        return self.component_id
+    
+    def get_id_name(self):
+        return "component_id"
 
 class Manufacturing_Process(Base):
     __tablename__ = 'Manufacturing_Process'
@@ -142,3 +158,18 @@ class Manufacturing_Process(Base):
         
     def __repr__(self):
         return f'<Manufacturing_Process id:{self.process_spec_id} product_id:{self.product_id}>'
+    
+    def to_dict(self):
+        return {
+            'process_spec_id': self.process_spec_id,
+            'product_id': self.product_id,
+            'date_entered': self.date_entered,
+            'date_modified': self.date_modified,
+            'doc': self.doc
+        }
+    
+    def get_id(self):
+        return self.process_spec_id
+    
+    def get_id_name(self):
+        return "process_spec_id"

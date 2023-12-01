@@ -2,15 +2,14 @@ from __future__ import annotations
 from typing import List, Literal, get_args, Optional
 
 from sqlalchemy import Integer, Enum, ForeignKey, Column
-from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.dialects.mysql import JSON, ENUM
 
+from .base import Base
+
 import datetime
 import enum
-
-class Base(DeclarativeBase):
-    pass
 
 ExpirationTypes = Literal["Best_By", "Exp"]
 
@@ -18,7 +17,7 @@ ComponentTypes = Literal['powder', 'liquid', 'container', 'pouch','shrink_band',
 
 UnitTypes = Literal['grams', 'kilograms', 'units', 'boxes', 'pallets', 'liters', 'rolls', 'totes', 'barrels', 'pounds']
 
-class Inventory_Components(Base):
+class Components(Base):
     __tablename__ = 'Components'
     __table_args__ = {'schema': 'Inventory'}
     
@@ -31,7 +30,7 @@ class Inventory_Components(Base):
     # formula_detail: Mapped[List["Formula_Detail"]] = relationship()
     # purchase_order_detail: Mapped[List["Purchase_Order_Detail"]] = relationship()
     # formula_master: Mapped[List["Formula_Master"]] = relationship()
-    # components: Mapped[List["ProductComponents"]] = relationship()
+    # components: Mapped[List["Materials"]] = relationship()
     
     # Table Columns
     component_type: Mapped[ComponentTypes] = mapped_column(Enum(
@@ -58,22 +57,6 @@ class Inventory_Components(Base):
         ))
     
     doc = Column(JSON, nullable=True)
-    
-    def __init__(self, component_id, component_type, certified_usda_organic, certified_halal, certified_kosher, certified_gluten_free, certified_national_sanitation_foundation, certified_us_pharmacopeia, certified_non_gmo, certified_vegan, date_entered, brand_id, units, doc):
-        self.component_id = component_id
-        self.component_type = component_type
-        self.certified_usda_organic = certified_usda_organic
-        self.certified_halal = certified_halal
-        self.certified_kosher = certified_kosher
-        self.certified_gluten_free = certified_gluten_free
-        self.certified_national_sanitation_foundation = certified_national_sanitation_foundation
-        self.certified_us_pharmacopeia = certified_us_pharmacopeia
-        self.certified_non_gmo = certified_non_gmo
-        self.certified_vegan = certified_vegan
-        self.date_entered = date_entered
-        self.brand_id = brand_id
-        self.units = units
-        self.doc = doc
     
     def __repr__(self):
         return f'<Inventory.Component component_id:{self.component_id} {self.component_type} brand:{self.brand_id}>'

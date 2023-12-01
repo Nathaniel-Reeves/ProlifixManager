@@ -11,7 +11,7 @@ DROP TABLE IF EXISTS `Formulas`.`Client_Spec_Group`;
 DROP TABLE IF EXISTS `Formulas`.`Formula_Detail`;
 DROP TABLE IF EXISTS `Formulas`.`Formula_Master`;
 DROP TABLE IF EXISTS `Orders`.`Purchase_Order_Detail`;
-DROP TABLE IF EXISTS `Products`.`Components`;
+DROP TABLE IF EXISTS `Products`.`Materials`;
 DROP DATABASE IF EXISTS `Inventory`;
 DROP DATABASE IF EXISTS `Orders`;
 DROP DATABASE IF EXISTS `Products`;

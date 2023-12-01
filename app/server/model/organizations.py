@@ -2,15 +2,14 @@ from __future__ import annotations
 from typing import List, Literal, get_args, Optional
 
 from sqlalchemy import Integer, Enum, ForeignKey, Column
-from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.dialects.mysql import JSON, ENUM
 
+from .base import Base
+
 import datetime
 import enum
-
-class Base(DeclarativeBase):
-    pass
 
 RiskLevels = Literal["UNKNOWN", "No_Risk", "Low_Risk", "Medium_Risk", "High_Risk"]
 
@@ -46,21 +45,6 @@ class Organizations(Base):
     
     doc = Column(MutableDict.as_mutable(JSON))
 
-    def __init__(self, organization_id, website_url, vetted, date_vetted, date_entered, risk_level, supplier, client, lab, courier, other, doc):
-        self.organization_id = organization_id
-        self.website_url = website_url
-        self.vetted = vetted
-        self.date_vetted = date_vetted
-        self.date_entered = date_entered
-        self.risk_level = risk_level
-        self.supplier = supplier
-        self.client = client
-        self.lab = lab
-        self.courier = courier
-        self.other = other
-        self.doc = doc
-        
-
     def __repr__(self):
         return f'<Organization {self.organization_id, self.website_url}>'
     
@@ -82,6 +66,9 @@ class Organizations(Base):
     
     def get_id(self):
         return self.organization_id
+    
+    def get_id_name(self):
+        return "organization_id"
 
 class Organization_Names(Base):
     __tablename__ = 'Organization_Names'
@@ -99,13 +86,6 @@ class Organization_Names(Base):
     organization_initial: Mapped[str] = mapped_column(default=None)
     primary_name: Mapped[bool] = mapped_column(default=False)
     
-    def __init__(self, name_id, organization_id, organization_name, organization_initial, primary_name):
-        self.name_id = name_id
-        self.organization_id = organization_id
-        self.organization_name = organization_name
-        self.organization_initial = organization_initial
-        self.primary_name = primary_name
-    
     def __repr__(self):
         return f'<Organization_Name {self.name_id}, {self.organization_id}, {self.organization_name}>'
     
@@ -120,6 +100,9 @@ class Organization_Names(Base):
     
     def get_id(self):
         return self.name_id
+    
+    def get_id_name(self):
+        return "name_id"
 
 class People(Base):
     __tablename__ = 'People'
@@ -153,23 +136,6 @@ class People(Base):
     termination_date: Mapped[datetime.datetime] = mapped_column()
     clock_number: Mapped[str] = mapped_column(default=None)
     
-    def __init__(self, person_id, organization_id, first_name, last_name, job_description, department, phone_number_primary, phone_number_secondary, email_primary, email_address_secondary, birthday, is_employee, contract_date, termination_date, clock_number):
-        self.person_id = person_id
-        self.organization_id = organization_id
-        self.first_name = first_name
-        self.last_name = last_name
-        self.job_description = job_description
-        self.department = department
-        self.phone_number_primary = phone_number_primary
-        self.phone_number_secondary = phone_number_secondary
-        self.email_address_primary = email_primary
-        self.email_address_secondary = email_address_secondary
-        self.birthday = birthday
-        self.is_employee = is_employee
-        self.contract_date = contract_date
-        self.termination_date = termination_date
-        self.clock_number = clock_number
-
     def __repr__(self):
         return f'<Person {self.person_id}, {self.first_name}, {self.last_name}>'
     
@@ -194,6 +160,12 @@ class People(Base):
     
     def getName(self):
         return f'{self.first_name} {self.last_name}'
+    
+    def get_id(self):
+        return self.person_id
+    
+    def get_id_name(self):
+        return "person_id"
 
 
 ColorThemes = Literal["Light", "Dark"]
@@ -222,15 +194,11 @@ class Users(Base):
     
     doc = Column(MutableDict.as_mutable(JSON))
     
-    def __init__(self, user_id, username, encrypted_password, profile_picture, color_theme):
-        self.user_id = user_id
-        self.username = username
-        self.encrypted_password = encrypted_password
-        self.profile_picture = profile_picture
-        self.color_theme = color_theme
-    
     def __repr__(self):
         return f'<User {self.user_id}, {self.username}>'
+    
+    def get_id(self):
+        return self.user_id
 
 BuildingTypes = Literal["Head_Office", "Office", "Distribution_Warehouse", "Manufacture_Facility", "Storefront"]
 
@@ -283,30 +251,41 @@ class Facilities(Base):
     ))
     ship_time_in_days: Mapped[int] = mapped_column()
     notes: Mapped[str] = mapped_column()
-    
-    def __init__(self, facility_id, organization_id, building_type, building_name, street_1_number, street_1_type, street_1_direction, street_1_name, street_2_number, street_2_type, street_2_direction, address_type, address_type_identifier, local_municipality, city_town, governing_district, postal_area, country, ship_time, ship_time_units, ship_in_days, notes):
-        self.facility_id = facility_id
-        self.organization_id = organization_id
-        self.building_type = building_type
-        self.building_name = building_name
-        self.street_1_number = street_1_number
-        self.street_1_type = street_1_type
-        self.street_1_direction = street_1_direction
-        self.street_1_name = street_1_name
-        self.street_2_number = street_2_number
-        self.street_2_type = street_2_type
-        self.street_2_direction = street_2_direction
-        self.address_type = address_type
-        self.address_type_identifier = address_type_identifier
-        self.local_municipality = local_municipality
-        self.city_town = city_town
-        self.governing_district = governing_district
-        self.postal_area = postal_area
-        self.country = country
-        self.ship_time = ship_time
-        self.ship_time_units = ship_time_units
-        self.ship_time_in_days = ship_in_days
-        self.notes = notes
         
     def __repr__(self):
         return f'<Facility {self.facility_id}, {self.building_name}, {self.country}, {self.governing_district}, {self.city_town}>'
+    
+    def to_dict(self):
+        return {
+            'facility_id': self.facility_id,
+            'organization_id': self.organization_id,
+            'building_type': self.building_type,
+            'building_name': self.building_name,
+            'street_1_number': self.street_1_number,
+            'street_1_number_suffix': self.street_1_number_suffix,
+            'street_1_name': self.street_1_name,
+            'street_1_type': self.street_1_type,
+            'street_1_direction': self.street_1_direction,
+            'street_2_number': self.street_1_number,
+            'street_2_number_suffix': self.street_1_number_suffix,
+            'street_2_name': self.street_1_name,
+            'street_2_type': self.street_1_type,
+            'street_2_direction': self.street_1_direction,
+            'address_type': self.address_type,
+            'address_type_identifier': self.address_type_identifier,
+            'local_municipality': self.local_municipality,
+            'city_town': self.city_town,
+            'governing_district': self.governing_district,
+            'postal_area': self.postal_area,
+            'country': self.country,
+            'ship_time': self.ship_time,
+            'ship_time_units': self.ship_time_units,
+            'ship_time_in_days': self.ship_time_in_days,
+            'notes': self.notes
+        }
+    
+    def get_id(self):
+        return self.facility_id
+
+    def get_id_name(self):
+        return "facility_id"
