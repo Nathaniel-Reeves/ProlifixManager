@@ -657,7 +657,7 @@ def organization_exists():
     # Insert the levenshtein_results into the response
     custom_response.insert_data(levenshtein_results)
 
-    return jsonify(custom_response.to_json())
+    return custom_response
 
 
 def check_org_exists_levenshtein(search_name):

@@ -20,7 +20,7 @@ def get_organizations():
     """
     GET api/organizations/ Endpoint
     """
-    
+
     # Clean Request
     org_ids = list(only_integers(request.args.getlist('org-id')))
 
@@ -67,6 +67,19 @@ def get_organizations():
         populate,
         doc
     )
-    
+
     return jsonify(custom_response.to_json()), custom_response.get_status_code()
-        
+
+@bp.route('/exists', methods=['GET'])
+@check_authenticated(authentication_required=True)
+def org_exists():
+    """
+    Check if an organization already exists by organization name.
+    """
+    custom_response = CustomResponse()  # Create an instance of Response
+
+    names = request.json['names']
+
+    custom_response = org.organization_exists(names, custom_response)
+
+    return jsonify(custom_response.to_json()), custom_response.get_status_code()

@@ -1,22 +1,36 @@
 '''
 Handle Organizations Data
 '''
-from model.connector import get_session
+import json
+from sqlalchemy import select, text
+
 import model as db
-from sqlalchemy import select
 from view.response import (
     MessageType,
     FlashMessage,
     CustomResponse,
     error_message
 )
-from flask import (
-    jsonify
-)
+from model.connector import get_session
+from .package import package_data
+
 def get_organizations(custom_response, org_ids, org_type, populate, doc):
     """
     Fetch Organizaiton from the database.
     Populate them and filter them if requested.
+    
+    Args:
+        custom_response (CustomResponse): CustomResponse object
+        org_ids (list): List of organization ids
+        org_type (list): Organization types (enum)
+            ('supplier', 'client', 'courier', 'lab')
+            Note: an empty list will return all organizations
+        populate (list): List of tables to populate (enum)
+            ('facilities','sales-orders', 'purchase-orders', 'people', 'components', 'products')
+        doc (bool): Whether or not to include the document column in the response
+        
+    Returns:
+        custom_response (CustomResponse): CustomResponse object containing the data and relivant error messages.
     """
     
     # Build the query
@@ -91,52 +105,90 @@ def get_organizations(custom_response, org_ids, org_type, populate, doc):
     data, custom_response = package_data(raw_data, doc, custom_response)
     custom_response.insert_data(data)
     return custom_response
-    
-    
-def package_data(raw_data, doc, custom_response):
+
+def organization_exists(names, custom_response):
+    """
+    Check if an organization already exists by organization name.
+    """
+    # Execute Querys
+    primary_exists = False
+    levenshtein_results = []
+    for name in names:
+        if name["primary_name"]:
+            primary_exists = True
+        results, levensthein_messages = check_org_exists_levenshtein(
+            name["organization_name"])
+        if not results == -1:
+            levenshtein_results += results
+        custom_response.insert_flash_messages(levensthein_messages)
+
+    # Handle Primary False
+    if not primary_exists:
+        e_message = FlashMessage(
+            message="Primary Name not selected!",
+            message_type=MessageType.WARNING)
+        custom_response.insert_flash_message(e_message)
+
+    # Insert the levenshtein_results into the response
+    custom_response.insert_data(levenshtein_results)
+
+    return custom_response
+
+
+def check_org_exists_levenshtein(search_name):
+    '''
+    Checks likelyhood if Organization Name already exists
+    in the Database.
+    '''
     try:
-        data = {}
-        for i, row in enumerate(raw_data):
-            parent_key = row[0].get_id()
-            
-            if i == 0 or parent_key != raw_data[i - 1][0].get_id():
-                d = row[0].to_dict()
-                if not doc and ("doc" in list(d.keys())):
-                    d["doc"] = {}
-                data[parent_key] = d
-            
-            
-            if len(row) > 1:
-                for j, table in enumerate(row, 0):
-                    if j == 0:
-                        continue
-                    if table == None:
-                        continue
+        session = get_session()
 
-                    if table.__tablename__ not in data[parent_key]:
-                        data[parent_key][table.__tablename__] = []
-                        
+        # Build Query
+        base_query = """
+        SELECT
+            JSON_OBJECT(
+                'organization_id', `organization_id`,
+                'organization_name', `organization_name`,
+                'levenshtein_probability', CAST(sys.LEVENSHTEIN_RATIO(`organization_name`, :search_name) AS UNSIGNED INTEGER)
+            ) AS levenshtein_results
+        FROM `Organizations`.`Organization_Names`
+        WHERE
+            sys.LEVENSHTEIN_RATIO(`organization_name`, :search_name) > 50;
+        """
 
-                    entered_keys = []
-                    for d in data[parent_key][table.__tablename__]:
-                        if isinstance(table.get_id(), int):
-                            entered_keys.append(d[table.get_id_name()])
-                        else:
-                            entered_keys.append((
-                                d["prefix"],
-                                d["year"],
-                                d["month"],
-                                d["sec_number"],
-                                d["suffix"]
-                            ))
-                            
-                    if table.get_id() not in entered_keys:
-                        d = table.to_dict()
-                        if not doc and ("doc" in list(d.keys())):
-                            d["doc"] = {}
-                        data[parent_key][table.__tablename__].append(d)
+        # Execute Query
+        result = session.execute(
+            text(base_query), 
+            {"search_name":search_name}
+        )
+        print(result)
+
+        # Return Results
+        levensthein_results = []
+        levensthein_messages = []
+        for row in result:
+            # Save Data
+            json_row = json.loads(row[0])
+            levensthein_results.append(json_row)
+
+            # Create Message Components
+            message_alert_heading = "Possible Duplicate Organization."
+            message = f"Possible duplicate organization between '{search_name}' and '{json_row['organization_name']}'."
+            message_detail = f"'{search_name}' is a {json_row['levenshtein_probability']} percent match for '{json_row['organization_name']}'.  Are they the same organization?"
+            message_link = f"/api/organizations/?org-id={json_row['organization_id']}"
+
+            # Create Message Object using Components
+            message_obj = FlashMessage(
+                alert_heading=message_alert_heading,
+                message=message,
+                message_detail=message_detail,
+                link=message_link,
+                message_type=MessageType.WARNING
+            )
+            levensthein_messages.append(message_obj)
+
+        return levensthein_results, levensthein_messages
+
     except Exception:
         error = error_message()
-        custom_response.insert_flash_message(error)
-        custom_response.set_status_code(500)
-    return data, custom_response
+        return -1, [error]

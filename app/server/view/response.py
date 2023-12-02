@@ -291,7 +291,9 @@ class CustomResponse:
             dict: JSON response.
         """
         flash_messages = [message.to_json() for message in self.flash_messages]
-        form_messages = {form_id: message.to_json() for form_id, message in self.form_messages.items()}
+        form_messages = {
+            form_id: message.to_json() for form_id, message in self.form_messages.items()
+            }
         return {
             "data": self.data,
             "messages": {
@@ -299,11 +301,23 @@ class CustomResponse:
                 "form": form_messages
             }
         }
-    
+
     def set_status_code(self, status_code):
+        """
+        Sets the status code of the response.
+
+        Args:
+            status_code (int): status code.
+        """
         self.status_code = status_code
-        
+
     def get_status_code(self):
+        """
+        Gets Status Code
+
+        Returns:
+            int: status_code
+        """
         return self.status_code
 
     def __str__(self):
