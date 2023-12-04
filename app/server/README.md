@@ -1,5 +1,22 @@
 # API Function Documentation
 
+## Running Tests
+
+### Manual Testing
+Use: 
+```bash
+pytest --spec
+```
+in the server/tests directory to run all tests
+
+### Auto Testing
+The following command will automatically watch for any file changes in the app/server directory and will run "pytest --spec" to capture test results for those changes.
+
+```bash
+pip3 install when-changed
+when-changed -r -v -1 -s ~/GitHub/Material-Requirements-Planning-System/app/server -c pytest --spec ~/GitHub/Material-Requirements-Planning-System/app/server/tests
+```
+
 ## Function: get_organizations()
 
 This function retrieves information about organizations from a database. It supports several query parameters to filter and populate the response data.

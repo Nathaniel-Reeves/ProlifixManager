@@ -1,5 +1,6 @@
 {
     "python.testing.pytestArgs": [
+        "--spec",
         "app/server"
     ],
     "python.testing.unittestEnabled": false,
