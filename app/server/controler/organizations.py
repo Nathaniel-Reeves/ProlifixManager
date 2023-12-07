@@ -4,7 +4,7 @@ Handle Organizations Data
 import json
 from sqlalchemy import select, text
 
-from view.response import (
+from server.view import (
     MessageType,
     FlashMessage,
     CustomResponse,

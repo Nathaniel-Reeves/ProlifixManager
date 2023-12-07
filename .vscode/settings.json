@@ -1,8 +1,9 @@
 {
     "python.testing.pytestArgs": [
         "--spec",
-        "app/server"
+        "./app/server/tests"
     ],
+    "python.experiments.optInto": ["pythonTestAdapter"],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
     "editor.rulers": [

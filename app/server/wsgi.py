@@ -13,8 +13,6 @@ from flask import (
 from flask_cors import CORS
 from flask_socketio import SocketIO
 
-import model as db
-
 
 # Get the parent directory
 parent_dir = os.path.dirname(os.path.realpath(__file__))
