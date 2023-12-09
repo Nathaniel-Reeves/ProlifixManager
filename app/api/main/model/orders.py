@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List, Literal, get_args, Optional
+from typing import List, Optional
 
 from sqlalchemy import Integer, Enum, ForeignKey, Column, ForeignKeyConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -9,9 +9,6 @@ from sqlalchemy.dialects.mysql import JSON, ENUM
 from .base import Base
 
 import datetime
-import enum
-
-ExpirationTypes = Literal["Best_By", "Exp"]
 
 class Sales_Orders(Base):
     __tablename__ = 'Sales_Orders'
@@ -153,8 +150,6 @@ class Sale_Order_Detail(Base):
     def get_id_name(self):
         return "so_detail_id"
     
-PaymentTypes = Literal["down_payment", "other", "final_payment"]
-    
 class Sales_Orders_Payments(Base):
     __tablename__ = 'Sales_Order_Payments'
     __table_args__ = {'schema': 'Orders'}
@@ -191,8 +186,9 @@ class Sales_Orders_Payments(Base):
     
     # Table Columns
     payment_amount: Mapped[float] = mapped_column(default=None)
-    payment_type: Mapped[PaymentTypes] = mapped_column(Enum(
-        *get_args(PaymentTypes),
+    PaymentTypes = ("down_payment", "other", "final_payment")
+    payment_type: Mapped[int] = mapped_column(Enum(
+        *PaymentTypes,
         name="PaymentTypes",
         create_constraint=True,
         validate_strings=True,
@@ -248,8 +244,9 @@ class Lot_Numbers(Base):
     bpr_printed: Mapped[bool] = mapped_column(default=False)
     date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     exp_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime)
-    exp_type: Mapped[ExpirationTypes] = mapped_column(Enum(
-        *get_args(ExpirationTypes),
+    ExpirationTypes = ("Best_By", "Exp")
+    exp_type: Mapped[int] = mapped_column(Enum(
+        *ExpirationTypes,
         name="ExpirationTypes",
         create_constraint=True,
         validate_strings=True,

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List, Literal, get_args, Optional
+from typing import List, Optional
 
 from sqlalchemy import Integer, Enum, ForeignKey, Column
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -9,7 +9,6 @@ from sqlalchemy.dialects.mysql import JSON, ENUM
 from .base import Base
 
 import datetime
-import enum
 
 class Formula_Master(Base):
     __tablename__ = 'Formula_Master'
@@ -115,8 +114,6 @@ class Formula_Detail(Base):
     def get_id_name(self):
         return "formula_detail_id"
 
-OrganicSpecTypes = Literal['organic', 'non_organic', 'cut_and_sifted', 'organic_or_wildcrafted', 'wildcrafted', 'any']
-
 class Client_Spec_Group(Base):
     __tablename__ = 'Client_Spec_Group'
     __table_args__ = {'schema': 'Formulas'}
@@ -129,8 +126,9 @@ class Client_Spec_Group(Base):
     brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
     
     # Table Columns
-    organic_spec: Mapped[OrganicSpecTypes] = mapped_column(Enum(
-        *get_args(OrganicSpecTypes),
+    OrganicSpecTypes = ("organic", "non_organic", "cut_and_sifted", "organic_or_wildcrafted", "wildcrafted", "any")
+    organic_spec: Mapped[int] = mapped_column(Enum(
+        *OrganicSpecTypes,
         name="OrganicSpecTypes",
         create_constraint=True,
         validate_strings=True,
@@ -161,8 +159,9 @@ class Primary_Group(Base):
     brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
     
     # Table Columns
-    organic_spec: Mapped[OrganicSpecTypes] = mapped_column(Enum(
-        *get_args(OrganicSpecTypes),
+    OrganicSpecTypes = ("organic", "non_organic", "cut_and_sifted", "organic_or_wildcrafted", "wildcrafted", "any")
+    organic_spec: Mapped[int] = mapped_column(Enum(
+        *OrganicSpecTypes,
         name="OrganicSpecTypes",
         create_constraint=True,
         validate_strings=True,
@@ -199,8 +198,9 @@ class Secondary_Group(Base):
     brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
     
     # Table Columns
-    organic_spec: Mapped[OrganicSpecTypes] = mapped_column(Enum(
-        *get_args(OrganicSpecTypes),
+    OrganicSpecTypes = ("organic", "non_organic", "cut_and_sifted", "organic_or_wildcrafted", "wildcrafted", "any")
+    organic_spec: Mapped[int] = mapped_column(Enum(
+        *OrganicSpecTypes,
         name="OrganicSpecTypes",
         create_constraint=True,
         validate_strings=True,
@@ -237,8 +237,9 @@ class Tertiary_Group(Base):
     brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
     
     # Table Columns
-    organic_spec: Mapped[OrganicSpecTypes] = mapped_column(Enum(
-        *get_args(OrganicSpecTypes),
+    OrganicSpecTypes = ("organic", "non_organic", "cut_and_sifted", "organic_or_wildcrafted", "wildcrafted", "any")
+    organic_spec: Mapped[int] = mapped_column(Enum(
+        *OrganicSpecTypes,
         name="OrganicSpecTypes",
         create_constraint=True,
         validate_strings=True,
@@ -275,8 +276,9 @@ class Quaternary_Group(Base):
     brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
     
     # Table Columns
-    organic_spec: Mapped[OrganicSpecTypes] = mapped_column(Enum(
-        *get_args(OrganicSpecTypes),
+    OrganicSpecTypes = ("organic", "non_organic", "cut_and_sifted", "organic_or_wildcrafted", "wildcrafted", "any")
+    organic_spec: Mapped[int] = mapped_column(Enum(
+        *OrganicSpecTypes,
         name="OrganicSpecTypes",
         create_constraint=True,
         validate_strings=True,

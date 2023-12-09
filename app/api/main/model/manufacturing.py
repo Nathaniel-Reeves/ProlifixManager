@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List, Literal, get_args, Optional
+from typing import List, Optional
 
 from sqlalchemy import Integer, Enum, ForeignKey, Column
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -9,9 +9,6 @@ from sqlalchemy.dialects.mysql import JSON, ENUM
 from .base import Base
 
 import datetime
-import enum
-    
-StatusTypes = Literal["Working_Order", "Broken", "Removed"]
 
 class Equipment(Base):
     __tablename__ = 'Equipment'
@@ -25,8 +22,9 @@ class Equipment(Base):
     
     # Table Columns
     equipment_sn: Mapped[str] = mapped_column()
-    status: Mapped[StatusTypes] = mapped_column(Enum(
-        *get_args(StatusTypes),
+    StatusTypes = ("Working Order", "Broken", "Removed")
+    status: Mapped[int] = mapped_column(Enum(
+        *StatusTypes,
         name="StatusTypes",
         create_constraint=True,
         validate_strings=True,

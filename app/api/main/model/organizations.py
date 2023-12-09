@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List, Literal, get_args, Optional
+from typing import List, Optional
 
 from sqlalchemy import Integer, Enum, ForeignKey, Column
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -9,9 +9,6 @@ from sqlalchemy.dialects.mysql import JSON, ENUM
 from .base import Base
 
 import datetime
-import enum
-
-RiskLevels = Literal["UNKNOWN", "No_Risk", "Low_Risk", "Medium_Risk", "High_Risk"]
 
 class Organizations(Base):
     __tablename__ = 'Organizations'
@@ -30,9 +27,10 @@ class Organizations(Base):
     website_url: Mapped[str] = mapped_column(default=None)
     vetted: Mapped[bool] = mapped_column()
     date_vetted: Mapped[datetime.datetime] = mapped_column()
-    risk_level: Mapped[RiskLevels] = mapped_column(Enum(
-        *get_args(RiskLevels),
-        name="RiskLevels",
+    RiskLevels = ("UNKNOWN", "No_Risk", "Low_Risk", "Medium_Risk", "High_Risk")
+    risk_level: Mapped[int] = mapped_column(Enum(
+        *RiskLevels,
+        name="risk_level",
         create_constraint=True,
         validate_strings=True,
     ))
@@ -166,9 +164,6 @@ class People(Base):
     def getName(self):
         return f'{self.first_name} {self.last_name}'
 
-
-ColorThemes = Literal["Light", "Dark"]
-
 class Users(Base):
     __tablename__ = 'Users'
     __table_args__ = {'schema': 'Organizations'}
@@ -183,8 +178,9 @@ class Users(Base):
     username: Mapped[str] = mapped_column(default=None)
     encrypted_password: Mapped[str] = mapped_column(default=None)
     profile_picture: Mapped[str] = mapped_column(default=None)
-    color_theme: Mapped[ColorThemes] = mapped_column(Enum(
-            *get_args(ColorThemes),
+    ColorThemes = ("Light","Dark")
+    color_theme: Mapped[int] = mapped_column(Enum(
+            *ColorThemes,
             name="ColorThemes",
             create_constraint=True,
             validate_strings=True,
@@ -213,10 +209,6 @@ class Users(Base):
     def get_id_name(self):
         return "user_id"
 
-BuildingTypes = Literal["Head_Office", "Office", "Distribution_Warehouse", "Manufacture_Facility", "Storefront"]
-
-TimeUnits = Literal["Unknown", "Days", "Weeks", "Months"]
-
 class Facilities(Base):
     __tablename__ = 'Facilities'
     __table_args__ = {'schema': 'Organizations'}
@@ -230,8 +222,9 @@ class Facilities(Base):
         )
     
     # Table Columns
-    building_type: Mapped[BuildingTypes] = mapped_column(Enum(
-        *get_args(BuildingTypes),
+    BuildingTypes = ("Head_Office", "Office", "Distribution_Warehouse", "Manufacture_Facility", "Storefront")
+    building_type: Mapped[int] = mapped_column(Enum(
+        *BuildingTypes,
         name="BuildingTypes",
         create_constraint=True,
         validate_strings=True,
@@ -255,8 +248,9 @@ class Facilities(Base):
     postal_area: Mapped[str] = mapped_column()
     country: Mapped[str] = mapped_column()
     ship_time: Mapped[int] = mapped_column()
-    ship_time_units: Mapped[TimeUnits] = mapped_column(Enum(
-        *get_args(TimeUnits),
+    TimeUnits = ("Unknown", "Days", "Weeks", "Months")
+    ship_time_units: Mapped[int] = mapped_column(Enum(
+        *TimeUnits,
         name="TimeUnits",
         create_constraint=True,
         validate_strings=True,

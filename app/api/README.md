@@ -14,7 +14,7 @@ The following command will automatically watch for any file changes in the app/s
 
 ```bash
 pip3 install when-changed
-when-changed -r -v -1 -s ~/GitHub/Material-Requirements-Planning-System/app/server -c pytest --spec ~/GitHub/Material-Requirements-Planning-System/app/server/tests
+when-changed -r -v -1 -s ~/GitHub/Material-Requirements-Planning-System/app/api pytest --spec ~/GitHub/Material-Requirements-Planning-System/app/api/tests
 ```
 
 ## Function: get_organizations()

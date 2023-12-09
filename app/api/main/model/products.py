@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List, Literal, get_args, Optional
+from typing import List, Optional
 
 from sqlalchemy import Integer, Enum, ForeignKey, Column
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -9,13 +9,7 @@ from sqlalchemy.dialects.mysql import JSON, ENUM
 from .base import Base
 
 import datetime
-import enum
 
-ProductTypes = Literal["Powder", "Capsule", "Liquid", "Other"]
-
-TimeUnits = Literal["Years", "Months", "Days"]
-
-ExpirationTypes = Literal["Best_By", "Exp"]
 
 class Product_Master(Base):
     __tablename__ = 'Product_Master'
@@ -25,8 +19,9 @@ class Product_Master(Base):
     product_id: Mapped[int] = mapped_column(primary_key=True)
     organization_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
     product_name: Mapped[str] = mapped_column()
-    type: Mapped[ProductTypes] = mapped_column(Enum(
-        *get_args(ProductTypes),
+    ProductTypes = ("Powder", "Capsule", "Liquid", "Other")
+    type: Mapped[int] = mapped_column(Enum(
+        *ProductTypes,
         name="ProductTypes",
         create_constraint=True,
         validate_strings=True,
@@ -35,14 +30,16 @@ class Product_Master(Base):
     date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     spec_issue_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     spec_revise_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    exp_unit: Mapped[TimeUnits] = mapped_column(Enum(
-        *get_args(TimeUnits),
+    TimeUnits = ("Years", "Months", "Days")
+    exp_unit: Mapped[int] = mapped_column(Enum(
+        *TimeUnits,
         name="TimeUnits",
         create_constraint=True,
         validate_strings=True,
         ))
-    exp_type: Mapped[ExpirationTypes] = mapped_column(Enum(
-        *get_args(ExpirationTypes),
+    ExpirationTypes = ("Best_By", "Exp")
+    exp_type: Mapped[int] = mapped_column(Enum(
+        *ExpirationTypes,
         name="ExpirationTypes",
         create_constraint=True,
         validate_strings=True,

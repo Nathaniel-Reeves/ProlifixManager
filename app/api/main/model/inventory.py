@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List, Literal, get_args, Optional
+from typing import List, Optional
 
 from sqlalchemy import Integer, Enum, ForeignKey, Column
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -9,13 +9,7 @@ from sqlalchemy.dialects.mysql import JSON, ENUM
 from .base import Base
 
 import datetime
-import enum
 
-ExpirationTypes = Literal["Best_By", "Exp"]
-
-ComponentTypes = Literal['powder', 'liquid', 'container', 'pouch','shrink_band', 'lid', 'label', 'capsule','misc','scoop', 'desiccant','box', 'carton', 'packaging_material']
-
-UnitTypes = Literal['grams', 'kilograms', 'units', 'boxes', 'pallets', 'liters', 'rolls', 'totes', 'barrels', 'pounds']
 
 class Components(Base):
     __tablename__ = 'Components'
@@ -34,8 +28,9 @@ class Components(Base):
     # components: Mapped[List["Materials"]] = relationship()
     
     # Table Columns
-    component_type: Mapped[ComponentTypes] = mapped_column(Enum(
-        *get_args(ComponentTypes),
+    ComponentTypes = ("powder", "liquid", "container", "pouch", "shrink_band", "lid", "label", "capsule", "misc", "scoop", "desiccant", "box", "carton", "packaging_material")
+    component_type: Mapped[int] = mapped_column(Enum(
+        *ComponentTypes,
         name="ComponentTypes",
         create_constraint=True,
         validate_strings=True,
@@ -49,8 +44,9 @@ class Components(Base):
     certified_non_gmo: Mapped[bool] = mapped_column(default=False)
     certified_vegan: Mapped[bool] = mapped_column(default=False)
     date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    units: Mapped[UnitTypes] = mapped_column(Enum(
-        *get_args(UnitTypes),
+    UnitTypes = ("grams", "kilograms", "units", "boxes", "poallets", "liters", "rolls", "totes", "barrels", "pounds")
+    units: Mapped[int] = mapped_column(Enum(
+        *UnitTypes,
         name="UnitTypes",
         create_constraint=True,
         validate_strings=True,
@@ -183,8 +179,6 @@ class Inventory(Base):
     def get_id_name(self):
         return "inv_id"
 
-InventoryStates = Literal["Ordered", "Revised_Order_Decreased", "Revised_Order_Increased", "InTransit", "Back_Order", "Checkin_Quarantine", "Received", "Produced", "CycleCount", "Released", "Returned", "Allocated", "Batched", "Used", "Quarantined", "Lost", "Expired", "Wasted", "Damaged", "Destroyed", "Shipped"]
-    
 class Inventory_Log(Base):
     __tablename__ = 'Inventory_Log'
     __table_args__ = {'schema': 'Inventory'}
@@ -212,8 +206,9 @@ class Inventory_Log(Base):
     lot_number: Mapped[str] = mapped_column(default=None)
     batch_number: Mapped[str] = mapped_column(default=None)
     date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    state: Mapped[InventoryStates] = mapped_column(Enum(
-        *get_args(InventoryStates),
+    InventoryStates = ("Ordered", "Revised Order Decreased", "Revised Order Increased", "InTransit", "Back Order", "Checkin Quarantine", "Received", "Produced", "Cycle Count", "Released", "Returned", "Allocated", "Batched", "Used", "Quarantined", "Lost", "Expired", "Wasted","Damaged","Destroyed", "Shipped")
+    state: Mapped[int] = mapped_column(Enum(
+        *InventoryStates,
         name="InventoryStates",
         create_constraint=True,
         validate_strings=True,

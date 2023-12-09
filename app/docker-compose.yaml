@@ -43,7 +43,7 @@ services:
         condition: service_healthy
     tty: true
 
-  server:
+  api:
     restart: unless-stopped
     environment:
       DB_USERNAME: client
@@ -53,9 +53,9 @@ services:
       API_PREFIX: 'False'
     build:
       context: .
-      dockerfile: server/Dockerfile
+      dockerfile: api/Dockerfile
     volumes:
-        - './client/public:/client/public'
+        - './client/public:/api/client/public'
         - './db/files:/db/files'
     ports:
       - "5000"
@@ -67,15 +67,15 @@ services:
     tty: true
 
   # Nginx Service
-  server-loadbalance:
-    container_name: server_loadbalance
+  api-lb:
+    container_name: api_lb
     image: nginx:latest
     restart: always
     volumes:
-     - ./server/nginx.conf:/etc/nginx/nginx.conf:ro
+     - ./api/main/nginx.conf:/etc/nginx/nginx.conf:ro
      - './client/public:/public'
     depends_on:
-      - server
+      - api
     ports:
      - "5000:5000"
     networks:
@@ -97,7 +97,7 @@ services:
       mrp:
         ipv4_address: 172.10.10.5
     depends_on:
-      - server-loadbalance
+      - api-lb
     ports:
       - "3000:3000"
     tty: true
@@ -119,9 +119,9 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     depends_on:
-      - server-loadbalance
+      - api-lb
 
-  #Nginx Service
+  # Nginx Service
   web-server:
     container_name: web_server
     depends_on:

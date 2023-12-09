@@ -274,11 +274,6 @@ def delete_database_schema(session):
     """
     flag = True
 
-    # Print working directory to console
-    working_dir = os.getcwd()
-    print("Working Directory: ", working_dir)
-    print("ls :", os.listdir())
-
     if flag:
         # Load the SQL drop_order from the file
         print("\033[0mDropping existing tables...")

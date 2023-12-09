@@ -1,5 +1,5 @@
 import pytest
-from server import model as db
+from main import model as db
 
 notImplemented = pytest.mark.skip(reason="Not yet implemented")
 def describe_Organizations_Schema():

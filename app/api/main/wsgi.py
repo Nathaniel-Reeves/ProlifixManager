@@ -141,9 +141,6 @@ def create_app(
     """
     Import controler
     """
-    # from old_controler.organizations import bp as organizations_bp
-    # api_blueprint.register_blueprint(organizations_bp)
-
     from old_controler.orders import bp as orders_bp
     api_blueprint.register_blueprint(orders_bp)
 
