@@ -1,5 +1,4 @@
 import pytest
-from redis import Redis
 
 from main.wsgi import create_app
 from main.controler import organizations as org
@@ -22,17 +21,16 @@ def describe_Organizations_Enpoints():
         
         @pytest.fixture
         def when_logged_in(mocker):
-            mocker.patch.object(
-                    Redis,
-                    "__init__", 
+            mocker.patch(
+                    "redis.Redis", 
                     return_value="fake_connection"
                 )
-            mocker.patch.object(
-                    "redis_connection.ping()",
+            mocker.patch(
+                    "redis.Redis.ping",
                     return_value=True
                 )
-            mocker.patch.object(
-                    "request.cookies.get()",
+            mocker.patch(
+                    "flask.request.cookies.get",
                     return_value=True
                 )
             mocker.patch.object(
