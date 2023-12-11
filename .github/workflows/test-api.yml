@@ -1,7 +1,5 @@
 name: Test API Server
 
-on: [push]
-
 jobs:
   test-API:
 
