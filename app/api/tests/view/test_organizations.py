@@ -688,3 +688,109 @@ def describe_Organizations_Enpoints():
                     assert args[3] == expected_args[3]
                     assert args[4] == expected_args[4]
                     assert response.status_code == 200
+                
+                def it_cleans_queries(mocker, when_logged_in, mock_controller__get_organizations):
+                    # Setup
+                    mock_get_organizations = mock_controller__get_organizations
+                    app = create_app()
+                    client = app.test_client()
+                    
+                    # Stimulate Test
+                    url = 'api/organizations/?doc=Injection'
+                    response = client.get(url)
+                    
+                    # Assert Response
+                    args = mock_get_organizations.call_args_list[0][0]
+                    expected_args = [
+                        CustomResponse(),
+                        [],                 # org_ids
+                        [],                 # org_types
+                        [],                 # populate
+                        False               # doc
+                    ]
+                    
+                    assert args[1] == expected_args[1]
+                    assert args[2] == expected_args[2]
+                    assert args[3] == expected_args[3]
+                    assert args[4] == expected_args[4]
+                    assert response.status_code == 200
+            
+            def describe_enpoint_handles_multiple_queries():
+                
+                def it_handles_filtering_org_type_and_org_id(mocker, when_logged_in, mock_controller__get_organizations):
+                    # Setup
+                    mock_get_organizations = mock_controller__get_organizations
+                    app = create_app()
+                    client = app.test_client()
+                    
+                    # Stimulate Test
+                    url = 'api/organizations/?org-id=1&org-type=client'
+                    response = client.get(url)
+                    
+                    # Assert Response
+                    args = mock_get_organizations.call_args_list[0][0]
+                    expected_args = [
+                        CustomResponse(),
+                        [1],             # org_ids
+                        ['client'],      # org_types
+                        [],              # populate
+                        False            # doc
+                    ]
+                    
+                    assert args[1] == expected_args[1]
+                    assert args[2] == expected_args[2]
+                    assert args[3] == expected_args[3]
+                    assert args[4] == expected_args[4]
+                    assert response.status_code == 200
+                    
+                def it_handles_filtering_and_populating(mocker, when_logged_in, mock_controller__get_organizations):
+                    # Setup
+                    mock_get_organizations = mock_controller__get_organizations
+                    app = create_app()
+                    client = app.test_client()
+                    
+                    # Stimulate Test
+                    url = 'api/organizations/?org-id=1&org-type=client&populate=facilities'
+                    response = client.get(url)
+                    
+                    # Assert Response
+                    args = mock_get_organizations.call_args_list[0][0]
+                    expected_args = [
+                        CustomResponse(),
+                        [1],             # org_ids
+                        ['client'],      # org_types
+                        ['facilities'],  # populate
+                        False            # doc
+                    ]
+                    
+                    assert args[1] == expected_args[1]
+                    assert args[2] == expected_args[2]
+                    assert args[3] == expected_args[3]
+                    assert args[4] == expected_args[4]
+                    assert response.status_code == 200
+                
+                def it_handles_filtering_and_populating_and_doc(mocker, when_logged_in, mock_controller__get_organizations):
+                    # Setup
+                    mock_get_organizations = mock_controller__get_organizations
+                    app = create_app()
+                    client = app.test_client()
+                    
+                    # Stimulate Test
+                    url = 'api/organizations/?org-id=1&org-id=6&org-type=client&org-id=7&populate=facilities&doc=true&org-type=supplier&populate=purchase-orders'
+                    response = client.get(url)
+                    
+                    # Assert Response
+                    args = mock_get_organizations.call_args_list[0][0]
+                    expected_args = [
+                        CustomResponse(),
+                        [1,6,7],             # org_ids
+                        ['client', 'supplier'],      # org_types
+                        ['facilities','purchase-orders'],  # populate
+                        True             # doc
+                    ]
+                    
+                    assert args[1] == expected_args[1]
+                    assert args[2] == expected_args[2]
+                    assert args[3] == expected_args[3]
+                    assert args[4] == expected_args[4]
+                    assert response.status_code == 200
