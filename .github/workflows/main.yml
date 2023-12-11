@@ -1,38 +1,26 @@
 name: Test & Build MRP System
 
-on: [push]
-  # push:
-  #   # Pattern matched against refs/tags
-  #   tags:        
-  #     - '**'  # Push events to every tag including hierarchical tags like v1.0/beta
+on:
+  push:
+    # Pattern matched against refs/tags
+    tags:        
+      - '**'  # Push events to every tag including hierarchical tags like v1.0/beta
 
 jobs:
-  build:
+  run-tests:
 
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
+      - name: Test API
+        uses: test-api.yml
+  
+  # build-and-deploy:
 
-      - uses: actions/checkout@v4
-      - name: Install MariaDB Connector Dependencies
-        run: |
-          sudo sudo apt install gcc
-          sudo apt install python3-dev
-          sudo apt install openssl
-          sudo apt install wget
-          sudo wget https://dlm.mariadb.com/3/MariaDB/mariadb_repo_setup
-          sudo chmod +x mariadb_repo_setup
-          sudo ./mariadb_repo_setup --os-type=debian --os-version=11 --arch=x86_64
-          sudo apt-get install -y mariadb-client
-          sudo apt install libmariadb3 libmariadb-dev
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r app/api/tests/requirements.txt
-          pip install pytest pytest-cov
-      - name: Run Tests
-        run: pytest app/api/tests --spec --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - name: Checkout Project
+  #       uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis

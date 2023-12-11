@@ -3,3 +3,4 @@ app/client/node_modules/*
 app/db/mariadb_data/*
 app/db/files/*
 app/redis/data/*
+app/secrets/*
