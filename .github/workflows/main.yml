@@ -20,15 +20,15 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install MariaDB Connector Dependencies
         run: |
-          apt-get install -y curl
-          apt-get install -y apt-transport-https 
-          apt-get install -y wget
-          wget https://dlm.mariadb.com/3/MariaDB/mariadb_repo_setup
+          sudo apt-get install -y curl
+          sudo apt-get install -y apt-transport-https 
+          sudo apt-get install -y wget
+          sudo wget https://dlm.mariadb.com/3/MariaDB/mariadb_repo_setup
           sudo chmod +x mariadb_repo_setup
-          ./mariadb_repo_setup --os-type=debian --os-version=11 --arch=x86_64
-          apt-get install -y mariadb-client
-          apt-get install -y python3-pip
-          apt-get install -y --no-install-recommends \
+          sudo ./mariadb_repo_setup --os-type=debian --os-version=11 --arch=x86_64
+          sudo apt-get install -y mariadb-client
+          sudo apt-get install -y python3-pip
+          sudo apt-get install -y --no-install-recommends \
             libmariadb3 \
             libmariadb-dev \
             && rm -rf /var/lib/apt/lists/*
