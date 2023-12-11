@@ -1,0 +1,24 @@
+name: test and build mrp system
+
+on:
+  push:
+    # Pattern matched against refs/tags
+    tags:        
+      - '**'  # Push events to every tag including hierarchical tags like v1.0/beta
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["pypy3.9", "pypy3.10", "3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r app/api/tests/requirements.txt
+      - name: Run Tests
+        run: pytest --spec app/api/tests
