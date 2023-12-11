@@ -14,6 +14,12 @@ from flask_cors import CORS
 from flask_socketio import SocketIO
 import json
 
+# Get the parent directory
+parent_dir = os.path.dirname(os.path.realpath(__file__))
+
+# Add the parent directory to sys.path
+sys.path.append(parent_dir)
+
 def load_env_variables(env_settings):
     """
     Load environment variables secrets/secrets.json
@@ -34,11 +40,6 @@ def print_config(app):
     print()
 
 def create_app():
-    # Get the parent directory
-    parent_dir = os.path.dirname(os.path.realpath(__file__))
-
-    # Add the parent directory to sys.path
-    sys.path.append(parent_dir)
     
     app = Flask(__name__)
 
