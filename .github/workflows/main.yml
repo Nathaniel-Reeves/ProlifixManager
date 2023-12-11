@@ -1,4 +1,4 @@
-name: test and build mrp system
+name: Test & Build MRP System
 
 on: [push]
   # push:
@@ -15,8 +15,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.8.10'
-          architecture: 'x84'
+          python-version: '3.x'
 
       - uses: actions/checkout@v4
       - name: Install dependencies
