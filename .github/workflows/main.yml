@@ -18,6 +18,20 @@ jobs:
           python-version: '3.x'
 
       - uses: actions/checkout@v4
+      - name: Install MariaDB Connector Dependencies
+        run: |
+          apt-get update && apt-get install -y curl
+          apt-get update && apt-get install -y apt-transport-https 
+          apt-get update && apt-get install -y wget
+          wget https://dlm.mariadb.com/3/MariaDB/mariadb_repo_setup
+          chmod +x mariadb_repo_setup
+          ./mariadb_repo_setup --os-type=debian --os-version=11 --arch=x86_64
+          apt-get update && apt-get install -y mariadb-client
+          apt-get update && apt-get install -y python3-pip
+          apt-get update && apt-get install -y --no-install-recommends \
+            libmariadb3 \
+            libmariadb-dev \
+            && rm -rf /var/lib/apt/lists/*
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
