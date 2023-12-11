@@ -7,13 +7,32 @@ on:
       - '**'  # Push events to every tag including hierarchical tags like v1.0/beta
 
 jobs:
-  run-tests:
+  run-unit-tests:
 
     runs-on: ubuntu-latest
 
     steps:
       - name: Test API
         uses: test-api.yml
+  
+  attempt-build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v4
+      - name: Build the stack
+        run: |
+        cd app
+        sudo docker-compose up --build -d
+      - name: Docker Compose Logs
+        run: docker-compose logs -f integrationtest
+      - name: Stop Containers
+        # the containers should be stopped regardless of 
+        # the test result
+        if: always()
+        run: docker-compose down
   
   # build-and-deploy:
 

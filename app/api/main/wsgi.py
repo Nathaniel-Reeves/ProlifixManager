@@ -1,5 +1,5 @@
 """
-Creates App
+Creates App Instance
 """
 from datetime import timedelta
 import socket
@@ -12,117 +12,66 @@ from flask import (
 )
 from flask_cors import CORS
 from flask_socketio import SocketIO
+import json
 
+def load_env_variables(env_settings):
+    """
+    Load environment variables secrets/secrets.json
+    """
+    project_dir = os.path.split(os.path.split(os.getcwd())[0])[0]
+    secrets_file = os.path.join(project_dir,'secrets/secrets.json')
+    with open(secrets_file, 'r') as f:
+        secrets = json.load(f)
+    for key, value in secrets[env_settings].items():
+        os.environ[key] = value
 
-# Get the parent directory
-parent_dir = os.path.dirname(os.path.realpath(__file__))
+def print_config(app):
+    print()
+    print("App Configurations:")
+    for config_name, config_value in app.config.items():
+        print(f"    {config_name}: {config_value}")
+    print()
+    print()
 
-# Add the parent directory to sys.path
-sys.path.append(parent_dir)
+def create_app():
+    # Get the parent directory
+    parent_dir = os.path.dirname(os.path.realpath(__file__))
 
-"""
-Database Connection Settings
-"""
-
-DB_HOST = os.environ.get('DB_HOST')
-if DB_HOST is None:
-    DB_HOST = '172.10.10.2'
-
-DB_PORT = os.environ.get('DB_PORT')
-if DB_PORT is None:
-    DB_PORT = '3306'
-
-DB_USER = os.environ.get('DB_USERNAME')
-if DB_USER is None:
-    DB_USER = 'client'
-
-DB_PASSWORD = os.environ.get('DB_PASSWORD')
-if DB_PASSWORD is None:
-    DB_PASSWORD = "ClientPassword!5"
-
-# print current working directory
-
-UPLOAD_FOLDER = os.path.join(os.getcwd().strip("/server"), 'db/files')
-
-print()
-print('~~~ DATABASE CONFIG ~~~')
-print('    Host:         ', DB_HOST)
-print('    Port:         ', DB_PORT)
-print('    SQL User:     ', DB_USER)
-print('    SQL Password: ', DB_PASSWORD)
-print('    Upload Folder: ', UPLOAD_FOLDER)
-print()
-
-"""
-Redis Connection Settings
-"""
-REDIS_HOST = os.environ.get('REDIS_HOST')
-if REDIS_HOST is None:
-    REDIS_HOST = "172.10.10.3"
-
-REDIS_PORT = os.environ.get('REDIS_PORT')
-if REDIS_PORT is None:
-    REDIS_PORT = 6379
-
-REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD')
-if REDIS_PASSWORD is None:
-    REDIS_PASSWORD = "Am^7qq?%QgedcLn"
-
-print()
-print('~~~ REDIS CONFIG ~~~')
-print('    Host:         ', REDIS_HOST)
-print('    Port:         ', REDIS_PORT)
-print('    Password:     ', REDIS_PASSWORD)
-print()
-
-API_PREFIX = os.environ.get('API_PREFIX')
-if API_PREFIX == 'True':
-    API_PREFIX = '/'
-else:
-    API_PREFIX = '/api'
-
-print()
-print('~~~ API CONFIG ~~~')
-print('    API Prefix:   ', API_PREFIX)
-print()
-
-"""
-Config Settings for Flask App
-"""
-
-
-def create_app(
-        DB_HOST=DB_HOST, 
-        DB_PORT=DB_PORT, 
-        DB_USER=DB_USER, 
-        DB_PASSWORD=DB_PASSWORD, 
-        REDIS_HOST=REDIS_HOST, 
-        REDIS_PORT=REDIS_PORT, 
-        REDIS_PASSWORD=REDIS_PASSWORD, 
-        UPLOAD_FOLDER=UPLOAD_FOLDER,
-        API_PREFIX=API_PREFIX
-    ):
-
+    # Add the parent directory to sys.path
+    sys.path.append(parent_dir)
+    
     app = Flask(__name__)
 
-    app.config['DB_HOSTNAME'] = DB_HOST
-    app.config['DB_PORT'] = DB_PORT
-    app.config['DB_USER'] = DB_USER
-    app.config['DB_PASSWORD'] = DB_PASSWORD
-    app.config['REDIS_HOST'] = REDIS_HOST
-    app.config['REDIS_PORT'] = REDIS_PORT
-    app.config['REDIS_PASSWORD'] = REDIS_PASSWORD
+    """
+    Database Connection Settings
+    """
+    app.config['DB_HOST'] = os.environ.get('DB_HOST')
+    app.config['DB_PORT'] = os.environ.get('DB_PORT')
+    app.config['DB_USER'] = os.environ.get('DB_USER')
+    app.config['DB_PASSWORD'] = os.environ.get('DB_PASSWORD')
+    
+    """
+    File Settings
+    """
+    project_dir = os.path.split(os.path.split(os.getcwd())[0])[0]
+    app.config['UPLOAD_FOLDER'] = os.path.join(project_dir, 'db/files')
+    app.config['ALLOWED_EXTENSIONS'] = (".pdf")
+
+    """
+    Redis Connection Settings
+    """
+    app.config['REDIS_HOST'] = os.environ.get('REDIS_HOST')
+    app.config['REDIS_PORT'] = os.environ.get('REDIS_PORT')
+    app.config['REDIS_PASSWORD'] = os.environ.get('REDIS_PASSWORD')
     app.config['SESSION_TYPE'] = 'redis'
     app.config['SESSION_PERMANENT'] = False
     app.config['SESSION_USE_SIGNER'] = True
     app.config['SESSION_EXPIRE'] = timedelta(days=7)
-    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     app.config['ALLOWED_EXTENSIONS'] = (".pdf")
 
     CORS(app, supports_credentials=True, allow_headers=[
         "Content-Type", "Access-Control-Allow-Origin"])
 
-    app.secret_key = '0kgy23uJpIin346NeC7hUZ3Bak36S844NoeN1X35k4kY'
 
 
     # login_manager = LoginManager(app)
@@ -133,19 +82,22 @@ def create_app(
     #  Set the API prefix to a falsey (empty string) value to
     #  send/recive traffic from the development client,
     #  $ export API_PREFIX=
+    
+    API_PREFIX = os.environ.get('API_PREFIX')
+    if API_PREFIX == 'True':
+        API_PREFIX = '/'
+    else:
+        API_PREFIX = '/api'
 
 
     api_blueprint = Blueprint('api', __name__, url_prefix=API_PREFIX)
 
 
     """
-    Import controler
+    Import Old Controler
     """
     from old_controler.orders import bp as orders_bp
     api_blueprint.register_blueprint(orders_bp)
-
-    from view.auth import bp as auth_bp
-    api_blueprint.register_blueprint(auth_bp)
 
     from old_controler.inventory import bp as inventory_bp
     api_blueprint.register_blueprint(inventory_bp)
@@ -155,11 +107,13 @@ def create_app(
     """
     from view.organizations import bp as organizations_bp
     api_blueprint.register_blueprint(organizations_bp)
+    
+    from view.auth import bp as auth_bp
+    api_blueprint.register_blueprint(auth_bp)
 
     """
-    sanity check routes
+    Sanity Check Routes
     """
-
     @api_blueprint.route('/ping', methods=['GET'])
     def ping_pong():
         """
@@ -187,6 +141,16 @@ def create_app(
     return app
 
 if __name__ == "__main__":
+    env_settings = os.environ.get('FLASK_ENV')
+    if env_settings in ('production','dev_work_laptop','defalut_dev'):
+        load_env_variables(env_settings)
+    else:
+        load_env_variables('default_dev')
     app = create_app()
+    print_config(app)
     print('~~~ SERVER START ~~~')
-    app.run(debug=True, port=5000, host="0.0.0.0")
+    app.run(
+        debug=True, 
+        port=5000, 
+        host="0.0.0.0"
+    )

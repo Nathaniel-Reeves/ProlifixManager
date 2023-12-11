@@ -177,7 +177,7 @@ def login():
     try:
         # Test Connection
         mariadb_connection = mariadb.connect(
-            host=app.config['DB_HOSTNAME'],
+            host=app.config['DB_HOST'],
             port=int(app.config['DB_PORT']),
             user=app.config['DB_USER'],
             password=app.config['DB_PASSWORD']
@@ -349,7 +349,10 @@ def logout():
             custom_response.insert_flash_message(
                 FlashMessage(message="User not authenticated",
                              message_type=MessageType.DANGER))
-        return jsonify(custom_response.to_json()), status_code
+
+        response = jsonify(custom_response.to_json())
+        response.status_code = custom_response.get_status_code()
+        return response
 
     except Exception:
         error = error_message()
