@@ -68,7 +68,8 @@ def check_authenticated(authentication_required=False, database_priveleges=None)
                         )
                         custom_response.insert_flash_message(message)
 
-                session_data = json.loads(redis_connection.get(session_token))
+                raw_session_data = redis_connection.get(session_token)
+                session_data = json.loads(raw_session_data)
 
                 # Check if User is Authenticated
                 if authentication_required and not session_data['user_id']:
@@ -83,9 +84,9 @@ def check_authenticated(authentication_required=False, database_priveleges=None)
                     response.set_cookie('session', session_token)
                     return response
 
-                response, code = func(*args, **kwargs)
+                response = func(*args, **kwargs)
                 response.set_cookie('session', session_token)
-                return response, code
+                return response
 
             except RedisError as error:
                 # Redis Error Handling
@@ -101,7 +102,9 @@ def check_authenticated(authentication_required=False, database_priveleges=None)
                         debug_code=f"Error:{exc_type} > File: {fname} > Line: {exc_tb.tb_lineno}"
                     )
                 )
-                return jsonify(custom_response.to_json()), 500
+                response = jsonify(custom_response.to_json())
+                response.status_code = custom_response.get_status_code()
+                return response
 
         return wrapper
 

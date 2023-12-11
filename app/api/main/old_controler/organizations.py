@@ -9,7 +9,7 @@ from flask import (
     jsonify,
     current_app as app
 )
-from .auth import check_authenticated
+from main.view.auth import check_authenticated
 from .response import (
     MessageType,
     FlashMessage,

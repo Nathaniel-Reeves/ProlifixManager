@@ -244,7 +244,7 @@ class CustomResponse:
 
         self.flash_messages = flash_messages or []
         self.form_messages = form_messages or {}
-        self.data = data or []
+        self.json = data or []
         self.status_code = 200
 
     def insert_flash_message(self, flash_message):
@@ -283,7 +283,7 @@ class CustomResponse:
         Args:
             data (list): Data.
         """
-        self.data.append(data)
+        self.json.append(data)
 
     def to_json(self):
         """
@@ -295,7 +295,7 @@ class CustomResponse:
             form_id: message.to_json() for form_id, message in self.form_messages.items()
             }
         return {
-            "data": self.data,
+            "data": self.json,
             "messages": {
                 "flash": flash_messages,
                 "form": form_messages

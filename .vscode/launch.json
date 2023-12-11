@@ -5,6 +5,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: Pytest",
+            "type": "python",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "--spec",
+                "~/GitHub/Material-Requirements-Planning-System/app/api/tests"
+            ],
+            "justMyCode": false
+        },
+        {
             "name": "Python: Flask",
             "type": "python",
             "request": "launch",

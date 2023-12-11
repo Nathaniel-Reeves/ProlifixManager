@@ -1,6 +1,7 @@
 '''
 Handle Organizations Data
 '''
+import json
 from flask import (
     Blueprint,
     request,
@@ -9,14 +10,13 @@ from flask import (
 from .auth import check_authenticated
 from .helper import only_integers
 from .response import CustomResponse
+from controller import organizations as org
 
 bp = Blueprint('organizations', __name__, url_prefix='/organizations')
 
-from controler import organizations as org
-
 @bp.route('/', methods=['GET'])
 @check_authenticated(authentication_required=True)
-def get_organizations():
+def handle_get_organizations():
     """
     GET api/organizations/ Endpoint
     """
@@ -43,7 +43,7 @@ def get_organizations():
         populate.append('facilities')
     if 'sales-orders' in populate_request:
         populate.append('sales-orders')
-    if 'purchases-orders' in populate_request:
+    if 'purchase-orders' in populate_request:
         populate.append('purchase-orders')
     if 'people' in populate_request:
         populate.append('people')
@@ -52,10 +52,10 @@ def get_organizations():
     if 'products' in populate_request:
         populate.append('products')
         
-    document = request.args.get('doc')
-    if document == None:
-        doc = False
-    else:
+    doc = False
+    document = request.args.get('doc', default=False, type=bool)
+    print(document)
+    if document != False:
         doc = True
 
     # Get Organizations from the database
@@ -68,11 +68,14 @@ def get_organizations():
         doc
     )
 
-    return jsonify(custom_response.to_json()), custom_response.get_status_code()
+    response = jsonify(custom_response.to_json())
+    response.status_code = custom_response.get_status_code()
+
+    return response
 
 @bp.route('/exists', methods=['GET'])
 @check_authenticated(authentication_required=True)
-def org_exists():
+def handle_org_exists():
     """
     Check if an organization already exists by organization name.
     """
@@ -81,5 +84,8 @@ def org_exists():
     names = request.json['names']
 
     custom_response = org.organization_exists(names, custom_response)
+    
+    response = jsonify(custom_response.to_json())
+    response.status_code = custom_response.get_status_code()
 
-    return jsonify(custom_response.to_json()), custom_response.get_status_code()
+    return response

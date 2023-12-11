@@ -9,8 +9,8 @@ from flask import (
     jsonify,
     current_app as app
 )
-from .auth import check_authenticated
-from .response import (
+from view.auth import check_authenticated
+from view.response import (
     MessageType,
     FlashMessage,
     CustomResponse
