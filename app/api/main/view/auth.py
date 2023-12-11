@@ -31,6 +31,11 @@ from .response import (
     error_message
 )
 
+def get_session_token(request):
+    # This funciton was made to make mocking easier for unittests.
+    session_token = request.cookies.get('session')
+    return session_token
+
 # Login & Authenication Wrapper Functions
 
 def check_authenticated(authentication_required=False, database_priveleges=None):
@@ -53,7 +58,7 @@ def check_authenticated(authentication_required=False, database_priveleges=None)
                 redis_connection.ping()
 
                 # Check if user has a session token, Create one if not
-                session_token = request.cookies.get('session')
+                session_token = get_session_token(request)
                 
                 if (session_token is None) or (not redis_connection.exists(session_token)):
                     session_token = create_session()
@@ -109,7 +114,6 @@ def check_authenticated(authentication_required=False, database_priveleges=None)
         return wrapper
 
     return decorator
-
 
 def create_session():
     """
@@ -230,7 +234,7 @@ def login():
         user_data.pop("encrypted_password", None)
 
         # Check if user has a session token, Create one if not
-        session_token = request.cookies.get('session')
+        session_token = get_session_token(request)
         redis_connection = Redis(
             host=app.config['REDIS_HOST'],
             port=app.config['REDIS_PORT'],
@@ -320,7 +324,7 @@ def logout():
     """
 
     try:
-        session_token = request.cookies.get('session')
+        session_token = get_session_token(request)
         status_code = 401
         if session_token is not None:
             redis_connection = Redis(

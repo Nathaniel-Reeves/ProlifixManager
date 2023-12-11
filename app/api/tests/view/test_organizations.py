@@ -4,6 +4,9 @@ import pytest
 from main.wsgi import create_app
 from main.view.response import CustomResponse
 from controller import organizations as org
+from view import auth as auth
+
+todo = pytest.mark.skip("todo")
 
 def describe_Organizations_Enpoints():
     
@@ -45,7 +48,7 @@ def describe_Organizations_Enpoints():
             }
             mocker.patch("redis.Redis")
             mocker.patch("redis.client.Redis.ping")
-            mocker.patch("werkzeug.datastructures.ImmutableMultiDict.get", return_value="session_token")
+            mocker.patch.object(auth,"get_session_token", return_value="session_token")
             mocker.patch("redis.client.Redis.exists", return_value=True)
             mocker.patch("redis.client.Redis.get", return_value=json.dumps(user_data_template))
             mocker.patch("flask.Response.set_cookie")
@@ -67,7 +70,7 @@ def describe_Organizations_Enpoints():
             }
             mocker.patch("redis.Redis")
             mocker.patch("redis.client.Redis.ping")
-            mocker.patch("werkzeug.datastructures.ImmutableMultiDict.get", return_value="session_token")
+            mocker.patch.object(auth,"get_session_token", return_value="session_token")
             mocker.patch("redis.client.Redis.exists", return_value=True)
             mocker.patch("redis.client.Redis.get", return_value=json.dumps(user_data_template))
             mocker.patch("flask.Response.set_cookie")
@@ -394,7 +397,7 @@ def describe_Organizations_Enpoints():
                     assert args[3] == expected_args[3]
                     assert args[4] == expected_args[4]
                     assert response.status_code == 200
-                
+            
             def describe_endpoint_handles_populating_organization_data():
                 
                 def it_handles_populating_organization_facilites_data(mocker, when_logged_in, mock_controller__get_organizations):
@@ -667,7 +670,7 @@ def describe_Organizations_Enpoints():
                     client = app.test_client()
                     
                     # Stimulate Test
-                    url = 'api/organizations/doc=true'
+                    url = 'api/organizations/?doc=true'
                     response = client.get(url)
                     
                     # Assert Response

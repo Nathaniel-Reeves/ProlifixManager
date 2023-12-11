@@ -53,9 +53,8 @@ def handle_get_organizations():
         populate.append('products')
         
     doc = False
-    document = request.args.get('doc', default=False, type=bool)
-    print(document)
-    if document != False:
+    document = request.args.get('doc')
+    if document == "true":
         doc = True
 
     # Get Organizations from the database
