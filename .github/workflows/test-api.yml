@@ -1,5 +1,7 @@
 name: Test API Server
 
+on: workflow_call
+
 jobs:
   test-API:
 
