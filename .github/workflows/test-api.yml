@@ -4,8 +4,14 @@ on: workflow_call
 
 jobs:
   test-API:
+    build-environment:
+      uses: ./.github/workflows/set-env.yml
 
     runs-on: self-hosted
+
+    needs: [
+      bulid-environment
+    ]
 
     steps:
       - name: Set up Python
