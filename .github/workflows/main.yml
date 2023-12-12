@@ -9,7 +9,7 @@ jobs:
 
     steps:
       - name: Test API
-        uses: test-api.yml
+        uses: ./test-api.yml
   
   attempt-build:
 
