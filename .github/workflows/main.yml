@@ -4,16 +4,8 @@ on: [push]
 
 jobs:
   run-unit-tests:
+    uses: ./.github/workflows/test-api.yml
 
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout Project
-      uses: actions/checkout@v4
-    - name: Run API Tests
-      uses: .github/workflows/test-api.yml
-
-  
   attempt-build:
 
     runs-on: ubuntu-latest
