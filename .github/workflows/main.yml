@@ -19,8 +19,7 @@ jobs:
       - name: Checkout Project
         uses: actions/checkout@v4
       - name: Build the stack
-        run: |
-        sudo docker compose -f app/docker-compose.yaml -d up --build
+        run: sudo docker compose -f app/docker-compose.yaml up -d --build
       - name: Docker Compose Logs
         run: docker-compose logs -f integrationtest
       - name: Stop Containers
