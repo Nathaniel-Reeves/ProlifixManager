@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Actions
+        uses: actions/checkout@v2
       - name: Test API
         uses: ./test-api.yml
   
@@ -18,15 +20,15 @@ jobs:
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
-      - name: Build the stack
+      - name: If Unit Tests Pass
+        needs: [
+          run-unit-tests
+        ]
+      - name: Attempt to Build MRP Project
         run: sudo docker compose -f app/docker-compose.yaml up -d --build
-      - name: Docker Compose Logs
-        run: docker-compose logs -f integrationtest
       - name: Stop Containers
-        # the containers should be stopped regardless of 
-        # the test result
         if: always()
-        run: docker-compose down
+        run: docker-compose -f app/docker-compose.yaml down
   
   # build-and-deploy:
 
