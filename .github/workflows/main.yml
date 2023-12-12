@@ -3,7 +3,7 @@ name: Test & Build MRP System
 on: [push]
 
 jobs:
-  build-environment:
+  set-env:
     uses: ./.github/workflows/set-env.yml
   run-unit-tests:
     uses: ./.github/workflows/test-api.yml
@@ -13,7 +13,7 @@ jobs:
     runs-on: self-hosted
 
     needs: [
-      build-environment,
+      set-env
       run-unit-tests
     ]
 
