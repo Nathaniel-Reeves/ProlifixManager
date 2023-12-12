@@ -17,13 +17,13 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    needs: [
+      run-unit-tests
+    ]
+
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
-      - name: If Unit Tests Pass
-        needs: [
-          run-unit-tests
-        ]
       - name: Attempt to Build MRP Project
         run: sudo docker compose -f app/docker-compose.yaml up -d --build
       - name: Stop Containers
