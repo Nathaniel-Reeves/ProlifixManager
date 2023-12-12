@@ -3,9 +3,11 @@ name: Test API Server
 on: workflow_call
 
 jobs:
-  test-API:
-    set-environment-variables:
+
+  set-environment-variables:
       uses: ./.github/workflows/set-env.yml
+
+  test-API:
 
     runs-on: self-hosted
 
