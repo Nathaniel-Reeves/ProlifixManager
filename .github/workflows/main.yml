@@ -21,7 +21,7 @@ jobs:
       - name: Build the stack
         run: |
         cd app
-        sudo docker-compose up --build -d
+        sudo docker compose up --build -d
       - name: Docker Compose Logs
         run: docker-compose logs -f integrationtest
       - name: Stop Containers
