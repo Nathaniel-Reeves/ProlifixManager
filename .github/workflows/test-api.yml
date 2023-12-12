@@ -4,13 +4,13 @@ on: workflow_call
 
 jobs:
   test-API:
-    set-env:
+    set-environment-variables:
       uses: ./.github/workflows/set-env.yml
 
     runs-on: self-hosted
 
     needs: [
-      set-env
+      set-environment-variables
     ]
 
     steps:

@@ -4,7 +4,7 @@ on: workflow_call
 
 jobs:
 
-  set-env:
+  set-environment-variables:
 
     runs-on: self-hosted
 
