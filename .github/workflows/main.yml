@@ -28,25 +28,30 @@ jobs:
           'sudo docker image rm mariadb:10.11'
           sudo docker image prune
         continue-on-error: true
+      - name: 'Create env File'
+        run: |
+          touch app/.env
+          echo SSH_PRIVATE_KEY="" >> app/.env
+          echo SSH_USER="" >> app/.env
+          echo SSH_HOST="" >> app/.env
+          echo WORK_DIR="" >> app/.env
+          echo MAIN_BRANCH="" >> app/.env
+          echo DB_ROOT_PASSWORD="Newspaper5" >> app/.env
+          echo DB_HOST="172.10.10.2" >> app/.env
+          echo DB_PORT="3306" >> app/.env
+          echo DB_USER="client" >> app/.env
+          echo DB_PASSWORD="ClientPassword!5" >> app/.env
+          echo UPLOAD_FOLDER="/home/nathanr" >> app/.env
+          echo REDIS_HOST="172.10.10.3" >> app/.env
+          echo REDIS_PORT="6379" >> app/.env
+          echo REDIS_PASSWORD="Am^7qq?%QgedcLn" >> app/.env
+          echo API_PREFIX="False" >> app/.env
+          echo API_CORS_KEY="0kgy23uJpIin346NeC7hUZ3Bak36S84N1X35k4kY" >> app/.env
+      - name: View Env
+        run: |
+          cat app/.env
       - name: Attempt to Build MRP Project
         run: sudo docker compose -f app/docker-compose.yaml up -d --build
-        env:
-          SSH_PRIVATE_KEY: ""
-          SSH_USER: ""
-          SSH_HOST: ""
-          WORK_DIR: ""
-          MAIN_BRANCH: ""
-          DB_ROOT_PASSWORD: "Newspaper5"
-          DB_HOST: "172.10.10.2"
-          DB_PORT: "3306"
-          DB_USER: "client"
-          DB_PASSWORD: "ClientPassword!5"
-          UPLOAD_FOLDER: "/home/nathanr"
-          REDIS_HOST: "172.10.10.3"
-          REDIS_PORT: "6379"
-          REDIS_PASSWORD: "Am^7qq?%QgedcLn"
-          API_PREFIX: "False"
-          API_CORS_KEY: "0kgy23uJpIin346NeC7hUZ3Bak36S844NoeN1X35k4kY"
       - name: Stop Containers
         if: always()
         run: sudo docker compose -f app/docker-compose.yaml down
