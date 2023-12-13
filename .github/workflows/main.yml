@@ -21,6 +21,10 @@ jobs:
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
+      - name: VIew Old Images
+        run: sudo docker image ls -a
+      - name: Clean Old Images
+        run: 'sudo docker image rm mariadb:10.9'
       - name: Attempt to Build MRP Project
         run: sudo docker compose -f app/docker-compose.yaml up -d --build
         env:
