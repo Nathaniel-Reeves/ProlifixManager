@@ -7,7 +7,7 @@ services:
     image: mariadb:10.11
     restart: always
     environment:
-      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${INPUT_DB_ROOT_PASSWORD}
       MARIADB_ROOT_HOST: '%'
     volumes:
       - './db/mariadb_data/:/var/lib/mysql/'
@@ -18,7 +18,7 @@ services:
       mrp:
         ipv4_address: 172.10.10.2
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "172.10.10.2", "--port", "3306", "-p${DB_ROOT_PASSWORD}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "172.10.10.2", "--port", "3306", "-p${INPUT_DB_ROOT_PASSWORD}"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -26,8 +26,8 @@ services:
   init_db:
     container_name: init_db
     environment:
-      DB_USERNAME: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
+      DB_USERNAME: ${INPUT_DB_USER}
+      DB_PASSWORD: ${INPUT_DB_PASSWORD}
       DB_HOST: '172.10.10.2'
       DB_PORT: '3306'
     restart: "no"
@@ -46,8 +46,8 @@ services:
   api:
     restart: unless-stopped
     environment:
-      DB_USERNAME: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
+      DB_USERNAME: ${INPUT_DB_USER}
+      DB_PASSWORD: ${INPUT_DB_PASSWORD}
       DB_HOST: '172.10.10.2'
       DB_PORT: '3306'
       API_PREFIX: ${API_PREFIX}

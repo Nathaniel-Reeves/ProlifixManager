@@ -18,30 +18,29 @@ jobs:
       unittest-CLIENT
 
     ]
-
-    env:
-      SSH_PRIVATE_KEY: ''
-      SSH_USER: ''
-      SSH_HOST: ''
-      WORK_DIR: ''
-      MAIN_BRANCH: ''
-      DB_ROOT_PASSWORD: 'Newspaper5'
-      DB_HOST: '172.10.10.2'
-      DB_PORT: '3306'
-      DB_USER: 'client'
-      DB_PASSWORD: 'ClientPassword!5'
-      UPLOAD_FOLDER: '/home/nathanr'
-      REDIS_HOST: '172.10.10.3'
-      REDIS_PORT: '6379'
-      REDIS_PASSWORD: 'Am^7qq?%QgedcLn'
-      API_PREFIX: 'False'
-      API_CORS_KEY: '0kgy23uJpIin346NeC7hUZ3Bak36S844NoeN1X35k4kY'
     
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
       - name: Attempt to Build MRP Project
         run: sudo docker compose -f app/docker-compose.yaml up -d --build
+        env:
+          SSH_PRIVATE_KEY: ''
+          SSH_USER: ''
+          SSH_HOST: ''
+          WORK_DIR: ''
+          MAIN_BRANCH: ''
+          DB_ROOT_PASSWORD: 'Newspaper5'
+          DB_HOST: '172.10.10.2'
+          DB_PORT: '3306'
+          DB_USER: 'client'
+          DB_PASSWORD: 'ClientPassword!5'
+          UPLOAD_FOLDER: '/home/nathanr'
+          REDIS_HOST: '172.10.10.3'
+          REDIS_PORT: '6379'
+          REDIS_PASSWORD: 'Am^7qq?%QgedcLn'
+          API_PREFIX: 'False'
+          API_CORS_KEY: '0kgy23uJpIin346NeC7hUZ3Bak36S844NoeN1X35k4kY'
       - name: Stop Containers
         if: always()
         run: sudo docker compose -f app/docker-compose.yaml down
