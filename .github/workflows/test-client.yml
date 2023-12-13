@@ -1,0 +1,22 @@
+name: Test Client
+
+on: workflow_call
+
+jobs:
+
+  set-environment-variables:
+      uses: ./.github/workflows/set-env.yml
+
+  test-API:
+
+    runs-on: self-hosted
+
+    needs: [
+      set-environment-variables
+    ]
+
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v4
+      - name: Echo TODO
+        run: echo "TODO"

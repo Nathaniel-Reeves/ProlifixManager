@@ -3,8 +3,10 @@ name: Test & Build MRP System
 on: [push]
 
 jobs:
-  run-unit-tests:
+  unittest-API:
     uses: ./.github/workflows/test-api.yml
+  unittest-CLIENT:
+    uses: ./.github/workflows/test-client.yml
 
 
   attempt-build:
@@ -12,7 +14,9 @@ jobs:
     runs-on: self-hosted
 
     needs: [
-      run-unit-tests
+      unittest-API,
+      unittest-CLIENT
+      
     ]
     
     steps:
