@@ -5,8 +5,6 @@ on: [push]
 jobs:
   run-unit-tests:
     uses: ./.github/workflows/test-api.yml
-  set-environment-variables:
-    uses: ./.github/workflows/set-env.yml
 
 
   attempt-build:
@@ -14,13 +12,30 @@ jobs:
     runs-on: self-hosted
 
     needs: [
-      run-unit-tests,
-      set-environment-variables
+      run-unit-tests
     ]
     
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
+      - name: Export Environment variables
+        run: |
+          export SSH_PRIVATE_KEY=''
+          export SSH_USER=''
+          export SSH_HOST=''
+          export WORK_DIR=''
+          export MAIN_BRANCH=''
+          export DB_ROOT_PASSWORD='Newspaper5'
+          export DB_HOST='172.10.10.2'
+          export DB_PORT='3306'
+          export DB_USER='client'
+          export DB_PASSWORD='ClientPassword!5'
+          export UPLOAD_FOLDER='/home/nathanr'
+          export REDIS_HOST='172.10.10.3'
+          export REDIS_PORT='6379'
+          export REDIS_PASSWORD='Am^7qq?%QgedcLn'
+          export API_PREFIX='False'
+          export API_CORS_KEY='0kgy23uJpIin346NeC7hUZ3Bak36S844NoeN1X35k4kY'
       - name: Attempt to Build MRP Project
         run: sudo docker compose -f app/docker-compose.yaml up -d --build
       - name: Stop Containers
