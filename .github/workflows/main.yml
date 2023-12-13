@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
-      - name: VIew Old Images
+      - name: View Old Images
         run: sudo docker image ls -a
       - name: Clean Old Images
         run: |
@@ -30,27 +30,27 @@ jobs:
         continue-on-error: true
       - name: 'Create New env File'
         run: |
-          [ ! -e app/.env ] || rm app/.env
-          touch app/.env
-          echo SSH_PRIVATE_KEY="" >> app/.env
-          echo SSH_USER="" >> app/.env
-          echo SSH_HOST="" >> app/.env
-          echo WORK_DIR="" >> app/.env
-          echo MAIN_BRANCH="" >> app/.env
-          echo DB_ROOT_PASSWORD="Newspaper5" >> app/.env
-          echo DB_HOST="172.10.10.2" >> app/.env
-          echo DB_PORT="3306" >> app/.env
-          echo DB_USER="client" >> app/.env
-          echo DB_PASSWORD="ClientPassword!5" >> app/.env
-          echo UPLOAD_FOLDER="/home/nathanr" >> app/.env
-          echo REDIS_HOST="172.10.10.3" >> app/.env
-          echo REDIS_PORT="6379" >> app/.env
-          echo REDIS_PASSWORD="Am^7qq?%QgedcLn" >> app/.env
-          echo API_PREFIX="False" >> app/.env
-          echo API_CORS_KEY="0kgy23uJpIin346NeC7hUZ3Bak36S84N1X35k4kY" >> app/.env
+          sudo [ ! -e ./app/.env ] || sudo rm ./app/.env
+          touch ./app/.env
+          echo SSH_PRIVATE_KEY="" >> ./app/.env
+          echo SSH_USER="" >> ./app/.env
+          echo SSH_HOST="" >> ./app/.env
+          echo WORK_DIR="" >> ./app/.env
+          echo MAIN_BRANCH="" >> ./app/.env
+          echo DB_ROOT_PASSWORD="Newspaper5" >> ./app/.env
+          echo DB_HOST="172.10.10.2" >> ./app/.env
+          echo DB_PORT="3306" >> ./app/.env
+          echo DB_USER="client" >> ./app/.env
+          echo DB_PASSWORD="ClientPassword!5" >> ./app/.env
+          echo UPLOAD_FOLDER="/home/nathanr" >> ./app/.env
+          echo REDIS_HOST="172.10.10.3" >> ./app/.env
+          echo REDIS_PORT="6379" >> ./app/.env
+          echo REDIS_PASSWORD="Am^7qq?%QgedcLn" >> ./app/.env
+          echo API_PREFIX="False" >> ./app/.env
+          echo API_CORS_KEY="0kgy23uJpIin346NeC7hUZ3Bak36S84N1X35k4kY" >> ./app/.env
       - name: View Env
         run: |
-          cat app/.env
+          cat ./app/.env
       - name: Attempt to Build MRP Project
         run: sudo docker compose -f app/docker-compose.yaml up -d --build
       - name: Stop Containers
