@@ -5,6 +5,8 @@ on: [push]
 jobs:
   run-unit-tests:
     uses: ./.github/workflows/test-api.yml
+  set-environment-variables:
+    uses: ./.github/workflows/set-env.yml
 
 
   attempt-build:
@@ -12,19 +14,18 @@ jobs:
     runs-on: self-hosted
 
     needs: [
-      run-unit-tests
+      run-unit-tests,
+      set-environment-variables
     ]
     
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
-      - name: Set Environment
-        uses: ./.github/workflows/set-env.yml
       - name: Attempt to Build MRP Project
         run: sudo docker compose -f app/docker-compose.yaml up -d --build
       - name: Stop Containers
         if: always()
-        run: docker compose -f app/docker-compose.yaml down
+        run: sudo docker compose -f app/docker-compose.yaml down
   
   # build-and-deploy:
 
