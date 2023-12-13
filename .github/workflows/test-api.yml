@@ -27,7 +27,7 @@ jobs:
         run: |
           sudo apt install wget
           sudo apt-get update
-          sudo wget https://r.mariadb.com/downloads/mariadb_repo_setup
+          sudo wget https://dlm.mariadb.com/3/MariaDB/mariadb_repo_setup
           echo "935944a2ab2b2a48a47f68711b43ad2d698c97f1c3a7d074b34058060c2ad21b  mariadb_repo_setup" \
             | sha256sum -c -
           sudo chmod +x mariadb_repo_setup
