@@ -45,12 +45,8 @@ services:
 
   api:
     restart: unless-stopped
-    environment:
-      DB_USERNAME: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_HOST: '172.10.10.2'
-      DB_PORT: '3306'
-      API_PREFIX: ${API_PREFIX}
+    env_file:
+      - .env
     build:
       context: .
       dockerfile: api/Dockerfile

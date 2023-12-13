@@ -28,8 +28,9 @@ jobs:
           'sudo docker image rm mariadb:10.11'
           sudo docker image prune
         continue-on-error: true
-      - name: 'Create env File'
+      - name: 'Create New env File'
         run: |
+          [ ! -e app/.env ] || rm app/.env
           touch app/.env
           echo SSH_PRIVATE_KEY="" >> app/.env
           echo SSH_USER="" >> app/.env
