@@ -3,23 +3,23 @@ name: Test & Build MRP System
 on: [push]
 
 jobs:
-  # unittest-API:
-  #   uses: ./.github/workflows/test-api.yml
-  # unittest-CLIENT:
-  #   uses: ./.github/workflows/test-client.yml
+  unittest-API:
+    uses: ./.github/workflows/test-api.yml
+  unittest-CLIENT:
+    uses: ./.github/workflows/test-client.yml
 
 
   attempt-build:
 
     runs-on: self-hosted
 
-    # needs: [
-    #   unittest-API,
-    #   unittest-CLIENT
-    # ]
+    needs: [
+      unittest-API,
+      unittest-CLIENT
+    ]
     
     steps:
-      
+
       - name: Checkout Project
         uses: actions/checkout@v4
       - name: View Old Images
