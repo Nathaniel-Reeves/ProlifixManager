@@ -7,8 +7,8 @@ services:
     image: mariadb:10.11
     restart: always
     environment:
-      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MARIADB_ROOT_HOST: '%'
+      - MARIADB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MARIADB_ROOT_HOST='%'
     volumes:
       - './db/mariadb_data/:/var/lib/mysql/'
       - ./db:/docker-entrypoint-initdb.d
@@ -26,10 +26,10 @@ services:
   init_db:
     container_name: init_db
     environment:
-      DB_USERNAME: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_HOST: '172.10.10.2'
-      DB_PORT: '3306'
+      - DB_USERNAME=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST='172.10.10.2'
+      - DB_PORT='3306'
     restart: "no"
     volumes:
         - './init_db:/init_db'
@@ -46,11 +46,16 @@ services:
   api:
     restart: unless-stopped
     environment:
-      DB_USERNAME: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_HOST: '172.10.10.2'
-      DB_PORT: '3306'
-      API_PREFIX: ${API_PREFIX}
+      - DB_USERNAME=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST='172.10.10.2'
+      - DB_PORT='3306'
+      - API_PREFIX=${API_PREFIX}
+      - API_CORS_KEY=${API_CORS_KEY}
+      - UPLOAD_FOLDER=${UPLOAD_FOLDER}
+      - REDIS_HOST='172.10.10.3'
+      - REDIS_PORT='6379'
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
     build:
       context: .
       dockerfile: api/Dockerfile
