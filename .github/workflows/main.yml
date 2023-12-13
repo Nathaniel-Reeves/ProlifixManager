@@ -27,6 +27,7 @@ jobs:
         run: |
           'sudo docker image rm mariadb:10.11'
           sudo docker image prune
+        continue-on-error: true
       - name: Attempt to Build MRP Project
         run: sudo docker compose -f app/docker-compose.yaml up -d --build
         env:
