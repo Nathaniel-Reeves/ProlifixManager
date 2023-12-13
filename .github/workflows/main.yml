@@ -18,12 +18,8 @@ jobs:
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
-        with:
-          sparse-checkout: |
-            .github
-            app
       - name: Set Environment
-        uses: ./.github/actions/workflows/set-env.yml
+        uses: ./.github/workflows/set-env.yml
       - name: Attempt to Build MRP Project
         run: sudo docker compose -f app/docker-compose.yaml up -d --build
       - name: Stop Containers
