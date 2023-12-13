@@ -36,7 +36,7 @@ jobs:
           sudo apt-get install -y mariadb-server mariadb-client
           sudo apt-get install -y python3-pip
           sudo apt-get update
-          sudo apt install -y --no-install-recommends libmariadb3 libmariadb-dev && rm -rf /var/lib/apt/lists/*
+          sudo apt install -y --no-install-recommends libmariadb3 libmariadb-dev && sudo rm -rf /var/lib/apt/lists/*
           sudo apt-get update
       - name: Install dependencies
         run: |
