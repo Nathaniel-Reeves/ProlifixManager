@@ -22,8 +22,6 @@ jobs:
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
-      - name: Attempt to Build MRP Project
-        run: sudo docker compose -f app/docker-compose.yaml up -d --build
         env:
           SSH_PRIVATE_KEY: ''
           SSH_USER: ''
@@ -41,6 +39,8 @@ jobs:
           REDIS_PASSWORD: 'Am^7qq?%QgedcLn'
           API_PREFIX: 'False'
           API_CORS_KEY: '0kgy23uJpIin346NeC7hUZ3Bak36S844NoeN1X35k4kY'
+      - name: Attempt to Build MRP Project
+        run: sudo docker compose -f app/docker-compose.yaml up -d --build
       - name: Stop Containers
         if: always()
         run: sudo docker compose -f app/docker-compose.yaml down
