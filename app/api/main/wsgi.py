@@ -12,7 +12,7 @@ from flask import (
 )
 from flask_cors import CORS
 from flask_socketio import SocketIO
-import json
+from dotenv import load_dotenv
 
 # Get the parent directory
 parent_dir = os.path.dirname(os.path.realpath(__file__))
@@ -20,24 +20,21 @@ parent_dir = os.path.dirname(os.path.realpath(__file__))
 # Add the parent directory to sys.path
 sys.path.append(parent_dir)
 
-def load_env_variables(env_settings):
-    """
-    Load environment variables secrets/secrets.json
-    """
-    project_dir = os.path.split(os.path.split(os.getcwd())[0])[0]
-    secrets_file = os.path.join(project_dir,'secrets/secrets.json')
-    with open(secrets_file, 'r') as f:
-        secrets = json.load(f)
-    for key, value in secrets[env_settings].items():
-        os.environ[key] = value
-
-def print_config(app):
+def print_config():
     print()
     print("App Configurations:")
-    for config_name, config_value in app.config.items():
-        print(f"    {config_name}: {config_value}")
+    for v in env_variables:
+        print(f"    {v[0]}: {v[1]}")
     print()
     print()
+
+# Set env variables
+print("Loading Environment Variables")
+app_dir = os.path.split(os.path.split(parent_dir)[0])[0]
+print(f"Env Location: ", os.path.join(app_dir,".env"))
+load_dotenv(os.path.join(app_dir,".env"), override=True)
+env_variables = os.environ.items()
+print_config()
 
 def create_app():
     
@@ -142,13 +139,9 @@ def create_app():
     return app
 
 if __name__ == "__main__":
-    env_settings = os.environ.get('FLASK_ENV')
-    if env_settings in ('production','dev_work_laptop','defalut_dev'):
-        load_env_variables(env_settings)
-    else:
-        load_env_variables('default_dev')
+    load_dotenv(override=True)
+    print_config()
     app = create_app()
-    print_config(app)
     print('~~~ SERVER START ~~~')
     app.run(
         debug=True, 

@@ -7,6 +7,7 @@ WORKDIR /main
 # Copy application files
 COPY ./api/main /main
 COPY ./client/public /main/public
+COPY ./.env ./.env
 
 # Prepare dependancies for mariadb-connector
 USER root
