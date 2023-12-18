@@ -1,5 +1,5 @@
 '''
-Handle Organizations Data
+Handle Organizations Endpoints
 '''
 import json
 from flask import (

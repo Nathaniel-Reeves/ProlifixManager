@@ -49,8 +49,8 @@ def get_organizations(custom_response, org_ids, org_type, populate, doc):
     if 'products' in populate:
         tables.append(db.Product_Master)
 
-    stm = select(*tables)\
-          .join(db.Organization_Names, isouter=True)
+    stm = select(*tables) \
+        .join(db.Organization_Names, isouter=True)
             
     if 'facilities' in populate:
         stm = stm.join(db.Facilities, db.Organizations.organization_id == db.Facilities.organization_id, isouter=True)

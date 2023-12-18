@@ -85,7 +85,7 @@ def create_app():
     if API_PREFIX == 'True':
         API_PREFIX = '/'
     else:
-        API_PREFIX = '/api'
+        API_PREFIX = '/api/v1'
 
 
     api_blueprint = Blueprint('api', __name__, url_prefix=API_PREFIX)
@@ -97,14 +97,17 @@ def create_app():
     from old_controler.orders import bp as orders_bp
     api_blueprint.register_blueprint(orders_bp)
 
-    from old_controler.inventory import bp as inventory_bp
-    api_blueprint.register_blueprint(inventory_bp)
+    # from old_controler.inventory import bp as inventory_bp
+    # api_blueprint.register_blueprint(inventory_bp)
     
     """
     Import Views
     """
     from view.organizations import bp as organizations_bp
     api_blueprint.register_blueprint(organizations_bp)
+    
+    from view.catalogue import bp_cat as catalogue_bp
+    api_blueprint.register_blueprint(catalogue_bp)
     
     from view.auth import bp as auth_bp
     api_blueprint.register_blueprint(auth_bp)
