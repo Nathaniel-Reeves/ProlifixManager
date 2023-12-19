@@ -169,3 +169,23 @@ def validate_int_in_dict(dict, field, min_v=0, max_v=99999999999, equal_to=True)
             return True
         return False
     return False
+
+def check_type(valid_types, types_request, empty_means_all=True):
+    """
+    Checks if the types_request is a list of valid types.
+
+    Args:
+        valid_types (list): List if valid strings.
+        types_request (list):Requested query in list of strings.
+        empty_means_all (bool, optional): if all items in the valid list are selected, return an empty list if True, and the full list if False. Defaults to True.
+
+    Returns:
+        List
+    """
+    types = []
+    for type in valid_types:
+        if type in types_request:
+            types.append(type)
+    if empty_means_all and types == valid_types:  # Empty list means get all types
+        types = []
+    return types

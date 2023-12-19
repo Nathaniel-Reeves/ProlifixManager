@@ -8,7 +8,7 @@ from flask import (
     jsonify
 )
 from .auth import check_authenticated
-from .helper import only_integers
+from .helper import only_integers, check_type
 from .response import CustomResponse
 from controller import organizations as org
 
@@ -24,33 +24,29 @@ def handle_get_organizations():
     # Clean Request
     org_ids = list(only_integers(request.args.getlist('org-id')))
 
-    org_types_request = request.args.getlist('org-type')
-    org_types = []
-    if 'client' in org_types_request:
-        org_types.append('client')
-    if 'supplier' in org_types_request:
-        org_types.append('supplier')
-    if 'lab' in org_types_request:
-        org_types.append('lab')
-    if 'courier' in org_types_request:
-        org_types.append('courier')
-    if len(org_types) == 4:  # Empty list means get all org types
-        org_types = []
+    types_request = request.args.getlist('org-type')
+    valid_types = [
+        'client',
+        'supplier',
+        'lab',
+        'courier'
+    ]
+    org_types = check_type(valid_types, types_request)
 
     populate_request = request.args.getlist('populate')
-    populate = []
-    if 'facilities' in populate_request:
-        populate.append('facilities')
-    if 'sales-orders' in populate_request:
-        populate.append('sales-orders')
-    if 'purchase-orders' in populate_request:
-        populate.append('purchase-orders')
-    if 'people' in populate_request:
-        populate.append('people')
-    if 'components' in populate_request:
-        populate.append('components')
-    if 'products' in populate_request:
-        populate.append('products')
+    valid_populate = [
+        'facilities',
+        'sales-orders',
+        'purchase-orders',
+        'people',
+        'components',
+        'products'
+    ]
+    populate = check_type(
+        valid_populate,
+        populate_request,
+        empty_means_all=False
+    )
         
     doc = False
     document = request.args.get('doc')
