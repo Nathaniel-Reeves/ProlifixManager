@@ -7,25 +7,49 @@ import os
 from os.path import exists
 import csv
 import sys
+from dotenv import load_dotenv
 
 # Define the connection details
+# DB_HOST = os.environ.get('DB_HOST')
+# if DB_HOST is None:
+#     # Change Host for testing purposes
+#     #DB_HOST = '127.0.0.1'
+#     DB_HOST = '192.168.1.133'
+
+# DB_PORT = os.environ.get('DB_PORT')
+# if DB_PORT is None:
+#     DB_PORT = '3306'
+
+# DB_USER = os.environ.get('DB_USERNAME')
+# if DB_USER is None:
+#     DB_USER = 'client'
+
+# DB_PASSWORD = os.environ.get('DB_PASSWORD')
+# if DB_PASSWORD is None:
+#     DB_PASSWORD = "ClientPassword!5"
+    
+parent_dir = os.path.dirname(os.path.realpath(__file__))
+    
+def print_config():
+    print()
+    print("App Configurations:")
+    for v in env_variables:
+        print(f"    {v[0]}: {v[1]}")
+    print()
+    print()
+
+# Set env variables
+print("Loading Environment Variables")
+app_dir = os.path.split(parent_dir)[0]
+print(f"Env Location: ", os.path.join(app_dir,".env"))
+load_dotenv(os.path.join(app_dir,".env"), override=True)
+env_variables = os.environ.items()
+print_config()
+
 DB_HOST = os.environ.get('DB_HOST')
-if DB_HOST is None:
-    # Change Host for testing purposes
-    #DB_HOST = '127.0.0.1'
-    DB_HOST = '192.168.1.133'
-
 DB_PORT = os.environ.get('DB_PORT')
-if DB_PORT is None:
-    DB_PORT = '3306'
-
-DB_USER = os.environ.get('DB_USERNAME')
-if DB_USER is None:
-    DB_USER = 'client'
-
+DB_USER = os.environ.get('DB_USER')
 DB_PASSWORD = os.environ.get('DB_PASSWORD')
-if DB_PASSWORD is None:
-    DB_PASSWORD = "ClientPassword!5"
 
 # Define the databases and their corresponding CSV files
 DATABASES = [
