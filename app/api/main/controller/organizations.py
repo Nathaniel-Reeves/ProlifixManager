@@ -38,9 +38,9 @@ def get_organizations(custom_response, org_ids, org_type, populate, doc):
     
     if 'facilities' in populate:
         tables.append(db.Facilities)
-    if 'sales-orders' in populate:
+    if 'sales_orders' in populate:
         tables.append(db.Sales_Orders)
-    if 'purchase-orders' in populate:
+    if 'purchase_orders' in populate:
         tables.append(db.Purchase_Orders)
     if 'people' in populate:
         tables.append(db.People)
@@ -54,9 +54,9 @@ def get_organizations(custom_response, org_ids, org_type, populate, doc):
             
     if 'facilities' in populate:
         stm = stm.join(db.Facilities, db.Organizations.organization_id == db.Facilities.organization_id, isouter=True)
-    if 'sales-orders' in populate:
+    if 'sales_orders' in populate:
         stm = stm.join(db.Sales_Orders, db.Organizations.organization_id == db.Sales_Orders.organization_id, isouter=True)
-    if 'purchase-orders' in populate:
+    if 'purchase_orders' in populate:
         stm = stm.join(db.Purchase_Orders, db.Organizations.organization_id == db.Purchase_Orders.organization_id, isouter=True)
     if 'people' in populate:
         stm = stm.join(db.People, db.Organizations.organization_id == db.People.organization_id, isouter=True)

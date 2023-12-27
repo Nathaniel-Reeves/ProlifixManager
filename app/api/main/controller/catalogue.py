@@ -14,7 +14,8 @@ import model as db
 from model.connector import get_session
 from .package import package_data
 
-def get_components(custom_response,
+def get_components(
+        custom_response,
         component_ids,
         component_types,
         certifications,
@@ -26,15 +27,15 @@ def get_components(custom_response,
     # Build the query
     tables = [db.Components, db.Component_Names]
     
-    if 'product-materials' in populate:
+    if 'product_materials' in populate:
         tables.append(db.Materials)
-    if 'purchase-order-detail' in populate:
+    if 'purchase_order_detail' in populate:
         tables.append(db.Purchase_Order_Detail)
-    if 'label-formula-master' in populate:
+    if 'label_formula-master' in populate:
         tables.append(db.Formula_Master)
-    if 'ingredient-formula-detail' in populate:
+    if 'ingredient_formula_detail' in populate:
         tables.append(db.Formula_Detail)
-    if 'item-id' in populate or 'inventory' in populate:
+    if 'item_id' in populate or 'inventory' in populate:
         tables.append(db.Item_id)
     if 'inventory' in populate:
         tables.append(db.Inventory)
@@ -45,15 +46,15 @@ def get_components(custom_response,
     stm = select(*tables) \
         .join(db.Component_Names, isouter=True)
     
-    if 'product-materials' in populate:
+    if 'product_materials' in populate:
         stm = stm.join(db.Materials, db.Components.component_id == db.Materials.component_id, isouter=True)
-    if 'purchase-order-detail' in populate:
+    if 'purchase_order_detail' in populate:
         stm = stm.join(db.Purchase_Order_Detail, db.Components.component_id == db.Purchase_Order_Detail.component_id, isouter=True)
-    if 'label-formula-master' in populate:
+    if 'label_formula_master' in populate:
         stm = stm.join(db.Formula_Master, db.Components.component_id == db.Formula_Master.label_id, isouter=True)
     if 'ingredient-formula-detail' in populate:
         stm = stm.join(db.Formula_Detail, db.Components.component_id == db.Formula_Detail.ingredient_id, isouter=True)
-    if 'item-id' in populate or 'inventory' in populate:
+    if 'item_id' in populate or 'inventory' in populate:
         stm = stm.join(db.Item_id, db.Components.component_id == db.Item_id.component_id, isouter=True)
     if 'inventory' in populate:
         stm = stm.join(db.Inventory, db.Item_id.item_id == db.Inventory.item_id, isouter=True)
@@ -63,9 +64,6 @@ def get_components(custom_response,
         
     stm = stm.where(db.Component_Names.primary_name == True)
     
-    if 'brand' in populate:
-        stm = stm.where(db.Organization_Names.primary_name == True)
-    
     if component_ids:
         stm = stm.where(db.Components.component_id.in_(component_ids))
         
@@ -74,21 +72,21 @@ def get_components(custom_response,
     
     if component_types:
         stm = stm.where(db.Components.component_type.in_(component_types))
-        
+    
     if certifications:
-        if 'usda-organic' in certifications:
+        if 'usda_organic' in certifications:
             stm = stm.where(db.Components.certified_usda_organic == True)
         if 'halal' in certifications:
             stm = stm.where(db.Components.certified_halal == True)
         if 'kosher' in certifications:
             stm = stm.where(db.Components.certified_kosher == True)
-        if 'gluten-free' in certifications:
+        if 'gluten_free' in certifications:
             stm = stm.where(db.Components.certified_gluten_free == True)
         if 'national-sanitation-foundation' in certifications:
             stm = stm.where(db.Components.certified_national_sanitation_foundation == True)
         if 'us-pharmocopeia' in certifications:
-            stm = stm.where(db.Components.certified_us_pharmocopeia == True)
-        if 'non-gmo' in certifications:
+            stm = stm.where(db.Components.certified_us_pharmacopeia == True)
+        if 'non_gmo' in certifications:
             stm = stm.where(db.Components.certified_non_gmo == True)
         if 'vegan' in certifications:
             stm = stm.where(db.Components.certified_vegan == True)
@@ -113,8 +111,31 @@ def get_components(custom_response,
         return custom_response
     
     session.close()
-    
     # Process and Package the data
     data, custom_response = package_data(raw_data, doc, custom_response)
     custom_response.insert_data(data)
+    return custom_response
+
+def post_component(
+        custom_response,
+        component
+    ):
+    
+
+    if 'doc' in component.keys():
+        if "files" in component["doc"].keys() and len(component["doc"]["files"]) > 0:
+            for file in component["doc"]["files"].keys():
+                if 'file_obj' in component["doc"]["files"][file].keys():
+                    component["doc"]["files"][file].pop("file_obj")
+
+    new_component = component
+    
+    # Process and Package the data
+    custom_response.insert_data(new_component)
+    custom_response.set_status_code(201)
+    flash_message = FlashMessage(
+        message_type=MessageType.SUCCESS, 
+        message="Component Added Successfully"
+    )
+    custom_response.insert_flash_message(flash_message)
     return custom_response

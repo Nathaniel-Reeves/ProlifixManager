@@ -380,7 +380,7 @@ class Purchase_Order_Detail(Base):
     unit_order_qty: Mapped[int] = mapped_column(default=None)
     kilos_order_qty: Mapped[float] = mapped_column(default=None)
     special_instructions: Mapped[str] = mapped_column(default=None)
-    datetime_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     bid_price_per_unit: Mapped[float] = mapped_column(default=None)
     bid_price_per_kilo: Mapped[float] = mapped_column(default=None)
     

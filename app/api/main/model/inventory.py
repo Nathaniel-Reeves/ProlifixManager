@@ -74,6 +74,12 @@ class Components(Base):
             "units": self.units,
             "doc": self.doc
         }
+    
+    def get_id(self):
+        return self.component_id
+    
+    def get_id_name(self):
+        return "component_id"
 
 class Component_Names(Base):
     __tablename__ = 'Component_Names'
@@ -91,7 +97,7 @@ class Component_Names(Base):
     
     # Common Methods   
     def __repr__(self):
-        return f'<Inventory.Component_Names name_id:{self.name_id} component_id:{self.component_id} Component_name:{self.Component_name}>'
+        return f'<Inventory.Component_Names name_id:{self.name_id} component_id:{self.component_id} Component_name:{self.component_name}>'
     
     def to_dict(self):
         return {

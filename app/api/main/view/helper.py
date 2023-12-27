@@ -12,6 +12,42 @@ from .response import (
     error_message
 )
 from werkzeug.utils import secure_filename
+import json
+
+def collect_form_data(request):
+    """
+    Converts form data and file data into one dictionary.
+    
+    if files and 'doc' key in form data are present, it will store data as such:
+      {
+          ... (other form data with keys)
+          "files": {
+              "file_key": {
+                  "file_obj": file_object
+                  ... (other file data stored from doc key in form)
+              }
+          }
+      }
+
+    Args:
+        request flask.Request: flask request object
+
+    Returns:
+        dict: all form elements with file data.
+    """
+    form_data = dict(request.form)
+    file_data = dict(request.files)
+    if "doc" in form_data.keys():
+        doc = json.loads(form_data["doc"])
+
+        if file_data and "files" in doc.keys():
+            for file_key in file_data.keys():
+                if file_key in doc["files"].keys():
+                    doc["files"][file_key]["file_obj"] = file_data[file_key]
+        
+        form_data["doc"] = doc
+        
+    return form_data
 
 def only_integers(iterable):
     '''

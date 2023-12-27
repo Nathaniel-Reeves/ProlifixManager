@@ -8,15 +8,30 @@ from flask import (
     jsonify
 )
 from .auth import check_authenticated
-from .helper import only_integers, check_type
+from .helper import only_integers, check_type, collect_form_data
 from .response import CustomResponse
 from controller import catalogue as cat
 
 bp_comp = Blueprint('components', __name__, url_prefix='/components')
 
 
-@bp_comp.route('/', methods=['GET'])
+@bp_comp.route('/', methods=['GET', 'POST', 'PUT'])
 @check_authenticated(authentication_required=True)
+def handle_components():
+    if request.method == 'GET':
+        return handle_get_components()
+    elif request.method == 'POST':
+        return handle_post_components()
+    elif request.method == 'PUT':
+        return handle_put_components()
+    else:
+        r = CustomResponse()
+        r.set_status_code(404)
+        response = jsonify(r.to_json())
+        response.status_code = r.get_status_code()
+        return response
+
+
 def handle_get_components():
     """
     GET api/v/catalogue/components/ Endpoint
@@ -27,20 +42,20 @@ def handle_get_components():
 
     types_request = request.args.getlist('type')
     valid_types = [
-        'powder', 'liquid', 'container', 'pouch','shrink-band', 'lid', 'label', 'capsule','misc','scoop', 'dessiccant', 'box', 'carton',
-        'packaging-material'
+        'powder', 'liquid', 'container', 'pouch','shrink_band', 'lid', 'label', 'capsule','misc','scoop', 'desiccant', 'box', 'carton',
+        'packaging_material'
     ]
     component_types = check_type(valid_types, types_request)
     
     certifications_request = request.args.getlist('certification')
     valid_certifications = [
-        'usda-organic',
+        'usda_organic',
         'halal',
         'kosher',
-        'gluten-free',
-        'national-sanitation-foundation',
-        'us-pharmacopeia',
-        'non-gmo',
+        'gluten_free',
+        'national_sanitation_foundation',
+        'us_pharmacopeia',
+        'non_gmo',
         'vegan'
     ]
     
@@ -54,11 +69,11 @@ def handle_get_components():
     
     populate_request = request.args.getlist('populate')
     valid_populate = [
-        'product-materials',
-        'purchase-order-detail',
-        'label-formula-master',
-        'ingredient-formula-detail',
-        'item-id',
+        'product_materials',
+        'purchase_order_detail',
+        'label_formula_master',
+        'ingredient_formula_detail',
+        'item_id',
         'inventory',
         'brand'
     ]
@@ -91,5 +106,38 @@ def handle_get_components():
 
     return response
 
+
+def handle_post_components():
+    
+    # Clean the Request        
+    component = collect_form_data(request)
+    
+    # Post Component to Database
+    custom_response = CustomResponse()
+    
+    custom_response = cat.post_component(
+        custom_response,
+        component
+    )
+    
+    response = jsonify(custom_response.to_json())
+    response.status_code = custom_response.get_status_code()
+
+    return response
+
+def handle_put_components():
+    
+    # Clean the Request
+    
+    # Get Components from Database
+    custom_response = CustomResponse()
+    
+    response = jsonify(custom_response.to_json())
+    response.status_code = custom_response.get_status_code()
+
+    return response
+
+
 bp_cat = Blueprint('catalogue', __name__, url_prefix='/catalogue')
 bp_cat.register_blueprint(bp_comp)
+
