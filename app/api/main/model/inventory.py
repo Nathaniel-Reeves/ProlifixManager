@@ -16,7 +16,7 @@ class Components(Base):
     __table_args__ = {'schema': 'Inventory'}
     
     # Primary Key
-    component_id: Mapped[int] = mapped_column(primary_key=True)
+    component_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     
     # Relationsips
     item_id: Mapped[List["Item_id"]] = relationship()

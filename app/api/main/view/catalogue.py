@@ -128,9 +128,15 @@ def handle_post_components():
 def handle_put_components():
     
     # Clean the Request
+    component = collect_form_data(request)
     
     # Get Components from Database
     custom_response = CustomResponse()
+    
+    custom_response = cat.put_component(
+        custom_response,
+        component
+    )
     
     response = jsonify(custom_response.to_json())
     response.status_code = custom_response.get_status_code()

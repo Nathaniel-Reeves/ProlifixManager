@@ -36,6 +36,26 @@ def collect_form_data(request):
         dict: all form elements with file data.
     """
     form_data = dict(request.form)
+    for key, value in form_data.items():
+        if value == 'false':
+            form_data[key] = False
+            continue
+        if value == 'true':
+            form_data[key] = True
+            continue
+        if "." in value:
+            try:
+                form_data[key] = float(value)
+                continue
+            except ValueError:
+                None
+        else:
+            try:
+                form_data[key] = int(value)
+                continue
+            except ValueError:
+                None
+    
     file_data = dict(request.files)
     if "doc" in form_data.keys():
         doc = json.loads(form_data["doc"])

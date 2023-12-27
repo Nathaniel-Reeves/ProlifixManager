@@ -121,14 +121,46 @@ def post_component(
         component
     ):
     
+    
+    new_component = db.Components(
+        brand_id=component.get('brand_id'),
+        component_type=component.get('component_type'),
+        certified_usda_organic=component.get('certified_usda_organic'),
+        certified_halal=component.get('certified_halal'),
+        certified_kosher=component.get('certified_kosher'),
+        certified_gluten_free=component.get('certified_gluten_free'),
+        certified_national_sanitation_foundation=component.get('certified_national_sanitation_foundation'),
+        certified_us_pharmacopeia=component.get('certified_us_pharmacopeia'),
+        certified_non_gmo=component.get('certified_non_gmo'),
+        certified_vegan=component.get('certified_vegan'),
+        units=component.get('units'),
+        doc=component.get('doc') or {}
+    )
+    
+    # Connect to the database
+    try:
+        session = get_session()
+    except Exception:
+        error = error_message()
+        custom_response.insert_flash_message(error)
+        custom_response.set_status_code(500)
+        return custom_response
+        
+    # Execute the query
+    try:
+        session.add_all([new_component])
+        session.commit()
+    except Exception as e:
+        error = error_message()
+        print(e)
+        custom_response.insert_flash_message(error)
+        custom_response.set_status_code(500)
+        return custom_response
+    
+    session.close()
+    
 
-    if 'doc' in component.keys():
-        if "files" in component["doc"].keys() and len(component["doc"]["files"]) > 0:
-            for file in component["doc"]["files"].keys():
-                if 'file_obj' in component["doc"]["files"][file].keys():
-                    component["doc"]["files"][file].pop("file_obj")
-
-    new_component = component
+    new_component = remove_file_obj_in_doc(component)
     
     # Process and Package the data
     custom_response.insert_data(new_component)
@@ -139,3 +171,28 @@ def post_component(
     )
     custom_response.insert_flash_message(flash_message)
     return custom_response
+
+def put_component(
+        custom_response,
+        component
+    ):
+    
+    new_component = remove_file_obj_in_doc(component)
+    
+    # Process and Package the data
+    custom_response.insert_data(new_component)
+    custom_response.set_status_code(201)
+    flash_message = FlashMessage(
+        message_type=MessageType.SUCCESS, 
+        message="Component Added Successfully"
+    )
+    custom_response.insert_flash_message(flash_message)
+    return custom_response
+
+def remove_file_obj_in_doc(data):
+    if 'doc' in data.keys():
+        if "files" in data["doc"].keys() and len(data["doc"]["files"]) > 0:
+            for file in data["doc"]["files"].keys():
+                if 'file_obj' in data["doc"]["files"][file].keys():
+                    data["doc"]["files"][file].pop("file_obj")
+    return data
