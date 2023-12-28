@@ -355,7 +355,8 @@ def error_message():
     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
     dirname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[0]
     flash_message = FlashMessage(
-        message=str(exc_obj),
+        message=str(exc_type),
+        message_detail=str(exc_obj),
         debug_code=(
             f"Error:{exc_type} -> Dir: {dirname} -> File: {fname} -> Line: {exc_tb.tb_lineno}"),
         message_type=MessageType.DANGER

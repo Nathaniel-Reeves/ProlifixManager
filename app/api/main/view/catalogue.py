@@ -109,8 +109,24 @@ def handle_get_components():
 
 def handle_post_components():
     
-    # Clean the Request        
+    # Clean the Request
     component = collect_form_data(request)
+    
+    # Validate Request
+    required_keys = ["component_type", "brand_id", "units"]
+    flag = False
+    for key in required_keys:
+        if key not in component.keys():
+            flag = True
+        if not component.get(key):
+            flag = True
+    
+    if flag:
+        custom_response = CustomResponse()
+        custom_response.set_status_code(400)
+        response = jsonify(custom_response.to_json())
+        response.status_code = 400
+        return response
     
     # Post Component to Database
     custom_response = CustomResponse()

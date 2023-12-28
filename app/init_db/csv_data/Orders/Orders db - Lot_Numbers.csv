@@ -1,298 +1,657 @@
 prefix,year,month,sec_number,suffix,product_id,so_detail_id,target_unit_yield,actual_unit_yield,retentions,total_shippable_product,doc,batch_printed,bpr_printed,exp_date,exp_type
-,21,10,170,,37,1,5279,5553,NULL,NULL,"{""_id"": ""2110170"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,171,,37,1,5279,NULL,NULL,NULL,"{""_id"": ""2110171"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,173,,5,2,8,8,NULL,NULL,"{""_id"": ""2110173"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,174,,5,2,8,8,NULL,NULL,"{""_id"": ""2110174"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,175,,5,2,12,12,NULL,NULL,"{""_id"": ""2110175"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,176,,5,2,12,12,NULL,NULL,"{""_id"": ""2110176"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,177,,49,3,1530,1549,NULL,NULL,"{""_id"": ""2110177"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,178,,54,4,1523,1621,NULL,NULL,"{""_id"": ""2110178"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,179,,83,5,1000,1014,NULL,NULL,"{""_id"": ""2110179"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,180,,83,5,1000,1014,NULL,NULL,"{""_id"": ""2110180"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,181,,83,5,1000,1009,NULL,NULL,"{""_id"": ""2110181"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,182,,83,5,1000,1011,NULL,NULL,"{""_id"": ""2110182"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,183,,83,5,1000,1011,NULL,NULL,"{""_id"": ""2110183"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,184,BLOT 52,56,6,628,635,NULL,NULL,"{""_id"": ""2110184 BLOT 52"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,185,BLOT 53,56,6,628,633,NULL,NULL,"{""_id"": ""2110185 BLOT 53"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,186,BLOT 54,56,6,628,636,NULL,NULL,"{""_id"": ""2110186 BLOT 54"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,187,BLOT 55,56,6,628,636,NULL,NULL,"{""_id"": ""2110187 BLOT 55"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,188,BLOT 56,56,6,628,631,NULL,NULL,"{""_id"": ""2110188 BLOT 56"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,189,BLOT 57,56,6,628,633,NULL,NULL,"{""_id"": ""2110189 BLOT 57"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,190,BLOT 58,56,6,628,636,NULL,NULL,"{""_id"": ""2110190 BLOT 58"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,191,BLOT 59,56,6,564,569,NULL,NULL,"{""_id"": ""2110191 BLOT 59"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-(GPC),21,10,192,,75,7,NULL,NULL,NULL,NULL,"{""_id"": ""(GPC)2110192"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-(GPC),21,10,193,,75,7,NULL,NULL,NULL,NULL,"{""_id"": ""(GPC)2110193"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-(GPC),21,10,194,,75,7,NULL,NULL,NULL,NULL,"{""_id"": ""(GPC)2110194"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-(GPC),21,10,195,,75,7,NULL,NULL,NULL,NULL,"{""_id"": ""(GPC)2110195"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-(GPC),21,10,196,,75,7,NULL,NULL,NULL,NULL,"{""_id"": ""(GPC)2110196"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-(GPC),21,10,197,,56,8,NULL,NULL,NULL,NULL,"{""_id"": ""(GPC)2110197"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-(GPC),21,10,198,,56,8,NULL,NULL,NULL,NULL,"{""_id"": ""(GPC)2110198"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-(GPC),21,10,199,,56,8,NULL,NULL,NULL,NULL,"{""_id"": ""(GPC)2110199"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-(GPC),21,10,200,,83,9,NULL,NULL,NULL,NULL,"{""_id"": ""(GPC)2110200"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-(GPC),21,10,201,,83,9,NULL,NULL,NULL,NULL,"{""_id"": ""(GPC)2110201"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,202,BLOT 60,57,10,335,335,NULL,NULL,"{""_id"": ""2110202 BLOT 60"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,203,BLOT 61,57,10,335,335,NULL,NULL,"{""_id"": ""2110203 BLOT 61"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,204,BLOT 62,57,10,335,336,NULL,NULL,"{""_id"": ""2110204 BLOT 62"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,205,BLOT 63,57,10,335,335,NULL,NULL,"{""_id"": ""2110205 BLOT 63"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,206,BLOT 64,57,10,335,335,NULL,NULL,"{""_id"": ""2110206 BLOT 64"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,207,BLOT 65,57,10,335,336,NULL,NULL,"{""_id"": ""2110207 BLOT 65"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,208,BLOT 66,57,10,335,335,NULL,NULL,"{""_id"": ""2110208 BLOT 66"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,209,BLOT 67,57,10,335,335,NULL,NULL,"{""_id"": ""2110209 BLOT 67"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,210,BLOT 68,57,10,300,299,NULL,NULL,"{""_id"": ""2110210 BLOT 68"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,211,BLOT 69,67,11,357,358,NULL,NULL,"{""_id"": ""2110211 BLOT 69"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,212,,5,12,10,NULL,NULL,NULL,"{""_id"": ""2110212"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,213,,5,12,10,NULL,NULL,NULL,"{""_id"": ""2110213"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,214,,5,12,10,NULL,NULL,NULL,"{""_id"": ""2110214"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,10,215,,5,12,9,NULL,NULL,NULL,"{""_id"": ""2110215"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,11,216,,24,14,1000,1069,NULL,NULL,"{""_id"": ""2111216"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,11,217,,26,13,1000,1024,NULL,NULL,"{""_id"": ""2111217"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,11,218,BLOT 70,67,11,192,192,NULL,NULL,"{""_id"": ""2111218 BLOT 70"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,11,219,,46,16,129,130,NULL,NULL,"{""_id"": ""2111219"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,11,220,,45,15,NULL,1240,NULL,NULL,"{""_id"": ""2111220"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,11,221,,5,17,NULL,NULL,NULL,NULL,"{""_id"": ""2111221"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,11,222,,5,17,NULL,NULL,NULL,NULL,"{""_id"": ""2111222"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,11,223,,5,17,NULL,NULL,NULL,NULL,"{""_id"": ""2111223"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,11,224,,5,17,NULL,NULL,NULL,NULL,"{""_id"": ""2111224"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,11,225,Pixie,4,18,NULL,NULL,NULL,NULL,"{""_id"": ""2111225 Pixie"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,11,226,,5,19,12,NULL,NULL,NULL,"{""_id"": ""2111226"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,11,227,,5,19,10,NULL,NULL,NULL,"{""_id"": ""2111227"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,11,228,,5,19,10,NULL,NULL,NULL,"{""_id"": ""2111228"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,11,229,,5,20,1,NULL,NULL,NULL,"{""_id"": ""2111229"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,11,230,,5,20,1,NULL,NULL,NULL,"{""_id"": ""2111230"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,11,231,,5,20,1,NULL,NULL,NULL,"{""_id"": ""2111231"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,11,232,,110,21,3000,3001,NULL,NULL,"{""_id"": ""2111232"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,11,233,BLOT 71,67,11,955,950,NULL,NULL,"{""_id"": ""2111233 BLOT 71"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,11,234,,26,22,1005,1014,NULL,NULL,"{""_id"": ""2111234"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,235,,5,23,NULL,NULL,NULL,NULL,"{""_id"": ""2112235"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,236,,5,27,12,NULL,NULL,NULL,"{""_id"": ""2112236"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,237,,5,27,11,NULL,NULL,NULL,"{""_id"": ""2112237"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,238,,5,27,9,NULL,NULL,NULL,"{""_id"": ""2112238"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,239,,5,27,9,NULL,NULL,NULL,"{""_id"": ""2112239"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,240,,13,24,1002,1001,NULL,NULL,"{""_id"": ""2112240"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,241,,8,25,1020,1009,NULL,NULL,"{""_id"": ""2112241"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,242,,9,26,770,1243,NULL,NULL,"{""_id"": ""2112242"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,243,,9,26,1230,1243,NULL,NULL,"{""_id"": ""2112243"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,244,,5,28,10,NULL,NULL,NULL,"{""_id"": ""2112244"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,245,,5,28,11,NULL,NULL,NULL,"{""_id"": ""2112245"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,246,,5,28,10,NULL,NULL,NULL,"{""_id"": ""2112246"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,247,,5,28,11,NULL,NULL,NULL,"{""_id"": ""2112247"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,248,,40,29,2645,NULL,NULL,NULL,"{""_id"": ""2112248"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,249,,106,30,5000,NULL,NULL,NULL,"{""_id"": ""2112249"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,250,,106,30,5000,NULL,NULL,NULL,"{""_id"": ""2112250"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,251,,109,31,2005,2568,NULL,NULL,"{""_id"": ""2112251"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,252,,107,32,10000,NULL,NULL,NULL,"{""_id"": ""2112252"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,253,,5,33,10,NULL,NULL,NULL,"{""_id"": ""2112253"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,254,,5,33,10,NULL,NULL,NULL,"{""_id"": ""2112254"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,255,,5,33,12,NULL,NULL,NULL,"{""_id"": ""2112255"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,256,,5,33,12,NULL,NULL,NULL,"{""_id"": ""2112256"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,257,,5,33,10,NULL,NULL,NULL,"{""_id"": ""2112257"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,258,,30,35,15245,NULL,NULL,NULL,"{""_id"": ""2112258"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,21,12,259,,28,34,3400,3402,NULL,NULL,"{""_id"": ""2112259"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,001,,70,41,300,NULL,NULL,NULL,"{""_id"": ""2201001"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,002,BLOT 01,75,42,250,253,NULL,NULL,"{""_id"": ""2201002 BLOT 01"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,003,,52,37,251,NULL,NULL,NULL,"{""_id"": ""2201003"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,004,,55,38,250,262,NULL,NULL,"{""_id"": ""2201004"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,005,BLOT 02,66,40,300,302,NULL,NULL,"{""_id"": ""2201005 BLOT 02"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,006,,83,44,400,409,NULL,NULL,"{""_id"": ""2201006"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,007,BLOT 03,56,39,500,506,NULL,NULL,"{""_id"": ""2201007 BLOT 03"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,008,,5,45,10,NULL,NULL,NULL,"{""_id"": ""2201008"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,009,,5,45,10,NULL,NULL,NULL,"{""_id"": ""2201009"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,010,,5,45,11,NULL,NULL,NULL,"{""_id"": ""2201010"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,011,,5,45,11,NULL,NULL,NULL,"{""_id"": ""2201011"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,012,,5,45,2,NULL,NULL,NULL,"{""_id"": ""2201012"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-A,22,01,013,,27,46,2000,0,NULL,NULL,"{""_id"": ""A2201013"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-B,22,01,013,,27,46,NULL,NULL,NULL,NULL,"{""_id"": ""B2201013"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-C,22,01,013,,27,46,NULL,NULL,NULL,NULL,"{""_id"": ""C2201013"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-D,22,01,013,,27,46,NULL,NULL,NULL,NULL,"{""_id"": ""D2201013"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,014,,5,47,9,NULL,NULL,NULL,"{""_id"": ""2201014"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,015,,5,47,9,NULL,NULL,NULL,"{""_id"": ""2201015"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,016,,5,47,8,NULL,NULL,NULL,"{""_id"": ""2201016"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,017,,49,36,250,NULL,NULL,NULL,"{""_id"": ""2201017"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,018,,9,48,1000,1004,NULL,NULL,"{""_id"": ""2201018"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,019,,9,48,1000,1005,NULL,NULL,"{""_id"": ""2201019"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,020,,53,49,750,763,NULL,NULL,"{""_id"": ""2201020"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,021,,62,50,1000,1146,NULL,NULL,"{""_id"": ""2201021"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,022,,69,53,750,762,NULL,NULL,"{""_id"": ""2201022"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,023,,69,53,750,750,NULL,NULL,"{""_id"": ""2201023"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,024,,70,54,1250,1400,NULL,NULL,"{""_id"": ""2201024"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,025,,70,54,1250,1450,NULL,NULL,"{""_id"": ""2201025"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,026,,70,54,1250,1540,NULL,NULL,"{""_id"": ""2201026"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,027,,70,54,1250,950,NULL,NULL,"{""_id"": ""2201027"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,028,BLOT 04,75,55,313,313,NULL,NULL,"{""_id"": ""2201028 BLOT 04"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,029,BLOT 05,75,55,313,314,NULL,NULL,"{""_id"": ""2201029 BLOT 05"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,030,BLOT 06,75,55,313,314,NULL,NULL,"{""_id"": ""2201030 BLOT 06"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,031,BLOT 07,75,55,313,314,NULL,NULL,"{""_id"": ""2201031 BLOT 07"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,032,BLOT 08,75,55,313,315,NULL,NULL,"{""_id"": ""2201032 BLOT 08"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,033,BLOT 09,75,55,313,314,NULL,NULL,"{""_id"": ""2201033 BLOT 09"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,034,BLOT 10,75,55,313,313,NULL,NULL,"{""_id"": ""2201034 BLOT 10"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,035,BLOT 11,75,55,313,314,NULL,NULL,"{""_id"": ""2201035 BLOT 11"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,036,BLOT 12,66,51,5000,NULL,NULL,NULL,"{""_id"": ""2201036 BLOT 12"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,037,BLOT 13,67,52,5500,NULL,NULL,NULL,"{""_id"": ""2201037 BLOT 13"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,038,,34,56,1760,1722,NULL,NULL,"{""_id"": ""2201038"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,039,,5,58,12,NULL,NULL,NULL,"{""_id"": ""2201039"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,040,,5,58,9,NULL,NULL,NULL,"{""_id"": ""2201040"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,041,,23,57,2220,2225,NULL,NULL,"{""_id"": ""2201041"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,042,,5,59,7,NULL,NULL,NULL,"{""_id"": ""2201042"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,043,,5,59,7,NULL,NULL,NULL,"{""_id"": ""2201043"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,044,,5,59,9,NULL,NULL,NULL,"{""_id"": ""2201044"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,045,,5,59,9,NULL,NULL,NULL,"{""_id"": ""2201045"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,046,,5,59,8,NULL,NULL,NULL,"{""_id"": ""2201046"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,01,047,,5,59,4,NULL,NULL,NULL,"{""_id"": ""2201047"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,02,048,,37,60,3668,3530,NULL,NULL,"{""_id"": ""2202048"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,02,049,,37,60,3668,3566,NULL,NULL,"{""_id"": ""2202049"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,02,050,,37,60,3668,3623,NULL,NULL,"{""_id"": ""2202050"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,02,051,,47,61,2564,2553,NULL,NULL,"{""_id"": ""2202051"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,02,052,,5,62,12,NULL,NULL,NULL,"{""_id"": ""2202052"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,02,053,,5,62,12,NULL,NULL,NULL,"{""_id"": ""2202053"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,02,054,,5,62,8,NULL,NULL,NULL,"{""_id"": ""2202054"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,02,055,,5,62,8,NULL,NULL,NULL,"{""_id"": ""2202055"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,02,056,,5,62,9,NULL,NULL,NULL,"{""_id"": ""2202056"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,02,057,,5,62,9,NULL,NULL,NULL,"{""_id"": ""2202057"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,02,058,,80,63,550,549,NULL,NULL,"{""_id"": ""2202058"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,02,059,,5,64,10,NULL,NULL,NULL,"{""_id"": ""2202059"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,02,060,,5,64,10,NULL,NULL,NULL,"{""_id"": ""2202060"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,02,061,,5,64,10,NULL,NULL,NULL,"{""_id"": ""2202061"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,02,062,,5,64,10,NULL,NULL,NULL,"{""_id"": ""2202062"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,02,063,,99,65,1000,9966,NULL,NULL,"{""_id"": ""2202063"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,02,064,,93,66,1000,1011,NULL,NULL,"{""_id"": ""2202064"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,03,065,,5,67,10,10,NULL,NULL,"{""_id"": ""2203065"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,03,066,,5,67,10,10,NULL,NULL,"{""_id"": ""2203066"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,03,067,,5,67,10,10,NULL,NULL,"{""_id"": ""2203067"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,03,068,,5,67,10,10,NULL,NULL,"{""_id"": ""2203068"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,03,069,,97,68,1050,957,NULL,NULL,"{""_id"": ""2203069"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,03,070,,5,69,10,10,NULL,NULL,"{""_id"": ""2203070"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,03,071,,5,69,10,10,NULL,NULL,"{""_id"": ""2203071"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,03,072,,5,69,10,249,NULL,NULL,"{""_id"": ""2203072"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,03,073,,5,69,10,10,NULL,NULL,"{""_id"": ""2203073"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,03,074,,89,70,1700,1610,NULL,NULL,"{""_id"": ""2203074"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,04,075,,9,48,1000,1006,NULL,NULL,"{""_id"": ""2204075"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,04,076,,43,72,3000,3202,NULL,NULL,"{""_id"": ""2204076"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,04,077,,84,73,330,297,NULL,NULL,"{""_id"": ""2204077"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,04,078,,48,71,5000,5071,NULL,NULL,"{""_id"": ""2204078"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,04,079,,48,71,5000,5089,NULL,NULL,"{""_id"": ""2204079"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,04,080,,28,74,2700,2700,NULL,NULL,"{""_id"": ""2204080"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,05,081,,24,76,1000,1075,NULL,NULL,"{""_id"": ""2205081"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,05,082,,25,77,1000,1026,NULL,NULL,"{""_id"": ""2205082"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,05,083,,26,78,1000,1013,NULL,NULL,"{""_id"": ""2205083"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,06,084,,39,79,4000,3955,NULL,NULL,"{""_id"": ""2206084"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,06,085,,18,80,1000,1019,NULL,NULL,"{""_id"": ""2206085"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,06,086,,113,87,3000,NULL,NULL,NULL,"{""_id"": ""2206086"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,06,087,,2,81,1000,981,NULL,NULL,"{""_id"": ""2206087"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,06,088,,3,82,1000,964,NULL,NULL,"{""_id"": ""2206088"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,06,089,,90,88,2300,2275,NULL,NULL,"{""_id"": ""2206089"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,06,090,,42,89,3111,3195,NULL,NULL,"{""_id"": ""2206090"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,06,091,,7,84,379,375,NULL,NULL,"{""_id"": ""2206091"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,06,092,,7,84,512,506,NULL,NULL,"{""_id"": ""2206093"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,06,093,,7,84,512,507,NULL,NULL,"{""_id"": ""2206093"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,06,094,,46,91,225,222,NULL,NULL,"{""_id"": ""2206094"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,06,095,,45,92,1305,1303,NULL,NULL,"{""_id"": ""2206095"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,06,096,,48,93,5000,5177,NULL,NULL,"{""_id"": ""2206096"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,06,097,,48,93,5000,5022,NULL,NULL,"{""_id"": ""2206097"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,06,098,A,92,94,1500,NULL,NULL,NULL,"{""_id"": ""2206098A"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,07,099,,40,90,573,532,NULL,NULL,"{""_id"": ""2207099"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,07,100,,40,90,617,664,NULL,NULL,"{""_id"": ""2207100"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,07,101,,34,95,2434,2345,NULL,NULL,"{""_id"": ""2207101"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,06,098,B,92,94,1339,NULL,NULL,NULL,"{""_id"": ""2206098B"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,06,098,C,92,94,NULL,NULL,NULL,NULL,"{""_id"": ""2206098C"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,07,102,,85,96,1150,NULL,NULL,NULL,"{""_id"": ""2207102"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,07,103,,103,98,125,104,NULL,NULL,"{""_id"": ""2207103"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,07,104,,74,110,1000,1019,NULL,NULL,"{""_id"": ""2207104"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,07,105,,81,85,250,NULL,NULL,NULL,"{""_id"": ""2207105"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,07,106,,81,85,250,NULL,NULL,NULL,"{""_id"": ""2207106"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,07,107,,76,86,250,NULL,NULL,NULL,"{""_id"": ""2207107"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,07,108,,76,86,250,NULL,NULL,NULL,"{""_id"": ""2207108"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,07,109,,30,101,17310,NULL,NULL,NULL,"{""_id"": ""2207109"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,08,110,,112,102,3000,NULL,NULL,NULL,"{""_id"": ""2208110"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,08,111,,87,103,85,NULL,NULL,NULL,"{""_id"": ""2208111"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,08,112,,79,99,500,509,NULL,NULL,"{""_id"": ""2208112"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,08,113,,80,100,500,510,NULL,NULL,"{""_id"": ""2208113"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,08,114,,8,104,1000,1047,NULL,NULL,"{""_id"": ""2208114"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,08,115,,89,105,2000,1875,NULL,NULL,"{""_id"": ""2208115"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,08,116,,110,108,897,888,NULL,NULL,"{""_id"": ""2208116"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,08,117,,110,108,277,248,NULL,NULL,"{""_id"": ""2208117"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,08,118,,95,109,300,279,NULL,NULL,"{""_id"": ""2208118"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,09,119,,75,106,337,340,NULL,NULL,"{""_id"": ""2209119"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,09,120,,75,106,337,340,NULL,NULL,"{""_id"": ""2209120"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,09,121,,75,106,337,342,NULL,NULL,"{""_id"": ""2209121"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,09,122,,82,107,337,338,NULL,NULL,"{""_id"": ""2209122"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,09,123,,82,107,337,339,NULL,NULL,"{""_id"": ""2209123"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,09,124,,82,107,337,399,NULL,NULL,"{""_id"": ""2209124"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,09,125,,42,111,3111,3207,NULL,NULL,"{""_id"": ""2209125"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,09,126,,41,113,1250,1231,NULL,NULL,"{""_id"": ""2209126"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,09,127,,40,112,5700,NULL,NULL,NULL,"{""_id"": ""2209127"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,09,128,,9,114,748,744,NULL,NULL,"{""_id"": ""2209128"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,09,129,,9,115,792,784,NULL,NULL,"{""_id"": ""2209129"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,09,130,,9,116,1022,1022,NULL,NULL,"{""_id"": ""2209130"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,09,131,,43,117,5110,4620,NULL,NULL,"{""_id"": ""2209131"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,09,132,,99,118,800,775,NULL,NULL,"{""_id"": ""2209132"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,09,133,,56,120,450,455,NULL,NULL,"{""_id"": ""2209133"", ""production"":[{""process_name"": ""batch"",""start_datetime"": ""2022-10-04 11:00:00"",""end_datetime"": ""2022-10-04 14:15:00"",""end_reason"": ""finished"",""duration"": ""3:15:00"",""user_ids"": [5,8],""batch_target_kilos"": 197.03,""batch_upper_tolerance"":198.29,""batch_lower_tolerance"":195.71,""batch_actual_kilos"":197.35,""difference_kilos"":-0.32,""percent_difference"":0.16,""batched_overage_kilos"": 3.53,""batched_overage_percent"": 1.79,""float_of_barrels"":2.0,""barrel_breakdown"":[{""barrel_number"":1,""gross_kilos"":109.95,""tare_kilos"":8.90,""net_kilos"":101.05},{""barrel_number"":2,""gross_kilos"":105.35,""tare_kilos"":9.05,""net_kilos"":96.30}]},{""process_name"": ""screen"",""start_datetime"": ""2022-10-04 18:15:00"",""end_datetime"": ""2022-10-04 18:40:00"",""end_reason"": ""finished"",""duration"": ""0:25:00"",""user_ids"": [7],""mesh_size"":""60"",""starting_kilos"":197.35, ""screen_upper_tolerance"":198.29,""screen_lower_tolerance"":195.71, ""screen_actual_kilos"":197.25,""difference_kilos"":"""",""percent_difference"":"""",""float_of_barrels"":1.75,""barrel_breakdown"":[]},{""process_name"": ""grind"",""start_datetime"": ""2022-10-04 18:50:00"",""end_datetime"": ""2022-10-04 19:35:00"",""end_reason"": ""finished"",""duration"": ""0:45:00"",""user_ids"": [7],""starting_kilos"":"""",""grind_upper_tolerance"":"""",""grind_lower_tolerance"":"""",""grind_actual_kilos"":"""",""difference_kilos"": """",""percent_difference"": """",""float_of_barrels"": 0.25,""barrel_breakdown"": []},{""process_name"": ""screen"",""start_datetime"": ""2022-10-04 19:40:00"",""end_datetime"": ""2022-10-04 19:50:00"",""end_reason"": ""finished"",""duration"": ""0:10:00"",""user_ids"": [7],""mesh_size"":""60"",""starting_kilos"":197.35, ""screen_upper_tolerance"":198.29,""screen_lower_tolerance"":195.71, ""screen_actual_kilos"":197.25,""difference_kilos"":0.1,""percent_difference"":0.05,""float_of_barrels"":0.25,""barrel_breakdown"":[{""barrel_number"":1,""gross_kilos"":106.45,""tare_kilos"":8.90,""net_kilos"":97.55},{""barrel_number"":2,""gross_kilos"":108.75,""tare_kilos"":9.05,""net_kilos"":99.70}]},{""process_name"": ""blend"",""start_datetime"": ""2022-10-12 10:10:00"",""end_datetime"": ""2022-10-12 11:00:00"",""end_reason"": ""finished"",""duration"": ""0:50:00"",""user_ids"": [7],""blend_durration"":""00:20:00"",""starting_kilos"":197.10, ""blend_upper_tolerance"":198.29,""blend_lower_tolerance"":195.71, ""blend_actual_kilos"":197.1,""difference_kilos"":0.15,""percent_difference"":0.07,""float_of_barrels"":2.0,""barrel_breakdown"":[{""barrel_number"":1,""gross_kilos"":115.25,""tare_kilos"":8.90,""net_kilos"":106.35},{""barrel_number"":2,""gross_kilos"":99.80,""tare_kilos"":9.05,""net_kilos"":90.75}]},{""process_name"": ""powder_fill_pouch"",""start_datetime"": ""2022-10-24 11:15:00"",""end_datetime"": ""2022-10-24 12:30:00"",""end_reason"": ""lunch"",""duration"": ""1:15:00"",""user_ids"": [6,5,8,9,10],""pouch_id"": """",""scoop_id"": """",""dessicant_id"": """",""kilos_filled"": 134.16,""target_fill_grams"": 430,""target_min_grams"": 428,""target_max_grams"": 432,""sample_average_grams"": 430,""target_units_filled"":450, ""units_filled_upper_tolerance"":460,""units_filled_lower_tolerance"":453 ,""units_filled"": 312},{""process_name"": ""label"",""start_datetime"": ""2022-10-24 11:15:00"",""end_datetime"": ""2022-10-24 12:30:00"",""end_reason"": ""lunch"",""duration"": ""1:15:00"",""user_ids"": [6,5,8,9,10],""label_id"": """",""sticker_id"": """",""exp_date"": """",""best_by_date"": """",""lot_date_placement"": """",""labels_pulled_from_inventory"": """",""labels_used"": """",""labels_returned"": """",""labels_destroyed"": """"}, {""process_name"": ""package"",""start_datetime"": ""2022-10-24 11:15:00"",""end_datetime"": ""2022-10-24 12:30:00"",""end_reason"": ""lunch"",""duration"": ""1:15:00"",""user_ids"": [6,5,8,9,10],""individual_packaging_components"": []},{""process_name"": ""palletize"",""start_datetime"": ""2022-10-24 11:15:00"",""end_datetime"": ""2022-10-24 12:30:00"",""end_reason"": ""lunch"",""duration"": ""1:15:00"",""user_ids"": [6,5,8,9,10],""shipping_stickers"": 0,""box_id"": """",""new_box"": 1,""used_box"": 0,""pack_count"": """",""pallet_height"": """",""boxes_per_pallet"": """"},{""process_name"": ""powder_fill_pouch"",""start_datetime"": ""2022-10-24 13:00:00"",""end_datetime"": ""2022-10-24 13:50:00"",""end_reason"": ""finished"",""duration"": ""0:50:00"",""user_ids"": [6,5,8,9],""pouch_id"": """",""scoop_id"": """",""dessicant_id"": """",""kilos_filled"": 61.92,""target_fill_grams"": 430,""target_min_grams"": 428,""target_max_grams"": 432,""sample_average_grams"": 429,""target_units_filled"":450, ""units_filled_upper_tolerance"":460,""units_filled_lower_tolerance"":453 ,""units_filled"": 144}, {""process_name"": ""label"",""start_datetime"": ""2022-10-24 13:00:00"",""end_datetime"": ""2022-10-24 13:50:00"",""end_reason"": ""finished"",""duration"": ""0:50:00"",""user_ids"": [6,5,8,9],""label_id"": """",""sticker_id"": """",""exp_date"": """",""best_by_date"": """",""lot_date_placement"": """",""labels_pulled_from_inventory"": """",""labels_used"": """",""labels_returned"": """",""labels_destroyed"": """"}, {""process_name"": ""package"",""start_datetime"": ""2022-10-24 13:00:00"",""end_datetime"": ""2022-10-24 13:50:00"",""end_reason"": ""finished"",""duration"": ""0:50:00"",""user_ids"": [6,5,8,9],""individual_packaging_components"": []},{""process_name"": ""palletize"",""start_datetime"": ""2022-10-24 13:00:00"",""end_datetime"": ""2022-10-24 13:50:00"",""end_reason"": ""finished"",""duration"": ""0:50:00"",""user_ids"": [6,5,8,9],""shipping_stickers"": 0,""box_id"": """",""new_box"": 1,""used_box"": 0,""pack_count"": """",""pallet_height"": """",""boxes_per_pallet"": """"} ], ""qc"": [{""test_type"": ""microbiological"",""lab_id"":"""",""required_spec"": 1,""date_sample_sent"":""2022-10-12"",""date_results_recived"":""2022-10-17"",""file_pointer"": """",""tests"": {""total_plate_count"": {""required_spec"": 1,""method"": ""USP <2021>"",""count"": 930000,""units"": ""cfu/g"",""less_than"": 0},""coliform_count"": {""required_spec"": 1,""method"": ""AOAC 991.14"",""summary"":"""",""count"": 5000,""units"": ""cfu/g"",""less_than"": 0}},""escherichia_coli_count"": {""required_spec"": 1,""method"": ""USP <2022>"",""summary"":""Absent"",""count"": 0,""units"": ""cfu/10g"",""less_than"": 0},""staphylococcus_count"": {""required_spec"": 1,""method"": ""USP <2022>"",""summary"":""Absent"",""count"": 0,""units"": ""cfu/10g"",""less_than"": 0},""salmonella_count"": {""required_spec"": 1,""method"": ""USP <2022>"",""summary"":""Absent"",""count"": 0,""units"": ""cfu/10g"",""less_than"": 0},""yeast_count"": {""required_spec"": 1,""method"": ""USP <2021>"",""summary"":""None Detected"",""count"": 0,""units"": ""cfu/g"",""less_than"": 0},""mold_count"": {""required_spec"": 1,""method"": ""USP <2021>"",""summary"":"""",""count"": ""400"",""units"": ""cfu/g"",""less_than"": 0}}, {""test_type"":""organoleptic"",""date_sample_sent"":""2022-10-22"",""date_results_recived"":""2022-10-22"",""qc_member_id"":1,""tests"":{""visual"":{""standard"":""Green"",""sample_status"":""pass"",""notes"":""""}, ""odor"":{""standard"":""Herbal"",""sample_status"":""pass"",""notes"":""""} , ""dry_taste"":{""standard"":""Sweet Herbal"",""sample_status"":""pass"",""notes"":""""} , ""dissolved_taste"":{""standard"":""Sweet Herbal"",""sample_status"":""pass"",""notes"":""""}  , ""texture"":{""standard"":""Fine"",""sample_status"":""pass"",""notes"":""""} }}]}",1,1,NULL,NULL
-,22,09,134,,83,121,400,405,NULL,NULL,"{""_id"": ""2209134"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,09,135,,92,122,1000,NULL,NULL,NULL,"{""_id"": ""2209135"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,09,136,,14,123,1000,NULL,NULL,NULL,"{""_id"": ""2209136"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,09,137,,15,124,1000,NULL,NULL,NULL,"{""_id"": ""2209137"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,138,,70,119,NULL,NULL,NULL,NULL,"{""_id"": ""2210138"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,139,,73,125,1000,NULL,NULL,NULL,"{""_id"": ""2210139"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,140,,44,126,NULL,NULL,NULL,NULL,"{""_id"": ""2210140"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,141,,50,127,1000,NULL,NULL,NULL,"{""_id"": ""2210141"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,142,,51,128,1000,NULL,NULL,NULL,"{""_id"": ""2210142"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,143,,56,129,631,NULL,NULL,NULL,"{""_id"": ""2210143"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,144,,56,129,631,NULL,NULL,NULL,"{""_id"": ""2210144"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,145,,56,129,631,NULL,NULL,NULL,"{""_id"": ""2210145"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,146,,56,129,631,NULL,NULL,NULL,"{""_id"": ""2210146"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,147,,56,129,631,NULL,NULL,NULL,"{""_id"": ""2210147"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,148,,56,129,631,NULL,NULL,NULL,"{""_id"": ""2210148"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,149,,56,129,631,NULL,NULL,NULL,"{""_id"": ""2210149"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,150,,56,129,500,NULL,NULL,NULL,"{""_id"": ""2210150"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,151,,72,130,750,NULL,NULL,NULL,"{""_id"": ""2210151"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,152,,83,131,835,NULL,NULL,NULL,"{""_id"": ""2210152"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,153,,83,131,835,NULL,NULL,NULL,"{""_id"": ""2210153"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,154,,83,131,835,NULL,NULL,NULL,"{""_id"": ""2210154"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,155,,83,131,835,NULL,NULL,NULL,"{""_id"": ""2210155"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,156,,83,131,835,NULL,NULL,NULL,"{""_id"": ""2210156"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,157,,83,131,775,NULL,NULL,NULL,"{""_id"": ""2210157"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,158,,68,132,1000,NULL,NULL,NULL,"{""_id"": ""2210158"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,159,,90,133,NULL,NULL,NULL,NULL,"{""_id"": ""2210159"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,160,,111,134,3000,NULL,NULL,NULL,"{""_id"": ""2210160"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,161,,107,135,2500,NULL,NULL,NULL,"{""_id"": ""2210161"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,162,,97,136,NULL,NULL,NULL,NULL,"{""_id"": ""2210162"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,163,,30,139,17310,NULL,NULL,NULL,"{""_id"": ""2210163"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,10,164,,28,140,NULL,NULL,NULL,NULL,"{""_id"": ""2210164"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,11,165,,85,137,800,NULL,NULL,NULL,"{""_id"": ""2211165"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,11,166,,91,138,1000,NULL,NULL,NULL,"{""_id"": ""2211166"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,11,167,,88,141,2000,NULL,NULL,NULL,"{""_id"": ""2211167"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,11,168,,99,142,500,NULL,NULL,NULL,"{""_id"": ""2211168"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,11,169,,108,143,3000,NULL,NULL,NULL,"{""_id"": ""2211169"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,11,170,,104,144,150,NULL,NULL,NULL,"{""_id"": ""2211170"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,12,171,,96,146,363,NULL,NULL,NULL,"{""_id"": ""2212171"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,12,172,,80,147,670,NULL,NULL,NULL,"{""_id"": ""2212172"", ""production"": [], ""lab_results"": []}",0,0,NULL,NULL
-,22,12,173,,80,147,670,NULL,NULL,NULL,"{""_id"": ""2212173"", ""production"": [], ""lab_results"": []}",0,0,NULL,NULL
-,22,12,174,,80,147,670,NULL,NULL,NULL,"{""_id"": ""2212174"", ""production"": [], ""lab_results"": []}",0,0,NULL,NULL
-,22,12,175,,75,148,302,NULL,NULL,NULL,"{""_id"": ""2212175"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,12,176,,75,148,302,NULL,NULL,NULL,"{""_id"": ""2212176"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,12,177,,75,148,302,NULL,NULL,NULL,"{""_id"": ""2212177"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,12,178,,75,148,302,NULL,NULL,NULL,"{""_id"": ""2212178"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,12,179,,75,148,302,NULL,NULL,NULL,"{""_id"": ""2212179"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,12,180,,82,149,302,NULL,NULL,NULL,"{""_id"": ""2212180"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,12,181,,82,149,302,NULL,NULL,NULL,"{""_id"": ""2212181"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,12,182,,82,149,302,NULL,NULL,NULL,"{""_id"": ""2212182"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,12,183,,82,149,302,NULL,NULL,NULL,"{""_id"": ""2212183"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,12,184,,82,149,302,NULL,NULL,NULL,"{""_id"": ""2212184"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,12,185,,107,32,2500,NULL,NULL,NULL,"{""_id"": ""2212185"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,12,186,,98,150,125,NULL,NULL,NULL,"{""_id"": ""2212186"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,12,187,,105,151,267,NULL,NULL,NULL,"{""_id"": ""2212187"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,12,188,,29,152,275,NULL,NULL,NULL,"{""_id"": ""2212188"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,12,189,,31,153,1100,NULL,NULL,NULL,"{""_id"": ""2212189"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,12,190,,9,154,1000,NULL,NULL,NULL,"{""_id"": ""2212190"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,22,12,191,,9,154,1000,NULL,NULL,NULL,"{""_id"": ""2212191"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,23,01,001,,19,156,564,NULL,NULL,NULL,"{""_id"": ""2301001"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,23,01,002,,19,156,693,NULL,NULL,NULL,"{""_id"": ""2301002"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,23,01,003,,19,156,851,NULL,NULL,NULL,"{""_id"": ""2301003"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,23,01,004,,33,157,NULL,NULL,NULL,NULL,"{""_id"": ""2301004"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,23,01,005,,28,158,NULL,NULL,NULL,NULL,"{""_id"": ""2301005"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,23,01,006,,30,159,NULL,NULL,NULL,NULL,"{""_id"": ""2301006"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,23,01,007,,26,160,1000,NULL,NULL,NULL,"{""_id"": ""2301007"", ""production"": [], ""lab_results"": []}",0,0,NULL,NULL
-,23,01,008,,11,161,1000,NULL,NULL,NULL,"{""_id"": ""2302009"", ""production"": [], ""lab_results"": []}",0,0,NULL,NULL
-,23,02,009,,38,162,1333,NULL,NULL,NULL,"{""_id"": ""2302009"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,23,02,010,,29,164,430,NULL,NULL,NULL,"{""_id"": ""2302010"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,23,02,011,,31,163,1370,NULL,NULL,NULL,"{""_id"": ""2302011"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
-,23,02,012,,35,155,1333,NULL,NULL,NULL,"{""_id"": ""2302012"", ""production"": [], ""lab_results"": []}",1,1,NULL,NULL
+,21,10,170,,37,1,5279,5553,NULL,NULL,"{""_id"": ""2110170"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,171,,37,1,5279,NULL,NULL,NULL,"{""_id"": ""2110171"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,173,,5,2,8,8,NULL,NULL,"{""_id"": ""2110173"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,174,,5,2,8,8,NULL,NULL,"{""_id"": ""2110174"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,175,,5,2,12,12,NULL,NULL,"{""_id"": ""2110175"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,176,,5,2,12,12,NULL,NULL,"{""_id"": ""2110176"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,177,,49,3,1530,1549,NULL,NULL,"{""_id"": ""2110177"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,178,,54,4,1523,1621,NULL,NULL,"{""_id"": ""2110178"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,179,,83,5,1000,1014,NULL,NULL,"{""_id"": ""2110179"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,180,,83,5,1000,1014,NULL,NULL,"{""_id"": ""2110180"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,181,,83,5,1000,1009,NULL,NULL,"{""_id"": ""2110181"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,182,,83,5,1000,1011,NULL,NULL,"{""_id"": ""2110182"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,183,,83,5,1000,1011,NULL,NULL,"{""_id"": ""2110183"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,184,BLOT 52,56,6,628,635,NULL,NULL,"{""_id"": ""2110184 BLOT 52"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,185,BLOT 53,56,6,628,633,NULL,NULL,"{""_id"": ""2110185 BLOT 53"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,186,BLOT 54,56,6,628,636,NULL,NULL,"{""_id"": ""2110186 BLOT 54"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,187,BLOT 55,56,6,628,636,NULL,NULL,"{""_id"": ""2110187 BLOT 55"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,188,BLOT 56,56,6,628,631,NULL,NULL,"{""_id"": ""2110188 BLOT 56"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,189,BLOT 57,56,6,628,633,NULL,NULL,"{""_id"": ""2110189 BLOT 57"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,190,BLOT 58,56,6,628,636,NULL,NULL,"{""_id"": ""2110190 BLOT 58"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,191,BLOT 59,56,6,564,569,NULL,NULL,"{""_id"": ""2110191 BLOT 59"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+(GPC),21,10,192,,75,7,NULL,NULL,NULL,NULL,"{""_id"": ""(GPC)2110192"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+(GPC),21,10,193,,75,7,NULL,NULL,NULL,NULL,"{""_id"": ""(GPC)2110193"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+(GPC),21,10,194,,75,7,NULL,NULL,NULL,NULL,"{""_id"": ""(GPC)2110194"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+(GPC),21,10,195,,75,7,NULL,NULL,NULL,NULL,"{""_id"": ""(GPC)2110195"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+(GPC),21,10,196,,75,7,NULL,NULL,NULL,NULL,"{""_id"": ""(GPC)2110196"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+(GPC),21,10,197,,56,8,NULL,NULL,NULL,NULL,"{""_id"": ""(GPC)2110197"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+(GPC),21,10,198,,56,8,NULL,NULL,NULL,NULL,"{""_id"": ""(GPC)2110198"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+(GPC),21,10,199,,56,8,NULL,NULL,NULL,NULL,"{""_id"": ""(GPC)2110199"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+(GPC),21,10,200,,83,9,NULL,NULL,NULL,NULL,"{""_id"": ""(GPC)2110200"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+(GPC),21,10,201,,83,9,NULL,NULL,NULL,NULL,"{""_id"": ""(GPC)2110201"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,202,BLOT 60,57,10,335,335,NULL,NULL,"{""_id"": ""2110202 BLOT 60"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,203,BLOT 61,57,10,335,335,NULL,NULL,"{""_id"": ""2110203 BLOT 61"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,204,BLOT 62,57,10,335,336,NULL,NULL,"{""_id"": ""2110204 BLOT 62"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,205,BLOT 63,57,10,335,335,NULL,NULL,"{""_id"": ""2110205 BLOT 63"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,206,BLOT 64,57,10,335,335,NULL,NULL,"{""_id"": ""2110206 BLOT 64"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,207,BLOT 65,57,10,335,336,NULL,NULL,"{""_id"": ""2110207 BLOT 65"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,208,BLOT 66,57,10,335,335,NULL,NULL,"{""_id"": ""2110208 BLOT 66"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,209,BLOT 67,57,10,335,335,NULL,NULL,"{""_id"": ""2110209 BLOT 67"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,210,BLOT 68,57,10,300,299,NULL,NULL,"{""_id"": ""2110210 BLOT 68"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,211,BLOT 69,67,11,357,358,NULL,NULL,"{""_id"": ""2110211 BLOT 69"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,212,,5,12,10,NULL,NULL,NULL,"{""_id"": ""2110212"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,213,,5,12,10,NULL,NULL,NULL,"{""_id"": ""2110213"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,214,,5,12,10,NULL,NULL,NULL,"{""_id"": ""2110214"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,10,215,,5,12,9,NULL,NULL,NULL,"{""_id"": ""2110215"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,11,216,,24,14,1000,1069,NULL,NULL,"{""_id"": ""2111216"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,11,217,,26,13,1000,1024,NULL,NULL,"{""_id"": ""2111217"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,11,218,BLOT 70,67,11,192,192,NULL,NULL,"{""_id"": ""2111218 BLOT 70"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,11,219,,46,16,129,130,NULL,NULL,"{""_id"": ""2111219"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,11,220,,45,15,NULL,1240,NULL,NULL,"{""_id"": ""2111220"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,11,221,,5,17,NULL,NULL,NULL,NULL,"{""_id"": ""2111221"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,11,222,,5,17,NULL,NULL,NULL,NULL,"{""_id"": ""2111222"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,11,223,,5,17,NULL,NULL,NULL,NULL,"{""_id"": ""2111223"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,11,224,,5,17,NULL,NULL,NULL,NULL,"{""_id"": ""2111224"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,11,225,Pixie,4,18,NULL,NULL,NULL,NULL,"{""_id"": ""2111225 Pixie"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,11,226,,5,19,12,NULL,NULL,NULL,"{""_id"": ""2111226"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,11,227,,5,19,10,NULL,NULL,NULL,"{""_id"": ""2111227"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,11,228,,5,19,10,NULL,NULL,NULL,"{""_id"": ""2111228"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,11,229,,5,20,1,NULL,NULL,NULL,"{""_id"": ""2111229"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,11,230,,5,20,1,NULL,NULL,NULL,"{""_id"": ""2111230"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,11,231,,5,20,1,NULL,NULL,NULL,"{""_id"": ""2111231"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,11,232,,110,21,3000,3001,NULL,NULL,"{""_id"": ""2111232"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,11,233,BLOT 71,67,11,955,950,NULL,NULL,"{""_id"": ""2111233 BLOT 71"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,11,234,,26,22,1005,1014,NULL,NULL,"{""_id"": ""2111234"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,235,,5,23,NULL,NULL,NULL,NULL,"{""_id"": ""2112235"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,236,,5,27,12,NULL,NULL,NULL,"{""_id"": ""2112236"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,237,,5,27,11,NULL,NULL,NULL,"{""_id"": ""2112237"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,238,,5,27,9,NULL,NULL,NULL,"{""_id"": ""2112238"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,239,,5,27,9,NULL,NULL,NULL,"{""_id"": ""2112239"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,240,,13,24,1002,1001,NULL,NULL,"{""_id"": ""2112240"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,241,,8,25,1020,1009,NULL,NULL,"{""_id"": ""2112241"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,242,,9,26,770,1243,NULL,NULL,"{""_id"": ""2112242"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,243,,9,26,1230,1243,NULL,NULL,"{""_id"": ""2112243"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,244,,5,28,10,NULL,NULL,NULL,"{""_id"": ""2112244"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,245,,5,28,11,NULL,NULL,NULL,"{""_id"": ""2112245"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,246,,5,28,10,NULL,NULL,NULL,"{""_id"": ""2112246"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,247,,5,28,11,NULL,NULL,NULL,"{""_id"": ""2112247"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,248,,40,29,2645,NULL,NULL,NULL,"{""_id"": ""2112248"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,249,,106,30,5000,NULL,NULL,NULL,"{""_id"": ""2112249"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,250,,106,30,5000,NULL,NULL,NULL,"{""_id"": ""2112250"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,251,,109,31,2005,2568,NULL,NULL,"{""_id"": ""2112251"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,252,,107,32,10000,NULL,NULL,NULL,"{""_id"": ""2112252"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,253,,5,33,10,NULL,NULL,NULL,"{""_id"": ""2112253"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,254,,5,33,10,NULL,NULL,NULL,"{""_id"": ""2112254"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,255,,5,33,12,NULL,NULL,NULL,"{""_id"": ""2112255"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,256,,5,33,12,NULL,NULL,NULL,"{""_id"": ""2112256"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,257,,5,33,10,NULL,NULL,NULL,"{""_id"": ""2112257"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,258,,30,35,15245,NULL,NULL,NULL,"{""_id"": ""2112258"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,21,12,259,,28,34,3400,3402,NULL,NULL,"{""_id"": ""2112259"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,001,,70,41,300,NULL,NULL,NULL,"{""_id"": ""2201001"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,002,BLOT 01,75,42,250,253,NULL,NULL,"{""_id"": ""2201002 BLOT 01"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,003,,52,37,251,NULL,NULL,NULL,"{""_id"": ""2201003"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,004,,55,38,250,262,NULL,NULL,"{""_id"": ""2201004"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,005,BLOT 02,66,40,300,302,NULL,NULL,"{""_id"": ""2201005 BLOT 02"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,006,,83,44,400,409,NULL,NULL,"{""_id"": ""2201006"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,007,BLOT 03,56,39,500,506,NULL,NULL,"{""_id"": ""2201007 BLOT 03"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,008,,5,45,10,NULL,NULL,NULL,"{""_id"": ""2201008"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,009,,5,45,10,NULL,NULL,NULL,"{""_id"": ""2201009"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,010,,5,45,11,NULL,NULL,NULL,"{""_id"": ""2201010"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,011,,5,45,11,NULL,NULL,NULL,"{""_id"": ""2201011"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,012,,5,45,2,NULL,NULL,NULL,"{""_id"": ""2201012"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+A,22,01,013,,27,46,2000,0,NULL,NULL,"{""_id"": ""A2201013"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+B,22,01,013,,27,46,NULL,NULL,NULL,NULL,"{""_id"": ""B2201013"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+C,22,01,013,,27,46,NULL,NULL,NULL,NULL,"{""_id"": ""C2201013"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+D,22,01,013,,27,46,NULL,NULL,NULL,NULL,"{""_id"": ""D2201013"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,014,,5,47,9,NULL,NULL,NULL,"{""_id"": ""2201014"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,015,,5,47,9,NULL,NULL,NULL,"{""_id"": ""2201015"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,016,,5,47,8,NULL,NULL,NULL,"{""_id"": ""2201016"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,017,,49,36,250,NULL,NULL,NULL,"{""_id"": ""2201017"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,018,,9,48,1000,1004,NULL,NULL,"{""_id"": ""2201018"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,019,,9,48,1000,1005,NULL,NULL,"{""_id"": ""2201019"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,020,,53,49,750,763,NULL,NULL,"{""_id"": ""2201020"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,021,,62,50,1000,1146,NULL,NULL,"{""_id"": ""2201021"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,022,,69,53,750,762,NULL,NULL,"{""_id"": ""2201022"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,023,,69,53,750,750,NULL,NULL,"{""_id"": ""2201023"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,024,,70,54,1250,1400,NULL,NULL,"{""_id"": ""2201024"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,025,,70,54,1250,1450,NULL,NULL,"{""_id"": ""2201025"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,026,,70,54,1250,1540,NULL,NULL,"{""_id"": ""2201026"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,027,,70,54,1250,950,NULL,NULL,"{""_id"": ""2201027"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,028,BLOT 04,75,55,313,313,NULL,NULL,"{""_id"": ""2201028 BLOT 04"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,029,BLOT 05,75,55,313,314,NULL,NULL,"{""_id"": ""2201029 BLOT 05"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,030,BLOT 06,75,55,313,314,NULL,NULL,"{""_id"": ""2201030 BLOT 06"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,031,BLOT 07,75,55,313,314,NULL,NULL,"{""_id"": ""2201031 BLOT 07"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,032,BLOT 08,75,55,313,315,NULL,NULL,"{""_id"": ""2201032 BLOT 08"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,033,BLOT 09,75,55,313,314,NULL,NULL,"{""_id"": ""2201033 BLOT 09"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,034,BLOT 10,75,55,313,313,NULL,NULL,"{""_id"": ""2201034 BLOT 10"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,035,BLOT 11,75,55,313,314,NULL,NULL,"{""_id"": ""2201035 BLOT 11"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,036,BLOT 12,66,51,5000,NULL,NULL,NULL,"{""_id"": ""2201036 BLOT 12"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,037,BLOT 13,67,52,5500,NULL,NULL,NULL,"{""_id"": ""2201037 BLOT 13"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,038,,34,56,1760,1722,NULL,NULL,"{""_id"": ""2201038"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,039,,5,58,12,NULL,NULL,NULL,"{""_id"": ""2201039"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,040,,5,58,9,NULL,NULL,NULL,"{""_id"": ""2201040"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,041,,23,57,2220,2225,NULL,NULL,"{""_id"": ""2201041"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,042,,5,59,7,NULL,NULL,NULL,"{""_id"": ""2201042"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,043,,5,59,7,NULL,NULL,NULL,"{""_id"": ""2201043"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,044,,5,59,9,NULL,NULL,NULL,"{""_id"": ""2201044"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,045,,5,59,9,NULL,NULL,NULL,"{""_id"": ""2201045"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,046,,5,59,8,NULL,NULL,NULL,"{""_id"": ""2201046"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,01,047,,5,59,4,NULL,NULL,NULL,"{""_id"": ""2201047"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,02,048,,37,60,3668,3530,NULL,NULL,"{""_id"": ""2202048"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,02,049,,37,60,3668,3566,NULL,NULL,"{""_id"": ""2202049"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,02,050,,37,60,3668,3623,NULL,NULL,"{""_id"": ""2202050"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,02,051,,47,61,2564,2553,NULL,NULL,"{""_id"": ""2202051"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,02,052,,5,62,12,NULL,NULL,NULL,"{""_id"": ""2202052"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,02,053,,5,62,12,NULL,NULL,NULL,"{""_id"": ""2202053"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,02,054,,5,62,8,NULL,NULL,NULL,"{""_id"": ""2202054"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,02,055,,5,62,8,NULL,NULL,NULL,"{""_id"": ""2202055"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,02,056,,5,62,9,NULL,NULL,NULL,"{""_id"": ""2202056"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,02,057,,5,62,9,NULL,NULL,NULL,"{""_id"": ""2202057"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,02,058,,80,63,550,549,NULL,NULL,"{""_id"": ""2202058"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,02,059,,5,64,10,NULL,NULL,NULL,"{""_id"": ""2202059"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,02,060,,5,64,10,NULL,NULL,NULL,"{""_id"": ""2202060"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,02,061,,5,64,10,NULL,NULL,NULL,"{""_id"": ""2202061"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,02,062,,5,64,10,NULL,NULL,NULL,"{""_id"": ""2202062"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,02,063,,99,65,1000,9966,NULL,NULL,"{""_id"": ""2202063"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,02,064,,93,66,1000,1011,NULL,NULL,"{""_id"": ""2202064"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,03,065,,5,67,10,10,NULL,NULL,"{""_id"": ""2203065"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,03,066,,5,67,10,10,NULL,NULL,"{""_id"": ""2203066"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,03,067,,5,67,10,10,NULL,NULL,"{""_id"": ""2203067"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,03,068,,5,67,10,10,NULL,NULL,"{""_id"": ""2203068"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,03,069,,97,68,1050,957,NULL,NULL,"{""_id"": ""2203069"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,03,070,,5,69,10,10,NULL,NULL,"{""_id"": ""2203070"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,03,071,,5,69,10,10,NULL,NULL,"{""_id"": ""2203071"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,03,072,,5,69,10,249,NULL,NULL,"{""_id"": ""2203072"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,03,073,,5,69,10,10,NULL,NULL,"{""_id"": ""2203073"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,03,074,,89,70,1700,1610,NULL,NULL,"{""_id"": ""2203074"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,04,075,,9,48,1000,1006,NULL,NULL,"{""_id"": ""2204075"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,04,076,,43,72,3000,3202,NULL,NULL,"{""_id"": ""2204076"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,04,077,,84,73,330,297,NULL,NULL,"{""_id"": ""2204077"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,04,078,,48,71,5000,5071,NULL,NULL,"{""_id"": ""2204078"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,04,079,,48,71,5000,5089,NULL,NULL,"{""_id"": ""2204079"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,04,080,,28,74,2700,2700,NULL,NULL,"{""_id"": ""2204080"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,05,081,,24,76,1000,1075,NULL,NULL,"{""_id"": ""2205081"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,05,082,,25,77,1000,1026,NULL,NULL,"{""_id"": ""2205082"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,05,083,,26,78,1000,1013,NULL,NULL,"{""_id"": ""2205083"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,06,084,,39,79,4000,3955,NULL,NULL,"{""_id"": ""2206084"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,06,085,,18,80,1000,1019,NULL,NULL,"{""_id"": ""2206085"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,06,086,,113,87,3000,NULL,NULL,NULL,"{""_id"": ""2206086"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,06,087,,2,81,1000,981,NULL,NULL,"{""_id"": ""2206087"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,06,088,,3,82,1000,964,NULL,NULL,"{""_id"": ""2206088"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,06,089,,90,88,2300,2275,NULL,NULL,"{""_id"": ""2206089"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,06,090,,42,89,3111,3195,NULL,NULL,"{""_id"": ""2206090"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,06,091,,7,84,379,375,NULL,NULL,"{""_id"": ""2206091"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,06,092,,7,84,512,506,NULL,NULL,"{""_id"": ""2206093"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,06,093,,7,84,512,507,NULL,NULL,"{""_id"": ""2206093"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,06,094,,46,91,225,222,NULL,NULL,"{""_id"": ""2206094"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,06,095,,45,92,1305,1303,NULL,NULL,"{""_id"": ""2206095"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,06,096,,48,93,5000,5177,NULL,NULL,"{""_id"": ""2206096"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,06,097,,48,93,5000,5022,NULL,NULL,"{""_id"": ""2206097"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,06,098,A,92,94,1500,NULL,NULL,NULL,"{""_id"": ""2206098A"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,07,099,,40,90,573,532,NULL,NULL,"{""_id"": ""2207099"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,07,100,,40,90,617,664,NULL,NULL,"{""_id"": ""2207100"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,07,101,,34,95,2434,2345,NULL,NULL,"{""_id"": ""2207101"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,06,098,B,92,94,1339,NULL,NULL,NULL,"{""_id"": ""2206098B"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,06,098,C,92,94,NULL,NULL,NULL,NULL,"{""_id"": ""2206098C"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,07,102,,85,96,1150,NULL,NULL,NULL,"{""_id"": ""2207102"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,07,103,,103,98,125,104,NULL,NULL,"{""_id"": ""2207103"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,07,104,,74,110,1000,1019,NULL,NULL,"{""_id"": ""2207104"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,07,105,,81,85,250,NULL,NULL,NULL,"{""_id"": ""2207105"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,07,106,,81,85,250,NULL,NULL,NULL,"{""_id"": ""2207106"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,07,107,,76,86,250,NULL,NULL,NULL,"{""_id"": ""2207107"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,07,108,,76,86,250,NULL,NULL,NULL,"{""_id"": ""2207108"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,07,109,,30,101,17310,NULL,NULL,NULL,"{""_id"": ""2207109"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,08,110,,112,102,3000,NULL,NULL,NULL,"{""_id"": ""2208110"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,08,111,,87,103,85,NULL,NULL,NULL,"{""_id"": ""2208111"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,08,112,,79,99,500,509,NULL,NULL,"{""_id"": ""2208112"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,08,113,,80,100,500,510,NULL,NULL,"{""_id"": ""2208113"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,08,114,,8,104,1000,1047,NULL,NULL,"{""_id"": ""2208114"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,08,115,,89,105,2000,1875,NULL,NULL,"{""_id"": ""2208115"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,08,116,,110,108,897,888,NULL,NULL,"{""_id"": ""2208116"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,08,117,,110,108,277,248,NULL,NULL,"{""_id"": ""2208117"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,08,118,,95,109,300,279,NULL,NULL,"{""_id"": ""2208118"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,09,119,,75,106,337,340,NULL,NULL,"{""_id"": ""2209119"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,09,120,,75,106,337,340,NULL,NULL,"{""_id"": ""2209120"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,09,121,,75,106,337,342,NULL,NULL,"{""_id"": ""2209121"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,09,122,,82,107,337,338,NULL,NULL,"{""_id"": ""2209122"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,09,123,,82,107,337,339,NULL,NULL,"{""_id"": ""2209123"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,09,124,,82,107,337,399,NULL,NULL,"{""_id"": ""2209124"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,09,125,,42,111,3111,3207,NULL,NULL,"{""_id"": ""2209125"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,09,126,,41,113,1250,1231,NULL,NULL,"{""_id"": ""2209126"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,09,127,,40,112,5700,NULL,NULL,NULL,"{""_id"": ""2209127"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,09,128,,9,114,748,744,NULL,NULL,"{""_id"": ""2209128"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,09,129,,9,115,792,784,NULL,NULL,"{""_id"": ""2209129"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,09,130,,9,116,1022,1022,NULL,NULL,"{""_id"": ""2209130"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,09,131,,43,117,5110,4620,NULL,NULL,"{""_id"": ""2209131"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,09,132,,99,118,800,775,NULL,NULL,"{""_id"": ""2209132"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,09,133,,56,120,450,455,NULL,NULL,"{
+        ""_id"": ""2209133"",
+        ""production"": [{
+                ""process_name"": ""batch"",
+                ""start_datetime"": ""2022-10-04 11:00:00"",
+                ""end_datetime"": ""2022-10-04 14:15:00"",
+                ""end_reason"": ""finished"",
+                ""duration"": ""3:15:00"",
+                ""user_ids"": [5, 8],
+                ""batch_target_kilos"": 197.03,
+                ""batch_upper_tolerance"": 198.29,
+                ""batch_lower_tolerance"": 195.71,
+                ""batch_actual_kilos"": 197.35,
+                ""difference_kilos"": -0.32,
+                ""percent_difference"": 0.16,
+                ""batched_overage_kilos"": 3.53,
+                ""batched_overage_percent"": 1.79,
+                ""float_of_barrels"": 2.0,
+                ""barrel_breakdown"": [{
+                        ""barrel_number"": 1,
+                        ""gross_kilos"": 109.95,
+                        ""tare_kilos"": 8.90,
+                        ""net_kilos"": 101.05
+                }, {
+                        ""barrel_number"": 2,
+                        ""gross_kilos"": 105.35,
+                        ""tare_kilos"": 9.05,
+                        ""net_kilos"": 96.30
+                }]
+        }, {
+                ""process_name"": ""screen"",
+                ""start_datetime"": ""2022-10-04 18:15:00"",
+                ""end_datetime"": ""2022-10-04 18:40:00"",
+                ""end_reason"": ""finished"",
+                ""duration"": ""0:25:00"",
+                ""user_ids"": [7],
+                ""mesh_size"": ""60"",
+                ""starting_kilos"": 197.35,
+                ""screen_upper_tolerance"": 198.29,
+                ""screen_lower_tolerance"": 195.71,
+                ""screen_actual_kilos"": 197.25,
+                ""difference_kilos"": """",
+                ""percent_difference"": """",
+                ""float_of_barrels"": 1.75,
+                ""barrel_breakdown"": []
+        }, {
+                ""process_name"": ""grind"",
+                ""start_datetime"": ""2022-10-04 18:50:00"",
+                ""end_datetime"": ""2022-10-04 19:35:00"",
+                ""end_reason"": ""finished"",
+                ""duration"": ""0:45:00"",
+                ""user_ids"": [7],
+                ""starting_kilos"": """",
+                ""grind_upper_tolerance"": """",
+                ""grind_lower_tolerance"": """",
+                ""grind_actual_kilos"": """",
+                ""difference_kilos"": """",
+                ""percent_difference"": """",
+                ""float_of_barrels"": 0.25,
+                ""barrel_breakdown"": []
+        }, {
+                ""process_name"": ""screen"",
+                ""start_datetime"": ""2022-10-04 19:40:00"",
+                ""end_datetime"": ""2022-10-04 19:50:00"",
+                ""end_reason"": ""finished"",
+                ""duration"": ""0:10:00"",
+                ""user_ids"": [7],
+                ""mesh_size"": ""60"",
+                ""starting_kilos"": 197.35,
+                ""screen_upper_tolerance"": 198.29,
+                ""screen_lower_tolerance"": 195.71,
+                ""screen_actual_kilos"": 197.25,
+                ""difference_kilos"": 0.1,
+                ""percent_difference"": 0.05,
+                ""float_of_barrels"": 0.25,
+                ""barrel_breakdown"": [{
+                        ""barrel_number"": 1,
+                        ""gross_kilos"": 106.45,
+                        ""tare_kilos"": 8.90,
+                        ""net_kilos"": 97.55
+                }, {
+                        ""barrel_number"": 2,
+                        ""gross_kilos"": 108.75,
+                        ""tare_kilos"": 9.05,
+                        ""net_kilos"": 99.70
+                }]
+        }, {
+                ""process_name"": ""blend"",
+                ""start_datetime"": ""2022-10-12 10:10:00"",
+                ""end_datetime"": ""2022-10-12 11:00:00"",
+                ""end_reason"": ""finished"",
+                ""duration"": ""0:50:00"",
+                ""user_ids"": [7],
+                ""blend_durration"": ""00:20:00"",
+                ""starting_kilos"": 197.10,
+                ""blend_upper_tolerance"": 198.29,
+                ""blend_lower_tolerance"": 195.71,
+                ""blend_actual_kilos"": 197.1,
+                ""difference_kilos"": 0.15,
+                ""percent_difference"": 0.07,
+                ""float_of_barrels"": 2.0,
+                ""barrel_breakdown"": [{
+                        ""barrel_number"": 1,
+                        ""gross_kilos"": 115.25,
+                        ""tare_kilos"": 8.90,
+                        ""net_kilos"": 106.35
+                }, {
+                        ""barrel_number"": 2,
+                        ""gross_kilos"": 99.80,
+                        ""tare_kilos"": 9.05,
+                        ""net_kilos"": 90.75
+                }]
+        }, {
+                ""process_name"": ""powder_fill_pouch"",
+                ""start_datetime"": ""2022-10-24 11:15:00"",
+                ""end_datetime"": ""2022-10-24 12:30:00"",
+                ""end_reason"": ""lunch"",
+                ""duration"": ""1:15:00"",
+                ""user_ids"": [6, 5, 8, 9, 10],
+                ""pouch_id"": """",
+                ""scoop_id"": """",
+                ""dessicant_id"": """",
+                ""kilos_filled"": 134.16,
+                ""target_fill_grams"": 430,
+                ""target_min_grams"": 428,
+                ""target_max_grams"": 432,
+                ""sample_average_grams"": 430,
+                ""target_units_filled"": 450,
+                ""units_filled_upper_tolerance"": 460,
+                ""units_filled_lower_tolerance"": 453,
+                ""units_filled"": 312
+        }, {
+                ""process_name"": ""label"",
+                ""start_datetime"": ""2022-10-24 11:15:00"",
+                ""end_datetime"": ""2022-10-24 12:30:00"",
+                ""end_reason"": ""lunch"",
+                ""duration"": ""1:15:00"",
+                ""user_ids"": [6, 5, 8, 9, 10],
+                ""label_id"": """",
+                ""sticker_id"": """",
+                ""exp_date"": """",
+                ""best_by_date"": """",
+                ""lot_date_placement"": """",
+                ""labels_pulled_from_inventory"": """",
+                ""labels_used"": """",
+                ""labels_returned"": """",
+                ""labels_destroyed"": """"
+        }, {
+                ""process_name"": ""package"",
+                ""start_datetime"": ""2022-10-24 11:15:00"",
+                ""end_datetime"": ""2022-10-24 12:30:00"",
+                ""end_reason"": ""lunch"",
+                ""duration"": ""1:15:00"",
+                ""user_ids"": [6, 5, 8, 9, 10],
+                ""individual_packaging_components"": []
+        }, {
+                ""process_name"": ""palletize"",
+                ""start_datetime"": ""2022-10-24 11:15:00"",
+                ""end_datetime"": ""2022-10-24 12:30:00"",
+                ""end_reason"": ""lunch"",
+                ""duration"": ""1:15:00"",
+                ""user_ids"": [6, 5, 8, 9, 10],
+                ""shipping_stickers"": 0,
+                ""box_id"": """",
+                ""new_box"": 1,
+                ""used_box"": 0,
+                ""pack_count"": """",
+                ""pallet_height"": """",
+                ""boxes_per_pallet"": """"
+        }, {
+                ""process_name"": ""powder_fill_pouch"",
+                ""start_datetime"": ""2022-10-24 13:00:00"",
+                ""end_datetime"": ""2022-10-24 13:50:00"",
+                ""end_reason"": ""finished"",
+                ""duration"": ""0:50:00"",
+                ""user_ids"": [6, 5, 8, 9],
+                ""pouch_id"": """",
+                ""scoop_id"": """",
+                ""dessicant_id"": """",
+                ""kilos_filled"": 61.92,
+                ""target_fill_grams"": 430,
+                ""target_min_grams"": 428,
+                ""target_max_grams"": 432,
+                ""sample_average_grams"": 429,
+                ""target_units_filled"": 450,
+                ""units_filled_upper_tolerance"": 460,
+                ""units_filled_lower_tolerance"": 453,
+                ""units_filled"": 144
+        }, {
+                ""process_name"": ""label"",
+                ""start_datetime"": ""2022-10-24 13:00:00"",
+                ""end_datetime"": ""2022-10-24 13:50:00"",
+                ""end_reason"": ""finished"",
+                ""duration"": ""0:50:00"",
+                ""user_ids"": [6, 5, 8, 9],
+                ""label_id"": """",
+                ""sticker_id"": """",
+                ""exp_date"": """",
+                ""best_by_date"": """",
+                ""lot_date_placement"": """",
+                ""labels_pulled_from_inventory"": """",
+                ""labels_used"": """",
+                ""labels_returned"": """",
+                ""labels_destroyed"": """"
+        }, {
+                ""process_name"": ""package"",
+                ""start_datetime"": ""2022-10-24 13:00:00"",
+                ""end_datetime"": ""2022-10-24 13:50:00"",
+                ""end_reason"": ""finished"",
+                ""duration"": ""0:50:00"",
+                ""user_ids"": [6, 5, 8, 9],
+                ""individual_packaging_components"": []
+        }, {
+                ""process_name"": ""palletize"",
+                ""start_datetime"": ""2022-10-24 13:00:00"",
+                ""end_datetime"": ""2022-10-24 13:50:00"",
+                ""end_reason"": ""finished"",
+                ""duration"": ""0:50:00"",
+                ""user_ids"": [6, 5, 8, 9],
+                ""shipping_stickers"": 0,
+                ""box_id"": """",
+                ""new_box"": 1,
+                ""used_box"": 0,
+                ""pack_count"": """",
+                ""pallet_height"": """",
+                ""boxes_per_pallet"": """"
+        }],
+        ""qc"": [{
+                ""test_type"": ""microbiological"",
+                ""lab_id"": """",
+                ""required_spec"": 1,
+                ""date_sample_sent"": ""2022-10-12"",
+                ""date_results_recived"": ""2022-10-17"",
+                ""file_pointer"": """",
+                ""tests"": {
+                        ""total_plate_count"": {
+                                ""required_spec"": 1,
+                                ""method"": ""USP <2021>"",
+                                ""count"": 930000,
+                                ""units"": ""cfu/g"",
+                                ""less_than"": 0
+                        },
+                        ""coliform_count"": {
+                                ""required_spec"": 1,
+                                ""method"": ""AOAC 991.14"",
+                                ""summary"": """",
+                                ""count"": 5000,
+                                ""units"": ""cfu/g"",
+                                ""less_than"": 0
+                        },
+                        ""escherichia_coli_count"": {
+                                ""required_spec"": 1,
+                                ""method"": ""USP <2022>"",
+                                ""summary"": ""Absent"",
+                                ""count"": 0,
+                                ""units"": ""cfu/10g"",
+                                ""less_than"": 0
+                        },
+                        ""staphylococcus_count"": {
+                                ""required_spec"": 1,
+                                ""method"": ""USP <2022>"",
+                                ""summary"": ""Absent"",
+                                ""count"": 0,
+                                ""units"": ""cfu/10g"",
+                                ""less_than"": 0
+                        },
+                        ""salmonella_count"": {
+                                ""required_spec"": 1,
+                                ""method"": ""USP <2022>"",
+                                ""summary"": ""Absent"",
+                                ""count"": 0,
+                                ""units"": ""cfu/10g"",
+                                ""less_than"": 0
+                        },
+                        ""yeast_count"": {
+                                ""required_spec"": 1,
+                                ""method"": ""USP <2021>"",
+                                ""summary"": ""None Detected"",
+                                ""count"": 0,
+                                ""units"": ""cfu/g"",
+                                ""less_than"": 0
+                        },
+                        ""mold_count"": {
+                                ""required_spec"": 1,
+                                ""method"": ""USP <2021>"",
+                                ""summary"": """",
+                                ""count"": ""400"",
+                                ""units"": ""cfu/g"",
+                                ""less_than"": 0
+                        }
+                }
+        }, {
+                ""test_type"": ""organoleptic"",
+                ""date_sample_sent"": ""2022-10-22"",
+                ""date_results_recived"": ""2022-10-22"",
+                ""qc_member_id"": 1,
+                ""tests"": {
+                        ""visual"": {
+                                ""standard"": ""Green"",
+                                ""sample_status"": ""pass"",
+                                ""notes"": """"
+                        },
+                        ""odor"": {
+                                ""standard"": ""Herbal"",
+                                ""sample_status"": ""pass"",
+                                ""notes"": """"
+                        },
+                        ""dry_taste"": {
+                                ""standard"": ""Sweet Herbal"",
+                                ""sample_status"": ""pass"",
+                                ""notes"": """"
+                        },
+                        ""dissolved_taste"": {
+                                ""standard"": ""Sweet Herbal"",
+                                ""sample_status"": ""pass"",
+                                ""notes"": """"
+                        },
+                        ""texture"": {
+                                ""standard"": ""Fine"",
+                                ""sample_status"": ""pass"",
+                                ""notes"": """"
+                        }
+                }
+        }]
+}",1,1,NULL,0
+,22,09,134,,83,121,400,405,NULL,NULL,"{""_id"": ""2209134"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,09,135,,92,122,1000,NULL,NULL,NULL,"{""_id"": ""2209135"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,09,136,,14,123,1000,NULL,NULL,NULL,"{""_id"": ""2209136"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,09,137,,15,124,1000,NULL,NULL,NULL,"{""_id"": ""2209137"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,138,,70,119,NULL,NULL,NULL,NULL,"{""_id"": ""2210138"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,139,,73,125,1000,NULL,NULL,NULL,"{""_id"": ""2210139"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,140,,44,126,NULL,NULL,NULL,NULL,"{""_id"": ""2210140"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,141,,50,127,1000,NULL,NULL,NULL,"{""_id"": ""2210141"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,142,,51,128,1000,NULL,NULL,NULL,"{""_id"": ""2210142"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,143,,56,129,631,NULL,NULL,NULL,"{""_id"": ""2210143"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,144,,56,129,631,NULL,NULL,NULL,"{""_id"": ""2210144"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,145,,56,129,631,NULL,NULL,NULL,"{""_id"": ""2210145"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,146,,56,129,631,NULL,NULL,NULL,"{""_id"": ""2210146"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,147,,56,129,631,NULL,NULL,NULL,"{""_id"": ""2210147"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,148,,56,129,631,NULL,NULL,NULL,"{""_id"": ""2210148"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,149,,56,129,631,NULL,NULL,NULL,"{""_id"": ""2210149"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,150,,56,129,500,NULL,NULL,NULL,"{""_id"": ""2210150"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,151,,72,130,750,NULL,NULL,NULL,"{""_id"": ""2210151"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,152,,83,131,835,NULL,NULL,NULL,"{""_id"": ""2210152"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,153,,83,131,835,NULL,NULL,NULL,"{""_id"": ""2210153"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,154,,83,131,835,NULL,NULL,NULL,"{""_id"": ""2210154"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,155,,83,131,835,NULL,NULL,NULL,"{""_id"": ""2210155"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,156,,83,131,835,NULL,NULL,NULL,"{""_id"": ""2210156"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,157,,83,131,775,NULL,NULL,NULL,"{""_id"": ""2210157"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,158,,68,132,1000,NULL,NULL,NULL,"{""_id"": ""2210158"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,159,,90,133,NULL,NULL,NULL,NULL,"{""_id"": ""2210159"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,160,,111,134,3000,NULL,NULL,NULL,"{""_id"": ""2210160"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,161,,107,135,2500,NULL,NULL,NULL,"{""_id"": ""2210161"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,162,,97,136,NULL,NULL,NULL,NULL,"{""_id"": ""2210162"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,163,,30,139,17310,NULL,NULL,NULL,"{""_id"": ""2210163"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,10,164,,28,140,NULL,NULL,NULL,NULL,"{""_id"": ""2210164"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,11,165,,85,137,800,NULL,NULL,NULL,"{""_id"": ""2211165"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,11,166,,91,138,1000,NULL,NULL,NULL,"{""_id"": ""2211166"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,11,167,,88,141,2000,NULL,NULL,NULL,"{""_id"": ""2211167"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,11,168,,99,142,500,NULL,NULL,NULL,"{""_id"": ""2211168"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,11,169,,108,143,3000,NULL,NULL,NULL,"{""_id"": ""2211169"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,11,170,,104,144,150,NULL,NULL,NULL,"{""_id"": ""2211170"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,12,171,,96,146,363,NULL,NULL,NULL,"{""_id"": ""2212171"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,12,172,,80,147,670,NULL,NULL,NULL,"{""_id"": ""2212172"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,12,173,,80,147,670,NULL,NULL,NULL,"{""_id"": ""2212173"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,12,174,,80,147,670,NULL,NULL,NULL,"{""_id"": ""2212174"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,12,175,,75,148,302,NULL,NULL,NULL,"{""_id"": ""2212175"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,12,176,,75,148,302,NULL,NULL,NULL,"{""_id"": ""2212176"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,12,177,,75,148,302,NULL,NULL,NULL,"{""_id"": ""2212177"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,12,178,,75,148,302,NULL,NULL,NULL,"{""_id"": ""2212178"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,12,179,,75,148,302,NULL,NULL,NULL,"{""_id"": ""2212179"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,12,180,,82,149,302,NULL,NULL,NULL,"{""_id"": ""2212180"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,12,181,,82,149,302,NULL,NULL,NULL,"{""_id"": ""2212181"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,12,182,,82,149,302,NULL,NULL,NULL,"{""_id"": ""2212182"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,12,183,,82,149,302,NULL,NULL,NULL,"{""_id"": ""2212183"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,12,184,,82,149,302,NULL,NULL,NULL,"{""_id"": ""2212184"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,12,185,,107,32,2500,NULL,NULL,NULL,"{""_id"": ""2212185"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,12,186,,98,150,125,NULL,NULL,NULL,"{""_id"": ""2212186"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,12,187,,105,151,267,NULL,NULL,NULL,"{""_id"": ""2212187"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,12,188,,29,152,275,NULL,NULL,NULL,"{""_id"": ""2212188"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,12,189,,31,153,1100,NULL,NULL,NULL,"{""_id"": ""2212189"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,12,190,,9,154,1000,NULL,NULL,NULL,"{""_id"": ""2212190"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,22,12,191,,9,154,1000,NULL,NULL,NULL,"{""_id"": ""2212191"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,23,01,001,,19,156,564,NULL,NULL,NULL,"{""_id"": ""2301001"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,23,01,002,,19,156,693,NULL,NULL,NULL,"{""_id"": ""2301002"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,23,01,003,,19,156,851,NULL,NULL,NULL,"{""_id"": ""2301003"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,23,01,004,,33,157,NULL,NULL,NULL,NULL,"{""_id"": ""2301004"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,23,01,005,,28,158,NULL,NULL,NULL,NULL,"{""_id"": ""2301005"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,23,01,006,,30,159,NULL,NULL,NULL,NULL,"{""_id"": ""2301006"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,23,01,007,,26,160,1000,NULL,NULL,NULL,"{""_id"": ""2301007"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,23,01,008,,11,161,1000,NULL,NULL,NULL,"{""_id"": ""2302009"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,23,02,009,,38,162,1333,NULL,NULL,NULL,"{""_id"": ""2302009"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,23,02,010,,29,164,430,NULL,NULL,NULL,"{""_id"": ""2302010"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,23,02,011,,31,163,1370,NULL,NULL,NULL,"{""_id"": ""2302011"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,23,02,012,,35,155,1333,NULL,NULL,NULL,"{""_id"": ""2302012"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,23,02,013,,37,165,4250,NULL,NULL,NULL,"{""_id"": ""2302013"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,23,02,014,,37,165,4250,NULL,NULL,NULL,"{""_id"": ""2302014"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,23,02,015,,118,166,17000,NULL,NULL,NULL,"{""_id"": ""2302015"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,23,03,016,,43,167,8320,NULL,NULL,NULL,"{""_id"": ""2303016"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,23,03,017,,119,168,NULL,NULL,NULL,NULL,"{""_id"": ""2303017"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,23,03,018,,23,169,NULL,NULL,NULL,NULL,"{""_id"": ""2303018"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,23,03,019,,120,170,NULL,NULL,NULL,NULL,"{""_id"": ""2303019"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,23,03,020,,25,171,NULL,NULL,NULL,NULL,"{""_id"": ""2303020"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,23,03,021,,124,172,4720,NULL,NULL,NULL,"{""_id"": ""2303021"", ""production"": [], ""lab_results"": []}",0,0,NULL,0
+,23,03,022,,49,173,NULL,NULL,NULL,NULL,"{""_id"": ""2303022"", ""production"": [], ""lab_results"": []}",0,0,NULL,0
+,23,03,023,,64,174,1200,NULL,NULL,NULL,"{""_id"": ""2303023"", ""production"": [], ""lab_results"": []}",0,0,NULL,0
+,23,03,024,,57,175,1000,NULL,NULL,NULL,"{""_id"": ""2303024"", ""production"": [], ""lab_results"": []}",0,0,NULL,0
+(GPC),23,03,025,,75,176,NULL,NULL,NULL,NULL,"{""_id"": ""2303025"", ""production"": [], ""lab_results"": []}",0,0,NULL,0
+(GPC),23,03,026,,75,176,NULL,NULL,NULL,NULL,"{""_id"": ""2303026"", ""production"": [], ""lab_results"": []}",0,0,NULL,0
+(GPC),23,03,027,,75,176,NULL,NULL,NULL,NULL,"{""_id"": ""2303027"", ""production"": [], ""lab_results"": []}",0,0,NULL,0
+(GPC),23,03,028,,75,176,NULL,NULL,NULL,NULL,"{""_id"": ""2303028"", ""production"": [], ""lab_results"": []}",0,0,NULL,0
+(GPC),23,03,029,,56,177,NULL,NULL,NULL,NULL,"{""_id"": ""2303029"", ""production"": [], ""lab_results"": []}",0,0,NULL,0
+(GPC),23,03,030,,56,177,NULL,NULL,NULL,NULL,"{""_id"": ""2303030"", ""production"": [], ""lab_results"": []}",0,0,NULL,0
+(GPC),23,03,031,,56,177,NULL,NULL,NULL,NULL,"{""_id"": ""2303031"", ""production"": [], ""lab_results"": []}",0,0,NULL,0
+(GPC),23,03,032,,83,178,NULL,NULL,NULL,NULL,"{""_id"": ""2303032"", ""production"": [], ""lab_results"": []}",0,0,NULL,0
+(GPC),23,03,033,,83,178,NULL,NULL,NULL,NULL,"{""_id"": ""2303033"", ""production"": [], ""lab_results"": []}",0,0,NULL,0
+,23,03,034,,121,179,315,NULL,NULL,NULL,"{""_id"": ""2303034"", ""production"": [], ""lab_results"": []}",0,0,NULL,0
+,23,03,035,,121,179,315,NULL,NULL,NULL,"{""_id"": ""2303035"", ""production"": [], ""lab_results"": []}",0,0,NULL,0
+,23,03,036,,121,179,315,NULL,NULL,NULL,"{""_id"": ""2303036"", ""production"": [], ""lab_results"": []}",0,0,NULL,0
+,23,03,037,,121,179,315,NULL,NULL,NULL,"{""_id"": ""2303037"", ""production"": [], ""lab_results"": []}",0,0,NULL,0
+,23,03,038,,121,179,315,NULL,NULL,NULL,"{""_id"": ""2303038"", ""production"": [], ""lab_results"": []}",0,0,NULL,0
+,23,03,039,,121,179,315,NULL,NULL,NULL,"{""_id"": ""2303039"", ""production"": [], ""lab_results"": []}",0,0,NULL,0
+,23,03,040,,121,179,315,NULL,NULL,NULL,"{""_id"": ""2303040"", ""production"": [], ""lab_results"": []}",0,0,NULL,0
+,23,03,041,,121,179,315,NULL,NULL,NULL,"{""_id"": ""2303041"", ""production"": [], ""lab_results"": []}",0,0,NULL,0
+,23,03,042,,124,180,42800,NULL,NULL,NULL,"{""_id"": ""2303042"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,23,03,043,,118,181,42800,NULL,NULL,NULL,"{""_id"": ""2303043"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,23,04,044,,122,182,1000,NULL,NULL,NULL,"{""_id"": ""2304044"", ""production"": [], ""lab_results"": []}",1,1,NULL,0
+,23,04,045,,123,183,3000,NULL,NULL,NULL,"{""_id"": ""2304045"", ""production"": [], ""lab_results"": []}",0,0,NULL,0
+,23,04,046,,30,184,15300,NULL,NULL,NULL,"{""_id"": ""2304046"", ""production"": [], ""lab_results"": []}",0,0,NULL,0
+,23,04,047,,28,185,3550,NULL,NULL,NULL,"{""_id"": ""2304047"", ""production"": [], ""lab_results"": []}",0,0,NULL,0

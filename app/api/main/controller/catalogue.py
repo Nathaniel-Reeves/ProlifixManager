@@ -2,7 +2,7 @@
 Handle Inventory Data
 '''
 import json
-from sqlalchemy import select, text
+from sqlalchemy import select, insert, text
 
 from view.response import (
     MessageType,
@@ -107,7 +107,7 @@ def get_components(
     except Exception:
         error = error_message()
         custom_response.insert_flash_message(error)
-        custom_response.set_status_code(500)
+        custom_response.set_status_code(400)
         return custom_response
     
     session.close()
@@ -121,22 +121,6 @@ def post_component(
         component
     ):
     
-    
-    new_component = db.Components(
-        brand_id=component.get('brand_id'),
-        component_type=component.get('component_type'),
-        certified_usda_organic=component.get('certified_usda_organic'),
-        certified_halal=component.get('certified_halal'),
-        certified_kosher=component.get('certified_kosher'),
-        certified_gluten_free=component.get('certified_gluten_free'),
-        certified_national_sanitation_foundation=component.get('certified_national_sanitation_foundation'),
-        certified_us_pharmacopeia=component.get('certified_us_pharmacopeia'),
-        certified_non_gmo=component.get('certified_non_gmo'),
-        certified_vegan=component.get('certified_vegan'),
-        units=component.get('units'),
-        doc=component.get('doc') or {}
-    )
-    
     # Connect to the database
     try:
         session = get_session()
@@ -148,17 +132,29 @@ def post_component(
         
     # Execute the query
     try:
-        session.add_all([new_component])
+        stream = session.execute(
+            insert(db.Components).returning(db.Components),
+            component
+        )
+        raw_data = stream.all()
+        new_component_id = raw_data[0][0].get_id()
+        
+        stream = session.execute(
+            insert(db.Item_id).returning(db.Item_id),
+            {"component_id": new_component_id}
+        )
+        raw_data = stream.all()
+        new_item_id = raw_data[0][0].get_id()
+        
         session.commit()
     except Exception as e:
         error = error_message()
-        print(e)
         custom_response.insert_flash_message(error)
-        custom_response.set_status_code(500)
+        custom_response.set_status_code(400)
+        session.rollback()
         return custom_response
     
     session.close()
-    
 
     new_component = remove_file_obj_in_doc(component)
     
