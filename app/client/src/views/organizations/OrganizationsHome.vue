@@ -134,18 +134,14 @@ export default {
       this.search_query = ''
     },
     populateOrg: function (orgId) {
-      const fetchRequest = window.origin + '/api/organizations?org-id=' + orgId + '&populate=facilities&populate=sales-orders&populate=purchase-orders&populate=people&populate=components&populate=products'
+      const fetchRequest = window.origin + '/api/v1/organizations/?org-id=' + orgId + '&populate=facilities&populate=sales-orders&populate=purchase-orders&populate=people&populate=components&populate=products'
       console.log(
         'GET ' + fetchRequest
       )
       fetch(fetchRequest, {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': [
-            'http://localhost:3000',
-            'http://127.0.0.1:3000'
-          ]
+          'Content-Type': 'application/json'
         },
         credentials: 'include'
       }).then(response => {
@@ -160,18 +156,14 @@ export default {
       })
     },
     getOrgData: function () {
-      const fetchRequest = window.origin + '/api/organizations'
+      const fetchRequest = window.origin + '/api/v1/organizations'
       console.log(
         'GET ' + fetchRequest
       )
       fetch(fetchRequest, {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': [
-            'http://localhost:3000',
-            'http://127.0.0.1:3000'
-          ]
+          'Content-Type': 'application/json'
         },
         credentials: 'include'
       }).then(response => {

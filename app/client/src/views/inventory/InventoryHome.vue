@@ -113,7 +113,7 @@ export default {
       this.search_query = ''
     },
     fetchInventoryData () {
-      const fetchRequest = window.origin + '/api/inventory'
+      const fetchRequest = window.origin + '/api/v1/inventory'
       console.log(
         'GET ' + fetchRequest
       )

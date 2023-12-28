@@ -50,7 +50,7 @@ export default {
   },
   methods: {
     login: function () {
-      const fetchRequest = window.origin + '/api/auth/sessions'
+      const fetchRequest = window.origin + '/api/v1/auth/sessions'
 
       console.log(
         'POST ' + fetchRequest
@@ -58,10 +58,9 @@ export default {
       fetch(fetchRequest, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
+          'Content-Type': 'application/json'
         },
-        credentials: 'same-origin',
+        credentials: 'include',
         body: JSON.stringify({
           username: this.username,
           password: this.password

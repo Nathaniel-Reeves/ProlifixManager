@@ -105,7 +105,7 @@ export default {
   },
   methods: {
     logout: function () {
-      const fetchRequest = window.origin + '/api/auth/sessions'
+      const fetchRequest = window.origin + '/api/v1/auth/sessions'
       console.log(
         'DELETE ' + fetchRequest
       )
@@ -118,7 +118,18 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           this.loggedInState = false
-          this.userData = {}
+          this.userData = {
+            department: '',
+            doc: {},
+            first_name: '',
+            job_description: '',
+            last_name: '',
+            organization_id: 0,
+            person_id: 0,
+            profile_picture: '',
+            user_id: '',
+            username: ''
+          }
         } else {
           console.log(response)
         }
@@ -137,7 +148,7 @@ export default {
       console.log('Saved Session Token: ', sessionToken)
 
       // Get user data
-      const fetchRequest = window.origin + '/api/auth/sessions?session-token=' + sessionToken
+      const fetchRequest = window.origin + '/api/v1/auth/sessions?session-token=' + sessionToken
       console.log(
         'GET ' + fetchRequest
       )
@@ -145,12 +156,17 @@ export default {
         method: 'GET',
         credentials: 'include'
       }).then(response => {
-        if (response.ok) {
+        if (response.status === 200) {
           response.json().then(jsonData => {
             this.userData = jsonData.data[0]
-            this.loggedInState = true
+            console.log(this.userData)
+            if (this.userData.user_id !== '') {
+              this.loggedInState = true
+            } else {
+              this.loggedInState = false
+            }
             const sessionToken = getCookie('session')
-            console.log('New Session Token: ', sessionToken)
+            console.log('Session Token: ', sessionToken)
           })
         } else {
           console.log('Looks like there was a problem. Status Code:' + response.status)
