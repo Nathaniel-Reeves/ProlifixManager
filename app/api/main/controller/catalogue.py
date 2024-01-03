@@ -121,6 +121,9 @@ def post_component(
         component
     ):
     
+    # Remove File Objects
+    component_no_files = remove_file_obj(component)
+    
     # Connect to the database
     try:
         session = get_session()
@@ -134,7 +137,7 @@ def post_component(
     try:
         stream = session.execute(
             insert(db.Components).returning(db.Components),
-            component
+            component_no_files
         )
         raw_data = stream.all()
         new_component_id = raw_data[0][0].get_id()
@@ -146,6 +149,9 @@ def post_component(
         raw_data = stream.all()
         new_item_id = raw_data[0][0].get_id()
         
+        # Save Files if Any
+        
+        
         session.commit()
     except Exception as e:
         error = error_message()
@@ -155,11 +161,9 @@ def post_component(
         return custom_response
     
     session.close()
-
-    new_component = remove_file_obj_in_doc(component)
     
     # Process and Package the data
-    custom_response.insert_data(new_component)
+    custom_response.insert_data(component_no_files)
     custom_response.set_status_code(201)
     flash_message = FlashMessage(
         message_type=MessageType.SUCCESS, 
@@ -173,10 +177,10 @@ def put_component(
         component
     ):
     
-    new_component = remove_file_obj_in_doc(component)
+    component_no_files = remove_file_obj(component)
     
     # Process and Package the data
-    custom_response.insert_data(new_component)
+    custom_response.insert_data(component_no_files)
     custom_response.set_status_code(201)
     flash_message = FlashMessage(
         message_type=MessageType.SUCCESS, 
@@ -185,10 +189,39 @@ def put_component(
     custom_response.insert_flash_message(flash_message)
     return custom_response
 
-def remove_file_obj_in_doc(data):
+def remove_file_obj(data):
     if 'doc' in data.keys():
         if "files" in data["doc"].keys() and len(data["doc"]["files"]) > 0:
             for file in data["doc"]["files"].keys():
-                if 'file_obj' in data["doc"]["files"][file].keys():
+                keys = data["doc"]["files"][file].keys()
+                if 'file_obj' in keys:
                     data["doc"]["files"][file].pop("file_obj")
     return data
+
+def save_files(data):
+    if 'doc' in data.keys():
+        if "files" in data["doc"].keys() and len(data["doc"]["files"]) > 0:
+            for file in data["doc"]["files"].keys():
+                keys = data["doc"]["files"][file].keys()
+                if 'file_obj' in keys and 'filename' in keys and 'file_type' in keys:
+                    file_data = data["doc"]["files"][file]
+                    save_file(file_data)
+                    data["doc"]["files"][file].pop("file_obj")
+    return data
+
+
+def save_file(file_data):
+    print(md5_from_file(file_data["file_obj"]))
+    print(file_data["filename"])
+    print(file_data["file_type"])
+
+import hashlib
+
+def md5_from_file(file, block_size=2**14):
+    md5 = hashlib.md5()
+    while True:
+        data = file.read(block_size)
+        if not data:
+            break
+        md5.update(data)
+    return md5.hexdigest()
