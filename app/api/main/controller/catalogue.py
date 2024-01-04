@@ -121,9 +121,6 @@ def post_component(
         component
     ):
     
-    # Remove File Objects
-    component_no_files = remove_file_obj(component)
-    
     # Connect to the database
     try:
         session = get_session()
@@ -132,24 +129,29 @@ def post_component(
         custom_response.insert_flash_message(error)
         custom_response.set_status_code(500)
         return custom_response
+    
+    print(component)
         
-    # Execute the query
     try:
+        
+        # Save Files if Any
+        new_component = save_files(component)
+        
+        # Insert Component in Components Table
         stream = session.execute(
             insert(db.Components).returning(db.Components),
-            component_no_files
+            new_component
         )
         raw_data = stream.all()
         new_component_id = raw_data[0][0].get_id()
         
+        # Insert new component_id in Items Table
         stream = session.execute(
             insert(db.Item_id).returning(db.Item_id),
             {"component_id": new_component_id}
         )
         raw_data = stream.all()
         new_item_id = raw_data[0][0].get_id()
-        
-        # Save Files if Any
         
         
         session.commit()
@@ -163,7 +165,7 @@ def post_component(
     session.close()
     
     # Process and Package the data
-    custom_response.insert_data(component_no_files)
+    custom_response.insert_data(new_component)
     custom_response.set_status_code(201)
     flash_message = FlashMessage(
         message_type=MessageType.SUCCESS, 
@@ -191,29 +193,50 @@ def put_component(
 
 def remove_file_obj(data):
     if 'doc' in data.keys():
+        flag = False
         if "files" in data["doc"].keys() and len(data["doc"]["files"]) > 0:
             for file in data["doc"]["files"].keys():
                 keys = data["doc"]["files"][file].keys()
                 if 'file_obj' in keys:
+                    flag = True
                     data["doc"]["files"][file].pop("file_obj")
-    return data
+        if not flag:
+            data["doc"].pop("files")
+    return data, flag
 
 def save_files(data):
     if 'doc' in data.keys():
-        if "files" in data["doc"].keys() and len(data["doc"]["files"]) > 0:
-            for file in data["doc"]["files"].keys():
-                keys = data["doc"]["files"][file].keys()
-                if 'file_obj' in keys and 'filename' in keys and 'file_type' in keys:
-                    file_data = data["doc"]["files"][file]
-                    save_file(file_data)
-                    data["doc"]["files"][file].pop("file_obj")
+        if "files" in data["doc"].keys():
+            if len(data["doc"]["files"]) > 0:
+                pop_list = []
+                save = {}
+                for file in data["doc"]["files"].keys():
+                    compare = ["file_obj", "filename", "type"]
+                    keys = data["doc"]["files"][file].keys()
+                    values = list(data["doc"]["files"][file].values())
+                    if len(compare & keys) == 3 and all(values):
+                        file_data = data["doc"]["files"][file]
+                        file_hash = save_file(file_data)
+                        data["doc"]["files"][file].pop("file_obj")
+                        save[file_hash] = data["doc"]["files"][file].copy()
+                    else:
+                        raise Exception("Missing File Information.")
+                    pop_list.append(file)
+            if len(pop_list) > 0:
+                for file in pop_list:
+                    data["doc"]["files"].pop(file)
+                data["doc"]["files"] = save
+        else:
+            raise Exception("No files to save")
     return data
 
 
 def save_file(file_data):
-    print(md5_from_file(file_data["file_obj"]))
+    file_hash = md5_from_file(file_data["file_obj"])
+    print(file_hash)
     print(file_data["filename"])
-    print(file_data["file_type"])
+    print(file_data["type"])
+    return file_hash
 
 import hashlib
 
