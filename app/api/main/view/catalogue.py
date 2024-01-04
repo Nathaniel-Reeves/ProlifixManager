@@ -9,7 +9,7 @@ from flask import (
 )
 from .auth import check_authenticated
 from .helper import only_integers, check_type, collect_form_data
-from .response import CustomResponse
+from .response import CustomResponse, FlashMessage
 from controller import catalogue as cat
 
 bp_comp = Blueprint('components', __name__, url_prefix='/components')
@@ -112,25 +112,81 @@ def handle_post_components():
     # Clean the Request
     component = collect_form_data(request)
     
+    custom_response = CustomResponse()
+    
     # Validate Request
-    required_keys = ["component_type", "brand_id", "units"]
+    required_keys = ["component_type", "brand_id", "units", "Component_Names"]
     flag = False
     for key in required_keys:
         if key not in component.keys():
             flag = True
+            message = f"Missing {key} field."
+            custom_response.insert_flash_message(
+                    FlashMessage(
+                        message=message
+                    )
+                )
         if not component.get(key):
             flag = True
-    
+            message = f"Missing {key} value."
+            custom_response.insert_flash_message(
+                    FlashMessage(
+                        message=message
+                    )
+                )
+
+    if not flag:
+        # Validate Component_Names Entry
+        # [{"component_name": STRING, "primary_name": BOOL}]
+        # There must be one and only one selected primary name
+        try:
+            component["Component_Names"] = json.loads(component["Component_Names"])
+            primary_name = False
+            primary_count = 0
+            required_keys = ["component_name", "primary_name"]
+            for name in component["Component_Names"]:
+                if (not isinstance(name, dict)) or \
+                    (list(name.keys()) != required_keys):
+                    flag = True
+                    message = "Invalid Component Name Data."
+                    custom_response.insert_flash_message(
+                        FlashMessage(
+                            message=message
+                        )
+                    )
+                if name["component_name"] and \
+                        not isinstance(name["component_name"], str):
+                    flag = True
+                    message = "Invalid Component Name."
+                    custom_response.insert_flash_message(
+                        FlashMessage(
+                            message=message
+                        )
+                    )
+                if name["primary_name"] == 'true' or \
+                        name["primary_name"] == 'True' or \
+                        name["primary_name"] == True or \
+                        name["primary_name"] == 1:
+                    primary_name = True
+                    primary_count += 1
+            if not primary_name or primary_count != 1:
+                flag = True
+                message = "At least one and only one primary name must be selected."
+                custom_response.insert_flash_message(
+                    FlashMessage(
+                        message=message
+                    )
+                )
+        except:
+            flag = True
+        
     if flag:
-        custom_response = CustomResponse()
         custom_response.set_status_code(400)
         response = jsonify(custom_response.to_json())
         response.status_code = 400
         return response
     
-    # Post Component to Database
-    custom_response = CustomResponse()
-    
+    # Post Components to Database
     custom_response = cat.post_component(
         custom_response,
         component

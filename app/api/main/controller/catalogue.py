@@ -129,13 +129,11 @@ def post_component(
         custom_response.insert_flash_message(error)
         custom_response.set_status_code(500)
         return custom_response
-    
-    print(component)
         
     try:
         
         # Save Files if Any
-        new_component = save_files(component)
+        new_component = save_files(component, session)
         
         # Insert Component in Components Table
         stream = session.execute(
@@ -153,6 +151,15 @@ def post_component(
         raw_data = stream.all()
         new_item_id = raw_data[0][0].get_id()
         
+        # Insert Component_Names in Component_Names Table
+        for name in new_component["Component_Names"]:
+            name["component_id"] = new_component_id
+            stream = session.execute(
+                insert(db.Component_Names).returning(db.Component_Names),
+                name
+            )
+            raw_data = stream.all()
+            name["name_id"] = raw_data[0][0].get_id()
         
         session.commit()
     except Exception as e:
@@ -191,34 +198,22 @@ def put_component(
     custom_response.insert_flash_message(flash_message)
     return custom_response
 
-def remove_file_obj(data):
-    if 'doc' in data.keys():
-        flag = False
-        if "files" in data["doc"].keys() and len(data["doc"]["files"]) > 0:
-            for file in data["doc"]["files"].keys():
-                keys = data["doc"]["files"][file].keys()
-                if 'file_obj' in keys:
-                    flag = True
-                    data["doc"]["files"][file].pop("file_obj")
-        if not flag:
-            data["doc"].pop("files")
-    return data, flag
-
-def save_files(data):
+def save_files(data, session):
     if 'doc' in data.keys():
         if "files" in data["doc"].keys():
             if len(data["doc"]["files"]) > 0:
                 pop_list = []
                 save = {}
                 for file in data["doc"]["files"].keys():
-                    compare = ["file_obj", "filename", "type"]
+                    compare = ["file_obj", "filename", "type", "page", "id_code"]
                     keys = data["doc"]["files"][file].keys()
                     values = list(data["doc"]["files"][file].values())
-                    if len(compare & keys) == 3 and all(values):
+                    if len(compare & keys) == 5 and all(values):
                         file_data = data["doc"]["files"][file]
-                        file_hash = save_file(file_data)
+                        file_hash, filename = save_file(file_data, session)
                         data["doc"]["files"][file].pop("file_obj")
                         save[file_hash] = data["doc"]["files"][file].copy()
+                        save[file_hash]["filename"] = filename
                     else:
                         raise Exception("Missing File Information.")
                     pop_list.append(file)
@@ -231,12 +226,16 @@ def save_files(data):
     return data
 
 
-def save_file(file_data):
+def save_file(file_data, session):
+    
+    # Create Filename
+    fn = file_data["filename"].replace(" ", "_").replace("/","-")
     file_hash = md5_from_file(file_data["file_obj"])
-    print(file_hash)
-    print(file_data["filename"])
+    filename = f"{file_hash}║fn[{fn}]║id_code[{file_data['id_code']}]║pg[{file_data['page']}]"
+
+    print(filename)
     print(file_data["type"])
-    return file_hash
+    return file_hash, filename
 
 import hashlib
 
