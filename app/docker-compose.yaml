@@ -52,7 +52,7 @@ services:
       dockerfile: api/Dockerfile
     volumes:
         - './client/public:/api/client/public'
-        - './db/files:/db/files'
+        - '${UPLOAD_FOLDER}:${UPLOAD_FOLDER}'
     ports:
       - "5000"
     networks:
