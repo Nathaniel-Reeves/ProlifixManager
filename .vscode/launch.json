@@ -19,24 +19,16 @@
             "name": "Python: Flask",
             "type": "python",
             "request": "launch",
-            "module": "flask",
-            "env": {
-                "FLASK_APP": "app/server/wsgi.py",
-                "FLASK_DEBUG": "1"
-            },
-            "args": [
-                "run",
-                "--no-debugger",
-                "--no-reload"
-            ],
-            "jinja": true,
+            "program": "wsgi.py",
+            "cwd": "./app/api/main",
             "justMyCode": true
         },
         {
             "name": "Python: SQLAlchemy",
             "type": "python",
             "request": "launch",
-            "program": "app/server/models/__init__.py",
+            "program": "__init__.py",
+            "cwd": "./app/api/main/model",
             "console": "integratedTerminal",
             "justMyCode": true
         }

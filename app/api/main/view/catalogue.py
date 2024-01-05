@@ -18,6 +18,7 @@ bp_comp = Blueprint('components', __name__, url_prefix='/components')
 @bp_comp.route('/', methods=['GET', 'POST', 'PUT'])
 @check_authenticated(authentication_required=True)
 def handle_components():
+
     if request.method == 'GET':
         return handle_get_components()
     elif request.method == 'POST':
@@ -110,10 +111,10 @@ def handle_get_components():
 def handle_post_components():
     
     # Clean the Request
-    component = collect_form_data(request)
-    
     custom_response = CustomResponse()
-    
+
+    component = collect_form_data(request)
+
     # Validate Request
     required_keys = ["component_type", "brand_id", "units", "Component_Names"]
     flag = False

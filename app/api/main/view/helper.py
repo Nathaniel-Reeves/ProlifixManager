@@ -36,7 +36,8 @@ def collect_form_data(request):
     Returns:
         dict: all form elements with file data.
     """
-    form_data = dict(request.form)
+    form_data = dict(request.form) # TODO: This occationally stalls the program
+    
     for key, value in form_data.items():
         if value == 'false':
             form_data[key] = False
@@ -49,14 +50,16 @@ def collect_form_data(request):
                 form_data[key] = float(value)
                 continue
             except ValueError:
-                None
+                form_data[key] = str(value)
+                continue
         else:
             try:
                 form_data[key] = int(value)
                 continue
             except ValueError:
-                None
-    
+                form_data[key] = str(value)
+                continue
+
     file_data = request.files
     if "doc" in form_data.keys():
         doc = json.loads(form_data["doc"])
@@ -64,11 +67,13 @@ def collect_form_data(request):
         if file_data and "files" in doc.keys():
             for file_key in file_data.keys():
                 if file_key in doc["files"].keys():
-                    print(file_data[file_key].stream.read())
-                    print(dir(file_data[file_key]))
-                    print(type(file_data[file_key]))
-                    doc["files"][file_key]["file_obj"] = copy.copy(file_data)[file_key]
-                    print(doc["files"][file_key]["file_obj"].stream.read())
+                    file_obj ={
+                        "filename": file_data[file_key].filename,
+                        "content_type": file_data[file_key].content_type,
+                        "content_length": file_data[file_key].content_length,
+                        "content": file_data[file_key].read()
+                    }
+                    doc["files"][file_key]["file_obj"] = file_obj
         
         form_data["doc"] = doc
     return form_data

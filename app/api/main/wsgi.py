@@ -57,7 +57,7 @@ def create_app():
         app.config['UPLOAD_FOLDER'] = os.path.join(project_dir, 'db/files')
     else:
         app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-    app.config['ALLOWED_EXTENSIONS'] = ("application/pdf")
+    app.config['ALLOWED_EXTENSIONS'] = ("application/pdf","image/png","image/jpeg")
 
     """
     Redis Connection Settings
@@ -69,7 +69,6 @@ def create_app():
     app.config['SESSION_PERMANENT'] = False
     app.config['SESSION_USE_SIGNER'] = True
     app.config['SESSION_EXPIRE'] = timedelta(days=7)
-    app.config['ALLOWED_EXTENSIONS'] = (".pdf")
 
     CORS(app, supports_credentials=True, allow_headers=[
         "Content-Type", "Access-Control-Allow-Origin"])
