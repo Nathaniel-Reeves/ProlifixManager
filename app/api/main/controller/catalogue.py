@@ -278,12 +278,8 @@ def save_file(file_data, session):
         directory, filename
     )
 
-    print(dir(file_data["file_obj"]))
-    f = file_data["file_obj"].stream
-    file_data["file_obj"].filename = filename
-    print(dir(f))
-    print(type(file_data["file_obj"]))
-    f.write(path)
+    # Save File
+    print(file_data["file_obj"].stream.read())
     file_data["file_obj"].save(path)
     file_data["file_obj"].close()
     
