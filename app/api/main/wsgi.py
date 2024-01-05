@@ -51,9 +51,13 @@ def create_app():
     """
     File Settings
     """
-    project_dir = os.path.split(os.path.split(os.getcwd())[0])[0]
-    app.config['UPLOAD_FOLDER'] = os.path.join(project_dir, 'db/files')
-    app.config['ALLOWED_EXTENSIONS'] = (".pdf")
+    UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER')
+    if UPLOAD_FOLDER == "DEFAULT":
+        project_dir = os.path.split(os.getcwd())[0]
+        app.config['UPLOAD_FOLDER'] = os.path.join(project_dir, 'db/files')
+    else:
+        app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    app.config['ALLOWED_EXTENSIONS'] = ("application/pdf")
 
     """
     Redis Connection Settings

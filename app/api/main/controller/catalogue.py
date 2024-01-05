@@ -226,15 +226,87 @@ def save_files(data, session):
     return data
 
 
+from flask import (
+    current_app as app
+)
+import os
+import pathlib
+from werkzeug.utils import secure_filename
+
 def save_file(file_data, session):
     
-    # Create Filename
-    fn = file_data["filename"].replace(" ", "_").replace("/","-")
+    # Get File Hash
     file_hash = md5_from_file(file_data["file_obj"])
-    filename = f"{file_hash}║fn[{fn}]║id_code[{file_data['id_code']}]║pg[{file_data['page']}]"
+    
+    # Check if File Exists in DB, Save if not
+    stream = session.execute(
+        select(db.Files).where(db.Files.file_hash == file_hash)
+    )
+    raw_data = stream.all()
+    
+    if len(raw_data) > 0:
+        return raw_data[0][0].get_id(), raw_data[0][0].file_name
+        
+    # Save File to Filesystem
+    
+    # Create File Name
+    fn = secure_filename(
+        str(file_data["filename"]).replace(" ", "_").replace("/","-")
+    )
+    id_code = secure_filename(
+        str(file_data["id_code"]).replace(" ", "_").replace("/","-")
+    )
+    page = secure_filename(
+        str(file_data["page"]).replace(" ", "_").replace("/","-")
+    )
 
-    print(filename)
-    print(file_data["type"])
+    filename = f"{file_hash}║fn[{fn}]║id_code[{id_code}]║pg[{page}]║"
+    
+    if file_data["file_obj"].content_type == "application/pdf":
+        filename += ".pdf"
+    
+    # Create Directory if it doesn't already exist
+    directory = os.path.join(
+        app.config['UPLOAD_FOLDER'], file_data["type"]
+    )
+
+    pathlib.Path(
+        directory
+    ).mkdir(exist_ok=True, parents=True)
+    
+    path = os.path.join(
+        directory, filename
+    )
+
+    print(dir(file_data["file_obj"]))
+    f = file_data["file_obj"].stream
+    file_data["file_obj"].filename = filename
+    print(dir(f))
+    print(type(file_data["file_obj"]))
+    f.write(path)
+    file_data["file_obj"].save(path)
+    file_data["file_obj"].close()
+    
+    # Save File Info in DB
+    stream = session.execute(
+        insert(db.Files).returning(db.Files),
+        {
+            "file_hash": file_hash,
+            "file_name": fn,
+            "file_type": file_data["type"],
+            "id_code": file_data["id_code"],
+            "pg": file_data["page"],
+        }
+    )
+    raw_data = stream.all()
+    new_file_id = raw_data[0][0].get_id()
+    if new_file_id != file_hash:
+        session.rollback()
+        raise Exception("File Hash Mismatch")
+    else:
+        # session.commit()
+        session.rollback()
+
     return file_hash, filename
 
 import hashlib
