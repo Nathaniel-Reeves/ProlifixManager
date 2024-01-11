@@ -38,6 +38,8 @@ def collect_form_data(request):
     """
     form_data = dict(request.form) # TODO: This occationally stalls the program
     
+    print(request.files)
+    
     for key, value in form_data.items():
         if value == 'false':
             form_data[key] = False
