@@ -69,12 +69,12 @@ def save_file(file_data, session):
         str(file_data["page"]).replace(" ", "_").replace("/","-")
     )
 
-    filename = f"{file_hash}║fn[{fn}]║id_code[{id_code}]║pg[{page}]║"
+    filename = f"fn[{fn}]║id_code[{id_code}]║pg[{page}]║hash[{file_hash}]║"
     
     if file_data["file_obj"]["content_type"] == "application/pdf":
         filename += ".pdf"
     elif file_data["file_obj"]["content_type"] == "image/jpeg":
-        filename += ".jpg"
+        filename += ".jpeg"
     elif file_data["file_obj"]["content_type"] == "image/png":
         filename += ".png"
     else:
