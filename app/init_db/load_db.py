@@ -48,7 +48,7 @@ print_config()
 
 DB_HOST = os.environ.get('DB_HOST')
 DB_PORT = os.environ.get('DB_PORT')
-DB_USER = os.environ.get('DB_USER')
+DB_USER = os.environ.get('DB_USERNAME')
 DB_PASSWORD = os.environ.get('DB_PASSWORD')
 
 # Define the databases and their corresponding CSV files
