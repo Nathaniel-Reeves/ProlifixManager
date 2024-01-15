@@ -70,8 +70,16 @@ def create_app():
     app.config['SESSION_USE_SIGNER'] = True
     app.config['SESSION_EXPIRE'] = timedelta(days=7)
 
-    CORS(app, supports_credentials=True, allow_headers=[
-        "Content-Type", "Access-Control-Allow-Origin"])
+    CORS(app, supports_credentials=True, 
+         allow_headers=[
+            "Content-Type", 
+            "Access-Control-Allow-Origin"
+        ],
+         allow_origins=[
+             "prolifixmanager.com",
+             "localhost",
+             "127.0.0.1"
+         ])
 
 
 
