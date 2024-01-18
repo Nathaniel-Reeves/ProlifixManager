@@ -59,6 +59,7 @@ def check_authenticated(authentication_required=False, database_priveleges=None)
 
                 # Check if user has a session token, Create one if not
                 session_token = get_session_token(request)
+                print(session_token)
                 
                 if (session_token is None) or (not redis_connection.exists(session_token)):
                     session_token = create_session()

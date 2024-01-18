@@ -15,7 +15,7 @@ export default {
   },
   data () {
     return {
-      cols: ['Building Name', 'Type'],
+      cols: ['First Name', 'Last Name'],
       people_data: Object.values(this.people),
       rows: [],
       pagination: {

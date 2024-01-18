@@ -60,7 +60,7 @@
                 <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse"
                   v-bind:data-target="'#collapse' + org.organization_id" aria-expanded="false"
                   v-bind:aria-controls="'collapse' + org.organization_id" v-on:click="populateOrg(org.organization_id)">
-                  {{ org.organization_name }}
+                  {{ org.Organization_Names[0].organization_name }}
                 </button>
               </h2>
             </div>
@@ -69,29 +69,29 @@
               v-bind:aria-labelledby="'heading' + org.organization_id" data-parent="#accordionExample">
               <div class="card-body d-flex flex-wrap">
 
-                <div class="p-2" v-if="org.hasOwnProperty('facilities')" v-show="Object.keys(org.facilities).length !== 0">
+                <div class="p-2" v-if="org.hasOwnProperty('Facilities')" v-show="Object.keys(org.Facilities).length !== 0">
                   <h5>Facilities</h5>
-                  <FacilitiesGrid v-bind:facilities="org.facilities"></FacilitiesGrid>
+                  <FacilitiesGrid v-bind:facilities="org.Facilities"></FacilitiesGrid>
                 </div>
-                <div class="p-2" v-if="org.hasOwnProperty('sales_orders')" v-show="Object.keys(org.sales_orders).length !== 0">
+                <div class="p-2" v-if="org.hasOwnProperty('Sales_Orders')" v-show="Object.keys(org.Sales_Orders).length !== 0">
                   <h5>Sales Orders</h5>
-                  <SalesOrdersGrid v-bind:sales_orders="org.sales_orders"></SalesOrdersGrid>
+                  <SalesOrdersGrid v-bind:sales_orders="org.Sales_Orders"></SalesOrdersGrid>
                 </div>
-                <div class="p-2" v-if="org.hasOwnProperty('purchase_orders')" v-show="Object.keys(org.purchase_orders).length !== 0">
+                <div class="p-2" v-if="org.hasOwnProperty('Purchase_Orders')" v-show="Object.keys(org.Purchase_Orders).length !== 0">
                   <h5>Purchase Orders</h5>
-                  <PurchaseOrdersGrid v-bind:purchase_orders="org.purchase_orders"></PurchaseOrdersGrid>
+                  <PurchaseOrdersGrid v-bind:purchase_orders="org.Purchase_Orders"></PurchaseOrdersGrid>
                 </div>
-                <div class="p-2" v-if="org.hasOwnProperty('people')" v-show="Object.keys(org.people).length !== 0">
+                <div class="p-2" v-if="org.hasOwnProperty('People')" v-show="Object.keys(org.People).length !== 0">
                   <h5>People</h5>
-                  <PeopleGrid v-bind:people="org.people"></PeopleGrid>
+                  <PeopleGrid v-bind:people="org.People"></PeopleGrid>
                 </div>
-                <div class="p-2" v-if="org.hasOwnProperty('components')" v-show="Object.keys(org.components).length !== 0">
+                <div class="p-2" v-if="org.hasOwnProperty('Components')" v-show="Object.keys(org.Components).length !== 0">
                   <h5>Components</h5>
-                  <ComponentsGrid v-bind:components="org.components"></ComponentsGrid>
+                  <ComponentsGrid v-bind:components="org.Components"></ComponentsGrid>
                 </div>
-                <div class="p-2" v-if="org.hasOwnProperty('products')" v-show="Object.keys(org.products).length !== 0">
+                <div class="p-2" v-if="org.hasOwnProperty('Products')" v-show="Object.keys(org.Products).length !== 0">
                   <h5>Products</h5>
-                  <ProductsGrid v-bind:products="org.products"></ProductsGrid>
+                  <ProductsGrid v-bind:products="org.Products"></ProductsGrid>
                 </div>
 
               </div>
@@ -156,6 +156,7 @@ export default {
       })
     },
     getOrgData: function () {
+      console.log(window.origin)
       const fetchRequest = window.origin + '/api/v1/organizations'
       console.log(
         'GET ' + fetchRequest
@@ -201,8 +202,8 @@ export default {
         const list = Object.values(this.org_data)
         list.forEach(org => {
           if (
-            org.organization_name.toLowerCase().includes(this.search_query.toLowerCase()) ||
-            org.organization_initial.toLowerCase().includes(this.search_query.toLowerCase())
+            org.Organization_Names[0].organization_name.toLowerCase().includes(this.search_query.toLowerCase()) ||
+            org.Organization_Names[0].organization_initial.toLowerCase().includes(this.search_query.toLowerCase())
           ) {
             searched.push(org)
           }
