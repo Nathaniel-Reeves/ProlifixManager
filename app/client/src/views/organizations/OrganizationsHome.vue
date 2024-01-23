@@ -160,7 +160,6 @@ export default {
       })
     },
     getOrgData: function () {
-      console.log(window.origin)
       const fetchRequest = window.origin + '/api/v1/organizations'
       console.log(
         'GET ' + fetchRequest
