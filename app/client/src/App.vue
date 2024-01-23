@@ -130,6 +130,7 @@ export default {
             user_id: '',
             username: ''
           }
+          this.$router.push({ name: 'login' })
         } else {
           console.log(response)
         }

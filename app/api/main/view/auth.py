@@ -41,7 +41,7 @@ def get_session_token(request):
 # Remove the authentication requirement for all endpoints (False)
 # Enable the authentication requirement for endpoints (True) 
 # This is for development purposes only
-AUTH_REQUIRED = False
+AUTH_REQUIRED = True
 
 def check_authenticated(authentication_required=False, database_priveleges=None):
     """

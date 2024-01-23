@@ -7,6 +7,12 @@
     class="p-4 mt-2 mb-4"
   >
     <b-card-text>
+        <!-- Show Flash Messages -->
+        <div v-for="flash in flash_errors" v-bind:key="flash.error">
+          <div class="alert alert-danger" role="alert">
+            <p>{{ flash }}</p>
+          </div>
+        </div>
         <b-form @submit.stop.prevent>
             <b-form-group>
                 <label for="text-username">Username</label>
@@ -19,7 +25,7 @@
                 <label for="text-password">Password</label>
                 <b-form-input type="password" class="form-control" v-model="password" id="text-password"></b-form-input>
                 <b-form-text>
-                  {{ usernameMessages.message }}
+                  {{ passwordMessages.message }}
                 </b-form-text>
             </b-form-group>
             <b-form-group>
@@ -27,12 +33,6 @@
             </b-form-group>
         </b-form>
     </b-card-text>
-    <!-- Show Flash Messages -->
-    <div v-for="flash in flash_errors" v-bind:key="flash.error">
-        <div class="alert alert-danger" role="alert">
-            <p>{{ flash }}</p>
-        </div>
-    </div>
   </b-card>
 </template>
 
@@ -68,8 +68,13 @@ export default {
       }).then(response => {
         response.json().then(jsonData => {
           console.log(jsonData)
-          this.userData = jsonData
-          this.$emit('login', jsonData)
+          if (response.status === 201) {
+            this.userData = jsonData
+            this.$emit('login', jsonData)
+            this.$router.push({ name: 'home' })
+          } else {
+            this.form_messages = jsonData.messages.form
+          }
         })
       }).catch(error => {
         console.log(error)
@@ -80,12 +85,21 @@ export default {
   },
   computed: {
     usernameMessages: function () {
-      if (Object.keys(this.form_messages).length === 0) {
+      if (this.form_messages.username === undefined) {
         return {
           message: ''
         }
       } else {
         return this.form_messages.username
+      }
+    },
+    passwordMessages: function () {
+      if (this.form_messages.password === undefined) {
+        return {
+          message: ''
+        }
+      } else {
+        return this.form_messages.password
       }
     }
   }
