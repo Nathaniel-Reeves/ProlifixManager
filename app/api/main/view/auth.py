@@ -263,6 +263,7 @@ def login():
         session_data['doc'] = user_data['doc']
         session_data['organization_id'] = user_data['organization_id']
         session_data['first_name'] = user_data['first_name']
+        session_data['last_name'] = user_data['last_name']
         redis_connection.set(session_token, json.dumps(session_data))
         redis_connection.expire(
             session_token, app.config['SESSION_EXPIRE'], nx=False, xx=False, gt=False, lt=False)

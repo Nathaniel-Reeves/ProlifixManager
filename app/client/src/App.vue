@@ -29,7 +29,7 @@
         <b-navbar-nav>
           <b-nav-item right>
             <b-button class="btn rounded-circle p-0 m-1" v-b-toggle.account-sidebar-right type="button" id="button-addon2">
-              <b-avatar icon="person-circle" size="2.5rem"></b-avatar>
+              <AvatarIcon v-bind:userData="userData" v-bind:loggedInState="loggedInState"></AvatarIcon>
             </b-button>
           </b-nav-item>
         </b-navbar-nav>
@@ -79,6 +79,7 @@
           </form>
         </section>
       </div> -->
+
         <div class="text-center bg-dark p-3">
           © 2023 Copyright  |  v0.0.1-beta
         </div>
@@ -88,6 +89,8 @@
 </template>
 
 <script>
+
+import AvatarIcon from './components/AvatarIcon.vue'
 
 function getCookie (name) {
   const value = `; ${document.cookie}`
@@ -139,8 +142,8 @@ export default {
       })
     },
     updateUserData: function (userDataFromLogin) {
-      console.log('Update Login Status: ', userDataFromLogin)
-      this.userData = userDataFromLogin
+      console.log('Update Login Status: ', userDataFromLogin.data[0])
+      this.userData = userDataFromLogin.data[0]
       this.loggedInState = true
     },
     getUser: function () {
@@ -183,6 +186,9 @@ export default {
   },
   created: function () {
     this.getUser()
+  },
+  components: {
+    AvatarIcon
   }
 }
 </script>

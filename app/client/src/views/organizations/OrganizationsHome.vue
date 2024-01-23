@@ -149,6 +149,10 @@ export default {
           response.json().then(data => {
             this.org_data[orgId] = Object.values(data.data[0])[0]
           })
+        } else if (response.status === 401) {
+          this.$router.push({
+            name: 'login'
+          })
         } else {
           console.log('Looks like there was a problem. Status Code:' + response.status)
           console.log(response)
@@ -173,6 +177,10 @@ export default {
             this.org_data = data.data[0]
             console.log(this.org_data)
             this.loaded = true
+          })
+        } else if (response.status === 401) {
+          this.$router.push({
+            name: 'login'
           })
         } else {
           console.log('Looks like there was a problem. Status Code:' + response.status)
