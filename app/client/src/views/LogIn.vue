@@ -72,8 +72,10 @@ export default {
             this.userData = jsonData
             this.$emit('login', jsonData)
             this.$router.push({ name: 'home' })
-          } else {
+          } else if (response.status === 401) {
             this.form_messages = jsonData.messages.form
+          } else {
+            this.flash_errors = jsonData.messages.flash
           }
         })
       }).catch(error => {

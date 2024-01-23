@@ -24,8 +24,7 @@ export default {
   computed: {
     initials: function () {
       console.log(this.avatar_data)
-      if (this.avatar_data.first_name !== undefined &&
-      this.avatar_data.last_name !== undefined) {
+      if (this.loggedInState) {
         const f = Array.from(this.avatar_data.first_name)[0]
         const l = Array.from(this.avatar_data.last_name)[0]
         const i = f + l
