@@ -29,7 +29,7 @@
         <b-navbar-nav>
           <b-nav-item right>
             <b-button class="btn rounded-circle p-0 m-1" v-b-toggle.account-sidebar-right type="button" id="button-addon2">
-              <AvatarIcon v-bind:userData="userData" v-bind:loggedInState="loggedInState"></AvatarIcon>
+              <AvatarIcon></AvatarIcon>
             </b-button>
           </b-nav-item>
         </b-navbar-nav>

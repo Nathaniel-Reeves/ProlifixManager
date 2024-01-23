@@ -12,10 +12,6 @@
 <script>
 export default {
   name: 'AvatarIcon',
-  props: {
-    userData: Object,
-    loggedInState: Boolean
-  },
   data () {
     return {
       avatar_data: this.userData
@@ -23,7 +19,7 @@ export default {
   },
   computed: {
     initials: function () {
-      console.log(this.avatar_data)
+      console.log('generate avatar', this.avatar_data)
       if (this.loggedInState) {
         const f = Array.from(this.avatar_data.first_name)[0]
         const l = Array.from(this.avatar_data.last_name)[0]
