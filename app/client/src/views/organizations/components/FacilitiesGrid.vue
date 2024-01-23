@@ -11,12 +11,12 @@ export default {
     Grid
   },
   props: {
-    facilities: Object
+    Facilities: Array
   },
   data () {
     return {
       cols: ['Building Name', 'Type'],
-      facility_data: Object.values(this.facilities),
+      facility_data: this.Facilities,
       rows: [],
       pagination: {
         limit: 5
@@ -24,13 +24,15 @@ export default {
     }
   },
   created: function () {
-    this.facility_data.forEach(facility => {
-      const row = [
-        facility.building_name,
-        facility.building_type
-      ]
-      this.rows.push(row)
-    })
+    if (this.facility_data !== undefined) {
+      this.facility_data.forEach(facility => {
+        const row = [
+          facility.building_name,
+          facility.building_type
+        ]
+        this.rows.push(row)
+      })
+    }
   }
 }
 </script>

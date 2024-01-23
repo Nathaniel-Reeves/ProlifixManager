@@ -11,12 +11,12 @@ export default {
     Grid
   },
   props: {
-    products: Object
+    Products: Array
   },
   data () {
     return {
       cols: ['Product Name', 'Type'],
-      product_data: Object.values(this.products),
+      product_data: this.Products,
       rows: [],
       pagination: {
         limit: 5
@@ -24,13 +24,15 @@ export default {
     }
   },
   created: function () {
-    this.product_data.forEach(product => {
-      const row = [
-        product.product_name,
-        product.type
-      ]
-      this.rows.push(row)
-    })
+    if (this.product_data !== undefined) {
+      this.product_data.forEach(product => {
+        const row = [
+          product.product_name,
+          product.type
+        ]
+        this.rows.push(row)
+      })
+    }
   }
 }
 </script>

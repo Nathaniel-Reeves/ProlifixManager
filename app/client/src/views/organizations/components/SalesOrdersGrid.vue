@@ -11,12 +11,12 @@ export default {
     Grid
   },
   props: {
-    sales_orders: Object
+    Sales_Orders: Array
   },
   data () {
     return {
       cols: ['Sales Order', 'Client PO'],
-      sales_orders_data: Object.values(this.sales_orders),
+      sales_orders_data: this.Sales_Orders,
       rows: [],
       pagination: {
         limit: 5
@@ -24,13 +24,15 @@ export default {
     }
   },
   created: function () {
-    this.sales_orders_data.forEach(salesOrder => {
-      const row = [
-        salesOrder.prefix + salesOrder.year + salesOrder.month + salesOrder.sec_number,
-        salesOrder.client_po_num
-      ]
-      this.rows.push(row)
-    })
+    if (this.sales_orders_data !== undefined) {
+      this.sales_orders_data.forEach(salesOrder => {
+        const row = [
+          salesOrder.prefix + salesOrder.year + salesOrder.month + salesOrder.sec_number,
+          salesOrder.client_po_num
+        ]
+        this.rows.push(row)
+      })
+    }
   }
 }
 </script>

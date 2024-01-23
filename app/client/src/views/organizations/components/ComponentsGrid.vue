@@ -11,12 +11,12 @@ export default {
     Grid
   },
   props: {
-    components: Object
+    Components: Array
   },
   data () {
     return {
       cols: ['Component Name', 'Type'],
-      component_data: Object.values(this.components),
+      component_data: Object.values(this.Components),
       rows: [],
       pagination: {
         limit: 5
@@ -24,13 +24,15 @@ export default {
     }
   },
   created: function () {
-    this.component_data.forEach(component => {
-      const row = [
-        component.component_name,
-        component.component_type
-      ]
-      this.rows.push(row)
-    })
+    if (this.Components !== undefined) {
+      this.component_data.forEach(component => {
+        const row = [
+          component.component_name,
+          component.component_type
+        ]
+        this.rows.push(row)
+      })
+    }
   }
 }
 </script>

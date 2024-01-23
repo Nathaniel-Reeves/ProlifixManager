@@ -99,16 +99,6 @@ def create_app():
 
 
     api_blueprint = Blueprint('api', __name__, url_prefix=API_PREFIX)
-
-
-    """
-    Import Old Controler
-    """
-    from old_controler.orders import bp as orders_bp
-    api_blueprint.register_blueprint(orders_bp)
-
-    # from old_controler.inventory import bp as inventory_bp
-    # api_blueprint.register_blueprint(inventory_bp)
     
     """
     Import Views

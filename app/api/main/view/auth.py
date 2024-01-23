@@ -38,6 +38,11 @@ def get_session_token(request):
 
 # Login & Authenication Wrapper Functions
 
+# Remove the authentication requirement for all endpoints (False)
+# Enable the authentication requirement for endpoints (True) 
+# This is for development purposes only
+AUTH_REQUIRED = False
+
 def check_authenticated(authentication_required=False, database_priveleges=None):
     """
     Check if the user is authenticated.
@@ -59,7 +64,6 @@ def check_authenticated(authentication_required=False, database_priveleges=None)
 
                 # Check if user has a session token, Create one if not
                 session_token = get_session_token(request)
-                print(session_token)
                 
                 if (session_token is None) or (not redis_connection.exists(session_token)):
                     session_token = create_session()
@@ -78,7 +82,7 @@ def check_authenticated(authentication_required=False, database_priveleges=None)
                 session_data = json.loads(raw_session_data)
 
                 # Check if User is Authenticated
-                if authentication_required and not session_data['user_id']:
+                if AUTH_REQUIRED and authentication_required and not session_data['user_id']:
                     custom_response.insert_flash_message(
                         FlashMessage(
                             message='User not authenticated',

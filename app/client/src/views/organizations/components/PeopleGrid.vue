@@ -11,12 +11,12 @@ export default {
     Grid
   },
   props: {
-    people: Object
+    People: Array
   },
   data () {
     return {
       cols: ['First Name', 'Last Name'],
-      people_data: Object.values(this.people),
+      people_data: this.People,
       rows: [],
       pagination: {
         limit: 5
@@ -24,13 +24,15 @@ export default {
     }
   },
   created: function () {
-    this.people_data.forEach(person => {
-      const row = [
-        person.first_name,
-        person.last_name
-      ]
-      this.rows.push(row)
-    })
+    if (this.people_data !== undefined) {
+      this.people_data.forEach(person => {
+        const row = [
+          person.first_name,
+          person.last_name
+        ]
+        this.rows.push(row)
+      })
+    }
   }
 }
 </script>

@@ -71,27 +71,27 @@
 
                 <div class="p-2" v-if="org.hasOwnProperty('Facilities')" v-show="Object.keys(org.Facilities).length !== 0">
                   <h5>Facilities</h5>
-                  <FacilitiesGrid v-bind:facilities="org.Facilities"></FacilitiesGrid>
+                  <FacilitiesGrid v-bind:Facilities="org.Facilities"></FacilitiesGrid>
                 </div>
                 <div class="p-2" v-if="org.hasOwnProperty('Sales_Orders')" v-show="Object.keys(org.Sales_Orders).length !== 0">
                   <h5>Sales Orders</h5>
-                  <SalesOrdersGrid v-bind:sales_orders="org.Sales_Orders"></SalesOrdersGrid>
+                  <SalesOrdersGrid v-bind:Sales_Orders="org.Sales_Orders"></SalesOrdersGrid>
                 </div>
                 <div class="p-2" v-if="org.hasOwnProperty('Purchase_Orders')" v-show="Object.keys(org.Purchase_Orders).length !== 0">
                   <h5>Purchase Orders</h5>
-                  <PurchaseOrdersGrid v-bind:purchase_orders="org.Purchase_Orders"></PurchaseOrdersGrid>
+                  <PurchaseOrdersGrid v-bind:Purchase_Orders="org.Purchase_Orders"></PurchaseOrdersGrid>
                 </div>
                 <div class="p-2" v-if="org.hasOwnProperty('People')" v-show="Object.keys(org.People).length !== 0">
                   <h5>People</h5>
-                  <PeopleGrid v-bind:people="org.People"></PeopleGrid>
+                  <PeopleGrid v-bind:People="org.People"></PeopleGrid>
                 </div>
                 <div class="p-2" v-if="org.hasOwnProperty('Components')" v-show="Object.keys(org.Components).length !== 0">
                   <h5>Components</h5>
-                  <ComponentsGrid v-bind:components="org.Components"></ComponentsGrid>
+                  <ComponentsGrid v-bind:Components="org.Components"></ComponentsGrid>
                 </div>
                 <div class="p-2" v-if="org.hasOwnProperty('Products')" v-show="Object.keys(org.Products).length !== 0">
                   <h5>Products</h5>
-                  <ProductsGrid v-bind:products="org.Products"></ProductsGrid>
+                  <ProductsGrid v-bind:Products="org.Products"></ProductsGrid>
                 </div>
 
               </div>
