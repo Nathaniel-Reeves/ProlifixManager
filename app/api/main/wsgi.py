@@ -77,7 +77,8 @@ def create_app():
         ],
          allow_origins=[
              "prolifixmanager.com",
-             "localhost"
+             "localhost:8080",
+             "127.0.0.1:8080",
          ])
 
 
