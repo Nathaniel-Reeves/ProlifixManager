@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import { h } from 'gridjs'
 import Grid from 'gridjs-vue'
 
 export default {
@@ -15,7 +16,23 @@ export default {
   },
   data () {
     return {
-      cols: ['Component Name', 'Type'],
+      cols: [
+        {
+          name: 'Component Name'
+        },
+        {
+          name: 'Type'
+        },
+        {
+          name: 'Actions',
+          formatter: (cell, row) => {
+            return h('button', {
+              className: 'btn btn-secondary rounded-pill',
+              onClick: () => this.view_row(cell, row)
+            }, 'View')
+          }
+        }
+      ],
       component_data: Object.values(this.Components),
       rows: [],
       pagination: {
@@ -23,12 +40,18 @@ export default {
       }
     }
   },
+  methods: {
+    view_row: function (cell, row) {
+      this.$router.push({ name: 'home' })
+    }
+  },
   created: function () {
     if (this.Components !== undefined) {
       this.component_data.forEach(component => {
         const row = [
-          component.component_name,
-          component.component_type
+          component.component_id,
+          component.component_type,
+          component.component_id
         ]
         this.rows.push(row)
       })

@@ -17,6 +17,9 @@
             <b-nav-item-dropdown text="Organizations" active-class>
               <b-dropdown-item to="/organizations">Organizations List</b-dropdown-item>
             </b-nav-item-dropdown>
+            <b-nav-item-dropdown text="Catalogue" active-class>
+              <b-dropdown-item to="/catalogue/components">Components</b-dropdown-item>
+            </b-nav-item-dropdown>
             <b-nav-item to="/barcodereader" active-class>barcodereader</b-nav-item>
           </b-navbar-nav>
         </b-collapse>

@@ -22,8 +22,6 @@ export default {
   },
   computed: {
     initials: function () {
-      console.log('generate avatar', this.user_data)
-      console.log('login status', this.logged_in_state)
       if (this.logged_in_state) {
         const f = Array.from(this.user_data.first_name)[0]
         const l = Array.from(this.user_data.last_name)[0]
