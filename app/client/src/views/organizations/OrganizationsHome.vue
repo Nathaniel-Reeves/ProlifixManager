@@ -40,11 +40,16 @@
 
     <div class="card m-2">
       <div class="card-body">
-        <div class="input-group d-flex justify-content-between">
-          <h2 class="card-title mr-2">Organizations</h2>
-            <b-button v-b-toggle.sidebar-right v-bind:class="['btn', 'my-2', filterActive ? 'btn-info' : 'btn-light']" type="button" id="button-addon2">
-              <i class="bi bi-filter"></i>
-            </b-button>
+        <div class="input-group d-flex">
+          <h2 class="card-title flex-grow-1">Organizations</h2>
+          <b-button v-b-tooltip.hover title="New Organization" v-b-toggle.sidebar-right style="border-width: 2px; border-color:#999999" v-bind:class="['btn', 'my-2', 'mx-1', filterActive ? 'btn-info' : 'btn-light']" type="button"
+                id="button-addon2">
+            <i class="bi bi-plus-lg"></i>
+          </b-button>
+          <b-button v-b-tooltip.hover title="Filter" v-b-toggle.sidebar-right style="border-width: 2px; border-color:#999999" v-bind:class="['btn', 'my-2', 'mx-1', filterActive ? 'btn-info' : 'btn-light']" type="button"
+              id="button-addon2">
+            <i class="bi bi-filter"></i>
+          </b-button>
         </div>
 
         <div v-show="!loaded">
@@ -56,12 +61,18 @@
         <div v-show="loaded" class="accordion overflow-auto border-top border-bottom" id="accordionExample" style="height:100vh;">
           <div class="card" v-for="org in filterOrganizations" :key="org.organization_id">
             <div class="card-header" v-bind:id="'heading' + org.organization_id">
-              <h2 class="mb-0">
-                <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse"
+              <h2 class="d-flex flex-row mb-0">
+                <button class="btn btn-block text-left" type="button" data-toggle="collapse"
                   v-bind:data-target="'#collapse' + org.organization_id" aria-expanded="false"
                   v-bind:aria-controls="'collapse' + org.organization_id" v-on:click="populateOrg(org.organization_id)">
-                  {{ org.Organization_Names[0].organization_name }}
+                  <b-container fluid class="d-flex justify-content-start flex-wrap">
+                      <i class="bi bi-chevron-down p-2"></i>
+                      <div class="p-2">{{ org.Organization_Names[0].organization_name }}</div>
+                    </b-container>
                 </button>
+                <b-container fluid class="d-flex justify-content-end flex-wrap" style="max-width:10rem;">
+                  <button type="button" class="btn btn-light ms-auto" style="border-width: 2px; border-color:#999999">View Details</button>
+                </b-container>
               </h2>
             </div>
 

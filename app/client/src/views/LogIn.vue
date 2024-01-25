@@ -10,7 +10,7 @@
         <!-- Show Flash Messages -->
         <div v-for="flash in flash_errors" v-bind:key="flash.error">
           <div class="alert alert-danger" role="alert">
-            <p>{{ flash }}</p>
+            <p>{{ flash.message_detail }}</p>
           </div>
         </div>
         <b-form @submit.stop.prevent>
