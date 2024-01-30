@@ -31,7 +31,7 @@
       <div class="card-body">
         <div class="input-group d-flex">
           <h2 class="card-title flex-grow-1">Components Catalogue</h2>
-          <b-button v-b-tooltip.hover title="New Component" v-b-toggle.sidebar-right style="border-width: 2px; border-color:#999999" v-bind:class="['btn', 'my-2', 'mx-1', filterActive ? 'btn-info' : 'btn-light']" type="button"
+          <b-button v-b-tooltip.hover title="New Component" v-b-toggle.sidebar-right style="border-width: 2px; border-color:#999999" v-bind:class="['btn', 'my-2', 'mx-1', 'btn-light']" type="button"
                 id="button-addon2">
             <i class="bi bi-plus-lg"></i>
           </b-button>
@@ -56,8 +56,8 @@
                     v-bind:aria-controls="'collapse' + component.component_id" v-on:click="populateComponent(component.component_id)">
                     <b-container fluid class="d-flex justify-content-start flex-wrap">
                       <i class="bi bi-chevron-down p-2"></i>
-                      <div class="p-2">{{ component.component_type.replace("_", " ").toLowerCase()
-                        .split(' ')
+                      <div class="p-2">{{ component.component_type.toLowerCase()
+                        .split('_')
                         .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
                         .join(' ') }}</div>
                       <div class="p-2">{{ get_comopnent_primary_name(component) }}</div>
@@ -66,7 +66,7 @@
                     </b-container>
                   </button>
                   <b-container fluid class="d-flex justify-content-end flex-wrap" style="max-width:10rem;">
-                    <button type="button" class="btn btn-light ms-auto" style="border-width: 2px; border-color:#999999">View Details</button>
+                    <button type="button" class="btn btn-light ms-auto" style="border-width: 2px; border-color:#999999" v-on:click="view_details(component.component_id)">View Details</button>
                   </b-container>
                 </h2>
               </div>
@@ -216,6 +216,12 @@ export default {
         }
       }
       return ''
+    },
+    view_details: function (id) {
+      this.$router.push({
+        name: 'ComponentDetail',
+        params: { id }
+      })
     },
     populateComponent: function (componentId) {
       const fetchRequest = window.origin + '/api/v1/catalogue/components?component-id=' + componentId + '&populate=product_materials&populate=purchase_order_detail&populate=label_formula_master&populate=ingredient_formula_master&populate=item_id&populate=inventory&populate=brand&doc=true'

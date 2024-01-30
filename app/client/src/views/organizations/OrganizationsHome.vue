@@ -98,7 +98,7 @@
                 </div>
                 <div class="p-2" v-if="org.hasOwnProperty('Components')" v-show="Object.keys(org.Components).length !== 0">
                   <h5>Components</h5>
-                  <ComponentsGrid v-bind:Components="org.Components"></ComponentsGrid>
+                  <ComponentsGrid v-bind:Components="org.Components" v-bind:Component_Names="org.Component_Names"></ComponentsGrid>
                 </div>
                 <div class="p-2" v-if="org.hasOwnProperty('Products')" v-show="Object.keys(org.Products).length !== 0">
                   <h5>Products</h5>
@@ -121,12 +121,12 @@
 </style>
 
 <script>
-import FacilitiesGrid from './components/FacilitiesGrid.vue'
-import SalesOrdersGrid from './components/SalesOrdersGrid.vue'
-import PurchaseOrdersGrid from './components/PurchaseOrdersGrid.vue'
-import PeopleGrid from './components/PeopleGrid.vue'
-import ComponentsGrid from './components/ComponentsGrid.vue'
-import ProductsGrid from './components/ProductsGrid.vue'
+import FacilitiesGrid from '../../components/FacilitiesGrid.vue'
+import SalesOrdersGrid from '../../components/SalesOrdersGrid.vue'
+import PurchaseOrdersGrid from '../../components/PurchaseOrdersGrid.vue'
+import PeopleGrid from '../../components/PeopleGrid.vue'
+import ComponentsGrid from '../../components/ComponentsGrid.vue'
+import ProductsGrid from '../../components/ProductsGrid.vue'
 
 export default {
   name: 'OrganizationsHome',

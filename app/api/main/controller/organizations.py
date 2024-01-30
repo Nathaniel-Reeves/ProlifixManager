@@ -46,6 +46,7 @@ def get_organizations(custom_response, org_ids, org_type, populate, doc):
         tables.append(db.People)
     if 'components' in populate:
         tables.append(db.Components)
+        tables.append(db.Component_Names)
     if 'products' in populate:
         tables.append(db.Product_Master)
 
@@ -62,10 +63,14 @@ def get_organizations(custom_response, org_ids, org_type, populate, doc):
         stm = stm.join(db.People, db.Organizations.organization_id == db.People.organization_id, isouter=True)
     if 'components' in populate:
         stm = stm.join(db.Components, db.Organizations.organization_id == db.Components.brand_id, isouter=True)
+        stm = stm.join(db.Component_Names, db.Components.component_id == db.Component_Names.component_id, isouter=True)
     if 'products' in populate:
         stm = stm.join(db.Product_Master, db.Organizations.organization_id == db.Product_Master.organization_id, isouter=True)
         
     stm = stm.where(db.Organization_Names.primary_name == True)
+    
+    if 'components' in populate:
+        stm = stm.where(db.Component_Names.primary_name == True)
     
     if org_type:
         if 'client' in org_type:

@@ -63,7 +63,7 @@
 </style>
 
 <script>
-import InventoryGrid from './components/InventoryGrid.vue'
+import InventoryGrid from '../../components/InventoryGrid.vue'
 
 export default {
   name: 'InventoryHome',
