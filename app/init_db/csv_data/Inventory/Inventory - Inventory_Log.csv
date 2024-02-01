@@ -1,0 +1,4 @@
+log_id,inv_id,courier_id,facility_id,user_id,po_detail_id,so_detail_id,previous_log_id,pre_change_actual_inventory,post_change_actual_inventory,pre_change_theoretic_inventory,post_change_theoretic_inventory,cycle_count_grade,archived_tree,supplier_item_id,lot_number,batch_number,doc,state,state_notes
+1,15,1,1,1,1,1,NULL,0,0,0,0,0,0,NULL,NULL,NULL,{},Ordered,NULL
+2,15,1,1,1,1,1,1,0,0,0,0,0,0,NULL,NULL,NULL,{},Received,NULL
+3,15,1,1,1,1,1,2,0,0,0,0,0,0,NULL,NULL,NULL,{},Allocated,NULL

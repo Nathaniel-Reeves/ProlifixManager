@@ -13,7 +13,7 @@ component_id,brand_id,component_type,units,date_entered,certified_usda_organic,c
 12,5,powder,kilograms,NULL,0,1,0,0,0,1,0,1
 13,5,powder,kilograms,NULL,0,0,1,0,0,1,0,1
 14,5,powder,kilograms,NULL,0,0,1,0,0,1,0,1
-15,5,powder,kilograms,NULL,0,0,1,0,0,0,0,1
+15,1,powder,kilograms,NULL,0,0,1,0,0,0,0,1
 16,5,powder,kilograms,NULL,0,0,1,0,0,0,0,1
 17,NULL,powder,kilograms,NULL,0,0,1,0,0,0,0,1
 18,NULL,powder,kilograms,NULL,0,0,1,0,1,0,0,1

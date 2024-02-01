@@ -88,6 +88,15 @@ DATABASES = [
         ]
     },
     {
+        "database": "Manufacturing",
+        "csv_files": [
+            {
+                "file": "./csv_data/Manufacturing/Manufacturing db - Processes.csv",
+                "table_name": "Processes"
+            }
+        ]
+    },
+    {
         "database": "Inventory",
         "csv_files": [
             {
@@ -109,15 +118,6 @@ DATABASES = [
         ]
     },
     {
-        "database": "Manufacturing",
-        "csv_files": [
-            {
-                "file": "./csv_data/Manufacturing/Manufacturing db - Processes.csv",
-                "table_name": "Processes"
-            }
-        ]
-    },
-    {
         "database": "Orders",
         "csv_files": [
             {
@@ -131,6 +131,23 @@ DATABASES = [
             {
                 "file": "./csv_data/Orders/Orders db - Lot_Numbers.csv",
                 "table_name": "Lot_Numbers"
+            },
+            {
+                "file": "./csv_data/Orders/Orders db - Purchase_Orders.csv",
+                "table_name": "Purchase_Orders"
+            },
+            {
+                "file": "./csv_data/Orders/Orders db - Purchase_Order_Detail.csv",
+                "table_name": "Purchase_Order_Detail"
+            }
+        ]
+    },
+    {
+        "database": "Inventory",
+        "csv_files": [
+            {
+                "file": "./csv_data/Inventory/Inventory - Inventory_Log.csv",
+                "table_name": "Inventory_Log"
             }
         ]
     },

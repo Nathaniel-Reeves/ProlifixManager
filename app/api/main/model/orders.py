@@ -401,7 +401,7 @@ class Purchase_Order_Detail(Base):
             'unit_order_qty': self.unit_order_qty,
             'kilos_order_qty': self.kilos_order_qty,
             'special_instructions': self.special_instructions,
-            'datetime_entered': self.datetime_entered,
+            'datetime_entered': self.date_entered,
             'bid_price_per_unit': self.bid_price_per_unit,
             'bid_price_per_kilo': self.bid_price_per_kilo,
             'doc': self.doc
