@@ -36,13 +36,14 @@ export default {
           name: 'Type'
         },
         {
-          name: 'Actions',
+          name: '',
           formatter: (cell, row) => {
             return h('button', {
               className: 'btn .custom-button rounded-pill btn-light',
-              onClick: () => this.view_row(cell, row),
-              onRowClick: () => this.view_row(cell, row)
-            }, 'View')
+              onClick: () => this.view_row(cell, row)
+            }, h('i', {
+              className: 'bi bi-box'
+            }))
           }
         }
       ],
