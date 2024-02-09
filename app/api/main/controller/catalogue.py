@@ -63,7 +63,7 @@ def get_components(
         stm = stm.join(db.Organizations, db.Components.brand_id == db.Organizations.organization_id, isouter=True)
         stm = stm.join(db.Organization_Names, db.Organizations.organization_id == db.Organization_Names.organization_id, isouter=True)
         
-    stm = stm.where(db.Component_Names.primary_name == True)
+    # stm = stm.where(db.Component_Names.primary_name == True)
     
     if component_ids:
         stm = stm.where(db.Components.component_id.in_(component_ids))

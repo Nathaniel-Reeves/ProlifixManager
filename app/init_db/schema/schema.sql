@@ -163,7 +163,8 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Component_Names` (
   `name_id` INT UNSIGNED AUTO_INCREMENT,
   `component_id` INT UNSIGNED,
   `component_name` VARCHAR(300) NOT NULL,
-  `primary_name` BOOL,
+  `primary_name` BOOL DEFAULT 0,
+  `botanical_name` BOOL DEFAULT 0,
   PRIMARY KEY (`name_id`),
   FOREIGN KEY (`component_id`) REFERENCES `Inventory`.`Components`(`component_id`),
   INDEX ( `component_name` )

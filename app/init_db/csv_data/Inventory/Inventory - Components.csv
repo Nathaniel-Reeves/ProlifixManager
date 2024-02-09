@@ -6,7 +6,7 @@ component_id,brand_id,component_type,units,date_entered,certified_usda_organic,c
 5,2,powder,kilograms,NULL,1,0,0,1,0,0,1,0
 6,3,powder,kilograms,NULL,1,0,0,1,0,0,1,0
 7,3,powder,kilograms,NULL,0,1,0,1,0,1,1,0
-8,3,powder,kilograms,NULL,0,1,0,1,0,1,1,1
+8,1,powder,kilograms,NULL,0,1,0,1,0,1,1,1
 9,4,powder,kilograms,NULL,0,1,0,1,0,1,1,1
 10,4,powder,kilograms,NULL,0,1,0,0,0,1,1,1
 11,4,powder,kilograms,NULL,0,1,0,0,0,1,1,1

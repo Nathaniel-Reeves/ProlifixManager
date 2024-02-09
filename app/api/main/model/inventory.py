@@ -94,6 +94,7 @@ class Component_Names(Base):
     # Table Columns
     component_name: Mapped[str] = mapped_column()
     primary_name: Mapped[bool] = mapped_column(default=False)
+    botanical_name: Mapped[bool] = mapped_column(default=False)
     
     # Common Methods   
     def __repr__(self):
@@ -104,7 +105,8 @@ class Component_Names(Base):
             "name_id": self.name_id,
             "component_id": self.component_id,
             "component_name": self.component_name,
-            "primary_name": self.primary_name
+            "primary_name": self.primary_name,
+            "botanical_name": self.botanical_name
         }
     
     def get_id(self):

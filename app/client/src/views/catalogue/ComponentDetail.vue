@@ -11,7 +11,7 @@
     <b-container fluid>
       <b-card class="m-2" v-show="loaded">
         <b-card-body>
-          <h2 class="card-title">{{ format_type(component_data.component_type) }} {{ get_comopnent_primary_name(component_data) }}</h2>
+          <h2 class="card-title">{{ format_string(get_comopnent_primary_name(component_data)) }} {{ format_string(component_data.component_type) }}</h2>
           <hr>
           <b-nav pills card-header slot="header" v-b-scrollspy:nav-scroller class="text-nowrap">
             <b-nav-item href="#Description" @click="scrollIntoView">Description</b-nav-item>
@@ -26,19 +26,37 @@
         <b-card-body id="nav-scroller" ref="content" style="position:relative; height:60vh; overflow-y:scroll;">
           <h3 id="Description">Description</h3>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero justo laoreet sit amet cursus sit amet. Et ultrices neque ornare aenean euismod elementum. Amet dictum sit amet justo donec enim diam vulputate. Est ultricies integer quis auctor elit. Habitasse platea dictumst quisque sagittis. Nulla malesuada pellentesque elit eget gravida cum sociis natoque penatibus. Ligula ullamcorper malesuada proin libero. Dictum varius duis at consectetur lorem donec massa. Eu turpis egestas pretium aenean pharetra magna ac placerat. Auctor neque vitae tempus quam pellentesque nec. Commodo elit at imperdiet dui accumsan sit amet nulla. Nulla facilisi nullam vehicula ipsum a arcu cursus vitae congue. Ultrices gravida dictum fusce ut placerat orci. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. Faucibus turpis in eu mi bibendum neque egestas congue. Cras semper auctor neque vitae tempus quam pellentesque. Turpis egestas pretium aenean pharetra magna. Euismod nisi porta lorem mollis aliquam ut porttitor leo.</p>
-          <h3 id="Aliases">Aliases</h3>
+
+          <h3 id="Aliases">Aliases<b-button v-show="!edit_names" v-b-tooltip.hover title="Edit Component Names" v-on:click="editNames()" v-bind:class="['btn','p-1', 'ml-2', 'btn-light']" type="button"><i class="bi bi-pencil-square"></i></b-button></h3>
             <div v-for="Component_Name in component_data.Component_Names" :key="Component_Name.name_id">
-              <div v-if="Component_Name.primary_name">
-                <p>
-                  <b>{{ Component_Name.component_name }} | Primary Name Used</b>
-                </p>
-              </div>
-              <div v-else>
-                <p>
-                  {{ Component_Name.component_name }}
-                </p>
-              </div>
+
+              <p v-show="!edit_names" v-bind:class="{ bold: Component_Name.primary_name, italic: Component_Name.botanical_name}">
+                {{ format_string(Component_Name.component_name) }}{{ Component_Name.primary_name?" | Primary":""}}{{ Component_Name.botanical_name ? " | Botanical" : "" }}
+              </p>
+
+              <b-form inline v-show="edit_names" class="m-2" @submit.stop.prevent>
+                <label class="sr-only" for="inline-form-input-name">Name</label>
+                <b-form-input
+                  id="inline-form-input-name"
+                  class="mb-2 mr-sm-2 mb-sm-0"
+                  v-model="Component_Name.component_name"
+                  :validated="text_validation(Component_Name.component_name)"
+                  ></b-form-input>
+                <b-form-invalid-feedback :validated="text_validation(Component_Name.component_name)">
+                  Your user ID must be 5-12 characters long.
+                </b-form-invalid-feedback>
+
+                <div v-on:click="radio(Component_Name.name_id, 'primary')">
+                  <b-form-checkbox button button-variant="light" name="Primary Name" class="mb-2 mr-sm-2 mb-sm-0" v-model="Component_Name.primary_name">Primary Name</b-form-checkbox>
+                </div>
+                <div v-on:click="radio(Component_Name.name_id, 'botanical')" v-show="component_data.component_type === 'powder'">
+                  <b-form-checkbox button button-variant="light" name="Botanical Name" class="mb-2 mr-sm-2 mb-sm-0" v-model="Component_Name.botanical_name">Botanical Name</b-form-checkbox>
+                </div>
+                </b-form>
+
             </div>
+            <b-button variant="primary" class="m-2" v-show="edit_names" v-on:click="editNames()">Save</b-button>
+
           <h3 id="Specifications">Specifications</h3>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero justo laoreet sit amet cursus sit amet. Et ultrices neque ornare aenean euismod elementum. Amet dictum sit amet justo donec enim diam vulputate. Est ultricies integer quis auctor elit. Habitasse platea dictumst quisque sagittis. Nulla malesuada pellentesque elit eget gravida cum sociis natoque penatibus. Ligula ullamcorper malesuada proin libero. Dictum varius duis at consectetur lorem donec massa. Eu turpis egestas pretium aenean pharetra magna ac placerat. Auctor neque vitae tempus quam pellentesque nec. Commodo elit at imperdiet dui accumsan sit amet nulla. Nulla facilisi nullam vehicula ipsum a arcu cursus vitae congue. Ultrices gravida dictum fusce ut placerat orci. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. Faucibus turpis in eu mi bibendum neque egestas congue. Cras semper auctor neque vitae tempus quam pellentesque. Turpis egestas pretium aenean pharetra magna. Euismod nisi porta lorem mollis aliquam ut porttitor leo.</p>
           <h3 id="Sources">Sources</h3>
@@ -54,6 +72,15 @@
 .my_component {
     width: 95%;
 }
+.bold {
+    font-weight: bold;
+}
+.italic {
+    font-style: italic;
+}
+.normal {
+    font-weight: normal;
+}
 </style>
 
 <script>
@@ -64,10 +91,32 @@ export default {
       id: this.$route.params.id,
       component_data: {},
       search_query: '',
-      loaded: false
+      loaded: false,
+      edit_names: false
     }
   },
   methods: {
+    radio: function (id, flag) {
+      for (var i = 0; i < this.component_data.Component_Names.length; i++) {
+        if (this.component_data.Component_Names[i].name_id === id) {
+          continue
+        } else {
+          if (flag === 'botanical') {
+            this.component_data.Component_Names[i].botanical_name = false
+          } else if (flag === 'primary') {
+            this.component_data.Component_Names[i].primary_name = false
+          } else {
+            continue
+          }
+        }
+      }
+    },
+    text_validation: function (text) {
+      return text.length > 0
+    },
+    editNames: function () {
+      this.edit_names = !this.edit_names
+    },
     scrollIntoView: function (event) {
       event.preventDefault()
       const href = event.target.getAttribute('href')
@@ -76,7 +125,7 @@ export default {
         this.$refs.content.scrollTop = el.offsetTop
       }
     },
-    format_type: function (type) {
+    format_string: function (type) {
       if (type === undefined) {
         return ''
       }
