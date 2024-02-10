@@ -186,15 +186,36 @@ def put_component(
         custom_response,
         component
     ):
+    # Connect to the database
+    try:
+        session = get_session()
+    except Exception:
+        error = error_message()
+        custom_response.insert_flash_message(error)
+        custom_response.set_status_code(500)
+        return custom_response
+        
+    try:
+        
+        # Save Files if Any
+        new_component = save_files(component, session)
     
-    component_no_files = remove_file_obj(component)
+        session.commit()
+    except Exception as e:
+        error = error_message()
+        custom_response.insert_flash_message(error)
+        custom_response.set_status_code(400)
+        session.rollback()
+        return custom_response
+    
+    session.close()
     
     # Process and Package the data
-    custom_response.insert_data(component_no_files)
+    custom_response.insert_data(new_component)
     custom_response.set_status_code(201)
     flash_message = FlashMessage(
         message_type=MessageType.SUCCESS, 
-        message="Component Added Successfully"
+        message="Component Updated Successfully"
     )
     custom_response.insert_flash_message(flash_message)
     return custom_response

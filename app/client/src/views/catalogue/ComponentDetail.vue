@@ -29,11 +29,12 @@
 
           <h3 id="Aliases">Aliases<b-button v-show="!edit_names" v-b-tooltip.hover title="Edit Component Names" v-on:click="editNames()" v-bind:class="['btn','p-1', 'ml-2', 'btn-light']" type="button"><i class="bi bi-pencil-square"></i></b-button></h3>
             <div v-for="Component_Name in component_data.Component_Names" :key="Component_Name.name_id">
-
               <p v-show="!edit_names" v-bind:class="{ bold: Component_Name.primary_name, italic: Component_Name.botanical_name}">
                 {{ format_string(Component_Name.component_name) }}{{ Component_Name.primary_name?" | Primary":""}}{{ Component_Name.botanical_name ? " | Botanical" : "" }}
               </p>
+            </div>
 
+            <div v-for="Component_Name in edit_names_buffer" :key="'edit' + Component_Name.name_id">
               <b-form inline v-show="edit_names" class="m-2" @submit.stop.prevent>
                 <label class="sr-only" for="inline-form-input-name">Name</label>
                 <b-form-input
@@ -52,10 +53,17 @@
                 <div v-on:click="radio(Component_Name.name_id, 'botanical')" v-show="component_data.component_type === 'powder'">
                   <b-form-checkbox button button-variant="light" name="Botanical Name" class="mb-2 mr-sm-2 mb-sm-0" v-model="Component_Name.botanical_name">Botanical Name</b-form-checkbox>
                 </div>
-                </b-form>
+                <div>
+                  <b-button variant="outline-danger" class="mb-2 mr-sm-2 mb-sm-0" v-show="!Component_Name.primary_name" v-on:click="deleteName(Component_Name.name_id)">Delete</b-button>
+                </div>
+              </b-form>
 
             </div>
-            <b-button variant="primary" class="m-2" v-show="edit_names" v-on:click="editNames()">Save</b-button>
+            <div class="d-flex">
+              <b-button variant="outline-info" class="m-2" v-show="edit_names" v-on:click="addName()">New Name</b-button>
+              <b-button variant="outline-info" class="m-2" v-show="edit_names" v-on:click="cancelEditNames()">Cancel</b-button>
+              <b-button v-show="edit_names_buffer.length > 0  && edit_names" variant="primary" class="m-2" v-on:click="editNames()">Save</b-button>
+            </div>
 
           <h3 id="Specifications">Specifications</h3>
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Libero justo laoreet sit amet cursus sit amet. Et ultrices neque ornare aenean euismod elementum. Amet dictum sit amet justo donec enim diam vulputate. Est ultricies integer quis auctor elit. Habitasse platea dictumst quisque sagittis. Nulla malesuada pellentesque elit eget gravida cum sociis natoque penatibus. Ligula ullamcorper malesuada proin libero. Dictum varius duis at consectetur lorem donec massa. Eu turpis egestas pretium aenean pharetra magna ac placerat. Auctor neque vitae tempus quam pellentesque nec. Commodo elit at imperdiet dui accumsan sit amet nulla. Nulla facilisi nullam vehicula ipsum a arcu cursus vitae congue. Ultrices gravida dictum fusce ut placerat orci. Luctus venenatis lectus magna fringilla urna porttitor rhoncus dolor purus. Faucibus turpis in eu mi bibendum neque egestas congue. Cras semper auctor neque vitae tempus quam pellentesque. Turpis egestas pretium aenean pharetra magna. Euismod nisi porta lorem mollis aliquam ut porttitor leo.</p>
@@ -92,19 +100,20 @@ export default {
       component_data: {},
       search_query: '',
       loaded: false,
-      edit_names: false
+      edit_names: false,
+      edit_names_buffer: []
     }
   },
   methods: {
     radio: function (id, flag) {
-      for (var i = 0; i < this.component_data.Component_Names.length; i++) {
-        if (this.component_data.Component_Names[i].name_id === id) {
+      for (var i = 0; i < this.edit_names_buffer.length; i++) {
+        if (this.edit_names_buffer[i].name_id === id) {
           continue
         } else {
           if (flag === 'botanical') {
-            this.component_data.Component_Names[i].botanical_name = false
+            this.edit_names_buffer[i].botanical_name = false
           } else if (flag === 'primary') {
-            this.component_data.Component_Names[i].primary_name = false
+            this.edit_names_buffer[i].primary_name = false
           } else {
             continue
           }
@@ -115,7 +124,67 @@ export default {
       return text.length > 0
     },
     editNames: function () {
-      this.edit_names = !this.edit_names
+      const original = structuredClone(this.component_data.Component_Names) // Deep Copy
+      if (!this.edit_names) {
+        this.edit_names_buffer = structuredClone(this.component_data.Component_Names) // Deep Copy
+        this.edit_names = true
+      } else {
+        this.component_data.Component_Names = []
+        this.component_data.Component_Names = structuredClone(this.edit_names_buffer) // Deep Copy
+        if (this.putComponent()) {
+          this.edit_names_buffer = []
+          this.edit_names = false
+        } else {
+          this.component_data.Component_Names = original
+        }
+      }
+    },
+    putComponent: function () {
+      const fetchRequest = window.origin + '/api/v1/catalogue/components'
+      console.log(
+        'PUT ' + fetchRequest
+      )
+      fetch(fetchRequest, {
+        method: 'PUT',
+
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      }).then(response => {
+        if (response.status === 201) {
+          return true
+        } else if (response.status === 401) {
+          this.$router.push({
+            name: 'login'
+          })
+        } else {
+          console.log('Looks like there was a problem. Status Code:' + response.status)
+          console.log(response)
+          return false
+        }
+      })
+    },
+    cancelEditNames: function () {
+      this.edit_names_buffer = []
+      this.edit_names = false
+    },
+    addName: function () {
+      const newName = {
+        name_id: (Math.random() + 1).toString(36).substring(7),
+        component_id: this.component_data.component_id,
+        component_name: '',
+        primary_name: false,
+        botanical_name: false
+      }
+      this.edit_names_buffer.push(newName)
+    },
+    deleteName: function (id) {
+      for (let i = 0; i < this.edit_names_buffer.length; i++) {
+        if (this.edit_names_buffer[i].name_id === id) {
+          this.edit_names_buffer.splice(i, 1)
+        }
+      }
     },
     scrollIntoView: function (event) {
       event.preventDefault()
