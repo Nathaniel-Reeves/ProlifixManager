@@ -144,7 +144,7 @@ export default {
       console.log(
         'PUT ' + fetchRequest
       )
-      fetch(fetchRequest, {
+      return fetch(fetchRequest, {
         method: 'PUT',
 
         headers: {
