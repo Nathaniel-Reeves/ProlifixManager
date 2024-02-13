@@ -24,7 +24,7 @@ from werkzeug.security import (
     generate_password_hash
 )
 from .response import (
-    MessageType,
+    VariantType,
     Message,
     FlashMessage,
     CustomResponse,
@@ -73,8 +73,10 @@ def check_authenticated(authentication_required=False, database_priveleges=None)
 
                     else:
                         message = FlashMessage(
-                            message='New Session Token Created',
-                            message_type=MessageType.SUCCESS
+                            title='New Session.',
+                            message='New Session Token Created.',
+                            variant=VariantType.SUCCESS,
+                            visible=False
                         )
                         custom_response.insert_flash_message(message)
 
@@ -85,8 +87,9 @@ def check_authenticated(authentication_required=False, database_priveleges=None)
                 if AUTH_REQUIRED and authentication_required and not session_data['user_id']:
                     custom_response.insert_flash_message(
                         FlashMessage(
+                            title='Unauthenticated!',
                             message='User not authenticated',
-                            message_type=MessageType.DANGER
+                            variant=VariantType.DANGER
                         )
                     )
                     response = make_response(
@@ -104,10 +107,9 @@ def check_authenticated(authentication_required=False, database_priveleges=None)
                 fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
                 custom_response.insert_flash_message(
                     FlashMessage(
-                        alert_heading='Redis Error',
-                        message="Redis Server Error",
-                        message_detail=str(error),
-                        message_type=MessageType.DANGER,
+                        title='Redis Server Error',
+                        message=str(error),
+                        variant=VariantType.DANGER,
                         dismissible=False,
                         debug_code=f"Error:{exc_type} > File: {fname} > Line: {exc_tb.tb_lineno}"
                     )
@@ -160,7 +162,7 @@ def create_session():
     except RedisError as error:
         # Redis Error Handling
         return FlashMessage(message=str(error),
-                            message_type=MessageType.DANGER)
+                            variant=VariantType.DANGER)
 
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -222,16 +224,22 @@ def login():
             user_data = json.loads(result[0])
         else:
             custom_response.insert_form_message(
-                "username", Message(message="User not found",
-                             message_type=MessageType.DANGER)
+                "username", Message(
+                    title="User not found",
+                    message="User doesn't exist.",
+                    variant=VariantType.DANGER
+                )
             )
             return jsonify(custom_response.to_json()), 401
 
         # Handle Check Password
         if not check_password_hash(user_data['encrypted_password'], password):
             custom_response.insert_form_message(
-                "password", Message(message="Incorrect Password",
-                             message_type=MessageType.DANGER)
+                "password", Message(
+                    title="Incorrect Password",
+                    message="Incorrect Password, try again.",
+                    variant=VariantType.DANGER
+                )
             )
             return jsonify(custom_response.to_json()), 401
 
@@ -309,8 +317,12 @@ def get_user_by_session_token():
             return jsonify(custom_response.to_json()), 200
         else:
             custom_response.insert_flash_message(
-                FlashMessage(message="User not authenticated",
-                             message_type=MessageType.DANGER))
+                FlashMessage(
+                    title="Unauthenticated!",
+                    message="User not authenticated",
+                    variant=VariantType.DANGER
+                )
+            )
             status_code = 401
             new_session_token = create_session()
             response = make_response(jsonify(custom_response.to_json()), status_code)
@@ -345,16 +357,16 @@ def logout():
             if result is not None:
                 custom_response.insert_flash_message(
                     FlashMessage(message="User successfully logged out",
-                                 message_type=MessageType.SUCCESS))
+                                 variant=VariantType.SUCCESS))
                 status_code = 200
             else:
                 custom_response.insert_flash_message(
                     FlashMessage(message="User not authenticated",
-                                 message_type=MessageType.DANGER))
+                                 variant=VariantType.DANGER))
         else:
             custom_response.insert_flash_message(
                 FlashMessage(message="User not authenticated",
-                             message_type=MessageType.DANGER))
+                             variant=VariantType.DANGER))
 
         response = jsonify(custom_response.to_json())
         response.status_code = custom_response.get_status_code()

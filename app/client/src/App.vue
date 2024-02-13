@@ -185,6 +185,20 @@ export default {
           })
         }
       })
+    },
+    createToast: function (flashMessage) {
+      console.log(flashMessage)
+      this.$bvToast.toast(flashMessage.message, {
+        title: flashMessage.title,
+        variant: flashMessage.variant,
+        visible: flashMessage.visible,
+        noCloseButton: flashMessage.no_close_button,
+        noAutoHide: flashMessage.no_auto_hide,
+        autoHideDelay: flashMessage.auto_hide_delay,
+        appendToast: true,
+        solid: true,
+        toaster: 'b-toaster-bottom-right'
+      })
     }
   },
   created: function () {

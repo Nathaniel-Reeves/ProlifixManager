@@ -101,7 +101,8 @@ export default {
       search_query: '',
       loaded: false,
       edit_names: false,
-      edit_names_buffer: []
+      edit_names_buffer: [],
+      flash_messages: []
     }
   },
   methods: {
@@ -131,12 +132,14 @@ export default {
       } else {
         this.component_data.Component_Names = []
         this.component_data.Component_Names = structuredClone(this.edit_names_buffer) // Deep Copy
-        if (this.putComponent()) {
-          this.edit_names_buffer = []
-          this.edit_names = false
-        } else {
-          this.component_data.Component_Names = original
-        }
+        this.putComponent().then(outcome => {
+          if (outcome === true) {
+            this.edit_names_buffer = []
+            this.edit_names = false
+          } else {
+            this.component_data.Component_Names = original
+          }
+        })
       }
     },
     putComponent: function () {
@@ -144,26 +147,58 @@ export default {
       console.log(
         'PUT ' + fetchRequest
       )
-      return fetch(fetchRequest, {
-        method: 'PUT',
-
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include'
-      }).then(response => {
-        if (response.status === 201) {
-          return true
-        } else if (response.status === 401) {
-          this.$router.push({
-            name: 'login'
-          })
-        } else {
-          console.log('Looks like there was a problem. Status Code:' + response.status)
-          console.log(response)
-          return false
-        }
-      })
+      const formData = new FormData()
+      formData.append('component_type', this.component_data.component_type)
+      formData.append('certified_usda_organic', this.component_data.certified_usda_organic)
+      formData.append('certified_halal', this.component_data.certified_halal)
+      formData.append('certified_kosher', this.component_data.certified_kosher)
+      formData.append('certified_gluten_free', this.component_data.certified_gluten_free)
+      formData.append('certified_national_sanitation_foundation', this.component_data.certified_national_sanitation_foundation)
+      formData.append('certified_us_pharmacopeia', this.component_data.certified_us_pharmacopeia)
+      formData.append('certified_non_gmo', this.component_data.certified_non_gmo)
+      formData.append('certified_vegan', this.component_data.certified_vegan)
+      formData.append('brand_id', this.component_data.brand_id)
+      formData.append('units', this.component_data.units)
+      formData.append('doc', JSON.stringify({ files: { } }))
+      formData.append('Component_Names', JSON.stringify(this.component_data.Component_Names))
+      try {
+        this.loaded = false
+        return fetch(fetchRequest, {
+          method: 'PUT',
+          credentials: 'include',
+          body: formData
+        }).then(response => {
+          if (response.status === 201) {
+            response.json().then(data => {
+              this.flash_messages = data.messages.flash
+              this.loaded = true
+              const createToast = this.$parent.createToast
+              this.flash_messages.forEach(function (message) {
+                createToast(message)
+              })
+            })
+            return true
+          } else if (response.status === 401) {
+            this.$router.push({
+              name: 'login'
+            })
+          } else {
+            response.json().then(data => {
+              this.flash_messages = data.messages.flash
+              this.loaded = true
+              const createToast = this.$parent.createToast
+              this.flash_messages.forEach(function (message) {
+                createToast(message)
+              })
+            })
+            return false
+          }
+        })
+      } catch (error) {
+        this.loaded = true
+        console.error('There has been a problem with your fetch operation: ', error)
+        return false
+      }
     },
     cancelEditNames: function () {
       this.edit_names_buffer = []

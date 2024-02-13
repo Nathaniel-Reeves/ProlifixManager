@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 import hashlib
 from sqlalchemy import select, insert, text
 from view.response import (
-    MessageType,
+    VariantType,
     FlashMessage,
     CustomResponse,
     error_message
@@ -18,8 +18,8 @@ import model as db
 def save_files(data, session):
     if 'doc' in data.keys():
         if "files" in data["doc"].keys():
+            pop_list = []
             if len(data["doc"]["files"]) > 0:
-                pop_list = []
                 save = {}
                 for file in data["doc"]["files"].keys():
                     compare = ["file_obj", "filename", "type", "page", "id_code"]

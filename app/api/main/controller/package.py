@@ -2,7 +2,7 @@
 Package Data Gathered from Controlers through the Models.
 """
 from view.response import (
-    MessageType,
+    VariantType,
     FlashMessage,
     CustomResponse,
     error_message

@@ -1,44 +1,12 @@
-"""
-{
-    "data": [],
-    "messages": {
-        "flash": [
-            {
-                "message": "",
-                "message_detail": "",
-                "message_type": "",
-                "debug_code": "",
-                "color": "",
-                "icon": "",
-                "link": "",
-                "dismissible": 1,
-                "count_down": 0,
-            }
-        ],
-        "form": {
-            "[input_id]": {
-                "message": "",
-                "message_detail": "",
-                "message_type": "",
-                "debug_code": "",
-                "color": "",
-                "icon": "",
-                "link": ""
-            }
-        }
-    }
-}
-"""
-
 import json
 from enum import Enum
 import sys
 import os
 
 
-class MessageType(Enum):
+class VariantType(Enum):
     """
-    Message Type Enum
+    Variant Type Enum
     """
     PRIMARY = "primary"
     SECONDARY = "secondary"
@@ -59,42 +27,50 @@ class Message:
         self,
         alert_heading=None,
         message=None,
-        message_detail=None,
-        message_type=MessageType.PRIMARY,
+        title=None,
+        variant=VariantType.PRIMARY,
         debug_code="0",
-        link="",
+        link=""
     ):
         """
         :param alert_heading:
         :param message:
-        :param message_detail:
-        :param message_type:
+        :param title:
+        :param variant:
         :param debug_code:
         :param link:
         """
 
         self.alert_heading = alert_heading
         self.message = message
-        self.message_detail = message_detail
-        self.message_type = message_type
+        self.title = title
+        self.variant = variant
         self.icon = ""
         self.color = ""
         self.debug_code = debug_code
         self.link = link
 
-        self.set_message_type(message_type, debug_code)
+        self.set_variant(variant, debug_code)
+        
+        # Require Title
+        if not self.title:
+            raise ValueError("Missing Title")
+        
+        # Require Message
+        if not self.message:
+            raise ValueError("Missing Message")
 
-    def set_message_type(self, message_type, debug_code):
+    def set_variant(self, variant, debug_code):
         """
-        :param message_type:
+        :param variant:
         :param debug_code:
         """
 
-        if not isinstance(message_type, MessageType):
+        if not isinstance(variant, VariantType):
             raise ValueError("Invalid message type")
-        self.message_type = message_type
-        self.color = message_type.value
-        self.set_icon(message_type)
+        self.variant = variant
+        self.color = variant.value
+        self.set_icon(variant)
         self.set_debug_code(debug_code)
 
     def set_debug_code(self, debug_code):
@@ -111,40 +87,48 @@ class Message:
 
         self.link = link
 
-    def set_icon(self, message_type):
+    def set_icon(self, variant):
         """
-        :param message_type:
+        :param variant:
         """
 
-        if message_type == MessageType.PRIMARY:
+        if variant == VariantType.PRIMARY:
             self.icon = "star-fill"
-        elif message_type == MessageType.SECONDARY:
+        elif variant == VariantType.SECONDARY:
             self.icon = "search"
-        elif message_type == MessageType.SUCCESS:
+        elif variant == VariantType.SUCCESS:
             self.icon = "check-circle"
-        elif message_type == MessageType.DANGER:
+        elif variant == VariantType.DANGER:
             self.icon = "exclamation-octagon"
-        elif message_type == MessageType.WARNING:
+        elif variant == VariantType.WARNING:
             self.icon = "exclamation-triangle"
-        elif message_type == MessageType.INFO:
+        elif variant == VariantType.INFO:
             self.icon = "info-circle"
-        elif message_type == MessageType.LIGHT:
+        elif variant == VariantType.LIGHT:
             self.icon = "star-fill"
-        elif message_type == MessageType.DARK:
+        elif variant == VariantType.DARK:
             self.icon = "star-fill"
         else:
-            raise Exception("Unknown message type: " + str(message_type))
+            raise Exception("Unknown message type: " + str(variant))
 
     def to_json(self):
         """
         Returns a JSON representation of the message
         """
+        
+        # Require Title
+        if not self.title:
+            raise ValueError("Missing Title")
+        
+        # Require Message
+        if not self.message:
+            raise ValueError("Missing Message")
 
         return {
             "alert_heading": self.alert_heading,
             "message": self.message,
-            "message_detail": self.message_detail,
-            "message_type": self.message_type.value,
+            "title": self.title,
+            "variant": self.variant.value,
             "icon": self.icon,
             "color": self.color,
             "debug_code": self.debug_code,
@@ -189,34 +173,40 @@ class FlashMessage(Message):
         self,
         alert_heading=None,
         message=None,
-        message_detail=None,
-        message_type=MessageType.PRIMARY,
+        title="",
+        variant=VariantType.PRIMARY,
         debug_code="0",
         link="",
-        dismissible=True,
-        count_down=0
+        auto_hide_delay=5000,
+        no_auto_hide=False,
+        no_close_button=False,
+        visible=True
     ):
         """
-        :param alert_heading:
-        :param message:
-        :param message_detail:
-        :param message_type:
-        :param debug_code:
-        :param link:
-        :param dismissible:
-        :param count_down:
+        :param alert_heading: String (None)
+        :param message: String (None)
+        :param title: String ("")
+        :param variant: VariantType (PRIMARY)
+        :param debug_code: String ("")
+        :param link: String ("")
+        :param auto_hide_delay: Intager (5000ms)
+        :param no_auto_hide: Boolean (False)
+        :param no_close_button: Boolean (False)
+        :param visible: Boolean (True)
         """
 
         super().__init__(
             alert_heading,
             message,
-            message_detail,
-            message_type,
+            title,
+            variant,
             debug_code,
             link
         )
-        self.dismissible = dismissible
-        self.count_down = count_down
+        self.auto_hide_delay = auto_hide_delay
+        self.no_auto_hide = no_auto_hide
+        self.no_close_button = no_close_button
+        self.visible = visible
 
     def to_json(self):
         """
@@ -224,8 +214,15 @@ class FlashMessage(Message):
         """
 
         message_obj = super().to_json()
-        message_obj["dismissible"] = self.dismissible
-        message_obj["count_down"] = self.count_down
+        
+        # Require Title
+        if not message_obj["title"]:
+            raise ValueError("Missing Title")
+        
+        message_obj["auto_hide_delay"] = self.auto_hide_delay
+        message_obj["no_auto_hide"] = self.no_auto_hide
+        message_obj["no_close_button"] = self.no_close_button
+        message_obj["visible"] = self.visible
         return message_obj
 
 
@@ -354,11 +351,12 @@ def error_message():
     exc_type, exc_obj, exc_tb = sys.exc_info()
     fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
     dirname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[0]
+    msg = f"Error:{exc_type} -> Dir: {dirname} -> File: {fname} -> Line: {exc_tb.tb_lineno}"
     flash_message = FlashMessage(
-        message=str(exc_type),
-        message_detail=str(exc_obj),
-        debug_code=(
-            f"Error:{exc_type} -> Dir: {dirname} -> File: {fname} -> Line: {exc_tb.tb_lineno}"),
-        message_type=MessageType.DANGER
+        title=str(exc_type),
+        message=msg,
+        debug_code=(str(exc_obj) + str(exc_tb)),
+        variant=VariantType.DANGER,
+        no_auto_hide=True
     )
     return flash_message

@@ -202,6 +202,7 @@ def handle_put_components():
     
     # Clean the Request
     component = collect_form_data(request)
+    # print(component)
     
     # Get Components from Database
     custom_response = CustomResponse()

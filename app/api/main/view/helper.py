@@ -6,7 +6,7 @@ from flask import (
     current_app as app
 )
 from .response import (
-    MessageType,
+    VariantType,
     FlashMessage,
     CustomResponse,
     error_message
@@ -37,8 +37,6 @@ def collect_form_data(request):
         dict: all form elements with file data.
     """
     form_data = dict(request.form) # TODO: This occationally stalls the program
-    
-    print(request.files)
     
     for key, value in form_data.items():
         if value == 'false':
@@ -114,7 +112,7 @@ def save_files(doc, file_objects, custom_response, location=""):
 
     NOT_FOUND = FlashMessage(
         message="No Files Uploaded",
-        message_type=MessageType.WARNING
+        variant=VariantType.WARNING
     )
 
     # Check if uploads are empty

@@ -5,7 +5,7 @@ import json
 from sqlalchemy import select, text
 
 from view.response import (
-    MessageType,
+    VariantType,
     FlashMessage,
     CustomResponse,
     error_message
@@ -131,7 +131,7 @@ def organization_exists(names, custom_response):
     if not primary_exists:
         e_message = FlashMessage(
             message="Primary Name not selected!",
-            message_type=MessageType.WARNING)
+            variant=VariantType.WARNING)
         custom_response.insert_flash_message(e_message)
 
     # Insert the levenshtein_results into the response
@@ -188,7 +188,7 @@ def check_org_exists_levenshtein(search_name):
                 message=message,
                 message_detail=message_detail,
                 link=message_link,
-                message_type=MessageType.WARNING
+                variant=VariantType.WARNING
             )
             levensthein_messages.append(message_obj)
 

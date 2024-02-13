@@ -5,7 +5,7 @@ import json
 from sqlalchemy import select, insert, text
 
 from view.response import (
-    MessageType,
+    VariantType,
     FlashMessage,
     CustomResponse,
     error_message
@@ -176,7 +176,7 @@ def post_component(
     custom_response.insert_data(new_component)
     custom_response.set_status_code(201)
     flash_message = FlashMessage(
-        message_type=MessageType.SUCCESS, 
+        variant=VariantType.SUCCESS, 
         message="Component Added Successfully"
     )
     custom_response.insert_flash_message(flash_message)
@@ -199,10 +199,10 @@ def put_component(
         
         # Save Files if Any
         new_component = save_files(component, session)
-    
         session.commit()
     except Exception as e:
         error = error_message()
+        print(e)
         custom_response.insert_flash_message(error)
         custom_response.set_status_code(400)
         session.rollback()
@@ -214,7 +214,8 @@ def put_component(
     custom_response.insert_data(new_component)
     custom_response.set_status_code(201)
     flash_message = FlashMessage(
-        message_type=MessageType.SUCCESS, 
+        variant=VariantType.SUCCESS,
+        title="Changes Saved!", 
         message="Component Updated Successfully"
     )
     custom_response.insert_flash_message(flash_message)
