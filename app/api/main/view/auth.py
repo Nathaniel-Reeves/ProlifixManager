@@ -343,7 +343,6 @@ def logout():
 
     try:
         session_token = get_session_token(request)
-        status_code = 401
         if session_token is not None:
             redis_connection = Redis(
                 host=app.config['REDIS_HOST'],
@@ -356,17 +355,25 @@ def logout():
             custom_response = CustomResponse()
             if result is not None:
                 custom_response.insert_flash_message(
-                    FlashMessage(message="User successfully logged out",
-                                 variant=VariantType.SUCCESS))
-                status_code = 200
+                    FlashMessage(
+                        title="Successfully Logged Out.",
+                        message="User successfully logged out.",
+                        variant=VariantType.SUCCESS))
+                custom_response.set_status_code(200)
             else:
                 custom_response.insert_flash_message(
-                    FlashMessage(message="User not authenticated",
-                                 variant=VariantType.DANGER))
+                    FlashMessage(
+                        title="Unauthenticated",
+                        message="User not authenticated",
+                        variant=VariantType.DANGER))
+                custom_response.set_status_code(401)
         else:
             custom_response.insert_flash_message(
-                FlashMessage(message="User not authenticated",
-                             variant=VariantType.DANGER))
+                FlashMessage(
+                    title="Unauthenticated",
+                    message="User not authenticated",
+                    variant=VariantType.DANGER))
+            custom_response.set_status_code(401)
 
         response = jsonify(custom_response.to_json())
         response.status_code = custom_response.get_status_code()

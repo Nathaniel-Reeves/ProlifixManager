@@ -39,7 +39,7 @@ def save_files(data, session):
                     data["doc"]["files"].pop(file)
                 data["doc"]["files"] = save
         else:
-            raise Exception("No files to save")
+            return data
     return data
 
 def save_file(file_data, session):

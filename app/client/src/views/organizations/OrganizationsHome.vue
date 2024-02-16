@@ -115,8 +115,13 @@
 </template>
 
 <style scoped>
-.organizations {
-  width: 95%;
+.my_component {
+    width: 90%;
+}
+@media only screen and (max-width: 1024px) {
+    .my_component {
+        width: 98%;
+    }
 }
 </style>
 

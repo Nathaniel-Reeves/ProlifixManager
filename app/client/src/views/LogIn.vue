@@ -44,7 +44,7 @@ export default {
       username: '',
       password: '',
       form_messages: {},
-      flash_errors: [],
+      flash_messages: [],
       userData: {}
     }
   },
@@ -75,7 +75,13 @@ export default {
           } else if (response.status === 401) {
             this.form_messages = jsonData.messages.form
           } else {
-            this.flash_errors = jsonData.messages.flash
+            response.json().then(data => {
+              this.flash_messages = data.messages.flash
+              const createToast = this.$parent.createToast
+              this.flash_messages.forEach(function (message) {
+                createToast(message)
+              })
+            })
           }
         })
       }).catch(error => {

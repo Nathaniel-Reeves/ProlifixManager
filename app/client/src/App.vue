@@ -14,9 +14,8 @@
                 <b-dropdown-item to="/inventory/checkins">checkins</b-dropdown-item>
                 <b-dropdown-item to="/inventory/checkouts">checkouts</b-dropdown-item>
               </b-nav-item-dropdown>
-            <b-nav-item-dropdown text="Organizations" active-class>
-              <b-dropdown-item to="/organizations">Organizations List</b-dropdown-item>
-            </b-nav-item-dropdown>
+            <b-nav-item to="/organizations" text="Organizations" active-class>Organizations
+            </b-nav-item>
             <b-nav-item-dropdown text="Catalogue" active-class>
               <b-dropdown-item to="/catalogue/components">Components</b-dropdown-item>
             </b-nav-item-dropdown>
@@ -40,12 +39,14 @@
       <div>
         <b-sidebar id="account-sidebar-right" title="Account Options" :right="true" shadow :lazy="true" backdrop-variant="dark">
           <div class="px-3 py-2">
-            <router-link v-if="!loggedInState" class="nav-link px-0" to="/login">
-              Login
+            <router-link v-if="!loggedInState" class="p-2 nav-link px-0" to="/login">
+              <b-button variant="light">
+                Login
+              </b-button>
             </router-link>
-            <div v-else class="nav-link px-0" v-on:click="logout">
+            <b-button v-else variant="light" class="p-2 nav-link px-0" v-on:click="logout">
               Logout
-            </div>
+            </b-button>
           </div>
         </b-sidebar>
       </div>

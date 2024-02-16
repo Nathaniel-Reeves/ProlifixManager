@@ -90,8 +90,13 @@
 </template>
 
 <style scoped>
-.components {
-  width: 95%;
+.my_component {
+    width: 75%;
+}
+@media only screen and (max-width: 1024px) {
+    .my_component {
+        width: 98%;
+    }
 }
 </style>
 
