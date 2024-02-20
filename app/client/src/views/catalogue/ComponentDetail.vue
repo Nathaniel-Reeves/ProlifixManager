@@ -142,8 +142,9 @@
                 <p><strong>Revision Number: </strong>{{ component_data.doc.specifications.microscopic.revision_number }}</p>
               </div>
               <div v-if="!edit_specs">
-                <p><strong>Spec Required: </strong><b-badge pill v-bind:variant="(component_data.doc.specifications.microscopic.required_spec ? 'success' : 'warning')">{{ component_data.doc.specifications.organoleptic.required_spec ? 'YES' : 'NO' }}</b-badge></p>
+                <p><strong>Spec Required: </strong><b-badge pill v-bind:variant="(component_data.doc.specifications.microscopic.required_spec ? 'success' : 'warning')">{{ component_data.doc.specifications.microscopic.required_spec ? 'YES' : 'NO' }}</b-badge></p>
                 <p><strong>Primary Testing Responsibility: </strong>{{ format_string(component_data.doc.specifications.microscopic.locations.primary) }}</p>
+                <b-img :src="getFile(component_data.doc.specifications.microscopic.tests.sterio_microscope.file_pointer)" fluid alt="Responsive image"></b-img>
               </div>
               <div v-if="edit_specs">
                 <b-form-group>
@@ -412,6 +413,13 @@ export default {
         console.error('There has been a problem with your fetch operation: ', error)
         return false
       }
+    },
+    getFile: function (filename) {
+      const fetchRequest = window.origin + '/api/v1/uploads/' + filename
+      console.log(
+        'GET ' + fetchRequest
+      )
+      return fetchRequest
     }
   },
   created: function () {

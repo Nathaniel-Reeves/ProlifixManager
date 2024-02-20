@@ -119,19 +119,13 @@ def handle_post_components():
     required_keys = ["component_type", "brand_id", "units", "Component_Names"]
     flag = False
     for key in required_keys:
-        if key not in component.keys():
+        if key not in component.keys() or not component.get(key):
             flag = True
+            title = "Invalid Request."
             message = f"Missing {key} field."
             custom_response.insert_flash_message(
                     FlashMessage(
-                        message=message
-                    )
-                )
-        if not component.get(key):
-            flag = True
-            message = f"Missing {key} value."
-            custom_response.insert_flash_message(
-                    FlashMessage(
+                        title=title,
                         message=message
                     )
                 )

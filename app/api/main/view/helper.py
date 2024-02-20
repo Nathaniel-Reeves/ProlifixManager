@@ -1,5 +1,6 @@
 import pathlib
 import datetime
+import time
 import os
 import shutil
 from flask import (
@@ -36,8 +37,14 @@ def collect_form_data(request):
     Returns:
         dict: all form elements with file data.
     """
-    form_data = dict(request.form) # TODO: This occationally stalls the program
-    
+    start = time.time()
+    limit = start + 1
+    while True:
+        form_data = dict(request.form) # TODO: This occationally stalls the program
+        now = time.time()
+        if now > limit or form_data:
+            break
+
     for key, value in form_data.items():
         if value == 'false':
             form_data[key] = False

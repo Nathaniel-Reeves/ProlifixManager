@@ -177,6 +177,7 @@ def post_component(
     custom_response.set_status_code(201)
     flash_message = FlashMessage(
         variant=VariantType.SUCCESS, 
+        title="Success",
         message="Component Added Successfully"
     )
     custom_response.insert_flash_message(flash_message)
