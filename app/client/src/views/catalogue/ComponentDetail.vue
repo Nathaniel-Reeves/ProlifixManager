@@ -46,7 +46,7 @@
             </p>
             </div>
             <div v-for="Component_Name in edit_names_buffer" :key="'edit' + Component_Name.name_id">
-            <b-form inline v-show="edit_names" class="m-2">
+            <b-form inline v-show="edit_names" class="m-2" @submit.stop.prevent>
               <label class="sr-only" for="inline-form-input-name">Name</label>
               <b-form-input
                 id="inline-form-input-name"
@@ -65,11 +65,11 @@
             </b-form>
             </div>
             <div class="d-flex">
-            <div v-show="edit_names">
-              <b-button variant="outline-info" class="m-2" v-on:click="addName()">New Name</b-button>
-              <b-button variant="outline-info" class="m-2" v-on:click="cancelEditNames()">Cancel</b-button>
-              <b-button v-show="edit_names_buffer.length > 0" variant="primary" class="m-2" v-on:click="editNames()">Save</b-button>
-            </div>
+              <div v-show="edit_names">
+                <b-button variant="outline-info" class="m-2" v-on:click="addName()">New Name</b-button>
+                <b-button variant="outline-info" class="m-2" v-on:click="cancelEditNames()">Cancel</b-button>
+                <b-button type="submit" v-show="edit_names_buffer.length > 0" variant="primary" class="m-2" v-on:click="editNames()">Save</b-button>
+              </div>
             </div>
           </div>
 
@@ -89,7 +89,7 @@
               <p v-if="component_data.doc.specifications.purity_statement.length > 0"><strong>Purity Statement</strong><br>{{ component_data.doc.specifications.purity_statement }}</p>
             </div>
             <div v-if="edit_specs">
-              <b-form-group>
+              <b-form-group @submit.stop.prevent>
                 <label for="description_statement"><strong>Component Description</strong><br></label>
                 <b-form-textarea id="description_statement" v-model="edit_specs_buffer.description_statement" placeholder="Component description..." rows="3" max-rows="6"></b-form-textarea>
                 <label for="origin"><strong>Origin</strong><br></label>
@@ -103,7 +103,7 @@
               </b-form-group>
               <div class="d-flex">
                 <b-button v-if="edit_specs" variant="outline-info" class="m-2" v-on:click="cancelEditSpecs()">Cancel</b-button>
-                <b-button v-if="edit_specs" variant="primary" class="m-2" v-on:click="editSpecs()">Save</b-button>
+                <b-button type="submit" v-if="edit_specs" variant="primary" class="m-2" v-on:click="editSpecs()">Save</b-button>
               </div>
             </div>
             <!-- Specifications Organoleptic -->
@@ -119,7 +119,7 @@
                 <p><strong>Primary Testing Responsibility: </strong>{{ format_string(component_data.doc.specifications.organoleptic.locations.primary) }}</p>
               </div>
               <div v-if="edit_specs">
-                <b-form-group>
+                <b-form-group @submit.stop.prevent>
                   <div class="d-flex">
                     <label for="Spec Required Organoleptic"><strong>Spec Required: </strong></label>
                     <b-form-checkbox class="ml-2" v-model="edit_specs_buffer.organoleptic.required_spec" name="Spec Required Organoleptic" switch>
@@ -129,7 +129,7 @@
                 </b-form-group>
                 <div class="d-flex">
                   <b-button v-if="edit_specs" variant="outline-info" class="m-2" v-on:click="cancelEditSpecs()">Cancel</b-button>
-                  <b-button v-if="edit_specs" variant="primary" class="m-2" v-on:click="editSpecs('organoleptic')">Save</b-button>
+                  <b-button type="submit" v-if="edit_specs" variant="primary" class="m-2" v-on:click="editSpecs('organoleptic')">Save</b-button>
                 </div>
               </div>
             </div>
@@ -144,20 +144,67 @@
               <div v-if="!edit_specs">
                 <p><strong>Spec Required: </strong><b-badge pill v-bind:variant="(component_data.doc.specifications.microscopic.required_spec ? 'success' : 'warning')">{{ component_data.doc.specifications.microscopic.required_spec ? 'YES' : 'NO' }}</b-badge></p>
                 <p><strong>Primary Testing Responsibility: </strong>{{ format_string(component_data.doc.specifications.microscopic.locations.primary) }}</p>
-                <b-img :src="getFile(component_data.doc.specifications.microscopic.tests.sterio_microscope.file_pointer)" fluid alt="Responsive image"></b-img>
+                <b-card-group deck>
+                  <div v-for="test in component_data.doc.specifications.microscopic.tests" :key="test.standard_sample_lot">
+                    <b-card
+                      :footer="test.magnification"
+                      :title="test.standard_sample_lot"
+                      style="max-width: 25rem;"
+                      :img-src="getMicroscopeImage(test.file_pointer)" img-top
+                      class="my-3">
+                      <b-card-text>
+                        {{ test.description }}
+                      </b-card-text>
+                    </b-card>
+                  </div>
+                </b-card-group>
               </div>
               <div v-if="edit_specs">
-                <b-form-group>
+                <b-form-group @submit.stop.prevent>
                   <div class="d-flex">
                     <label for="Spec Required Microscopic"><strong>Spec Required: </strong></label>
                     <b-form-checkbox class="ml-2" v-model="edit_specs_buffer.microscopic.required_spec" name="Spec Required Microscopic" switch>
                         <b-badge pill v-bind:variant="(edit_specs_buffer.microscopic.required_spec ? 'success' : 'warning')">{{ edit_specs_buffer.microscopic.required_spec ? 'YES' : 'NO' }}</b-badge>
                     </b-form-checkbox>
                   </div>
+                  <b-card-group deck>
+                    <div v-for="( test, index ) in edit_specs_buffer.microscopic.tests" :key="index">
+                      <b-card
+                        style="max-width: 25rem; min-width: 25rem;"
+                        :img-src="test.file_pointer? getMicroscopeImage(test.file_pointer) : test.url_preview" img-top
+                        class="my-3">
+                        <b-form-file no-drop required accept="image/png, image/jpeg" v-show="!test.url_preview && !test.file_pointer" type="file" class="my-2" @change="onFileChange($event, test)"></b-form-file>
+                        <b-form-input type="text" class="my-1" v-model="test.standard_sample_lot" placeholder="Lot Number..."></b-form-input>
+                        <b-form-textarea class="my-1" rows="3" max-rows="3" v-model="test.description" placeholder="Discription..."></b-form-textarea>
+                        <b-button class="my-2" variant="outline-danger" @click="removeMicroscopicImage(index)">Remove</b-button>
+                        <template #footer>
+                          <small class="text-muted">
+                            <b-form-select
+                            v-model="test.magnification"
+                            required
+                            :options="[
+                              { value: null, text: 'Select Magnification' },
+                              { value: '20X', text: '20X' },
+                              { value: '40X', text: '40X' }
+                            ]"></b-form-select>
+                          </small>
+                        </template>
+                      </b-card>
+                    </div>
+                    <b-card
+                      img-src="../../assets/no_image_placeholder.png"
+                      class="my-3"
+                      style="max-width: 25rem; min-width: 25rem;"
+                      v-on:click="newMicrscopicImage">
+                      <b-card-title>
+                        New Microscopic Image
+                      </b-card-title>
+                    </b-card>
+                  </b-card-group>
                 </b-form-group>
                 <div class="d-flex">
                   <b-button v-if="edit_specs" variant="outline-info" class="m-2" v-on:click="cancelEditSpecs()">Cancel</b-button>
-                  <b-button v-if="edit_specs" variant="primary" class="m-2" v-on:click="editSpecs('microscopic')">Save</b-button>
+                  <b-button type="submit" v-if="edit_specs" variant="primary" class="m-2" v-on:click="editSpecs('microscopic')">Save</b-button>
                 </div>
               </div>
             </div>
@@ -209,6 +256,28 @@ export default {
     }
   },
   methods: {
+    newMicrscopicImage: function () {
+      const newImage = {
+        description: null,
+        magnification: null,
+        required_spec: true,
+        methods: [
+          "Method outlined in SOP QA 04.02, 'Microscopic Testing Procedure.'"
+        ],
+        file_pointer: null,
+        standard_sample_lot: null,
+        url_preview: null
+      }
+      this.edit_specs_buffer.microscopic.tests.push(newImage)
+    },
+    removeMicroscopicImage: function (index) {
+      this.edit_specs_buffer.microscopic.tests.splice(index, 1)
+    },
+    onFileChange: function (e, test) {
+      const file = e.target.files[0]
+      test.url_preview = URL.createObjectURL(file)
+      URL.revokeObjectURL(file)
+    },
     editSpecs: function (subSpec) {
       const original = structuredClone(this.component_data.doc.specifications) // Deep Copy
       if (!this.edit_specs) {
@@ -414,7 +483,7 @@ export default {
         return false
       }
     },
-    getFile: function (filename) {
+    getMicroscopeImage: function (filename) {
       const fetchRequest = window.origin + '/api/v1/uploads/' + filename
       console.log(
         'GET ' + fetchRequest

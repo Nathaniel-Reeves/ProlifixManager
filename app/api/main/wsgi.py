@@ -11,6 +11,7 @@ from flask import (
     Blueprint,
     send_from_directory
 )
+from markupsafe import escape
 from flask_cors import CORS
 from flask_socketio import SocketIO
 from dotenv import load_dotenv
@@ -141,11 +142,9 @@ def create_app():
     #     counter = str(redis.get('hits'), 'utf-8')
     #     return "Welcome to this webpage!, This webpage has been viewed "+counter+" time(s)"
     
-    @api_blueprint.route('/uploads/<directory>/<filename>')
-    def upload(directory, filename):
-        location = os.path.join(directory, filename)
-        print(os.path.join(app.config['UPLOAD_FOLDER'], location))
-        return send_from_directory(app.config['UPLOAD_FOLDER'], location)
+    @api_blueprint.route('/uploads/<path:subpath>')
+    def upload(subpath):
+        return send_from_directory(app.config['UPLOAD_FOLDER'], escape(subpath))
 
     app.register_blueprint(api_blueprint)
 
