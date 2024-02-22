@@ -200,6 +200,7 @@ def put_component(
         
         # Save Files if Any
         new_component = save_files(component, session)
+        print(new_component)
         session.commit()
     except Exception as e:
         error = error_message()

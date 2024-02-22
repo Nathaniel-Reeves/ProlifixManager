@@ -171,9 +171,9 @@
                     <div v-for="( test, index ) in edit_specs_buffer.microscopic.tests" :key="index">
                       <b-card
                         style="max-width: 25rem; min-width: 25rem;"
-                        :img-src="test.file_pointer? getMicroscopeImage(test.file_pointer) : test.url_preview" img-top
+                        :img-src="test.url_preview || test.url_preview === null? test.url_preview : getMicroscopeImage(test.file_pointer)" img-top
                         class="my-3">
-                        <b-form-file no-drop required accept="image/png, image/jpeg" v-show="!test.url_preview && !test.file_pointer" type="file" class="my-2" @change="onFileChange($event, test)"></b-form-file>
+                        <b-form-file no-drop required accept="image/png, image/jpeg" v-show="!test.url_preview && !test.file_pointer && test.standard_sample_lot !== null && test.standard_sample_lot.length > 3" type="file" class="my-2" @change="onFileChange($event, test)"></b-form-file>
                         <b-form-input type="text" class="my-1" v-model="test.standard_sample_lot" placeholder="Lot Number..."></b-form-input>
                         <b-form-textarea class="my-1" rows="3" max-rows="3" v-model="test.description" placeholder="Discription..."></b-form-textarea>
                         <b-button class="my-2" variant="outline-danger" @click="removeMicroscopicImage(index)">Remove</b-button>
@@ -195,7 +195,7 @@
                       img-src="../../assets/no_image_placeholder.png"
                       class="my-3"
                       style="max-width: 25rem; min-width: 25rem;"
-                      v-on:click="newMicrscopicImage">
+                      v-on:click="newMicrscopicImage()">
                       <b-card-title>
                         New Microscopic Image
                       </b-card-title>
@@ -252,7 +252,9 @@ export default {
       edit_specs_buffer: {},
       edit_specs_organoleptic: false,
       edit_specs_organoleptic_buffer: {},
-      flash_messages: []
+      upload_files_buffer: {},
+      flash_messages: [],
+      file_index: 1
     }
   },
   methods: {
@@ -271,12 +273,34 @@ export default {
       this.edit_specs_buffer.microscopic.tests.push(newImage)
     },
     removeMicroscopicImage: function (index) {
+      for (const pair in this.edit_files_buffer) {
+        if (this.edit_specs_buffer.microscopic.tests[index].file_pointer === pair[0]) {
+          this.edit_files_buffer.splice(pair[0], 1)
+        }
+      }
       this.edit_specs_buffer.microscopic.tests.splice(index, 1)
     },
     onFileChange: function (e, test) {
+      // Preview File
       const file = e.target.files[0]
       test.url_preview = URL.createObjectURL(file)
       URL.revokeObjectURL(file)
+
+      // Save File in Buffer
+      const newFile = {
+        filename: this.get_comopnent_primary_name(this.component_data),
+        type: 'microscopic_spec',
+        page: 1,
+        id_code: test.standard_sample_lot,
+        file: file
+      }
+
+      const customKey = 'file_' + this.file_index
+      const obj = {}
+      obj[customKey] = newFile
+      Object.assign(this.upload_files_buffer, obj)
+      test.file_pointer = customKey
+      this.file_index += 1
     },
     editSpecs: function (subSpec) {
       const original = structuredClone(this.component_data.doc.specifications) // Deep Copy
@@ -292,6 +316,7 @@ export default {
           this.edit_specs_buffer[subSpec].date_revised = new Date().toISOString()
         }
         this.component_data.doc.specifications = structuredClone(this.edit_specs_buffer) // Deep Copy
+        this.component_data.doc.files = structuredClone(this.upload_files_buffer)
         this.putComponent().then(outcome => {
           if (outcome === true) {
             this.edit_specs_buffer = []
@@ -442,10 +467,19 @@ export default {
       formData.append('certified_vegan', this.component_data.certified_vegan)
       formData.append('brand_id', this.component_data.brand_id)
       formData.append('units', this.component_data.units)
+      for (const pair of Object.entries(this.component_data.doc.files)) {
+        const key = pair[0]
+        const value = pair[1]
+        const fileObj = structuredClone(value.file)
+        delete value.file
+        this.component_data.doc.files[key] = value
+        formData.append(key, fileObj)
+      }
       formData.append('doc', JSON.stringify(this.component_data.doc))
       formData.append('Component_Names', JSON.stringify(this.component_data.Component_Names))
       try {
         this.loaded = false
+        console.log(this.component_data)
         return fetch(fetchRequest, {
           method: 'PUT',
           credentials: 'include',
@@ -485,9 +519,9 @@ export default {
     },
     getMicroscopeImage: function (filename) {
       const fetchRequest = window.origin + '/api/v1/uploads/' + filename
-      console.log(
-        'GET ' + fetchRequest
-      )
+      // console.log(
+      //   'GET ' + fetchRequest
+      // )
       return fetchRequest
     }
   },

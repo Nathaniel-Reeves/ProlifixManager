@@ -27,10 +27,11 @@ def save_files(data, session):
                     values = list(data["doc"]["files"][file].values())
                     if len(compare & keys) == 5 and all(values):
                         file_data = data["doc"]["files"][file]
-                        file_hash, filename = save_file(file_data, session)
+                        file_hash, filename, pointer = save_file(file_data, session)
                         data["doc"]["files"][file].pop("file_obj")
                         save[file_hash] = data["doc"]["files"][file].copy()
                         save[file_hash]["filename"] = filename
+                        save[file_hash]["file_pointer"] = pointer
                     else:
                         raise Exception("Missing File Information.")
                     pop_list.append(file)
@@ -84,6 +85,8 @@ def save_file(file_data, session):
     directory = os.path.join(
         app.config['UPLOAD_FOLDER'], file_data["type"]
     )
+    
+    pointer = os.path.join(file_data["type"], filename)
 
     pathlib.Path(
         directory
@@ -116,7 +119,7 @@ def save_file(file_data, session):
     else:
         session.commit()
 
-    return file_hash, filename
+    return file_hash, filename, pointer
 
 def md5_from_file(file, block_size=2**14):
     md5 = hashlib.md5()
