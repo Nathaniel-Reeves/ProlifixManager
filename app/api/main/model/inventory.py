@@ -52,7 +52,7 @@ class Components(Base):
         validate_strings=True,
         ))
     
-    doc = Column(JSON, nullable=True)
+    doc = Column(JSON, default={})
     
     # Common Methods
     def __repr__(self):

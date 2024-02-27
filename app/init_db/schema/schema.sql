@@ -10,8 +10,9 @@ CREATE DATABASE IF NOT EXISTS `Files`;
 
 CREATE TABLE IF NOT EXISTS `Files`.`Files` (
   `file_hash` VARCHAR(64) UNIQUE NOT NULL,
-  `file_name` VARCHAR(255) NOT NULL,
+  `file_name` VARCHAR(1024) NOT NULL,
   `file_type` VARCHAR(255) NOT NULL,
+  `file_pointer` VARCHAR(2048) NOT NULL,
   `id_code` VARCHAR(255) NOT NULL,
   `pg` VARCHAR(16) NOT NULL,
   PRIMARY KEY (`file_hash`)

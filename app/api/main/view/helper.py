@@ -52,6 +52,9 @@ def collect_form_data(request):
         if value == 'true':
             form_data[key] = True
             continue
+        if value == 'undefined' or value == 'null':
+            form_data[key] = None
+            continue
         if "." in value:
             try:
                 form_data[key] = float(value)

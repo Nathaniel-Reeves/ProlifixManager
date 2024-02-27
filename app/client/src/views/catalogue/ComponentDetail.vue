@@ -145,10 +145,10 @@
                 <p><strong>Spec Required: </strong><b-badge pill v-bind:variant="(component_data.doc.specifications.microscopic.required_spec ? 'success' : 'warning')">{{ component_data.doc.specifications.microscopic.required_spec ? 'YES' : 'NO' }}</b-badge></p>
                 <p><strong>Primary Testing Responsibility: </strong>{{ format_string(component_data.doc.specifications.microscopic.locations.primary) }}</p>
                 <b-card-group deck>
-                  <div v-for="test in component_data.doc.specifications.microscopic.tests" :key="test.standard_sample_lot">
+                  <div v-for="test in component_data.doc.specifications.microscopic.tests" :key="test.id_code">
                     <b-card
                       :footer="test.magnification"
-                      :title="test.standard_sample_lot"
+                      :title="test.id_code"
                       style="max-width: 25rem;"
                       :img-src="getMicroscopeImage(test.file_pointer)" img-top
                       class="my-3">
@@ -173,8 +173,8 @@
                         style="max-width: 25rem; min-width: 25rem;"
                         :img-src="test.url_preview || test.url_preview === null? test.url_preview : getMicroscopeImage(test.file_pointer)" img-top
                         class="my-3">
-                        <b-form-file no-drop required accept="image/png, image/jpeg" v-show="!test.url_preview && !test.file_pointer && test.standard_sample_lot !== null && test.standard_sample_lot.length > 3" type="file" class="my-2" @change="onFileChange($event, test)"></b-form-file>
-                        <b-form-input type="text" class="my-1" v-model="test.standard_sample_lot" placeholder="Lot Number..."></b-form-input>
+                        <b-form-file no-drop required accept="image/png, image/jpeg" v-show="!test.url_preview && !test.file_pointer && test.id_code !== null && test.id_code.length > 3" type="file" class="my-2" @change="onFileChange($event, test)"></b-form-file>
+                        <b-form-input type="text" class="my-1" v-model="test.id_code" placeholder="Lot Number..."></b-form-input>
                         <b-form-textarea class="my-1" rows="3" max-rows="3" v-model="test.description" placeholder="Discription..."></b-form-textarea>
                         <b-button class="my-2" variant="outline-danger" @click="removeMicroscopicImage(index)">Remove</b-button>
                         <template #footer>
@@ -267,7 +267,7 @@ export default {
           "Method outlined in SOP QA 04.02, 'Microscopic Testing Procedure.'"
         ],
         file_pointer: null,
-        standard_sample_lot: null,
+        id_code: null,
         url_preview: null
       }
       this.edit_specs_buffer.microscopic.tests.push(newImage)
@@ -291,7 +291,7 @@ export default {
         filename: this.get_comopnent_primary_name(this.component_data),
         type: 'microscopic_spec',
         page: 1,
-        id_code: test.standard_sample_lot,
+        id_code: test.id_code,
         file: file
       }
 
@@ -320,6 +320,7 @@ export default {
         this.putComponent().then(outcome => {
           if (outcome === true) {
             this.edit_specs_buffer = []
+            this.upload_files_buffer = {}
             this.edit_specs = false
           } else {
             this.component_data.doc.specifications = original
@@ -456,6 +457,7 @@ export default {
         'PUT ' + fetchRequest
       )
       const formData = new FormData()
+      formData.append('component_id', this.id)
       formData.append('component_type', this.component_data.component_type)
       formData.append('certified_usda_organic', this.component_data.certified_usda_organic)
       formData.append('certified_halal', this.component_data.certified_halal)
@@ -492,6 +494,7 @@ export default {
               this.flash_messages.forEach(function (message) {
                 createToast(message)
               })
+              this.getComponentData()
             })
             this.loaded = true
             return true

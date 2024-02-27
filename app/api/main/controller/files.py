@@ -14,6 +14,38 @@ from view.response import (
 )
 import model as db
 
+def matchup_recursive(data, file_meta_key, file_meta_value, updates, finished):
+    if finished:
+        return data, updates, finished
+    if isinstance(data, dict):
+        for key, value in data.items():
+            if key == "files":
+                continue
+            if key == "file_pointer" and value == file_meta_key:
+                data["file_pointer"] = file_meta_value["file_pointer"]
+                data["file_hash"] = file_meta_value["file_hash"]
+                data["id_code"] = file_meta_value["id_code"]
+                if "url_preview" in data.keys():
+                    data.pop("url_preview")
+                updates += 1
+                return data, updates, True
+            else:
+                data[key], updates, finished = matchup_recursive(data[key], file_meta_key, file_meta_value, updates, finished)
+    elif isinstance(data, list):
+        for i, item in enumerate(data):
+            data[i], updates, finished = matchup_recursive(item, file_meta_key, file_meta_value, updates, finished)
+    return data, updates, finished
+
+def matchup_saved_file_to_data(data):
+    for file_meta_key, file_meta_value in data["doc"]["files"].items():
+        updates = 0
+        data, updates, finished = matchup_recursive(data, file_meta_key, file_meta_value, updates, False)
+        if updates < 1:
+            raise NameError("Could not update file.")
+        if updates > 1:
+            raise NameError("Too many file updates.  Should only have one, found: " + updates)
+    data["doc"].pop("files")
+    return data
 
 def save_files(data, session):
     if 'doc' in data.keys():
@@ -29,18 +61,14 @@ def save_files(data, session):
                         file_data = data["doc"]["files"][file]
                         file_hash, filename, pointer = save_file(file_data, session)
                         data["doc"]["files"][file].pop("file_obj")
-                        save[file_hash] = data["doc"]["files"][file].copy()
-                        save[file_hash]["filename"] = filename
-                        save[file_hash]["file_pointer"] = pointer
+                        save[file] = data["doc"]["files"][file].copy()
+                        save[file]["filename"] = filename
+                        save[file]["file_pointer"] = pointer
+                        save[file]["file_hash"] = file_hash
                     else:
                         raise Exception("Missing File Information.")
-                    pop_list.append(file)
-            if len(pop_list) > 0:
-                for file in pop_list:
-                    data["doc"]["files"].pop(file)
-                data["doc"]["files"] = save
-        else:
-            return data
+                data["doc"]["files"] = save.copy()
+                return matchup_saved_file_to_data(data)
     return data
 
 def save_file(file_data, session):
@@ -53,10 +81,7 @@ def save_file(file_data, session):
         select(db.Files).where(db.Files.file_hash == file_hash)
     )
     raw_data = stream.all()
-    
-    if len(raw_data) > 0:
-        return raw_data[0][0].get_id(), raw_data[0][0].file_name
-        
+
     # Save File to Filesystem
     
     # Create File Name
@@ -80,6 +105,10 @@ def save_file(file_data, session):
         filename += ".png"
     else:
         raise Exception("Invalid File Type")
+    
+    if len(raw_data) > 0:
+        # Do not save the file to the filesystem if it already exists.
+        return raw_data[0][0].get_id(), raw_data[0][0].file_name, raw_data[0][0].file_pointer
     
     # Create Directory if it doesn't already exist
     directory = os.path.join(
@@ -107,6 +136,7 @@ def save_file(file_data, session):
             "file_hash": file_hash,
             "file_name": fn,
             "file_type": file_data["type"],
+            "file_pointer": pointer,
             "id_code": file_data["id_code"],
             "pg": file_data["page"],
         }

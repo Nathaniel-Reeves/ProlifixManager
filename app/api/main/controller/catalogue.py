@@ -2,7 +2,7 @@
 Handle Inventory Data
 '''
 import json
-from sqlalchemy import select, insert, text
+from sqlalchemy import select, insert, update, delete
 
 from view.response import (
     VariantType,
@@ -195,16 +195,48 @@ def put_component(
         custom_response.insert_flash_message(error)
         custom_response.set_status_code(500)
         return custom_response
-        
+
     try:
         
         # Save Files if Any
-        new_component = save_files(component, session)
-        print(new_component)
+        update_component = save_files(component, session)
+        
+        # Update Component Names
+        component_names = json.loads(update_component.pop("Component_Names"))
+        stream = session.execute(
+            select(db.Component_Names)
+            .where(db.Component_Names.component_id == update_component["component_id"])
+        )
+        raw_data = stream.all()
+        current_names = []
+        for row in raw_data:
+            current_names.append(row[0].to_dict())
+
+        if component_names != current_names:
+            # Delete existing Component Names
+            session.execute(
+                delete(db.Component_Names)
+                .where(db.Component_Names.component_id == update_component["component_id"])
+            )
+            
+            # Add New Component Names
+            session.execute(
+                insert(db.Component_Names)
+                .values(component_names)
+            )
+        
+        # Update Component Data
+        session.execute(
+            update(db.Components)
+            .where(db.Components.component_id == update_component["component_id"])
+            .values(update_component)
+        )
+        
+        
         session.commit()
     except Exception as e:
-        error = error_message()
         print(e)
+        error = error_message()
         custom_response.insert_flash_message(error)
         custom_response.set_status_code(400)
         session.rollback()
@@ -213,7 +245,7 @@ def put_component(
     session.close()
     
     # Process and Package the data
-    custom_response.insert_data(new_component)
+    custom_response.insert_data(update_component)
     custom_response.set_status_code(201)
     flash_message = FlashMessage(
         variant=VariantType.SUCCESS,

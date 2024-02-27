@@ -22,6 +22,7 @@ class Files(Base):
     # Table Columns
     file_name: Mapped[str] = mapped_column()
     file_type: Mapped[str] = mapped_column()
+    file_pointer: Mapped[str] = mapped_column()
     id_code: Mapped[str] = mapped_column()
     pg: Mapped[str] = mapped_column()
     
@@ -34,6 +35,7 @@ class Files(Base):
             "file_hash": self.file_hash,
             "file_name": self.file_name,
             "file_type": self.file_type,
+            "file_pointer": self.file_pointer,
             "id_code": self.id_code,
             "pg": self.pg
         }
