@@ -41,6 +41,8 @@ print_config()
 def create_app():
     
     app = Flask(__name__)
+    app.config['MAX_CONTENT_LENGTH'] = 6000 * 6024  # 4000 KB in bytes
+    app.config['MAX_CONTENT_PATH'] = 1024  # Example value, adjust as needed
 
     """
     Database Connection Settings

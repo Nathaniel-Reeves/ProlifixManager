@@ -188,7 +188,6 @@ export default {
       })
     },
     createToast: function (flashMessage) {
-      console.log(flashMessage)
       this.$bvToast.toast(flashMessage.message, {
         title: flashMessage.title,
         variant: flashMessage.variant,

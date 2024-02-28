@@ -16,20 +16,9 @@
           <b-nav pills card-header slot="header" v-b-scrollspy:nav-scroller class="text-nowrap">
             <b-nav-item href="#Aliases" @click="scrollIntoView">Aliases</b-nav-item>
             <b-nav-item href="#Specifications" @click="scrollIntoView" v-if="component_data.doc.specifications !== undefined">Specifications</b-nav-item>
-            <b-nav-item href="#Organoleptic" @click="scrollIntoView" v-if="component_data.doc.specifications !== undefined && component_data.doc.specifications.organoleptic !== undefined">Organoleptic</b-nav-item>
-            <b-nav-item href="#Sterio_Microscopic" @click="scrollIntoView" v-if="component_data.doc.specifications !== undefined && component_data.doc.specifications.microscopic !== undefined">Sterio Microscopic</b-nav-item>
-            <b-nav-item href="#Microbiological" @click="scrollIntoView" v-if="component_data.doc.specifications !== undefined && component_data.doc.specifications.microbiological !== undefined">Microbiological</b-nav-item>
-            <b-nav-item href="#Gluten" @click="scrollIntoView" v-if="component_data.doc.specifications !== undefined && component_data.doc.specifications.gluten !== undefined">Gluten</b-nav-item>
-            <b-nav-item href="#FTIR" @click="scrollIntoView" v-if="component_data.doc.specifications !== undefined && component_data.doc.specifications.ftir !== undefined">FTIR</b-nav-item>
-            <b-nav-item href="#HPLC" @click="scrollIntoView" v-if="component_data.doc.specifications !== undefined && component_data.doc.specifications.hplc !== undefined">HPLC</b-nav-item>
-            <b-nav-item href="#HPTLC" @click="scrollIntoView" v-if="component_data.doc.specifications !== undefined && component_data.doc.specifications.hptlc !== undefined">HPTLC</b-nav-item>
-            <b-nav-item href="#Nutritional_Facts" @click="scrollIntoView" v-if="component_data.doc.specifications !== undefined && component_data.doc.specifications.nutritional_facts !== undefined">Nutritional Facts</b-nav-item>
-            <b-nav-item href="#Pesticides" @click="scrollIntoView" v-if="component_data.doc.specifications !== undefined && component_data.doc.specifications.pesticides !== undefined">Pesticides</b-nav-item>
-            <b-nav-item href="#Herbicides" @click="scrollIntoView" v-if="component_data.doc.specifications !== undefined && component_data.doc.specifications.herbicides !== undefined">Herbicides</b-nav-item>
-            <b-nav-item href="#Insecticides" @click="scrollIntoView" v-if="component_data.doc.specifications !== undefined && component_data.doc.specifications.insecticides !== undefined">Insecticides</b-nav-item>
-            <b-nav-item href="#Organochlorines" @click="scrollIntoView" v-if="component_data.doc.specifications !== undefined && component_data.doc.specifications.organochlorines !== undefined">Organochlorines</b-nav-item>
-            <b-nav-item href="#Foreign_Matter" @click="scrollIntoView" v-if="component_data.doc.specifications !== undefined && component_data.doc.specifications.foreign_matter !== undefined">Foreign Matter</b-nav-item>
-            <b-nav-item href="#Residual_Solvents" @click="scrollIntoView" v-if="component_data.doc.specifications !== undefined && component_data.doc.specifications.residual_solvents !== undefined">Residual Solvents</b-nav-item>
+            <div v-for="(spec_data, spec) in component_data.doc.specifications.specs" :key="spec">
+              <b-nav-item :href="'#'+spec" @click="scrollIntoView">{{ spec_data.test_name }}</b-nav-item>
+            </div>
           </b-nav>
         </b-card-body>
       </b-card>
@@ -107,23 +96,23 @@
               </div>
             </div>
             <!-- Specifications Organoleptic -->
-            <div v-if="component_data.doc.specifications.organoleptic !== undefined">
-              <h3 id="Organoleptic">Organoleptic<b-button v-if="!edit_specs" v-b-tooltip.hover title="Edit Component Organoleptic Specifications" v-on:click="editSpecs()" v-bind:class="['btn', 'p-1', 'ml-2', 'btn-light']" type="button"><i class="bi bi-pencil-square"></i></b-button></h3>
+            <div v-if="component_data.doc.specifications.specs.organoleptic !== undefined">
+              <h3 id="organoleptic">Organoleptic<b-button v-if="!edit_specs" v-b-tooltip.hover title="Edit Component Organoleptic Specifications" v-on:click="editSpecs()" v-bind:class="['btn', 'p-1', 'ml-2', 'btn-light']" type="button"><i class="bi bi-pencil-square"></i></b-button></h3>
               <div v-if="!edit_specs">
-                <p><strong>Spec Issued: </strong>{{ new Date(component_data.doc.specifications.organoleptic.date_issued).toDateString() }}</p>
-                <p><strong>Spec Revised: </strong>{{ new Date(component_data.doc.specifications.organoleptic.date_revised).toDateString() }}</p>
-                <p><strong>Revision Number: </strong>{{ component_data.doc.specifications.organoleptic.revision_number }}</p>
+                <p><strong>Spec Issued: </strong>{{ new Date(component_data.doc.specifications.specs.organoleptic.date_issued).toDateString() }}</p>
+                <p><strong>Spec Revised: </strong>{{ new Date(component_data.doc.specifications.specs.organoleptic.date_revised).toDateString() }}</p>
+                <p><strong>Revision Number: </strong>{{ component_data.doc.specifications.specs.organoleptic.revision_number }}</p>
               </div>
               <div v-if="!edit_specs">
-                <p><strong>Spec Required: </strong><b-badge pill v-bind:variant="(component_data.doc.specifications.organoleptic.required_spec ? 'success' : 'warning')">{{ component_data.doc.specifications.organoleptic.required_spec ? 'YES' : 'NO' }}</b-badge></p>
-                <p><strong>Primary Testing Responsibility: </strong>{{ format_string(component_data.doc.specifications.organoleptic.locations.primary) }}</p>
+                <p><strong>Spec Required: </strong><b-badge pill v-bind:variant="(component_data.doc.specifications.specs.organoleptic.required_spec ? 'success' : 'warning')">{{ component_data.doc.specifications.specs.organoleptic.required_spec ? 'YES' : 'NO' }}</b-badge></p>
+                <p><strong>Primary Testing Responsibility: </strong>{{ format_string(component_data.doc.specifications.specs.organoleptic.locations.primary) }}</p>
               </div>
               <div v-if="edit_specs">
                 <b-form-group @submit.stop.prevent>
                   <div class="d-flex">
                     <label for="Spec Required Organoleptic"><strong>Spec Required: </strong></label>
-                    <b-form-checkbox class="ml-2" v-model="edit_specs_buffer.organoleptic.required_spec" name="Spec Required Organoleptic" switch>
-                        <b-badge pill v-bind:variant="(edit_specs_buffer.organoleptic.required_spec ? 'success' : 'warning')">{{ edit_specs_buffer.organoleptic.required_spec ? 'YES' : 'NO' }}</b-badge>
+                    <b-form-checkbox class="ml-2" v-model="edit_specs_buffer.specs.organoleptic.required_spec" name="Spec Required Organoleptic" switch>
+                        <b-badge pill v-bind:variant="(edit_specs_buffer.specs.organoleptic.required_spec ? 'success' : 'warning')">{{ edit_specs_buffer.specs.organoleptic.required_spec ? 'YES' : 'NO' }}</b-badge>
                     </b-form-checkbox>
                   </div>
                 </b-form-group>
@@ -134,18 +123,18 @@
               </div>
             </div>
             <!-- Specifications Sterio_Microscopic -->
-            <div v-if="component_data.doc.specifications.microscopic !== undefined">
-              <h3 id="Sterio_Microscopic">Sterio Microscopic<b-button v-if="!edit_specs" v-b-tooltip.hover title="Edit Component Microscopic Specifications" v-on:click="editSpecs()" v-bind:class="['btn', 'p-1', 'ml-2', 'btn-light']" type="button"><i class="bi bi-pencil-square"></i></b-button></h3>
+            <div v-if="component_data.doc.specifications.specs.microscopic !== undefined">
+              <h3 id="microscopic">Sterio Microscopic<b-button v-if="!edit_specs" v-b-tooltip.hover title="Edit Component Microscopic Specifications" v-on:click="editSpecs()" v-bind:class="['btn', 'p-1', 'ml-2', 'btn-light']" type="button"><i class="bi bi-pencil-square"></i></b-button></h3>
               <div v-if="!edit_specs">
-                <p><strong>Spec Issued: </strong>{{ new Date(component_data.doc.specifications.microscopic.date_issued).toDateString() }}</p>
-                <p><strong>Spec Revised: </strong>{{ new Date(component_data.doc.specifications.microscopic.date_revised).toDateString() }}</p>
-                <p><strong>Revision Number: </strong>{{ component_data.doc.specifications.microscopic.revision_number }}</p>
+                <p><strong>Spec Issued: </strong>{{ new Date(component_data.doc.specifications.specs.microscopic.date_issued).toDateString() }}</p>
+                <p><strong>Spec Revised: </strong>{{ new Date(component_data.doc.specifications.specs.microscopic.date_revised).toDateString() }}</p>
+                <p><strong>Revision Number: </strong>{{ component_data.doc.specifications.specs.microscopic.revision_number }}</p>
               </div>
               <div v-if="!edit_specs">
-                <p><strong>Spec Required: </strong><b-badge pill v-bind:variant="(component_data.doc.specifications.microscopic.required_spec ? 'success' : 'warning')">{{ component_data.doc.specifications.microscopic.required_spec ? 'YES' : 'NO' }}</b-badge></p>
-                <p><strong>Primary Testing Responsibility: </strong>{{ format_string(component_data.doc.specifications.microscopic.locations.primary) }}</p>
+                <p><strong>Spec Required: </strong><b-badge pill v-bind:variant="(component_data.doc.specifications.specs.microscopic.required_spec ? 'success' : 'warning')">{{ component_data.doc.specifications.specs.microscopic.required_spec ? 'YES' : 'NO' }}</b-badge></p>
+                <p><strong>Primary Testing Responsibility: </strong>{{ format_string(component_data.doc.specifications.specs.microscopic.locations.primary) }}</p>
                 <b-card-group deck>
-                  <div v-for="test in component_data.doc.specifications.microscopic.tests" :key="test.id_code">
+                  <div v-for="test in component_data.doc.specifications.specs.microscopic.tests" :key="test.id_code">
                     <b-card
                       :footer="test.magnification"
                       :title="test.id_code"
@@ -163,12 +152,12 @@
                 <b-form-group @submit.stop.prevent>
                   <div class="d-flex">
                     <label for="Spec Required Microscopic"><strong>Spec Required: </strong></label>
-                    <b-form-checkbox class="ml-2" v-model="edit_specs_buffer.microscopic.required_spec" name="Spec Required Microscopic" switch>
-                        <b-badge pill v-bind:variant="(edit_specs_buffer.microscopic.required_spec ? 'success' : 'warning')">{{ edit_specs_buffer.microscopic.required_spec ? 'YES' : 'NO' }}</b-badge>
+                    <b-form-checkbox class="ml-2" v-model="edit_specs_buffer.specs.microscopic.required_spec" name="Spec Required Microscopic" switch>
+                        <b-badge pill v-bind:variant="(edit_specs_buffer.specs.microscopic.required_spec ? 'success' : 'warning')">{{ edit_specs_buffer.specs.microscopic.required_spec ? 'YES' : 'NO' }}</b-badge>
                     </b-form-checkbox>
                   </div>
                   <b-card-group deck>
-                    <div v-for="( test, index ) in edit_specs_buffer.microscopic.tests" :key="index">
+                    <div v-for="( test, index ) in edit_specs_buffer.specs.microscopic.tests" :key="index">
                       <b-card
                         style="max-width: 25rem; min-width: 25rem;"
                         :img-src="test.url_preview || test.url_preview === null? test.url_preview : getMicroscopeImage(test.file_pointer)" img-top
@@ -268,17 +257,18 @@ export default {
         ],
         file_pointer: null,
         id_code: null,
-        url_preview: null
+        url_preview: null,
+        type: 'microscopic_spec'
       }
-      this.edit_specs_buffer.microscopic.tests.push(newImage)
+      this.edit_specs_buffer.specs.microscopic.tests.push(newImage)
     },
     removeMicroscopicImage: function (index) {
       for (const pair in this.edit_files_buffer) {
-        if (this.edit_specs_buffer.microscopic.tests[index].file_pointer === pair[0]) {
+        if (this.edit_specs_buffer.specs.microscopic.tests[index].file_pointer === pair[0]) {
           this.edit_files_buffer.splice(pair[0], 1)
         }
       }
-      this.edit_specs_buffer.microscopic.tests.splice(index, 1)
+      this.edit_specs_buffer.specs.microscopic.tests.splice(index, 1)
     },
     onFileChange: function (e, test) {
       // Preview File
@@ -289,7 +279,7 @@ export default {
       // Save File in Buffer
       const newFile = {
         filename: this.get_comopnent_primary_name(this.component_data),
-        type: 'microscopic_spec',
+        type: test.type,
         page: 1,
         id_code: test.id_code,
         file: file
@@ -451,7 +441,7 @@ export default {
         }
       })
     },
-    putComponent: function () {
+    putComponent: async function () {
       const fetchRequest = window.origin + '/api/v1/catalogue/components'
       console.log(
         'PUT ' + fetchRequest
@@ -482,41 +472,54 @@ export default {
       try {
         this.loaded = false
         console.log(this.component_data)
-        return fetch(fetchRequest, {
+        const response = await fetch(fetchRequest, {
           method: 'PUT',
           credentials: 'include',
           body: formData
-        }).then(response => {
-          if (response.status === 201) {
-            response.json().then(data => {
-              this.flash_messages = data.messages.flash
-              const createToast = this.$parent.createToast
-              this.flash_messages.forEach(function (message) {
-                createToast(message)
-              })
-              this.getComponentData()
-            })
-            this.loaded = true
-            return true
-          } else if (response.status === 401) {
-            this.$router.push({
-              name: 'login'
-            })
-          } else {
-            response.json().then(data => {
-              this.flash_messages = data.messages.flash
-              const createToast = this.$parent.createToast
-              this.flash_messages.forEach(function (message) {
-                createToast(message)
-              })
-            })
-            this.loaded = true
-            return false
-          }
         })
+        if (response.status === 201) {
+          const data = await response.json()
+          this.flash_messages = data.messages.flash
+          const createToast = this.$parent.createToast
+          this.flash_messages.forEach(function (message) {
+            createToast(message)
+          })
+          this.getComponentData()
+          this.loaded = true
+          return true
+        } else if (response.status === 401) {
+          this.$router.push({
+            name: 'login'
+          })
+        } else {
+          response.json().then(data => {
+            this.flash_messages = data.messages.flash
+            const createToast = this.$parent.createToast
+            this.flash_messages.forEach(function (message) {
+              createToast(message)
+            })
+          })
+          this.loaded = true
+          return false
+        }
       } catch (error) {
+        const err = error
         this.loaded = true
-        console.error('There has been a problem with your fetch operation: ', error)
+        console.error('There has been a problem with your fetch operation: ', err)
+        const errorToast = {
+          title: 'Failure to save changes.',
+          message: 'Find IT to help fix the issue.',
+          variant: 'danger',
+          visible: true,
+          noCloseButton: false,
+          noAutoHide: true,
+          autoHideDelay: false,
+          appendToast: true,
+          solid: true,
+          toaster: 'b-toaster-bottom-right'
+        }
+        const createToast = this.$parent.createToast
+        createToast(errorToast)
         return false
       }
     },
