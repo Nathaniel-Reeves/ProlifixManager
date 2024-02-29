@@ -16,8 +16,8 @@
           <b-nav pills card-header slot="header" v-b-scrollspy:nav-scroller class="text-nowrap">
             <b-nav-item href="#Aliases" @click="scrollIntoView">Aliases</b-nav-item>
             <b-nav-item href="#Specifications" @click="scrollIntoView" v-if="component_data.doc.specifications !== undefined">Specifications</b-nav-item>
-            <div v-for="(spec_data, spec) in component_data.doc.specifications.specs" :key="spec">
-              <b-nav-item :href="'#'+spec" @click="scrollIntoView">{{ spec_data.test_name }}</b-nav-item>
+            <div v-for="(spec, spec_key) in component_data.doc.specifications.specs" :key="spec_key">
+              <b-nav-item :href="'#'+spec_key" @click="scrollIntoView">{{ spec.test_name }}</b-nav-item>
             </div>
           </b-nav>
         </b-card-body>
@@ -26,41 +26,9 @@
       <b-card class="m-2" v-show="loaded">
         <b-card-body id="nav-scroller" ref="content" style="position:relative; height:60vh; overflow-y:scroll;">
 
-          <!-- Alias Names-->
-          <div>
-            <h3 id="Aliases">Aliases<b-button v-show="!edit_names" v-b-tooltip.hover title="Edit Component Names" v-on:click="editNames()" v-bind:class="['btn','p-1', 'ml-2', 'btn-light']" type="button"><i class="bi bi-pencil-square"></i></b-button></h3>
-            <div v-for="Component_Name in component_data.Component_Names" :key="Component_Name.name_id">
-            <p v-show="!edit_names" v-bind:class="{ bold: Component_Name.primary_name, italic: Component_Name.botanical_name}">
-              {{ Component_Name.component_name }}{{ Component_Name.primary_name?" | Primary":""}}{{ Component_Name.botanical_name ? " | Botanical" : "" }}
-            </p>
-            </div>
-            <div v-for="Component_Name in edit_names_buffer" :key="'edit' + Component_Name.name_id">
-            <b-form inline v-show="edit_names" class="m-2" @submit.stop.prevent>
-              <label class="sr-only" for="inline-form-input-name">Name</label>
-              <b-form-input
-                id="inline-form-input-name"
-                class="mb-2 mr-sm-2 mb-sm-0"
-                v-model="Component_Name.component_name"
-                ></b-form-input>
-              <div v-on:click="radioNames(Component_Name.name_id, 'primary')">
-                <b-form-checkbox button button-variant="light" name="Primary Name" class="mb-2 mr-sm-2 mb-sm-0" v-model="Component_Name.primary_name">Primary Name</b-form-checkbox>
-              </div>
-              <div v-on:click="radioNames(Component_Name.name_id, 'botanical')" v-show="component_data.component_type === 'powder'">
-                <b-form-checkbox button button-variant="light" name="Botanical Name" class="mb-2 mr-sm-2 mb-sm-0" v-model="Component_Name.botanical_name">Botanical Name</b-form-checkbox>
-              </div>
-              <div>
-                <b-button variant="outline-danger" class="mb-2 mr-sm-2 mb-sm-0" v-show="!Component_Name.primary_name" v-on:click="deleteName(Component_Name.name_id)">Delete</b-button>
-              </div>
-            </b-form>
-            </div>
-            <div class="d-flex">
-              <div v-show="edit_names">
-                <b-button variant="outline-info" class="m-2" v-on:click="addName()">New Name</b-button>
-                <b-button variant="outline-info" class="m-2" v-on:click="cancelEditNames()">Cancel</b-button>
-                <b-button type="submit" v-show="edit_names_buffer.length > 0" variant="primary" class="m-2" v-on:click="editNames()">Save</b-button>
-              </div>
-            </div>
-          </div>
+          <!-- Alias Names -->
+          <NamesComponent :data="component_data.Component_Names" :save-function="putComponent" naming-type="component"></NamesComponent>
+          <hr>
 
           <!-- Specifications -->
           <div v-if="component_data.doc.specifications !== undefined">
@@ -95,107 +63,98 @@
                 <b-button type="submit" v-if="edit_specs" variant="primary" class="m-2" v-on:click="editSpecs()">Save</b-button>
               </div>
             </div>
-            <!-- Specifications Organoleptic -->
-            <div v-if="component_data.doc.specifications.specs.organoleptic !== undefined">
-              <h3 id="organoleptic">Organoleptic<b-button v-if="!edit_specs" v-b-tooltip.hover title="Edit Component Organoleptic Specifications" v-on:click="editSpecs()" v-bind:class="['btn', 'p-1', 'ml-2', 'btn-light']" type="button"><i class="bi bi-pencil-square"></i></b-button></h3>
+
+            <hr>
+
+            <!-- Generic Specifications -->
+            <div v-for="(spec, spec_key, index) in component_data.doc.specifications.specs" :key="index">
+              <!-- Spec Header -->
+              <h3 :id="spec_key">{{ spec.test_name }}<b-button v-if="!edit_specs" v-b-tooltip.hover :title="'Edit Component ' + spec.test_name + ' Specifications'" v-on:click="editSpecs()" class="btn p-1ml-2 btn-light" type="button"><i class="bi bi-pencil-square"></i></b-button></h3>
               <div v-if="!edit_specs">
-                <p><strong>Spec Issued: </strong>{{ new Date(component_data.doc.specifications.specs.organoleptic.date_issued).toDateString() }}</p>
-                <p><strong>Spec Revised: </strong>{{ new Date(component_data.doc.specifications.specs.organoleptic.date_revised).toDateString() }}</p>
-                <p><strong>Revision Number: </strong>{{ component_data.doc.specifications.specs.organoleptic.revision_number }}</p>
+                <p><strong>Spec Issued: </strong>{{ new Date(spec.date_issued).toDateString() }}</p>
+                <p><strong>Spec Revised: </strong>{{ new Date(spec.date_revised).toDateString() }}</p>
+                <p><strong>Revision Number: </strong>{{ spec.revision_number }}</p>
+                <p><strong>Primary Testing Responsibility: </strong>{{ format_string(spec.locations.primary) }}</p>
+                <p><strong>Spec Required: </strong><b-badge pill v-bind:variant="(spec.required_spec ? 'success' : 'warning')">{{ spec.required_spec ? 'YES' : 'NO' }}</b-badge></p>
+                <p v-show="Boolean(spec.statement)"><strong>Statement</strong><br>{{ spec.statement }}</p>
               </div>
-              <div v-if="!edit_specs">
-                <p><strong>Spec Required: </strong><b-badge pill v-bind:variant="(component_data.doc.specifications.specs.organoleptic.required_spec ? 'success' : 'warning')">{{ component_data.doc.specifications.specs.organoleptic.required_spec ? 'YES' : 'NO' }}</b-badge></p>
-                <p><strong>Primary Testing Responsibility: </strong>{{ format_string(component_data.doc.specifications.specs.organoleptic.locations.primary) }}</p>
-              </div>
-              <div v-if="edit_specs">
-                <b-form-group @submit.stop.prevent>
-                  <div class="d-flex">
-                    <label for="Spec Required Organoleptic"><strong>Spec Required: </strong></label>
-                    <b-form-checkbox class="ml-2" v-model="edit_specs_buffer.specs.organoleptic.required_spec" name="Spec Required Organoleptic" switch>
-                        <b-badge pill v-bind:variant="(edit_specs_buffer.specs.organoleptic.required_spec ? 'success' : 'warning')">{{ edit_specs_buffer.specs.organoleptic.required_spec ? 'YES' : 'NO' }}</b-badge>
-                    </b-form-checkbox>
-                  </div>
-                </b-form-group>
-                <div class="d-flex">
-                  <b-button v-if="edit_specs" variant="outline-info" class="m-2" v-on:click="cancelEditSpecs()">Cancel</b-button>
-                  <b-button type="submit" v-if="edit_specs" variant="primary" class="m-2" v-on:click="editSpecs('organoleptic')">Save</b-button>
-                </div>
-              </div>
-            </div>
-            <!-- Specifications Sterio_Microscopic -->
-            <div v-if="component_data.doc.specifications.specs.microscopic !== undefined">
-              <h3 id="microscopic">Sterio Microscopic<b-button v-if="!edit_specs" v-b-tooltip.hover title="Edit Component Microscopic Specifications" v-on:click="editSpecs()" v-bind:class="['btn', 'p-1', 'ml-2', 'btn-light']" type="button"><i class="bi bi-pencil-square"></i></b-button></h3>
-              <div v-if="!edit_specs">
-                <p><strong>Spec Issued: </strong>{{ new Date(component_data.doc.specifications.specs.microscopic.date_issued).toDateString() }}</p>
-                <p><strong>Spec Revised: </strong>{{ new Date(component_data.doc.specifications.specs.microscopic.date_revised).toDateString() }}</p>
-                <p><strong>Revision Number: </strong>{{ component_data.doc.specifications.specs.microscopic.revision_number }}</p>
-              </div>
-              <div v-if="!edit_specs">
-                <p><strong>Spec Required: </strong><b-badge pill v-bind:variant="(component_data.doc.specifications.specs.microscopic.required_spec ? 'success' : 'warning')">{{ component_data.doc.specifications.specs.microscopic.required_spec ? 'YES' : 'NO' }}</b-badge></p>
-                <p><strong>Primary Testing Responsibility: </strong>{{ format_string(component_data.doc.specifications.specs.microscopic.locations.primary) }}</p>
-                <b-card-group deck>
-                  <div v-for="test in component_data.doc.specifications.specs.microscopic.tests" :key="test.id_code">
-                    <b-card
-                      :footer="test.magnification"
-                      :title="test.id_code"
-                      style="max-width: 25rem;"
-                      :img-src="getMicroscopeImage(test.file_pointer)" img-top
-                      class="my-3">
-                      <b-card-text>
-                        {{ test.description }}
-                      </b-card-text>
-                    </b-card>
-                  </div>
-                </b-card-group>
-              </div>
-              <div v-if="edit_specs">
-                <b-form-group @submit.stop.prevent>
-                  <div class="d-flex">
-                    <label for="Spec Required Microscopic"><strong>Spec Required: </strong></label>
-                    <b-form-checkbox class="ml-2" v-model="edit_specs_buffer.specs.microscopic.required_spec" name="Spec Required Microscopic" switch>
-                        <b-badge pill v-bind:variant="(edit_specs_buffer.specs.microscopic.required_spec ? 'success' : 'warning')">{{ edit_specs_buffer.specs.microscopic.required_spec ? 'YES' : 'NO' }}</b-badge>
-                    </b-form-checkbox>
-                  </div>
+
+              <!-- Spec Content -->
+              <div>
+                <div v-if="!edit_specs">
                   <b-card-group deck>
-                    <div v-for="( test, index ) in edit_specs_buffer.specs.microscopic.tests" :key="index">
+                    <div v-for="test, test_key, index in spec.tests" :key="index">
                       <b-card
-                        style="max-width: 25rem; min-width: 25rem;"
-                        :img-src="test.url_preview || test.url_preview === null? test.url_preview : getMicroscopeImage(test.file_pointer)" img-top
+                        :footer="test.magnification"
+                        :title="test.id_code"
+                        style="max-width: 25rem;"
+                        :img-src="getMicroscopeImage(test.file_pointer)" img-top
                         class="my-3">
-                        <b-form-file no-drop required accept="image/png, image/jpeg" v-show="!test.url_preview && !test.file_pointer && test.id_code !== null && test.id_code.length > 3" type="file" class="my-2" @change="onFileChange($event, test)"></b-form-file>
-                        <b-form-input type="text" class="my-1" v-model="test.id_code" placeholder="Lot Number..."></b-form-input>
-                        <b-form-textarea class="my-1" rows="3" max-rows="3" v-model="test.description" placeholder="Discription..."></b-form-textarea>
-                        <b-button class="my-2" variant="outline-danger" @click="removeMicroscopicImage(index)">Remove</b-button>
-                        <template #footer>
-                          <small class="text-muted">
-                            <b-form-select
-                            v-model="test.magnification"
-                            required
-                            :options="[
-                              { value: null, text: 'Select Magnification' },
-                              { value: '20X', text: '20X' },
-                              { value: '40X', text: '40X' }
-                            ]"></b-form-select>
-                          </small>
-                        </template>
+                        <b-card-text>
+                          {{ test.description }}
+                        </b-card-text>
                       </b-card>
                     </div>
-                    <b-card
-                      img-src="../../assets/no_image_placeholder.png"
-                      class="my-3"
-                      style="max-width: 25rem; min-width: 25rem;"
-                      v-on:click="newMicrscopicImage()">
-                      <b-card-title>
-                        New Microscopic Image
-                      </b-card-title>
-                    </b-card>
                   </b-card-group>
-                </b-form-group>
-                <div class="d-flex">
+                </div>
+
+                <!-- Edit Section -->
+                <div v-if="edit_specs">
+                  <b-form-group @submit.stop.prevent>
+
+                    <!-- Edit Spec Header Content -->
+                    <div class="d-flex">
+                      <label for="Spec Required Microscopic"><strong>Spec Required: </strong></label>
+                      <b-form-checkbox class="ml-2" v-model="edit_specs_buffer.specs[spec_key].required_spec" name="Spec Required Microscopic" switch>
+                          <b-badge pill v-bind:variant="(edit_specs_buffer.specs[spec_key].required_spec ? 'success' : 'warning')">{{ edit_specs_buffer.specs[spec_key].required_spec ? 'YES' : 'NO' }}</b-badge>
+                      </b-form-checkbox>
+                    </div>
+
+                    <!-- Edit Spec Content -->
+                    <b-card-group deck>
+                      <div v-for="( test, test_key, index ) in edit_specs_buffer.specs[spec_key].tests" :key="index">
+                        <b-card
+                          style="max-width: 25rem; min-width: 25rem;"
+                          :img-src="test.url_preview || test.url_preview === null ? test.url_preview : getMicroscopeImage(test.file_pointer)" img-top
+                          class="my-3">
+                          <b-form-file no-drop required accept="image/png, image/jpeg" v-show="!test.url_preview && !test.file_pointer && test.id_code !== null && test.id_code.length > 3" type="file" class="my-2" @change="onFileChange($event, test)"></b-form-file>
+                          <b-form-input type="text" class="my-1" v-model="test.id_code" placeholder="Lot Number..."></b-form-input>
+                          <b-form-textarea class="my-1" rows="3" max-rows="3" v-model="test.description" placeholder="Discription..."></b-form-textarea>
+                          <b-button class="my-2" variant="outline-danger" @click="removeMicroscopicImage(index)">Remove</b-button>
+                          <template #footer>
+                            <small class="text-muted">
+                              <b-form-select
+                              v-model="test.magnification"
+                              required
+                              :options="[
+                                { value: '', text: 'Select Magnification' },
+                                { value: '20X', text: '20X' },
+                                { value: '40X', text: '40X' }
+                              ]"></b-form-select>
+                            </small>
+                          </template>
+                        </b-card>
+                      </div>
+                      <b-card
+                        img-src="../../assets/no_image_placeholder.png"
+                        class="my-3"
+                        style="max-width: 25rem; min-width: 25rem;"
+                        v-on:click="newMicrscopicImage()">
+                        <b-card-title>
+                          New Microscopic Image
+                        </b-card-title>
+                      </b-card>
+                    </b-card-group>
+                  </b-form-group>
+                </div>
+
+                <!-- Spec Action Buttons -->
+                <div class="d-flex" v-if="edit_specs">
                   <b-button v-if="edit_specs" variant="outline-info" class="m-2" v-on:click="cancelEditSpecs()">Cancel</b-button>
-                  <b-button type="submit" v-if="edit_specs" variant="primary" class="m-2" v-on:click="editSpecs('microscopic')">Save</b-button>
+                  <b-button type="submit" v-if="edit_specs" variant="primary" class="m-2" v-on:click="editSpecs(spec_key)">Save</b-button>
                 </div>
               </div>
+              <hr>
             </div>
           </div>
 
@@ -215,20 +174,16 @@
         width: 98%;
     }
 }
-.bold {
-    font-weight: bold;
-}
-.italic {
-    font-style: italic;
-}
-.normal {
-    font-weight: normal;
-}
 </style>
 
 <script>
+import NamesComponent from './NamesComponent.vue'
+
 export default {
   name: 'ComponentDetail',
+  components: {
+    NamesComponent
+  },
   data: function () {
     return {
       id: this.$route.params.id,
@@ -270,6 +225,13 @@ export default {
       }
       this.edit_specs_buffer.specs.microscopic.tests.splice(index, 1)
     },
+    getMicroscopeImage: function (filename) {
+      const fetchRequest = window.origin + '/api/v1/uploads/' + filename
+      // console.log(
+      //   'GET ' + fetchRequest
+      // )
+      return fetchRequest
+    },
     onFileChange: function (e, test) {
       // Preview File
       const file = e.target.files[0]
@@ -300,10 +262,10 @@ export default {
       } else {
         this.component_data.doc.specifications = {}
         this.edit_specs_buffer.revision_number++
-        this.edit_specs_buffer.date_revised = new Date().toISOString()
+        this.edit_specs_buffer.date_revised = new Date().toISOString() // Today
         if (subSpec !== undefined) {
-          this.edit_specs_buffer[subSpec].revision_number++
-          this.edit_specs_buffer[subSpec].date_revised = new Date().toISOString()
+          this.edit_specs_buffer.specs[subSpec].revision_number++
+          this.edit_specs_buffer.specs[subSpec].date_revised = new Date().toISOString() // Today
         }
         this.component_data.doc.specifications = structuredClone(this.edit_specs_buffer) // Deep Copy
         this.component_data.doc.files = structuredClone(this.upload_files_buffer)
@@ -321,60 +283,6 @@ export default {
     cancelEditSpecs: function () {
       this.edit_specs_buffer = []
       this.edit_specs = false
-    },
-    radioNames: function (id, flag) {
-      for (let i = 0; i < this.edit_names_buffer.length; i++) {
-        if (this.edit_names_buffer[i].name_id === id) {
-          continue
-        } else {
-          if (flag === 'botanical') {
-            this.edit_names_buffer[i].botanical_name = false
-          } else if (flag === 'primary') {
-            this.edit_names_buffer[i].primary_name = false
-          } else {
-            continue
-          }
-        }
-      }
-    },
-    editNames: function () {
-      const original = structuredClone(this.component_data.Component_Names) // Deep Copy
-      if (!this.edit_names) {
-        this.edit_names_buffer = structuredClone(this.component_data.Component_Names) // Deep Copy
-        this.edit_names = true
-      } else {
-        this.component_data.Component_Names = []
-        this.component_data.Component_Names = structuredClone(this.edit_names_buffer) // Deep Copy
-        this.putComponent().then(outcome => {
-          if (outcome === true) {
-            this.edit_names_buffer = []
-            this.edit_names = false
-          } else {
-            this.component_data.Component_Names = original
-          }
-        })
-      }
-    },
-    cancelEditNames: function () {
-      this.edit_names_buffer = []
-      this.edit_names = false
-    },
-    addName: function () {
-      const newName = {
-        name_id: (Math.random() + 1).toString(36).substring(7),
-        component_id: this.component_data.component_id,
-        component_name: '',
-        primary_name: false,
-        botanical_name: false
-      }
-      this.edit_names_buffer.push(newName)
-    },
-    deleteName: function (id) {
-      for (let i = 0; i < this.edit_names_buffer.length; i++) {
-        if (this.edit_names_buffer[i].name_id === id) {
-          this.edit_names_buffer.splice(i, 1)
-        }
-      }
     },
     scrollIntoView: function (event) {
       event.preventDefault()
@@ -522,13 +430,6 @@ export default {
         createToast(errorToast)
         return false
       }
-    },
-    getMicroscopeImage: function (filename) {
-      const fetchRequest = window.origin + '/api/v1/uploads/' + filename
-      // console.log(
-      //   'GET ' + fetchRequest
-      // )
-      return fetchRequest
     }
   },
   created: function () {

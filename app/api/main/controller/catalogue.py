@@ -220,6 +220,8 @@ def put_component(
             )
             
             # Add New Component Names
+            for name in component_names:
+                name["name_id"] = None
             session.execute(
                 insert(db.Component_Names)
                 .values(component_names)

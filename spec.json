@@ -32,6 +32,8 @@
                         "test_name": "Screen",
                         "summary": "",
                         "statement": "",
+                        "description": "",
+                        "magnification": "",
                         "required_spec": false,
                         "method": "",
                         "methods": [],
@@ -76,6 +78,8 @@
                         "test_name": "FTIR",
                         "summary": "",
                         "statement": "",
+                        "description": "",
+                        "magnification": "",
                         "required_spec": false,
                         "method": "",
                         "methods": [],
@@ -117,6 +121,8 @@
                         "test_name": "Gluten",
                         "summary": "",
                         "statement": "",
+                        "description": "",
+                        "magnification": "",
                         "required_spec": false,
                         "method": "",
                         "methods": [],
@@ -158,6 +164,8 @@
                         "test_name": "Arsenic (As)",
                         "summary": "",
                         "statement": "",
+                        "description": "",
+                        "magnification": "",
                         "required_spec": true,
                         "method": "",
                         "methods": [
@@ -184,6 +192,8 @@
                         "test_name": "Cadmium (Cd)",
                         "summary": "",
                         "statement": "",
+                        "description": "",
+                        "magnification": "",
                         "required_spec": true,
                         "method": "",
                         "methods": [
@@ -210,6 +220,8 @@
                         "test_name": "Lead (Pb)",
                         "summary": "",
                         "statement": "",
+                        "description": "",
+                        "magnification": "",
                         "required_spec": true,
                         "method": "",
                         "methods": [
@@ -236,6 +248,8 @@
                         "test_name": "Mercury (Hg)",
                         "summary": "",
                         "statement": "",
+                        "description": "",
+                        "magnification": "",
                         "required_spec": true,
                         "method": "",
                         "methods": [
@@ -262,6 +276,8 @@
                         "test_name": "Total Heavy Metals",
                         "summary": "",
                         "statement": "",
+                        "description": "",
+                        "magnification": "",
                         "required_spec": true,
                         "method": "",
                         "methods": [
@@ -337,7 +353,7 @@
                 "revision_number": 0,
                 "id_code": "",
                 "statement": "",
-                "test_name": "hptlc",
+                "test_name": "HPTLC",
                 "tests": []
             },
             "insecticides": {
@@ -354,7 +370,7 @@
                 "revision_number": 1,
                 "id_code": "",
                 "statement": "Since this is a certified organic product it's highly unlikely that insecticides would be present.",
-                "test_name": "insecticides",
+                "test_name": "Insecticides",
                 "tests": []
             },
             "microbiological": {
@@ -377,6 +393,8 @@
                         "test_name": "Aerobic Plate Count",
                         "summary": "",
                         "statement": "",
+                        "description": "",
+                        "magnification": "",
                         "required_spec": true,
                         "method": "",
                         "methods": [
@@ -403,6 +421,8 @@
                         "test_name": "Coliforms Count",
                         "summary": "",
                         "statement": "",
+                        "description": "",
+                        "magnification": "",
                         "required_spec": true,
                         "method": "",
                         "methods": [
@@ -428,6 +448,8 @@
                         "test_name": "Escherichia Coli Count (E.Coli)",
                         "summary": "",
                         "statement": "",
+                        "description": "",
+                        "magnification": "",
                         "required_spec": true,
                         "method": "",
                         "methods": [
@@ -454,6 +476,8 @@
                         "test_name": "Moisture/Loss on Drying",
                         "summary": "",
                         "statement": "",
+                        "description": "",
+                        "magnification": "",
                         "required_spec": true,
                         "method": "",
                         "methods": [
@@ -482,6 +506,8 @@
                         "test_name": "Mold Count",
                         "summary": "",
                         "statement": "",
+                        "description": "",
+                        "magnification": "",
                         "required_spec": true,
                         "method": "",
                         "methods": [
@@ -508,6 +534,8 @@
                         "test_name": "Salmonella Count",
                         "summary": "",
                         "statement": "",
+                        "description": "",
+                        "magnification": "",
                         "required_spec": true,
                         "method": "",
                         "methods": [
@@ -534,6 +562,8 @@
                         "test_name": "Staphylococcus Count (Staph)",
                         "summary": "",
                         "statement": "",
+                        "description": "",
+                        "magnification": "",
                         "required_spec": true,
                         "method": "",
                         "methods": [
@@ -560,6 +590,8 @@
                         "test_name": "Total Plate Count",
                         "summary": "",
                         "statement": "",
+                        "description": "",
+                        "magnification": "",
                         "required_spec": true,
                         "method": "",
                         "methods": [
@@ -586,6 +618,8 @@
                         "test_name": "Yeast Count",
                         "summary": "",
                         "statement": "",
+                        "description": "",
+                        "magnification": "",
                         "required_spec": true,
                         "method": "",
                         "methods": [
@@ -630,6 +664,8 @@
                         "test_name": "Stereo-Microscopic",
                         "summary": "",
                         "statement": "",
+                        "description": "Orange Tan/Yellow Particles mixed with smaller white and black/darkbrown particles.",
+                        "magnification": "40X",
                         "required_spec": true,
                         "method": "",
                         "methods": [],
@@ -665,7 +701,7 @@
                 "revision_number": 0,
                 "id_code": "",
                 "statement": "",
-                "test_name": "nutritional_assay",
+                "test_name": "Nutritional Assay",
                 "tests": []
             },
             "organochlorines": {
@@ -682,7 +718,7 @@
                 "revision_number": 0,
                 "id_code": "",
                 "statement": "",
-                "test_name": "organochlorines",
+                "test_name": "Organochlorines",
                 "tests": []
             },
             "organoleptic": {
@@ -704,6 +740,8 @@
                         "test_name": "Organoleptic",
                         "summary": "",
                         "statement": "",
+                        "description": "",
+                        "magnification": "",
                         "required_spec": true,
                         "method": "",
                         "methods": [],
