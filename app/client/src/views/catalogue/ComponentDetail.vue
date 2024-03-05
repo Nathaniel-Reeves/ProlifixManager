@@ -46,7 +46,7 @@
               <p v-if="component_data.doc.specifications.purity_statement.length > 0"><strong>Purity Statement</strong><br>{{ component_data.doc.specifications.purity_statement }}</p>
             </div>
             <div v-if="edit_specs">
-              <b-form-group @submit.stop.prevent>
+              <b-form-group>
                 <label for="description_statement"><strong>Component Description</strong><br></label>
                 <b-form-textarea id="description_statement" v-model="edit_specs_buffer.description_statement" placeholder="Component description..." rows="3" max-rows="6"></b-form-textarea>
                 <label for="origin"><strong>Origin</strong><br></label>
@@ -68,91 +68,111 @@
 
             <!-- Generic Specifications -->
             <div v-for="(spec, spec_key, index) in component_data.doc.specifications.specs" :key="index">
+
               <!-- Spec Header -->
               <h3 :id="spec_key">{{ spec.test_name }}<b-button v-if="!edit_specs" v-b-tooltip.hover :title="'Edit Component ' + spec.test_name + ' Specifications'" v-on:click="editSpecs()" class="btn p-1ml-2 btn-light" type="button"><i class="bi bi-pencil-square"></i></b-button></h3>
               <div v-if="!edit_specs">
                 <p><strong>Spec Issued: </strong>{{ new Date(spec.date_issued).toDateString() }}</p>
                 <p><strong>Spec Revised: </strong>{{ new Date(spec.date_revised).toDateString() }}</p>
                 <p><strong>Revision Number: </strong>{{ spec.revision_number }}</p>
-                <p><strong>Primary Testing Responsibility: </strong>{{ format_string(spec.locations.primary) }}</p>
-                <p><strong>Spec Required: </strong><b-badge pill v-bind:variant="(spec.required_spec ? 'success' : 'warning')">{{ spec.required_spec ? 'YES' : 'NO' }}</b-badge></p>
+                <p><strong>Accepted Testing Sources: </strong>
+                  <b-badge variant="secondary" pill class="ml-2" style="font-size:1em;" v-show="spec.locations.in_house">In House</b-badge>
+                  <b-badge variant="secondary" pill class="ml-2" style="font-size:1em;" v-show="spec.locations.third_party_lab">Third Party Lab</b-badge>
+                  <b-badge variant="secondary" pill class="ml-2" style="font-size:1em;" v-show="spec.locations.supplier">Supplier</b-badge>
+                </p>
+                <p><strong>Primary Testing Responsibility: </strong>
+                  <b-badge variant="primary" pill class="ml-2" style="font-size:1em;">{{ format_string(spec.locations.primary) }}</b-badge>
+                </p>
+                <p><strong>Spec Required: </strong><b-badge pill class="ml-2" style="font-size:1em;" v-bind:variant="(spec.required_spec ? 'success' : 'warning')">{{ spec.required_spec ? 'YES' : 'NO' }}</b-badge></p>
                 <p v-show="Boolean(spec.statement)"><strong>Statement</strong><br>{{ spec.statement }}</p>
               </div>
 
-              <!-- Spec Content -->
+              <!-- Edit Spec Header -->
+              <div v-if="edit_specs">
+                <b-form-group v-slot="{ ariaDescribedby }">
+                  <label :for="'spec_accepted_' + spec_key"><strong>Accepted Test Sources: <br></strong></label>
+                  <b-form-checkbox :name="'spec_accepted_' + spec_key" v-model="edit_specs_buffer.specs[spec_key].locations.in_house" :aria-describedby="ariaDescribedby">In House</b-form-checkbox>
+                  <b-form-checkbox :name="'spec_accepted_' + spec_key" v-model="edit_specs_buffer.specs[spec_key].locations.third_party_lab" :aria-describedby="ariaDescribedby">Third Party Lab</b-form-checkbox>
+                  <b-form-checkbox :name="'spec_accepted_' + spec_key" v-model="edit_specs_buffer.specs[spec_key].locations.supplier" :aria-describedby="ariaDescribedby">Supplier</b-form-checkbox>
+                </b-form-group>
+
+                <b-form-group v-slot="{ ariaDescribedby }" v-model="edit_specs_buffer.specs[spec_key].locations.primary">
+                  <label :for="'spec_responsibility_' + spec_key"><strong>Primary Testing Responsibility: </strong></label>
+                  <b-form-radio v-model="edit_specs_buffer.specs[spec_key].locations.primary" :aria-describedby="ariaDescribedby" :name="'spec_responsibility_' + spec_key" value="in_house">In House</b-form-radio>
+                  <b-form-radio v-model="edit_specs_buffer.specs[spec_key].locations.primary" :aria-describedby="ariaDescribedby" :name="'spec_responsibility_' + spec_key" value="third_party_lab">Third Party Lab</b-form-radio>
+                  <b-form-radio v-model="edit_specs_buffer.specs[spec_key].locations.primary" :aria-describedby="ariaDescribedby" :name="'spec_responsibility_' + spec_key" value="supplier">Supplier</b-form-radio>
+                </b-form-group>
+
+                <div class="d-flex">
+                  <label :for="'spec_required_' + spec_key"><strong>Spec Required: </strong></label>
+                  <b-form-checkbox class="ml-2" v-model="edit_specs_buffer.specs[spec_key].required_spec" :name="'spec_required_' + spec_key" switch>
+                      <b-badge class="ml-2" style="font-size:1em;" pill v-bind:variant="(edit_specs_buffer.specs[spec_key].required_spec ? 'success' : 'warning')">{{ edit_specs_buffer.specs[spec_key].required_spec ? 'YES' : 'NO' }}</b-badge>
+                  </b-form-checkbox>
+                </div>
+                <label :for="'statement_' + spec_key"><strong>Statement</strong><br></label>
+                <b-form-textarea class="d-flex" :id="'statement_' + spec_key" v-model="edit_specs_buffer.specs[spec_key].statement" placeholder="Statement..." rows="3" max-rows="6"></b-form-textarea>
+              </div>
+
               <div>
+                <!-- Spec Content -->
                 <div v-if="!edit_specs">
-                  <b-card-group deck>
+                  <!-- Card Type Specs -->
+                  <b-card-group deck v-if="useCardType(spec_key)">
                     <div v-for="test, test_key, index in spec.tests" :key="index">
-                      <b-card
-                        :footer="test.magnification"
-                        :title="test.id_code"
-                        style="max-width: 25rem;"
-                        :img-src="getMicroscopeImage(test.file_pointer)" img-top
-                        class="my-3">
-                        <b-card-text>
-                          {{ test.description }}
-                        </b-card-text>
+                      <b-card no-body style="max-width: 25rem;" class="my-3 no-shaddow">
+                        <b-card-img v-if="getFile(test.file_pointer)" :src="getFile(test.file_pointer)" top></b-card-img>
+                        <b-card-body v-if="spec_key !== 'organoleptic'">
+                          <b-card-title>{{ test.id_code }}</b-card-title>
+                          <b-card-text>{{ test.description }}<br><strong>Magnification: </strong><b-badge variant="secondary" pill class="ml-2" style="font-size:1em;">{{ test.magnification }}</b-badge></b-card-text>
+                        </b-card-body>
+                        <b-card-body v-else>
+                          <b-card-title>{{ test.id_code }}</b-card-title>
+                          <b-card-text>
+                            <p><strong>Odor: </strong><br>{{ test.odor }}</p>
+                            <p><strong>Dissolved Taste: </strong><br>{{ test.taste_dissolved }}</p>
+                            <p><strong>Dry Taste: </strong><br>{{ test.taste_dry }}</p>
+                            <p><strong>Visual: </strong><br>{{ test.visual }}</p>
+                          </b-card-text>
+                        </b-card-body>
+                        <b-card-footer>{{ new Date(test.date_revised).toDateString() }}</b-card-footer>
                       </b-card>
                     </div>
                   </b-card-group>
+
+                  <!-- Grid Type Specs -->
+                  <div v-else>
+                    <Grid :rows="spec.tests" :cols="test_cols"></Grid>
+                  </div>
                 </div>
 
-                <!-- Edit Section -->
+                <!-- Edit Spec Content -->
                 <div v-if="edit_specs">
-                  <b-form-group @submit.stop.prevent>
-
-                    <!-- Edit Spec Header Content -->
-                    <div class="d-flex">
-                      <label for="Spec Required Microscopic"><strong>Spec Required: </strong></label>
-                      <b-form-checkbox class="ml-2" v-model="edit_specs_buffer.specs[spec_key].required_spec" name="Spec Required Microscopic" switch>
-                          <b-badge pill v-bind:variant="(edit_specs_buffer.specs[spec_key].required_spec ? 'success' : 'warning')">{{ edit_specs_buffer.specs[spec_key].required_spec ? 'YES' : 'NO' }}</b-badge>
-                      </b-form-checkbox>
-                    </div>
-
-                    <!-- Edit Spec Content -->
-                    <b-card-group deck>
-                      <div v-for="( test, test_key, index ) in edit_specs_buffer.specs[spec_key].tests" :key="index">
-                        <b-card
-                          style="max-width: 25rem; min-width: 25rem;"
-                          :img-src="test.url_preview || test.url_preview === null ? test.url_preview : getMicroscopeImage(test.file_pointer)" img-top
-                          class="my-3">
-                          <b-form-file no-drop required accept="image/png, image/jpeg" v-show="!test.url_preview && !test.file_pointer && test.id_code !== null && test.id_code.length > 3" type="file" class="my-2" @change="onFileChange($event, test)"></b-form-file>
+                  <b-card-group deck v-if="useCardType(spec_key)">
+                    <div v-for="( test, test_key, index ) in edit_specs_buffer.specs[spec_key].tests" :key="index">
+                      <b-card no-body style="max-width: 25rem; min-width: 25rem;" class="my-3">
+                        <b-card-img :src="test.url_preview || test.url_preview === null ? test.url_preview : getFile(test.file_pointer)" top></b-card-img>
+                        <b-card-body>
+                          <b-form-file no-drop required accept="image/png, image/jpeg, application/pdf" v-show="!test.url_preview && !test.file_pointer && test.id_code !== null && test.id_code.length > 3" type="file" class="my-2" @change="onFileChange($event, test)"></b-form-file>
                           <b-form-input type="text" class="my-1" v-model="test.id_code" placeholder="Lot Number..."></b-form-input>
-                          <b-form-textarea class="my-1" rows="3" max-rows="3" v-model="test.description" placeholder="Discription..."></b-form-textarea>
-                          <b-button class="my-2" variant="outline-danger" @click="removeMicroscopicImage(index)">Remove</b-button>
-                          <template #footer>
-                            <small class="text-muted">
-                              <b-form-select
-                              v-model="test.magnification"
-                              required
-                              :options="[
-                                { value: '', text: 'Select Magnification' },
-                                { value: '20X', text: '20X' },
-                                { value: '40X', text: '40X' }
-                              ]"></b-form-select>
-                            </small>
-                          </template>
-                        </b-card>
-                      </div>
-                      <b-card
-                        img-src="../../assets/no_image_placeholder.png"
-                        class="my-3"
-                        style="max-width: 25rem; min-width: 25rem;"
-                        v-on:click="newMicrscopicImage()">
-                        <b-card-title>
-                          New Microscopic Image
-                        </b-card-title>
+                          <strong>Discription: </strong><br><b-form-textarea class="my-1" rows="3" max-rows="3" v-model="test.description" placeholder="Discription..."></b-form-textarea>
+                          <strong>Magnification: </strong><br><b-form-select v-model="test.magnification" required :options="[{ value: '', text: 'Select Magnification' },{ value: '20X', text: '20X' },{ value: '40X', text: '40X' }]"></b-form-select>
+                        </b-card-body>
+                        <b-card-footer>
+                          <b-button class="my-2" variant="outline-danger" @click="removeTest(index, spec_key)">Remove</b-button>
+                        </b-card-footer>
                       </b-card>
-                    </b-card-group>
-                  </b-form-group>
+                    </div>
+                    <b-card img-src="../../assets/no_image_placeholder.png" class="my-3" style="max-width: 25rem; min-width: 25rem;" v-on:click="newMicrscopicImage()">
+                      <b-card-title>New Microscopic Image</b-card-title>
+                    </b-card>
+                  </b-card-group>
                 </div>
+              </div>
 
-                <!-- Spec Action Buttons -->
-                <div class="d-flex" v-if="edit_specs">
-                  <b-button v-if="edit_specs" variant="outline-info" class="m-2" v-on:click="cancelEditSpecs()">Cancel</b-button>
-                  <b-button type="submit" v-if="edit_specs" variant="primary" class="m-2" v-on:click="editSpecs(spec_key)">Save</b-button>
-                </div>
+              <!-- Spec Action Buttons -->
+              <div class="d-flex mt-3" v-if="edit_specs">
+                <b-button v-if="edit_specs" variant="outline-info" class="m-2" v-on:click="cancelEditSpecs()">Cancel</b-button>
+                <b-button type="submit" v-if="edit_specs" variant="primary" class="m-2" v-on:click="editSpecs(spec_key)">Save</b-button>
               </div>
               <hr>
             </div>
@@ -166,8 +186,11 @@
 </template>
 
 <style scoped>
+.bold {
+    font-weight: bold;
+}
 .my_component {
-    width: 75%;
+    width: 95%;
 }
 @media only screen and (max-width: 1024px) {
     .my_component {
@@ -178,11 +201,14 @@
 
 <script>
 import NamesComponent from './NamesComponent.vue'
+import Grid from 'gridjs-vue'
+import { html } from 'gridjs'
 
 export default {
   name: 'ComponentDetail',
   components: {
-    NamesComponent
+    NamesComponent,
+    Grid
   },
   data: function () {
     return {
@@ -190,12 +216,67 @@ export default {
       component_data: {},
       search_query: '',
       loaded: false,
+      test_cols: [
+        {
+          id: 'test_name',
+          name: 'Test'
+        },
+        {
+          id: 'required_spec',
+          name: 'Rqd',
+          formatter: (cell) => (cell ? html('<span class="badge ml-2 badge-success badge-pill" style="font-size: 1em;">Yes</span>') : html('<span class="badge ml-2 badge-warning badge-pill" style="font-size: 1em;">No</span>')),
+          width: '1em'
+        },
+        {
+          id: 'greater_than',
+          hidden: true
+        },
+        {
+          id: 'less_than',
+          hidden: true
+        },
+        {
+          id: 'count',
+          name: 'Count',
+          hidden: true
+        },
+        {
+          id: 'unit_of_measure',
+          name: 'UoM',
+          hidden: true
+        },
+        {
+          name: 'Spec',
+          formatter: (_, row) => (
+            (row.cells[2].data ? '>' : '') +
+            (row.cells[3].data ? '<' : '') +
+            row.cells[4].data +
+            ' ' +
+            row.cells[5].data
+          ),
+          width: '20%'
+        },
+        {
+          id: 'methods',
+          name: 'Methods',
+          formatter: (cell) => {
+            let d = ''
+            cell.forEach((method) => {
+              d += ' ' + method + '<br>'
+            })
+            return html(d)
+          }
+        },
+        {
+          id: 'statement',
+          name: 'Statement',
+          width: '100%'
+        }
+      ],
       edit_names: false,
       edit_names_buffer: [],
       edit_specs: false,
       edit_specs_buffer: {},
-      edit_specs_organoleptic: false,
-      edit_specs_organoleptic_buffer: {},
       upload_files_buffer: {},
       flash_messages: [],
       file_index: 1
@@ -203,34 +284,70 @@ export default {
   },
   methods: {
     newMicrscopicImage: function () {
-      const newImage = {
-        description: null,
-        magnification: null,
-        required_spec: true,
-        methods: [
-          "Method outlined in SOP QA 04.02, 'Microscopic Testing Procedure.'"
-        ],
-        file_pointer: null,
-        id_code: null,
-        url_preview: null,
-        type: 'microscopic_spec'
-      }
+      const newImage = this.newTest()
+      newImage.test_name = 'Microscopic'
+      newImage.type = 'specifications/microscopic'
+      newImage.required_spec = true
+      newImage.method = 'Method outlined in SOP QA 04.02, Microscopic Testing Procedure.'
       this.edit_specs_buffer.specs.microscopic.tests.push(newImage)
     },
-    removeMicroscopicImage: function (index) {
+    removeTest: function (index, specKey) {
       for (const pair in this.edit_files_buffer) {
-        if (this.edit_specs_buffer.specs.microscopic.tests[index].file_pointer === pair[0]) {
+        if (this.edit_specs_buffer.specs[specKey].tests[index].file_pointer === pair[0]) {
           this.edit_files_buffer.splice(pair[0], 1)
         }
       }
-      this.edit_specs_buffer.specs.microscopic.tests.splice(index, 1)
+      this.edit_specs_buffer.specs[specKey].tests.splice(index, 1)
     },
-    getMicroscopeImage: function (filename) {
-      const fetchRequest = window.origin + '/api/v1/uploads/' + filename
-      // console.log(
-      //   'GET ' + fetchRequest
-      // )
-      return fetchRequest
+    newTest: function () {
+      return {
+        test_name: null,
+        type: null,
+        summary: null,
+        statement: null,
+        description: null,
+        magnification: null,
+        required_spec: true,
+        method: null,
+        methods: [],
+        unit_of_measure: '',
+        rf_value: 0,
+        mesh_size: 0,
+        percent: 0,
+        count: 0,
+        amount_per_serving: 0,
+        greater_than: false,
+        less_than: true,
+        sources: [],
+        odor: null,
+        taste_dissolved: null,
+        taste_dry: null,
+        visual: null,
+        id_code: null,
+        file_pointer: null,
+        file_preview_pointer: null,
+        date_issued: new Date().toISOString(),
+        date_revised: new Date().toISOString(),
+        url_preview: null
+      }
+    },
+    getFile: function (filename) {
+      if (filename) {
+        const fetchRequest = window.origin + '/api/v1/uploads/' + filename
+        return fetchRequest
+      } else {
+        return false
+      }
+    },
+    useCardType: function (specKey) {
+      const cardTypes = [
+        'organoleptic',
+        'microscopic',
+        'ftir',
+        'hplc',
+        'hptlc'
+      ]
+      return cardTypes.includes(specKey)
     },
     onFileChange: function (e, test) {
       // Preview File

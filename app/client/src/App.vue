@@ -222,4 +222,8 @@ export default {
 .card {
   box-shadow: 0 20px 40px rgba(0,0,0,.2);
 }
+
+.no-shaddow {
+  box-shadow: none;
+}
 </style>

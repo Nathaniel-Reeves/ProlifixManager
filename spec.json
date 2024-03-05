@@ -13,8 +13,8 @@
         "parts_used": "Mushroom",
         "specs": {
             "mesh_size": {
-                "date_issued": "YYYY-MM-DDT00:00:00.000Z",
-                "date_revised": "YYYY-MM-DDT00:00:00.000Z",
+                "date_issued": "2023-10-24T00:00:00.000Z",
+                "date_revised": "2023-10-24T00:00:00.000Z",
                 "file_pointer": "",
                 "id_code": "",
                 "locations": {
@@ -27,37 +27,11 @@
                 "revision_number": 0,
                 "statement": "",
                 "test_name": "Mesh Size",
-                "tests": [
-                    {
-                        "test_name": "Screen",
-                        "summary": "",
-                        "statement": "",
-                        "description": "",
-                        "magnification": "",
-                        "required_spec": false,
-                        "method": "",
-                        "methods": [],
-                        "unit_of_measure": "",
-                        "rf_value": 0,
-                        "mesh_size": 0,
-                        "percent": 0,
-                        "count": 0,
-                        "amount_per_serving": 0,
-                        "greater_than": false,
-                        "less_than": true,
-                        "sources": [],
-                        "odor": "",
-                        "taste_dissolved": "",
-                        "taste_dry": "",
-                        "visual": "",
-                        "id_code": "",
-                        "file_pointer": ""
-                    }
-                ]
+                "tests": []
             },
             "ftir": {
-                "date_issued": "YYYY-MM-DDT00:00:00.000Z",
-                "date_revised": "YYYY-MM-DDT00:00:00.000Z",
+                "date_issued": "2023-10-24T00:00:00.000Z",
+                "date_revised": "2023-10-24T00:00:00.000Z",
                 "file_pointer": "",
                 "locations": {
                     "in_house": false,
@@ -73,37 +47,11 @@
                 "methods": [
                     "FTIR"
                 ],
-                "tests": [
-                    {
-                        "test_name": "FTIR",
-                        "summary": "",
-                        "statement": "",
-                        "description": "",
-                        "magnification": "",
-                        "required_spec": false,
-                        "method": "",
-                        "methods": [],
-                        "unit_of_measure": "",
-                        "rf_value": 0,
-                        "mesh_size": 0,
-                        "percent": 0,
-                        "count": 0,
-                        "amount_per_serving": 0,
-                        "greater_than": false,
-                        "less_than": true,
-                        "sources": [],
-                        "odor": "",
-                        "taste_dissolved": "",
-                        "taste_dry": "",
-                        "visual": "",
-                        "id_code": "",
-                        "file_pointer": ""
-                    }
-                ]
+                "tests": []
             },
             "gluten": {
-                "date_issued": "YYYY-MM-DDT00:00:00.000Z",
-                "date_revised": "YYYY-MM-DDT00:00:00.000Z",
+                "date_issued": "2023-10-24T00:00:00.000Z",
+                "date_revised": "2023-10-24T00:00:00.000Z",
                 "file_pointer": "",
                 "locations": {
                     "in_house": false,
@@ -116,33 +64,7 @@
                 "id_code": "",
                 "statement": "",
                 "test_name": "Gluten",
-                "tests": [
-                    {
-                        "test_name": "Gluten",
-                        "summary": "",
-                        "statement": "",
-                        "description": "",
-                        "magnification": "",
-                        "required_spec": false,
-                        "method": "",
-                        "methods": [],
-                        "unit_of_measure": "",
-                        "rf_value": 0,
-                        "mesh_size": 0,
-                        "percent": 0,
-                        "count": 0,
-                        "amount_per_serving": 0,
-                        "greater_than": false,
-                        "less_than": true,
-                        "sources": [],
-                        "odor": "",
-                        "taste_dissolved": "",
-                        "taste_dry": "",
-                        "visual": "",
-                        "id_code": "",
-                        "file_pointer": ""
-                    }
-                ]
+                "tests": []
             },
             "heavy_metals": {
                 "date_issued": "2023-10-24T00:00:00.000Z",
@@ -186,7 +108,10 @@
                         "taste_dry": "",
                         "visual": "",
                         "id_code": "",
-                        "file_pointer": ""
+                        "file_pointer": "",
+                        "file_preview_pointer": "",
+                        "date_issued": "",
+                        "date_revised": ""
                     },
                     {
                         "test_name": "Cadmium (Cd)",
@@ -214,7 +139,10 @@
                         "taste_dry": "",
                         "visual": "",
                         "id_code": "",
-                        "file_pointer": ""
+                        "file_pointer": "",
+                        "file_preview_pointer": "",
+                        "date_issued": "",
+                        "date_revised": ""
                     },
                     {
                         "test_name": "Lead (Pb)",
@@ -242,7 +170,10 @@
                         "taste_dry": "",
                         "visual": "",
                         "id_code": "",
-                        "file_pointer": ""
+                        "file_pointer": "",
+                        "file_preview_pointer": "",
+                        "date_issued": "",
+                        "date_revised": ""
                     },
                     {
                         "test_name": "Mercury (Hg)",
@@ -270,7 +201,10 @@
                         "taste_dry": "",
                         "visual": "",
                         "id_code": "",
-                        "file_pointer": ""
+                        "file_pointer": "",
+                        "file_preview_pointer": "",
+                        "date_issued": "",
+                        "date_revised": ""
                     },
                     {
                         "test_name": "Total Heavy Metals",
@@ -298,7 +232,10 @@
                         "taste_dry": "",
                         "visual": "",
                         "id_code": "",
-                        "file_pointer": ""
+                        "file_pointer": "",
+                        "file_preview_pointer": "",
+                        "date_issued": "",
+                        "date_revised": ""
                     }
                 ]
             },
@@ -320,8 +257,8 @@
                 "tests": []
             },
             "hplc": {
-                "date_issued": "YYYY-MM-DDT00:00:00.000Z",
-                "date_revised": "YYYY-MM-DDT00:00:00.000Z",
+                "date_issued": "2023-10-24T00:00:00.000Z",
+                "date_revised": "2023-10-24T00:00:00.000Z",
                 "file_pointer": "",
                 "locations": {
                     "in_house": false,
@@ -340,8 +277,8 @@
                 "tests": []
             },
             "hptlc": {
-                "date_issued": "YYYY-MM-DDT00:00:00.000Z",
-                "date_revised": "YYYY-MM-DDT00:00:00.000Z",
+                "date_issued": "2023-10-24T00:00:00.000Z",
+                "date_revised": "2023-10-24T00:00:00.000Z",
                 "file_pointer": "",
                 "locations": {
                     "in_house": false,
@@ -415,7 +352,10 @@
                         "taste_dry": "",
                         "visual": "",
                         "id_code": "",
-                        "file_pointer": ""
+                        "file_pointer": "",
+                        "file_preview_pointer": "",
+                        "date_issued": "",
+                        "date_revised": ""
                     },
                     {
                         "test_name": "Coliforms Count",
@@ -442,7 +382,10 @@
                         "taste_dry": "",
                         "visual": "",
                         "id_code": "",
-                        "file_pointer": ""
+                        "file_pointer": "",
+                        "file_preview_pointer": "",
+                        "date_issued": "",
+                        "date_revised": ""
                     },
                     {
                         "test_name": "Escherichia Coli Count (E.Coli)",
@@ -470,7 +413,10 @@
                         "taste_dry": "",
                         "visual": "",
                         "id_code": "",
-                        "file_pointer": ""
+                        "file_pointer": "",
+                        "file_preview_pointer": "",
+                        "date_issued": "",
+                        "date_revised": ""
                     },
                     {
                         "test_name": "Moisture/Loss on Drying",
@@ -500,7 +446,10 @@
                         "taste_dry": "",
                         "visual": "",
                         "id_code": "",
-                        "file_pointer": ""
+                        "file_pointer": "",
+                        "file_preview_pointer": "",
+                        "date_issued": "",
+                        "date_revised": ""
                     },
                     {
                         "test_name": "Mold Count",
@@ -528,7 +477,10 @@
                         "taste_dry": "",
                         "visual": "",
                         "id_code": "",
-                        "file_pointer": ""
+                        "file_pointer": "",
+                        "file_preview_pointer": "",
+                        "date_issued": "",
+                        "date_revised": ""
                     },
                     {
                         "test_name": "Salmonella Count",
@@ -556,7 +508,10 @@
                         "taste_dry": "",
                         "visual": "",
                         "id_code": "",
-                        "file_pointer": ""
+                        "file_pointer": "",
+                        "file_preview_pointer": "",
+                        "date_issued": "",
+                        "date_revised": ""
                     },
                     {
                         "test_name": "Staphylococcus Count (Staph)",
@@ -584,7 +539,10 @@
                         "taste_dry": "",
                         "visual": "",
                         "id_code": "",
-                        "file_pointer": ""
+                        "file_pointer": "",
+                        "file_preview_pointer": "",
+                        "date_issued": "",
+                        "date_revised": ""
                     },
                     {
                         "test_name": "Total Plate Count",
@@ -612,7 +570,10 @@
                         "taste_dry": "",
                         "visual": "",
                         "id_code": "",
-                        "file_pointer": ""
+                        "file_pointer": "",
+                        "file_preview_pointer": "",
+                        "date_issued": "",
+                        "date_revised": ""
                     },
                     {
                         "test_name": "Yeast Count",
@@ -640,7 +601,10 @@
                         "taste_dry": "",
                         "visual": "",
                         "id_code": "",
-                        "file_pointer": ""
+                        "file_pointer": "",
+                        "file_preview_pointer": "",
+                        "date_issued": "",
+                        "date_revised": ""
                     }
                 ]
             },
@@ -683,13 +647,16 @@
                         "taste_dry": "",
                         "visual": "",
                         "id_code": "AP200623",
-                        "file_pointer": "microscopic_spec/fn[agaricus_blazei_AP200623]║id_code[123]║pg[1]║hash[555d8a05c9a39af719c889dcf11ac67b]║.jpeg"
+                        "file_pointer": "microscopic_spec/fn[agaricus_blazei_AP200623]║id_code[123]║pg[1]║hash[555d8a05c9a39af719c889dcf11ac67b]║.jpeg",
+                        "file_preview_pointer": "microscopic_spec/fn[agaricus_blazei_AP200623]║id_code[123]║pg[1]║hash[555d8a05c9a39af719c889dcf11ac67b]║.jpeg",
+                        "date_issued": "2023-10-02T00:00:00.000Z",
+                        "date_revised": "2024-02-27T19:27:02.399Z"
                     }
                 ]
             },
             "nutritional_facts": {
-                "date_issued": "YYYY-MM-DDT00:00:00.000Z",
-                "date_revised": "YYYY-MM-DDT00:00:00.000Z",
+                "date_issued": "2023-10-24T00:00:00.000Z",
+                "date_revised": "2023-10-24T00:00:00.000Z",
                 "file_pointer": "",
                 "locations": {
                     "in_house": false,
@@ -705,8 +672,8 @@
                 "tests": []
             },
             "organochlorines": {
-                "date_issued": "YYYY-MM-DDT00:00:00.000Z",
-                "date_revised": "YYYY-MM-DDT00:00:00.000Z",
+                "date_issued": "2023-10-24T00:00:00.000Z",
+                "date_revised": "2023-10-24T00:00:00.000Z",
                 "file_pointer": "",
                 "locations": {
                     "in_house": false,
@@ -758,8 +725,11 @@
                         "taste_dissolved": "characteristic",
                         "taste_dry": "mildly woody",
                         "visual": "light tan",
-                        "id_code": "",
-                        "file_pointer": ""
+                        "id_code": "AP200623",
+                        "file_pointer": "",
+                        "file_preview_pointer": "",
+                        "date_issued": "2023-10-24T00:00:00.000Z",
+                        "date_revised": "2024-02-27T17:10:27.186Z"
                     }
                 ]
             },
@@ -781,8 +751,8 @@
                 "tests": []
             },
             "residual_solvents": {
-                "date_issued": "YYYY-MM-DDT00:00:00.000Z",
-                "date_revised": "YYYY-MM-DDT00:00:00.000Z",
+                "date_issued": "2023-10-24T00:00:00.000Z",
+                "date_revised": "2023-10-24T00:00:00.000Z",
                 "file_pointer": "",
                 "locations": {
                     "in_house": false,
