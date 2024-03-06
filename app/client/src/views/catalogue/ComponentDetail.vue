@@ -120,12 +120,16 @@
                   <b-card-group deck v-if="useCardType(spec_key)">
                     <div v-for="test, test_key, index in spec.tests" :key="index">
                       <b-card no-body style="max-width: 25rem;" class="my-3 no-shaddow">
-                        <b-card-img v-if="getFile(test.file_pointer)" :src="getFile(test.file_pointer)" top></b-card-img>
-                        <b-card-body v-if="spec_key !== 'organoleptic'">
+                        <b-card-img v-if="(spec_key === 'microscopic' || spec_key === 'organoleptic') && getFile(test.file_pointer)" :src="getFile(test.file_pointer)" top></b-card-img>
+                        <b-card-body v-if="spec_key === 'microscopic'">
                           <b-card-title>{{ test.id_code }}</b-card-title>
-                          <b-card-text>{{ test.description }}<br><strong>Magnification: </strong><b-badge variant="secondary" pill class="ml-2" style="font-size:1em;">{{ test.magnification }}</b-badge></b-card-text>
+                          <b-card-text>
+                            <p class="mb-2">{{ test.description }}</p>
+                            <strong>Magnification: </strong><b-badge variant="secondary" pill class="ml-2" style="font-size:1em;">{{ test.magnification }}</b-badge><br>
+                            <strong>Method:  </strong>{{ test.method }}
+                          </b-card-text>
                         </b-card-body>
-                        <b-card-body v-else>
+                        <b-card-body v-else-if="spec_key === 'organoleptic'">
                           <b-card-title>{{ test.id_code }}</b-card-title>
                           <b-card-text>
                             <p><strong>Odor: </strong><br>{{ test.odor }}</p>
@@ -133,6 +137,9 @@
                             <p><strong>Dry Taste: </strong><br>{{ test.taste_dry }}</p>
                             <p><strong>Visual: </strong><br>{{ test.visual }}</p>
                           </b-card-text>
+                        </b-card-body>
+                        <b-card-body v-else>
+                          <b-card-title>{{ test.id_code }}</b-card-title>
                         </b-card-body>
                         <b-card-footer>{{ new Date(test.date_revised).toDateString() }}</b-card-footer>
                       </b-card>
@@ -147,25 +154,49 @@
 
                 <!-- Edit Spec Content -->
                 <div v-if="edit_specs">
+                  <!-- Card Type Specs -->
                   <b-card-group deck v-if="useCardType(spec_key)">
-                    <div v-for="( test, test_key, index ) in edit_specs_buffer.specs[spec_key].tests" :key="index">
+                    <div v-for="( test, index ) in edit_specs_buffer.specs[spec_key].tests" :key="index">
                       <b-card no-body style="max-width: 25rem; min-width: 25rem;" class="my-3">
                         <b-card-img :src="test.url_preview || test.url_preview === null ? test.url_preview : getFile(test.file_pointer)" top></b-card-img>
-                        <b-card-body>
-                          <b-form-file no-drop required accept="image/png, image/jpeg, application/pdf" v-show="!test.url_preview && !test.file_pointer && test.id_code !== null && test.id_code.length > 3" type="file" class="my-2" @change="onFileChange($event, test)"></b-form-file>
-                          <b-form-input type="text" class="my-1" v-model="test.id_code" placeholder="Lot Number..."></b-form-input>
+                        <b-card-body v-if="spec_key === 'microscopic'">
+                          <b-form-file no-drop required accept="image/png, image/jpeg" v-show="!test.url_preview && !test.file_pointer && test.id_code !== null && test.id_code.length > 3" type="file" class="my-2" @change="onFileChange($event, test)"></b-form-file>
+                          <b-form-input v-show="!test.file_pointer" type="text" class="my-1" v-model="test.id_code" placeholder="Lot Number..."></b-form-input>
+                          <b-card-title v-show="test.file_pointer && test.id_code !== null && test.id_code.length > 3" class="my-1">{{ test.id_code }}</b-card-title>
                           <strong>Discription: </strong><br><b-form-textarea class="my-1" rows="3" max-rows="3" v-model="test.description" placeholder="Discription..."></b-form-textarea>
                           <strong>Magnification: </strong><br><b-form-select v-model="test.magnification" required :options="[{ value: '', text: 'Select Magnification' },{ value: '20X', text: '20X' },{ value: '40X', text: '40X' }]"></b-form-select>
+                          <strong>Method: </strong><br><b-form-select v-model="test.method" required :options="[{ value: '', text: 'Select Method' }, { value: 'SOP QA 04.02', text: 'SOP QA 04.02' }]"></b-form-select>
+                        </b-card-body>
+                        <b-card-body v-if="spec_key === 'organoleptic'">
+                          <b-form-file no-drop required accept="image/png, image/jpeg" v-show="!test.url_preview && !test.file_pointer && test.id_code !== null && test.id_code.length > 3" type="file" class="my-2" @change="onFileChange($event, test)"></b-form-file>
+                          <b-form-input v-show="!test.file_pointer" type="text" class="my-1" v-model="test.id_code" placeholder="Lot Number..."></b-form-input>
+                          <b-card-title v-show="test.file_pointer && test.id_code !== null && test.id_code.length > 3" class="my-1">{{ test.id_code }}</b-card-title>
+                          <strong>Odor: </strong><br><b-form-textarea class="my-1" rows="3" max-rows="3" v-model="test.odor" placeholder="Odor..."></b-form-textarea>
+                          <strong>Dissolved Taste: </strong><br><b-form-textarea class="my-1" rows="3" max-rows="3" v-model="test.taste_dissolved" placeholder="Dissolved Taste..."></b-form-textarea>
+                          <strong>Dry Taste: </strong><br><b-form-textarea class="my-1" rows="3" max-rows="3" v-model="test.taste_dry" placeholder="Dry Taste..."></b-form-textarea>
+                          <strong>Visual: </strong><br><b-form-textarea class="my-1" rows="3" max-rows="3" v-model="test.visual" placeholder="Visual..."></b-form-textarea>
+                          <strong>Method: </strong><br><b-form-select v-model="test.method" required :options="[{ value: '', text: 'Select Method' }, { value: 'SOP QA 04.02', text: 'SOP QA 04.01' }]"></b-form-select>
                         </b-card-body>
                         <b-card-footer>
                           <b-button class="my-2" variant="outline-danger" @click="removeTest(index, spec_key)">Remove</b-button>
                         </b-card-footer>
                       </b-card>
                     </div>
-                    <b-card img-src="../../assets/no_image_placeholder.png" class="my-3" style="max-width: 25rem; min-width: 25rem;" v-on:click="newMicrscopicImage()">
+                    <b-card v-if="spec_key === 'microscopic'" img-src="../../assets/no_image_placeholder.png" class="my-3" style="max-width: 25rem; min-width: 25rem; cursor: pointer;" v-on:click="newCardSpec(spec_key)">
                       <b-card-title>New Microscopic Image</b-card-title>
                     </b-card>
+                    <b-card v-else-if="spec_key === 'organoleptic'" class="my-3" style="max-width: 25rem; min-width: 25rem; cursor: pointer;" v-on:click="newCardSpec(spec_key)">
+                      <b-card-title>New Organoleptic Spec</b-card-title>
+                    </b-card>
+                    <!-- <b-card v-else class="my-3" style="max-width: 25rem; min-width: 25rem; cursor: pointer;" v-on:click="newCardSpec(spec_key)">
+                      <b-card-title>New Spec</b-card-title>
+                    </b-card> -->
                   </b-card-group>
+
+                  <!-- Grid Type Specs -->
+                  <div v-else>
+                    <Grid :rows="spec.tests" :cols="test_cols"></Grid>
+                  </div>
                 </div>
               </div>
 
@@ -283,13 +314,12 @@ export default {
     }
   },
   methods: {
-    newMicrscopicImage: function () {
-      const newImage = this.newTest()
-      newImage.test_name = 'Microscopic'
-      newImage.type = 'specifications/microscopic'
-      newImage.required_spec = true
-      newImage.method = 'Method outlined in SOP QA 04.02, Microscopic Testing Procedure.'
-      this.edit_specs_buffer.specs.microscopic.tests.push(newImage)
+    newCardSpec: function (specKey) {
+      const test = this.newTest()
+      test.test_name = this.edit_specs_buffer.specs[specKey].test_name
+      test.type = 'component_specifications/' + specKey
+      test.required_spec = this.edit_specs_buffer.specs[specKey].required_spec
+      this.edit_specs_buffer.specs[specKey].tests.push(test)
     },
     removeTest: function (index, specKey) {
       for (const pair in this.edit_files_buffer) {
@@ -336,7 +366,7 @@ export default {
         const fetchRequest = window.origin + '/api/v1/uploads/' + filename
         return fetchRequest
       } else {
-        return false
+        return ''
       }
     },
     useCardType: function (specKey) {
