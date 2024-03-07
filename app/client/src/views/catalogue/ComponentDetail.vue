@@ -124,7 +124,7 @@
                         <b-card-body v-if="spec_key === 'microscopic'">
                           <b-card-title>{{ test.id_code }}</b-card-title>
                           <b-card-text>
-                            <p class="mb-2">{{ test.description }}</p>
+                            <p class="mb-2">{{ test.statement }}</p>
                             <strong>Magnification: </strong><b-badge variant="secondary" pill class="ml-2" style="font-size:1em;">{{ test.magnification }}</b-badge><br>
                             <strong>Method:  </strong>{{ test.method }}
                           </b-card-text>
@@ -163,7 +163,7 @@
                           <b-form-file no-drop required accept="image/png, image/jpeg" v-show="!test.url_preview && !test.file_pointer && test.id_code !== null && test.id_code.length > 3" type="file" class="my-2" @change="onFileChange($event, test)"></b-form-file>
                           <b-form-input v-show="!test.file_pointer" type="text" class="my-1" v-model="test.id_code" placeholder="Lot Number..."></b-form-input>
                           <b-card-title v-show="test.file_pointer && test.id_code !== null && test.id_code.length > 3" class="my-1">{{ test.id_code }}</b-card-title>
-                          <strong>Discription: </strong><br><b-form-textarea class="my-1" rows="3" max-rows="3" v-model="test.description" placeholder="Discription..."></b-form-textarea>
+                          <strong>Discription: </strong><br><b-form-textarea class="my-1" rows="3" max-rows="3" v-model="test.statement" placeholder="Discription..."></b-form-textarea>
                           <strong>Magnification: </strong><br><b-form-select v-model="test.magnification" required :options="[{ value: '', text: 'Select Magnification' },{ value: '20X', text: '20X' },{ value: '40X', text: '40X' }]"></b-form-select>
                           <strong>Method: </strong><br><b-form-select v-model="test.method" required :options="[{ value: '', text: 'Select Method' }, { value: 'SOP QA 04.02', text: 'SOP QA 04.02' }]"></b-form-select>
                         </b-card-body>
@@ -171,10 +171,10 @@
                           <b-form-file no-drop required accept="image/png, image/jpeg" v-show="!test.url_preview && !test.file_pointer && test.id_code !== null && test.id_code.length > 3" type="file" class="my-2" @change="onFileChange($event, test)"></b-form-file>
                           <b-form-input v-show="!test.file_pointer" type="text" class="my-1" v-model="test.id_code" placeholder="Lot Number..."></b-form-input>
                           <b-card-title v-show="test.file_pointer && test.id_code !== null && test.id_code.length > 3" class="my-1">{{ test.id_code }}</b-card-title>
-                          <strong>Odor: </strong><br><b-form-textarea class="my-1" rows="3" max-rows="3" v-model="test.odor" placeholder="Odor..."></b-form-textarea>
-                          <strong>Dissolved Taste: </strong><br><b-form-textarea class="my-1" rows="3" max-rows="3" v-model="test.taste_dissolved" placeholder="Dissolved Taste..."></b-form-textarea>
-                          <strong>Dry Taste: </strong><br><b-form-textarea class="my-1" rows="3" max-rows="3" v-model="test.taste_dry" placeholder="Dry Taste..."></b-form-textarea>
-                          <strong>Visual: </strong><br><b-form-textarea class="my-1" rows="3" max-rows="3" v-model="test.visual" placeholder="Visual..."></b-form-textarea>
+                          <strong>Odor: </strong><br><b-form-textarea class="my-1" rows="2" max-rows="2" v-model="test.odor" placeholder="Odor..."></b-form-textarea>
+                          <strong>Dissolved Taste: </strong><br><b-form-textarea class="my-1" rows="2" max-rows="2" v-model="test.taste_dissolved" placeholder="Dissolved Taste..."></b-form-textarea>
+                          <strong>Dry Taste: </strong><br><b-form-textarea class="my-1" rows="2" max-rows="2" v-model="test.taste_dry" placeholder="Dry Taste..."></b-form-textarea>
+                          <strong>Visual: </strong><br><b-form-textarea class="my-1" rows="2" max-rows="2" v-model="test.visual" placeholder="Visual..."></b-form-textarea>
                           <strong>Method: </strong><br><b-form-select v-model="test.method" required :options="[{ value: '', text: 'Select Method' }, { value: 'SOP QA 04.02', text: 'SOP QA 04.01' }]"></b-form-select>
                         </b-card-body>
                         <b-card-footer>
@@ -195,13 +195,56 @@
 
                   <!-- Grid Type Specs -->
                   <div v-else>
-                    <Grid :rows="spec.tests" :cols="test_cols"></Grid>
+                    <h5 class="mt-4">Individual Specifications</h5>
+                    <div v-for="( test, index ) in edit_specs_buffer.specs[spec_key].tests" :key="index">
+                      <b-form inline class="d-flex mt-4 mb-2" style="align-items: baseline;">
+                        <label class="sr-only" for="test">Test</label>
+                        <b-form-input id="test" class="bold mr-sm-2" style="width:30%; min-width: 15rem;" placeholder="Test..." v-model="test.test_name" v-b-tooltip.hover title="Test Name"></b-form-input>
+                        <label class="sr-only">Spec Required</label>
+                        <b-form-checkbox v-model="test.required_spec" class="mr-sm-2" style="font-size:1em;" pill v-bind:button-variant="(test.required_spec ? 'success' : 'warning')" button v-b-tooltip.hover title="Required Spec">
+                          <strong>{{ test.required_spec ? 'YES' : 'NO' }}</strong>
+                        </b-form-checkbox>
+                        <b-form-radio-group v-model="test.inequality" class="mr-2" buttons button-variant="outline-info" :aria-describedby="ariaDescribedby">
+                          <b-form-radio value=">">&#62;</b-form-radio> <!--  >  -->
+                          <b-form-radio value="=">&#61;</b-form-radio> <!--  =  -->
+                          <b-form-radio value="<">&#60;</b-form-radio> <!--  <  -->
+                        </b-form-radio-group>
+                        <label class="sr-only" for="spec">Spec</label>
+                        <b-input-group class="mr-sm-2">
+                          <b-form-input style="width:15%;" id="spec" placeholder="Spec..." v-b-tooltip.hover title="Specification" type="number" min="0" no-wheel number v-model="test.count"></b-form-input>
+                        </b-input-group>
+                        <b-form-select
+                          v-model="test.unit_of_measure"
+                          :options="['%','cfu/g','cfu/10g','cfu/25g','ppm','rf']"
+                          class="mr-sm-2"
+                          placeholder="Select Units"
+                        ></b-form-select>
+                      </b-form>
+                      <b-form-tags v-model="test.methods" no-outer-focus class="mb-2" style="width:86%;">
+                        <template v-slot="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
+                          <b-input-group class="mb-2">
+                            <b-form-input v-bind="inputAttrs" v-on="inputHandlers" placeholder="New Method - Press enter to add" class="form-control"></b-form-input>
+                            <b-input-group-append>
+                              <b-button @click="addTag()" variant="outline-primary">Add</b-button>
+                            </b-input-group-append>
+                          </b-input-group>
+                          <div class="d-inline-block" style="font-size: 1.5rem;">
+                            <b-form-tag v-for="tag in tags" @remove="removeTag(tag)" :key="tag" :title="tag" variant="light" class="mr-1">{{ tag }}</b-form-tag>
+                          </div>
+                        </template>
+                      </b-form-tags>
+                      <b-form inline class="d-flex mb-4" style="align-items: end;">
+                        <b-form-textarea class="mb-2 mr-sm-2" style="width:80%;" v-model="test.statement" placeholder="Statement..." rows="2" max-rows="3"></b-form-textarea>
+                        <b-button class="mb-2 mr-sm-2" variant="outline-danger" @click="removeTest(index, spec_key)">Remove</b-button>
+                      </b-form>
+                    </div>
                   </div>
                 </div>
               </div>
 
               <!-- Spec Action Buttons -->
               <div class="d-flex mt-3" v-if="edit_specs">
+                <b-button variant="outline-info" class="m-2" v-on:click="addSpec(spec_key)">New Spec</b-button>
                 <b-button v-if="edit_specs" variant="outline-info" class="m-2" v-on:click="cancelEditSpecs()">Cancel</b-button>
                 <b-button type="submit" v-if="edit_specs" variant="primary" class="m-2" v-on:click="editSpecs(spec_key)">Save</b-button>
               </div>
@@ -255,15 +298,11 @@ export default {
         {
           id: 'required_spec',
           name: 'Rqd',
-          formatter: (cell) => (cell ? html('<span class="badge ml-2 badge-success badge-pill" style="font-size: 1em;">Yes</span>') : html('<span class="badge ml-2 badge-warning badge-pill" style="font-size: 1em;">No</span>')),
+          formatter: (cell) => (cell ? html('<span class="badge badge-success badge-pill" style="font-size: 1em;">Yes</span>') : html('<span class="badge ml-2 badge-warning badge-pill" style="font-size: 1em;">No</span>')),
           width: '1em'
         },
         {
-          id: 'greater_than',
-          hidden: true
-        },
-        {
-          id: 'less_than',
+          id: 'inequality',
           hidden: true
         },
         {
@@ -279,11 +318,10 @@ export default {
         {
           name: 'Spec',
           formatter: (_, row) => (
-            (row.cells[2].data ? '>' : '') +
-            (row.cells[3].data ? '<' : '') +
-            row.cells[4].data +
+            (row.cells[2].data === '=' ? '' : row.cells[2].data) +
+            row.cells[3].data +
             ' ' +
-            row.cells[5].data
+            row.cells[4].data
           ),
           width: '20%'
         },
@@ -314,6 +352,11 @@ export default {
     }
   },
   methods: {
+    addSpec: function (specKey) {
+      const test = this.newTest()
+      test.type = 'component_specifications/' + specKey
+      this.edit_specs_buffer.specs[specKey].tests.push(test)
+    },
     newCardSpec: function (specKey) {
       const test = this.newTest()
       test.test_name = this.edit_specs_buffer.specs[specKey].test_name
@@ -341,11 +384,7 @@ export default {
         method: null,
         methods: [],
         unit_of_measure: '',
-        rf_value: 0,
-        mesh_size: 0,
-        percent: 0,
         count: 0,
-        amount_per_serving: 0,
         greater_than: false,
         less_than: true,
         sources: [],
