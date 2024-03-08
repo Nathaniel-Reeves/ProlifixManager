@@ -1,0 +1,905 @@
+{
+    "component_id":0,
+    "component_primary_name":"agaricus blazei",
+    "botanical_name": "agaricus blazei",
+    "other_names": [
+        "cogomelo do sol",
+        "himematsutake",
+        "almond mushroom",
+        "royal sun agaricus"
+    ],
+    "brand_id":0,
+    "brand_primary_name":"",
+    "date_entered": "2023-10-24T00:00:00.000Z",
+    "certifications": {
+        "usda_organic": true,
+        "halal": false,
+        "kosher": false,
+        "gluten_free": false,
+        "national_sanitation_foundation": false,
+        "us_pharmacopeia": false,
+        "non_gmo": false,
+        "vegan": false
+    },
+    "specifications": {
+        "date_issued": "2023-10-24T00:00:00.000Z",
+        "date_revised": "2023-12-06T00:00:00.000Z",
+        "revision_number": 2,
+        "identity_statement":"This ingredient is identified by in house organoleptic specs as well as microscopy specs.",
+        "strength_statement":"Strength is not relevant to this ingredient.",
+        "purity_statement":"This ingredient is verified for purity via the supplier's Certificate of Analysis. We verify this supplier on a random/skip lot basis.",
+        "origin": "Native to Brazil; and now cultivated in Japan, China and the United States.",
+        "parts_used": "Mushroom",
+        "description_statement":"A fine powder that comes in a variety of brown shades.",
+        "file_pointer": "",
+        "standard_sample_lot": "",
+        "organoleptic": {
+            "test_name": "organoleptic",
+            "required_spec": true,
+            "date_issued": "2023-10-24T00:00:00.000Z",
+            "date_revised": "2023-10-24T00:00:00.000Z",
+            "revision_number": 1,
+            "file_pointer": "",
+            "standard_sample_lot": "",
+            "locations": {
+                "primary": "in_house",
+                "in_house": true,
+                "third_party_lab": false,
+                "supplier": true
+            },
+            "tests": {
+                "visual": "light tan",
+                "odor": "mildly tart",
+                "taste_dry": "mildly woody",
+                "taste_dissolved": "characteristic"
+            }
+        },
+        "microbiological": {
+            "test_name": "microbiological",
+            "required_spec": true,
+            "date_issued": "2023-10-24T00:00:00.000Z",
+            "date_revised": "2023-12-06T00:00:00.000Z",
+            "revision_number": 2,
+            "file_pointer": "",
+            "standard_sample_lot": "",
+            "statement": "",
+            "locations": {
+                "primary": "supplier",
+                "in_house": false,
+                "third_party_lab": true,
+                "supplier": true
+            },
+            "tests": {
+                "total_plate_count": {
+                    "required_spec": true,
+                    "methods": [
+                        "USP <2021>",
+                        "AOAC 966.23"
+                    ],
+                    "summary": "",
+                    "count": 100000,
+                    "unit_of_measure": "cfu/g",
+                    "less_than": true,
+                    "greater_than": false,
+                    "statement": ""
+                },
+                "aerobic_plate_count": {
+                    "required_spec": true,
+                    "methods": [
+                        "USP <2021>",
+                        "AOAC 966.23"
+                    ],
+                    "summary": "",
+                    "count": 100000,
+                    "unit_of_measure": "cfu/g",
+                    "less_than": true,
+                    "greater_than": false,
+                    "statement": ""
+                },
+                "anaerobic_plate_count": {
+                    "required_spec": true,
+                    "methods": [
+                        "",
+                        ""
+                    ],
+                    "summary": "",
+                    "count": 0,
+                    "unit_of_measure": "",
+                    "less_than": false,
+                    "greater_than": true,
+                    "statement": ""
+                },
+                "coliform_count": {
+                    "required_spec": true,
+                    "methods": [
+                        "AOAC 991.14"
+                    ],
+                    "summary": "",
+                    "count": 100,
+                    "unit_of_measure": "cfu/g",
+                    "less_than": true,
+                    "greater_than": false,
+                    "statement": ""
+                },
+                "escherichia_coli_count": {
+                    "required_spec": true,
+                    "methods": [
+                        "USP <2022>",
+                        "USP <62> / AOAC 991.14"
+                    ],
+                    "summary": "",
+                    "count": 10,
+                    "unit_of_measure": "cfu/g",
+                    "less_than": true,
+                    "greater_than": false,
+                    "statement": ""
+                },
+                "staphylococcus_count": {
+                    "required_spec": true,
+                    "methods": [
+                        "USP <2022>",
+                        "USP <62> / AOAC 975.55"
+                    ],
+                    "summary": "",
+                    "count": 0,
+                    "unit_of_measure": "cfu/g",
+                    "less_than": true,
+                    "greater_than": false,
+                    "statement": ""
+                },
+                "salmonella_count": {
+                    "required_spec": true,
+                    "methods": [
+                        "USP <2022>",
+                        "USP <62> / AOAC 975.55"
+                    ],
+                    "summary": "",
+                    "count": 0,
+                    "unit_of_measure": "cfu/g",
+                    "less_than": true,
+                    "greater_than": false,
+                    "statement": ""
+                },
+                "yeast_count": {
+                    "required_spec": true,
+                    "methods": [
+                        "USP <2021>",
+                        "FDA BAM Chapter 18"
+                    ],
+                    "summary": "",
+                    "count": 2500,
+                    "unit_of_measure": "cfu/g",
+                    "less_than": true,
+                    "greater_than": false,
+                    "statement": ""
+                },
+                "mold_count": {
+                    "required_spec": true,
+                    "methods": [
+                        "USP <2021>",
+                        "FDA BAM Chapter 18"
+                    ],
+                    "summary": "",
+                    "count": 2500,
+                    "unit_of_measure": "cfu/g",
+                    "less_than": true,
+                    "greater_than": false,
+                    "statement": ""
+                },
+                "moisture": {
+                    "required_spec": true,
+                    "methods": [
+                        "AOAC 930.15",
+                        "AOAC 964.22",
+                        "AOAC 966.02",
+                        "AOAC 930.15 / LOD"
+                    ],
+                    "summary": "",
+                    "count": 8.0,
+                    "unit_of_measure": "%",
+                    "less_than": true,
+                    "greater_than": false,
+                    "statement": ""
+                }
+            }
+        },
+        "heavy_metals": {
+            "test_name": "heavy_metals",
+            "required_spec": true,
+            "date_issued": "2023-10-24T00:00:00.000Z",
+            "date_revised": "2023-11-28T00:00:00.000Z",
+            "revision_number": 1,
+            "file_pointer": "",
+            "standard_sample_lot": "",
+            "statement": "",
+            "locations": {
+                "primary": "supplier",
+                "in_house": false,
+                "third_party_lab": true,
+                "supplier": true
+            },
+            "tests": {
+                "total_heavy_metals": {
+                    "required_spec": true,
+                    "methods": [
+                        "ICP-MS",
+                        "USP <233>"
+                    ],
+                    "summary": "",
+                    "count": 5,
+                    "unit_of_measure": "ppm",
+                    "less_than": true,
+                    "greater_than": false,
+                    "statement": ""
+                },
+                "arsenic": {
+                    "required_spec": true,
+                    "methods": [
+                        "ICP-MS",
+                        "USP <233>"
+                    ],
+                    "summary": "",
+                    "count": 1,
+                    "unit_of_measure": "ppm",
+                    "less_than": true,
+                    "greater_than": false,
+                    "statement": ""
+                },
+                "cadmium": {
+                    "required_spec": true,
+                    "methods": [
+                        "ICP-MS",
+                        "USP <233>"
+                    ],
+                    "summary": "",
+                    "count": 3,
+                    "unit_of_measure": "ppm",
+                    "less_than": true,
+                    "greater_than": false,
+                    "statement": ""
+                },
+                "lead": {
+                    "required_spec": true,
+                    "methods": [
+                        "ICP-MS",
+                        "USP <233>"
+                    ],
+                    "summary": "",
+                    "count": 0.5,
+                    "unit_of_measure": "ppm",
+                    "less_than": true,
+                    "greater_than": false,
+                    "statement": ""
+                },
+                "mercury": {
+                    "required_spec": true,
+                    "methods": [
+                        "ICP-MS",
+                        "USP <233>"
+                    ],
+                    "summary": "",
+                    "count": 0.5,
+                    "unit_of_measure": "ppm",
+                    "less_than": true,
+                    "greater_than": false,
+                    "statement": ""
+                }
+            }
+        },
+        "gluten": {
+            "test_name": "gluten",
+            "required_spec": false,
+            "date_issued": "YYYY-MM-DDT00:00:00.000Z",
+            "date_revised": "YYYY-MM-DDT00:00:00.000Z",
+            "revision_number": 0,
+            "file_pointer": "",
+            "standard_sample_lot": "",
+            "statement": "",
+            "locations": {
+                "primary": "supplier",
+                "in_house": false,
+                "third_party_lab": true,
+                "supplier": true
+            },
+            "tests": {
+                "gluten": {
+                    "required_spec": false,
+                    "methods": [
+                        "",
+                        ""
+                    ],
+                    "summary": "",
+                    "count": 0,
+                    "unit_of_measure": "",
+                    "less_than": true,
+                    "greater_than": false,
+                    "statement": ""
+                }
+            }
+        },
+        "ftir": {
+            "test_name": "ftir",
+            "required_spec": false,
+            "date_issued": "YYYY-MM-DDT00:00:00.000Z",
+            "date_revised": "YYYY-MM-DDT00:00:00.000Z",
+            "revision_number": 0,
+            "file_pointer": "",
+            "standard_sample_lot": "",
+            "statement": "",
+            "locations": {
+                "primary": "supplier",
+                "in_house": false,
+                "third_party_lab": true,
+                "supplier": true
+            },
+            "tests": {
+                "required_spec": false,
+                "methods": [
+                    "ftir"
+                ],
+                "rf_value": "",
+                "percent_match_standard": "",
+                "statement": ""
+            }
+        },
+        "hplc": {
+            "test_name": "hplc",
+            "required_spec": false,
+            "date_issued": "YYYY-MM-DDT00:00:00.000Z",
+            "date_revised": "YYYY-MM-DDT00:00:00.000Z",
+            "revision_number": 0,
+            "file_pointer": "",
+            "standard_sample_lot": "",
+            "statement": "",
+            "locations": {
+                "primary": "supplier",
+                "in_house": false,
+                "third_party_lab": true,
+                "supplier": true
+            },
+            "tests": {
+                "required_spec": false,
+                "methods": [
+                    "hplc"
+                ],
+                "rf_value": "",
+                "percent_match_standard": "",
+                "statement": "",
+                "unit_of_measure": ""
+            }
+        },
+        "hptlc": {
+            "test_name": "hptlc",
+            "required_spec": false,
+            "date_issued": "YYYY-MM-DDT00:00:00.000Z",
+            "date_revised": "YYYY-MM-DDT00:00:00.000Z",
+            "revision_number": 0,
+            "file_pointer": "",
+            "standard_sample_lot": "",
+            "statement": "",
+            "locations": {
+                "primary": "supplier",
+                "in_house": false,
+                "third_party_lab": true,
+                "supplier": true
+            },
+            "tests": {
+                "required_spec": false,
+                "methods": [
+                    "hptlc"
+                ],
+                "rf_value": "",
+                "percent_match_standard": "",
+                "statement": "",
+                "unit_of_measure": ""
+            }
+
+        },
+        "microscopic": {
+            "test_name": "microscopic",
+            "required_spec": false,
+            "date_issued": "2023-10-02T00:00:00.000Z",
+            "date_revised": "2023-10-24T00:00:00.000Z",
+            "revision_number": 1,
+            "file_pointer": "",
+            "standard_sample_lot": "",
+            "statement": "",
+            "locations": {
+                "primary": "in_house",
+                "in_house": true,
+                "third_party_lab": false,
+                "supplier": false
+            },
+            "tests": {
+                "sterio_microscope": {
+                    "description": "A fine powder with cream to yellow colored specks.",
+                    "magnification": "40X",
+                    "required_spec": true,
+                    "methods": [
+                        "Method outlined in SOP QA 04.02, 'Microscopic Testing Procedure.'"
+                    ],
+                    "file_pointer": "Agaricus Blazei_AB200623_10-02-2023.jpg",
+                    "standard_sample_lot": "AB200623"
+                }
+            }
+        },
+        "nutritional_facts": {
+            "test_name": "nutritional_assay",
+            "required_spec": false,
+            "date_issued": "YYYY-MM-DDT00:00:00.000Z",
+            "date_revised": "YYYY-MM-DDT00:00:00.000Z",
+            "revision_number": 0,
+            "file_pointer": "",
+            "standard_sample_lot": "",
+            "statement": "",
+            "locations": {
+                "primary": "third_party_lab",
+                "in_house": false,
+                "third_party_lab": true,
+                "supplier": true
+            },
+            "tests": {
+                "calories": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "total_fats": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "saturated_fats": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "trans_fats": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "cholesterol": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "total_carbohydrate": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "dietary_fiber": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "total_sugars": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "added_sugars": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "protein": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "sodium": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "potassium": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "calcium": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "zinc": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "iron": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "copper": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "magnesium": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "selenium": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "manganese": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "biotin": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "vitamin_a": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "vitamin_b1": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "vitamin_b2": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "vitamin_b3": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "vitamin_b5": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "vitamin_b6": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "vitamin_b12": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "vitamin_c": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "vitamin_d3": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "vitamin_e": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                },
+                "vitamin_k2": {
+                    "required_spec": false,
+                    "ammount_per_serving": 0,
+                    "unit_of_measure": "",
+                    "methods": [
+                        ""
+                    ],
+                    "sources": [
+                        ""
+                    ]
+                }
+            }
+        },
+        "pesticides": {
+            "test_name": "pesticides",
+            "required_spec": false,
+            "date_issued": "2023-10-24T00:00:00.000Z",
+            "date_revised": "2023-10-24T00:00:00.000Z",
+            "revision_number": 1,
+            "file_pointer": "",
+            "standard_sample_lot": "",
+            "statement": "Since this is a certified organic ingredient it's highly unlikely that pesticides would be present.",
+            "locations": {
+                "primary": "supplier",
+                "in_house": false,
+                "third_party_lab": true,
+                "supplier": true
+            },
+            "tests": {
+                "":{
+
+                }
+            }
+        },
+        "herbicides": {
+            "test_name": "herbicides",
+            "required_spec": false,
+            "date_issued": "2023-10-24T00:00:00.000Z",
+            "date_revised": "2023-10-24T00:00:00.000Z",
+            "revision_number": 1,
+            "file_pointer": "",
+            "standard_sample_lot": "",
+            "statement": "Since this is a certified organic product it's highly unlikely that herbicides would be present.",
+            "locations": {
+                "primary": "supplier",
+                "in_house": false,
+                "third_party_lab": true,
+                "supplier": true
+            },
+            "tests": {
+                "": {}
+            }
+        },
+        "insecticides": {
+            "test_name": "insecticides",
+            "required_spec": false,
+            "date_issued": "2023-10-24T00:00:00.000Z",
+            "date_revised": "2023-10-24T00:00:00.000Z",
+            "revision_number": 1,
+            "file_pointer": "",
+            "standard_sample_lot": "",
+            "statement": "Since this is a certified organic product it's highly unlikely that insecticides would be present.",
+            "locations": {
+                "primary": "supplier",
+                "in_house": false,
+                "third_party_lab": true,
+                "supplier": true
+            },
+            "tests": {
+                "": {}
+            }
+        },
+        "organochlorines": {
+            "test_name": "organochlorines",
+            "required_spec": false,
+            "date_issued": "YYYY-MM-DDT00:00:00.000Z",
+            "date_revised": "YYYY-MM-DDT00:00:00.000Z",
+            "revision_number": 0,
+            "file_pointer": "",
+            "standard_sample_lot": "",
+            "statement": "",
+            "locations": {
+                "primary": "supplier",
+                "in_house": false,
+                "third_party_lab": true,
+                "supplier": true
+            },
+            "tests": {
+                "": {}
+            }
+        },
+        "foreign_matter": {
+            "test_name": "foreign_matter",
+            "required_spec": false,
+            "date_issued": "YYYY-MM-DDT00:00:00.000Z",
+            "date_revised": "YYYY-MM-DDT00:00:00.000Z",
+            "revision_number": 0,
+            "file_pointer": "",
+            "standard_sample_lot": "",
+            "statement": "",
+            "locations": {
+                "primary": "in_house",
+                "in_house": true,
+                "third_party_lab": true,
+                "supplier": true
+            },
+            "tests": {
+                "screen": {
+                    "mesh_size": 0,
+                    "percent_through_screen": 0
+                },
+                "sterio_microscope": {}
+            }
+        },
+        "residual_solvents": {
+            "test_name": "residual_solvents",
+            "required_spec": false,
+            "date_issued": "YYYY-MM-DDT00:00:00.000Z",
+            "date_revised": "YYYY-MM-DDT00:00:00.000Z",
+            "revision_number": 0,
+            "file_pointer": "",
+            "standard_sample_lot": "",
+            "statement": "",
+            "locations": {
+                "primary": "supplier",
+                "in_house": false,
+                "third_party_lab": true,
+                "supplier": true
+            },
+            "tests": {
+            }
+        }
+    }
+}

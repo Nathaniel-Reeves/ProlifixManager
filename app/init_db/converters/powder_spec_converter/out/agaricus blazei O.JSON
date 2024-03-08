@@ -1,0 +1,626 @@
+{
+   "component_type": "powder",
+   "certified_usda_organic": true,
+   "certified_halal": false,
+   "certified_kosher": false,
+   "certified_gluten_free": false,
+   "certified_national_sanitation_foundation": false,
+   "certified_us_pharmacopeia": false,
+   "certified_non_gmo": false,
+   "certified_vegan": false,
+   "Component_Names": [
+      {
+         "component_name": "Agaricus Blazei",
+         "primary_name": true,
+         "botanical_name": true
+      },
+      {
+         "component_name": "Cogomelo Do Sol",
+         "primary_name": false,
+         "botanical_name": false
+      },
+      {
+         "component_name": "Himematsutake",
+         "primary_name": false,
+         "botanical_name": false
+      },
+      {
+         "component_name": "Almond Mushroom",
+         "primary_name": false,
+         "botanical_name": false
+      },
+      {
+         "component_name": "Royal Sun Agaricus",
+         "primary_name": false,
+         "botanical_name": false
+      }
+   ],
+   "doc": {
+      "specifications": {
+         "date_issued": "2023-10-24T00:00:00.000000Z",
+         "date_revised": "2023-12-06T00:00:00.000000Z",
+         "file_pointer": "",
+         "revision_number": 2,
+         "id_code": "",
+         "description_statement": "A fine powder that comes in a variety of brown shades.",
+         "identity_statement": "This ingredient is identified by in house organoleptic specs as well as microscopy specs.",
+         "purity_statement": "This ingredient is verified for purity via the supplier's Certificate of Analysis. We verify this supplier on a random/skip lot basis.",
+         "strength_statement": "Strength is not relevant to this ingredient.",
+         "origin": "Native to Brazil; and now cultivated in Japan, China and the United States.",
+         "parts_used": "Mushroom",
+         "specs": {
+            "mesh_size": {
+               "date_issued": "2023-10-24T00:00:00.000000Z",
+               "date_revised": "2023-10-24T00:00:00.000000Z",
+               "file_pointer": "",
+               "id_code": "",
+               "locations": {
+                  "primary": "in_house",
+                  "in_house": true,
+                  "third_party_lab": true,
+                  "supplier": true
+               },
+               "required_spec": false,
+               "revision_number": 0,
+               "statement": "",
+               "test_name": "Mesh Size",
+               "tests": []
+            },
+            "ftir": {
+               "date_issued": "",
+               "date_revised": "",
+               "file_pointer": "",
+               "locations": {
+                  "in_house": false,
+                  "primary": "supplier",
+                  "supplier": true,
+                  "third_party_lab": true
+               },
+               "required_spec": false,
+               "revision_number": 0,
+               "id_code": "",
+               "statement": "",
+               "test_name": "FTIR",
+               "methods": [
+                  "FTIR"
+               ],
+               "tests": []
+            },
+            "gluten": {
+               "date_issued": "2023-10-24T00:00:00.000000Z",
+               "date_revised": "2023-10-24T00:00:00.000000Z",
+               "file_pointer": "",
+               "locations": {
+                  "primary": "supplier",
+                  "in_house": false,
+                  "third_party_lab": true,
+                  "supplier": true
+               },
+               "required_spec": false,
+               "revision_number": 0,
+               "id_code": "",
+               "statement": "",
+               "test_name": "Gluten",
+               "tests": []
+            },
+            "heavy_metals": {
+               "date_issued": "2023-10-24T00:00:00.000000Z",
+               "date_revised": "2023-11-28T00:00:00.000000Z",
+               "file_pointer": "",
+               "locations": {
+                  "primary": "supplier",
+                  "in_house": false,
+                  "third_party_lab": true,
+                  "supplier": true
+               },
+               "required_spec": true,
+               "revision_number": 1,
+               "id_code": "",
+               "statement": "",
+               "test_name": "Heavy Metals",
+               "tests": [
+                  {
+                     "test_name": "Arsenic (As)",
+                     "statement": "",
+                     "magnification": "",
+                     "required_spec": true,
+                     "method": "",
+                     "methods": [
+                        "ICP-MS",
+                        "USP <233>"
+                     ],
+                     "unit_of_measure": "ppm",
+                     "count": 1,
+                     "inequality": "<",
+                     "sources": [],
+                     "odor": "",
+                     "taste_dissolved": "",
+                     "taste_dry": "",
+                     "visual": "",
+                     "id_code": "",
+                     "file_pointer": "",
+                     "file_preview_pointer": "",
+                     "date_issued": "",
+                     "date_revised": ""
+                  },
+                  {
+                     "test_name": "Cadmium (Cd)",
+                     "statement": "",
+                     "magnification": "",
+                     "required_spec": true,
+                     "method": "",
+                     "methods": [
+                        "ICP-MS",
+                        "USP <233>"
+                     ],
+                     "unit_of_measure": "ppm",
+                     "count": 3,
+                     "inequality": "<",
+                     "sources": [],
+                     "odor": "",
+                     "taste_dissolved": "",
+                     "taste_dry": "",
+                     "visual": "",
+                     "id_code": "",
+                     "file_pointer": "",
+                     "file_preview_pointer": "",
+                     "date_issued": "",
+                     "date_revised": ""
+                  },
+                  {
+                     "test_name": "Lead (Pb)",
+                     "statement": "",
+                     "magnification": "",
+                     "required_spec": true,
+                     "method": "",
+                     "methods": [
+                        "ICP-MS",
+                        "USP <233>"
+                     ],
+                     "unit_of_measure": "ppm",
+                     "count": 0.5,
+                     "inequality": "<",
+                     "sources": [],
+                     "odor": "",
+                     "taste_dissolved": "",
+                     "taste_dry": "",
+                     "visual": "",
+                     "id_code": "",
+                     "file_pointer": "",
+                     "file_preview_pointer": "",
+                     "date_issued": "",
+                     "date_revised": ""
+                  },
+                  {
+                     "test_name": "Mercury (Hg)",
+                     "statement": "",
+                     "magnification": "",
+                     "required_spec": true,
+                     "method": "",
+                     "methods": [
+                        "ICP-MS",
+                        "USP <233>"
+                     ],
+                     "unit_of_measure": "ppm",
+                     "count": 0.5,
+                     "inequality": "<",
+                     "sources": [],
+                     "odor": "",
+                     "taste_dissolved": "",
+                     "taste_dry": "",
+                     "visual": "",
+                     "id_code": "",
+                     "file_pointer": "",
+                     "file_preview_pointer": "",
+                     "date_issued": "",
+                     "date_revised": ""
+                  },
+                  {
+                     "test_name": "Total Heavy Metals",
+                     "statement": "",
+                     "magnification": "",
+                     "required_spec": true,
+                     "method": "",
+                     "methods": [
+                        "ICP-MS",
+                        "USP <233>"
+                     ],
+                     "unit_of_measure": "ppm",
+                     "count": 5,
+                     "inequality": "<",
+                     "sources": [],
+                     "odor": "",
+                     "taste_dissolved": "",
+                     "taste_dry": "",
+                     "visual": "",
+                     "id_code": "",
+                     "file_pointer": "",
+                     "file_preview_pointer": "",
+                     "date_issued": "",
+                     "date_revised": ""
+                  }
+               ]
+            },
+            "hplc": {
+               "date_issued": "",
+               "date_revised": "",
+               "file_pointer": "",
+               "locations": {
+                  "in_house": false,
+                  "primary": "supplier",
+                  "supplier": true,
+                  "third_party_lab": true
+               },
+               "required_spec": false,
+               "revision_number": 0,
+               "id_code": "",
+               "statement": "",
+               "test_name": "HPLC",
+               "tests": []
+            },
+            "hptlc": {
+               "date_issued": "2023-10-24T00:00:00.000000Z",
+               "date_revised": "2023-10-24T00:00:00.000000Z",
+               "file_pointer": "",
+               "locations": {
+                  "primary": "supplier",
+                  "in_house": false,
+                  "third_party_lab": true,
+                  "supplier": true
+               },
+               "required_spec": false,
+               "revision_number": 0,
+               "id_code": "",
+               "statement": "",
+               "test_name": "HPTLC",
+               "tests": []
+            },
+            "microbiological": {
+               "date_issued": "2023-10-24T00:00:00.000000Z",
+               "date_revised": "2023-12-06T00:00:00.000000Z",
+               "file_pointer": "",
+               "locations": {
+                  "primary": "supplier",
+                  "in_house": false,
+                  "third_party_lab": true,
+                  "supplier": true
+               },
+               "required_spec": true,
+               "revision_number": 2,
+               "id_code": "",
+               "statement": "",
+               "test_name": "Microbiological",
+               "tests": [
+                  {
+                     "test_name": "Aerobic Plate Count",
+                     "statement": "",
+                     "magnification": "",
+                     "required_spec": true,
+                     "method": "",
+                     "methods": [
+                        "USP <2021>",
+                        "AOAC 966.23"
+                     ],
+                     "unit_of_measure": "cfu/g",
+                     "count": 100000,
+                     "inequality": "<",
+                     "sources": [],
+                     "odor": "",
+                     "taste_dissolved": "",
+                     "taste_dry": "",
+                     "visual": "",
+                     "id_code": "",
+                     "file_pointer": "",
+                     "file_preview_pointer": "",
+                     "date_issued": "",
+                     "date_revised": ""
+                  },
+                  {
+                     "test_name": "Coliforms Count",
+                     "statement": "",
+                     "magnification": "",
+                     "required_spec": true,
+                     "method": "",
+                     "methods": [
+                        "AOAC 991.14"
+                     ],
+                     "unit_of_measure": "cfu/g",
+                     "count": 100,
+                     "inequality": "<",
+                     "sources": [],
+                     "odor": "",
+                     "taste_dissolved": "",
+                     "taste_dry": "",
+                     "visual": "",
+                     "id_code": "",
+                     "file_pointer": "",
+                     "file_preview_pointer": "",
+                     "date_issued": "",
+                     "date_revised": ""
+                  },
+                  {
+                     "test_name": "Escherichia Coli Count (E.Coli)",
+                     "statement": "",
+                     "magnification": "",
+                     "required_spec": true,
+                     "method": "",
+                     "methods": [
+                        "USP <2022>",
+                        "USP <62> / AOAC 991.14"
+                     ],
+                     "unit_of_measure": "cfu/g",
+                     "count": 10,
+                     "inequality": "<",
+                     "sources": [],
+                     "odor": "",
+                     "taste_dissolved": "",
+                     "taste_dry": "",
+                     "visual": "",
+                     "id_code": "",
+                     "file_pointer": "",
+                     "file_preview_pointer": "",
+                     "date_issued": "",
+                     "date_revised": ""
+                  },
+                  {
+                     "test_name": "Moisture/Loss on Drying",
+                     "statement": "",
+                     "magnification": "",
+                     "required_spec": true,
+                     "method": "",
+                     "methods": [
+                        "AOAC 930.15",
+                        "AOAC 964.22",
+                        "AOAC 966.02",
+                        "AOAC 930.15 / LOD"
+                     ],
+                     "unit_of_measure": "%",
+                     "count": 8.0,
+                     "inequality": "<",
+                     "sources": [],
+                     "odor": "",
+                     "taste_dissolved": "",
+                     "taste_dry": "",
+                     "visual": "",
+                     "id_code": "",
+                     "file_pointer": "",
+                     "file_preview_pointer": "",
+                     "date_issued": "",
+                     "date_revised": ""
+                  },
+                  {
+                     "test_name": "Mold Count",
+                     "statement": "",
+                     "magnification": "",
+                     "required_spec": true,
+                     "method": "",
+                     "methods": [
+                        "USP <2021>",
+                        "FDA BAM Chapter 18"
+                     ],
+                     "unit_of_measure": "cfu/g",
+                     "count": 2500,
+                     "inequality": "<",
+                     "sources": [],
+                     "odor": "",
+                     "taste_dissolved": "",
+                     "taste_dry": "",
+                     "visual": "",
+                     "id_code": "",
+                     "file_pointer": "",
+                     "file_preview_pointer": "",
+                     "date_issued": "",
+                     "date_revised": ""
+                  },
+                  {
+                     "test_name": "Salmonella Count",
+                     "statement": "",
+                     "magnification": "",
+                     "required_spec": true,
+                     "method": "",
+                     "methods": [
+                        "USP <2022>",
+                        "USP <62> / AOAC 975.55"
+                     ],
+                     "unit_of_measure": "cfu/g",
+                     "count": 0,
+                     "inequality": "<",
+                     "sources": [],
+                     "odor": "",
+                     "taste_dissolved": "",
+                     "taste_dry": "",
+                     "visual": "",
+                     "id_code": "",
+                     "file_pointer": "",
+                     "file_preview_pointer": "",
+                     "date_issued": "",
+                     "date_revised": ""
+                  },
+                  {
+                     "test_name": "Staphylococcus Count (Staph)",
+                     "statement": "",
+                     "magnification": "",
+                     "required_spec": true,
+                     "method": "",
+                     "methods": [
+                        "USP <2022>",
+                        "USP <62> / AOAC 975.55"
+                     ],
+                     "unit_of_measure": "cfu/g",
+                     "count": 0,
+                     "inequality": "<",
+                     "sources": [],
+                     "odor": "",
+                     "taste_dissolved": "",
+                     "taste_dry": "",
+                     "visual": "",
+                     "id_code": "",
+                     "file_pointer": "",
+                     "file_preview_pointer": "",
+                     "date_issued": "",
+                     "date_revised": ""
+                  },
+                  {
+                     "test_name": "Total Plate Count",
+                     "statement": "",
+                     "magnification": "",
+                     "required_spec": true,
+                     "method": "",
+                     "methods": [
+                        "USP <2021>",
+                        "AOAC 966.23"
+                     ],
+                     "unit_of_measure": "cfu/g",
+                     "count": 100000,
+                     "inequality": "<",
+                     "sources": [],
+                     "odor": "",
+                     "taste_dissolved": "",
+                     "taste_dry": "",
+                     "visual": "",
+                     "id_code": "",
+                     "file_pointer": "",
+                     "file_preview_pointer": "",
+                     "date_issued": "",
+                     "date_revised": ""
+                  },
+                  {
+                     "test_name": "Yeast Count",
+                     "statement": "",
+                     "magnification": "",
+                     "required_spec": true,
+                     "method": "",
+                     "methods": [
+                        "USP <2021>",
+                        "FDA BAM Chapter 18"
+                     ],
+                     "unit_of_measure": "cfu/g",
+                     "count": 2500,
+                     "inequality": "<",
+                     "sources": [],
+                     "odor": "",
+                     "taste_dissolved": "",
+                     "taste_dry": "",
+                     "visual": "",
+                     "id_code": "",
+                     "file_pointer": "",
+                     "file_preview_pointer": "",
+                     "date_issued": "",
+                     "date_revised": ""
+                  }
+               ]
+            },
+            "microscopic": {
+               "date_issued": "",
+               "date_revised": "",
+               "file_pointer": "",
+               "locations": {
+                  "in_house": true,
+                  "primary": "in_house",
+                  "supplier": true,
+                  "third_party_lab": false
+               },
+               "required_spec": true,
+               "revision_number": 0,
+               "id_code": "",
+               "statement": "",
+               "test_name": "Microscopic",
+               "tests": []
+            },
+            "nutritional_facts": {
+               "date_issued": "2023-10-24T00:00:00.000000Z",
+               "date_revised": "2023-10-24T00:00:00.000000Z",
+               "file_pointer": "",
+               "locations": {
+                  "primary": "third_party_lab",
+                  "in_house": false,
+                  "third_party_lab": true,
+                  "supplier": true
+               },
+               "required_spec": false,
+               "revision_number": 0,
+               "id_code": "",
+               "statement": "",
+               "test_name": "Nutritional Assay",
+               "tests": []
+            },
+            "organoleptic": {
+               "date_issued": "2023-10-24T00:00:00.000000Z",
+               "date_revised": "2023-10-24T00:00:00.000000Z",
+               "file_pointer": "",
+               "locations": {
+                  "primary": "in_house",
+                  "in_house": true,
+                  "third_party_lab": false,
+                  "supplier": true
+               },
+               "required_spec": true,
+               "revision_number": 1,
+               "id_code": "",
+               "test_name": "Organoleptic",
+               "tests": [
+                  {
+                     "test_name": "Organoleptic",
+                     "statement": "",
+                     "magnification": "",
+                     "required_spec": true,
+                     "method": "",
+                     "methods": [
+                        "SOP QA 04.02"
+                     ],
+                     "unit_of_measure": "cfu/g",
+                     "count": 0,
+                     "inequality": "<",
+                     "sources": [],
+                     "odor": "2023-10-24T00:00:00.000000Z",
+                     "taste_dissolved": "",
+                     "taste_dry": "mildly woody",
+                     "visual": "2023-10-24T00:00:00.000000Z",
+                     "id_code": "",
+                     "file_pointer": "",
+                     "file_preview_pointer": "",
+                     "date_issued": "2023-10-24T00:00:00.000Z",
+                     "date_revised": "2023-10-24T00:00:00.000Z"
+                  }
+               ]
+            },
+            "pesticides": {
+               "date_issued": "2023-10-24T00:00:00.000000Z",
+               "date_revised": "2023-10-24T00:00:00.000000Z",
+               "file_pointer": "",
+               "locations": {
+                  "primary": "supplier",
+                  "in_house": false,
+                  "third_party_lab": true,
+                  "supplier": true
+               },
+               "required_spec": false,
+               "revision_number": 1,
+               "id_code": "",
+               "statement": "Since this is a certified organic ingredient it's highly unlikely that pesticides would be present.",
+               "test_name": "Pesticides",
+               "tests": []
+            },
+            "residual_solvents": {
+               "date_issued": "2023-10-24T00:00:00.000000Z",
+               "date_revised": "2023-10-24T00:00:00.000000Z",
+               "file_pointer": "",
+               "locations": {
+                  "primary": "supplier",
+                  "in_house": false,
+                  "third_party_lab": true,
+                  "supplier": true
+               },
+               "required_spec": false,
+               "revision_number": 0,
+               "id_code": "",
+               "statement": "",
+               "test_name": "Residual Solvents",
+               "tests": []
+            }
+         }
+      }
+   },
+   "units": "kilograms",
+   "brand_id": null
+}
