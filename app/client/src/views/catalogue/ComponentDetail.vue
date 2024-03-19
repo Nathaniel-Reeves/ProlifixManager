@@ -11,7 +11,7 @@
     <b-container fluid>
       <b-card class="m-2" v-show="loaded">
         <b-card-body>
-          <h2 class="card-title">{{ get_comopnent_primary_name(component_data) }} {{ format_string(component_data.component_type) }}</h2>
+          <h2 class="card-title">{{ get_comopnent_primary_name(component_data) }} {{ format_string(component_data.component_type) }}<CertBadge :data="component_data"></CertBadge></h2>
           <hr>
           <b-nav pills card-header slot="header" v-b-scrollspy:nav-scroller class="text-nowrap">
             <b-nav-item href="#Aliases" @click="scrollIntoView">Aliases</b-nav-item>
@@ -32,7 +32,7 @@
 
           <!-- Specifications -->
           <div v-if="component_data.doc.specifications !== undefined">
-            <h3 id="Specifications">Specifications<b-button v-if="!edit_specs" v-b-tooltip.hover title="Edit Component Specifications" v-on:click="editSpecs()" v-bind:class="['btn','p-1', 'ml-2', 'btn-light']" type="button"><i class="bi bi-pencil-square"></i></b-button></h3>
+            <h3 id="Specifications">Specifications<b-button v-if="!edit_specs" v-b-tooltip.hover title="Edit Component Specifications" v-on:click="editSpecs()" class="btn p-1 ml-2 btn-light" type="button"><i class="bi bi-pencil-square"></i></b-button></h3>
             <div v-if="!edit_specs">
               <p><strong>Spec Issued: </strong>{{ new Date(component_data.doc.specifications.date_issued).toDateString() }}</p>
               <p><strong>Spec Revised: </strong>{{ new Date(component_data.doc.specifications.date_revised).toDateString() }}</p>
@@ -72,35 +72,35 @@
               <!-- Spec Header -->
               <h3 :id="spec_key">{{ spec.test_name }}<b-button v-if="!edit_specs" v-b-tooltip.hover :title="'Edit Component ' + spec.test_name + ' Specifications'" v-on:click="editSpecs()" class="btn p-1ml-2 btn-light" type="button"><i class="bi bi-pencil-square"></i></b-button></h3>
               <div v-if="!edit_specs">
-                <p><strong>Spec Issued: </strong>{{ new Date(spec.date_issued).toDateString() }}</p>
-                <p><strong>Spec Revised: </strong>{{ new Date(spec.date_revised).toDateString() }}</p>
-                <p><strong>Revision Number: </strong>{{ spec.revision_number }}</p>
-                <p><strong>Accepted Testing Sources: </strong>
+                <p v-if="spec_key != 'example_cofas'"><strong>Spec Issued: </strong>{{ new Date(spec.date_issued).toDateString() }}</p>
+                <p v-if="spec_key != 'example_cofas'"><strong>Spec Revised: </strong>{{ new Date(spec.date_revised).toDateString() }}</p>
+                <p v-if="spec_key != 'example_cofas'"><strong>Revision Number: </strong>{{ spec.revision_number }}</p>
+                <p v-if="spec_key != 'example_cofas'"><strong>Accepted Testing Sources: </strong>
                   <b-badge variant="secondary" pill class="ml-2" style="font-size:1em;" v-show="spec.locations.in_house">In House</b-badge>
                   <b-badge variant="secondary" pill class="ml-2" style="font-size:1em;" v-show="spec.locations.third_party_lab">Third Party Lab</b-badge>
                   <b-badge variant="secondary" pill class="ml-2" style="font-size:1em;" v-show="spec.locations.supplier">Supplier</b-badge>
                 </p>
-                <p><strong>Primary Testing Responsibility: </strong>
+                <p v-if="spec_key != 'example_cofas'"><strong>Primary Testing Responsibility: </strong>
                   <b-badge variant="primary" pill class="ml-2" style="font-size:1em;">{{ format_string(spec.locations.primary) }}</b-badge>
                 </p>
-                <p><strong>Spec Required: </strong><b-badge pill class="ml-2" style="font-size:1em;" v-bind:variant="(spec.required_spec ? 'success' : 'warning')">{{ spec.required_spec ? 'YES' : 'NO' }}</b-badge></p>
+                <p v-if="spec_key != 'example_cofas'"><strong>Spec Required: </strong><b-badge pill class="ml-2" style="font-size:1em;" v-bind:variant="(spec.required_spec ? 'success' : 'warning')">{{ spec.required_spec ? 'YES' : 'NO' }}</b-badge></p>
                 <p v-show="Boolean(spec.statement)"><strong>Statement</strong><br>{{ spec.statement }}</p>
               </div>
 
               <!-- Edit Spec Header -->
-              <div v-if="edit_specs">
-                <b-form-group v-slot="{ ariaDescribedby }">
+              <div v-if="edit_specs && spec_key != 'example_cofas'">
+                <b-form-group>
                   <label :for="'spec_accepted_' + spec_key"><strong>Accepted Test Sources: <br></strong></label>
-                  <b-form-checkbox :name="'spec_accepted_' + spec_key" v-model="edit_specs_buffer.specs[spec_key].locations.in_house" :aria-describedby="ariaDescribedby">In House</b-form-checkbox>
-                  <b-form-checkbox :name="'spec_accepted_' + spec_key" v-model="edit_specs_buffer.specs[spec_key].locations.third_party_lab" :aria-describedby="ariaDescribedby">Third Party Lab</b-form-checkbox>
-                  <b-form-checkbox :name="'spec_accepted_' + spec_key" v-model="edit_specs_buffer.specs[spec_key].locations.supplier" :aria-describedby="ariaDescribedby">Supplier</b-form-checkbox>
+                  <b-form-checkbox :name="'spec_accepted_' + spec_key" v-model="edit_specs_buffer.specs[spec_key].locations.in_house">In House</b-form-checkbox>
+                  <b-form-checkbox :name="'spec_accepted_' + spec_key" v-model="edit_specs_buffer.specs[spec_key].locations.third_party_lab">Third Party Lab</b-form-checkbox>
+                  <b-form-checkbox :name="'spec_accepted_' + spec_key" v-model="edit_specs_buffer.specs[spec_key].locations.supplier">Supplier</b-form-checkbox>
                 </b-form-group>
 
-                <b-form-group v-slot="{ ariaDescribedby }" v-model="edit_specs_buffer.specs[spec_key].locations.primary">
+                <b-form-group v-model="edit_specs_buffer.specs[spec_key].locations.primary">
                   <label :for="'spec_responsibility_' + spec_key"><strong>Primary Testing Responsibility: </strong></label>
-                  <b-form-radio v-model="edit_specs_buffer.specs[spec_key].locations.primary" :aria-describedby="ariaDescribedby" :name="'spec_responsibility_' + spec_key" value="in_house">In House</b-form-radio>
-                  <b-form-radio v-model="edit_specs_buffer.specs[spec_key].locations.primary" :aria-describedby="ariaDescribedby" :name="'spec_responsibility_' + spec_key" value="third_party_lab">Third Party Lab</b-form-radio>
-                  <b-form-radio v-model="edit_specs_buffer.specs[spec_key].locations.primary" :aria-describedby="ariaDescribedby" :name="'spec_responsibility_' + spec_key" value="supplier">Supplier</b-form-radio>
+                  <b-form-radio v-model="edit_specs_buffer.specs[spec_key].locations.primary" :name="'spec_responsibility_' + spec_key" value="in_house">In House</b-form-radio>
+                  <b-form-radio v-model="edit_specs_buffer.specs[spec_key].locations.primary" :name="'spec_responsibility_' + spec_key" value="third_party_lab">Third Party Lab</b-form-radio>
+                  <b-form-radio v-model="edit_specs_buffer.specs[spec_key].locations.primary" :name="'spec_responsibility_' + spec_key" value="supplier">Supplier</b-form-radio>
                 </b-form-group>
 
                 <div class="d-flex">
@@ -120,7 +120,7 @@
                   <b-card-group deck v-if="useCardType(spec_key)">
                     <div v-for="test, test_key, index in spec.tests" :key="index">
                       <b-card no-body style="max-width: 25rem;" class="my-3 no-shaddow">
-                        <b-card-img v-if="(spec_key === 'microscopic' || spec_key === 'organoleptic') && getFile(test.file_pointer)" :src="getFile(test.file_pointer)" top></b-card-img>
+                        <b-link :href="getFile(test.file_pointer)" target="_blank"><b-card-img v-if="(spec_key === 'microscopic' || spec_key === 'organoleptic') && getFile(test.file_pointer)" :src="getFile(test.file_pointer)" top></b-card-img></b-link>
                         <b-card-body v-if="spec_key === 'microscopic'">
                           <b-card-title>{{ test.id_code }}</b-card-title>
                           <b-card-text>
@@ -136,6 +136,13 @@
                             <p><strong>Dissolved Taste: </strong><br>{{ test.taste_dissolved }}</p>
                             <p><strong>Dry Taste: </strong><br>{{ test.taste_dry }}</p>
                             <p><strong>Visual: </strong><br>{{ test.visual }}</p>
+                          </b-card-text>
+                        </b-card-body>
+                        <b-card-body v-else-if="spec_key === 'example_cofas'">
+                          <b-card-title>{{ test.id_code }}</b-card-title>
+                          <b-card-text>
+                            <p><strong>Notes: </strong><br>{{ test.statement }}</p>
+                            <b-button :href="getFile(test.file_pointer)" target="_blank" class="btn-light">View CofA</b-button>
                           </b-card-text>
                         </b-card-body>
                         <b-card-body v-else>
@@ -166,6 +173,12 @@
                           <strong>Discription: </strong><br><b-form-textarea class="my-1" rows="3" max-rows="3" v-model="test.statement" placeholder="Discription..."></b-form-textarea>
                           <strong>Magnification: </strong><br><b-form-select v-model="test.magnification" required :options="[{ value: '', text: 'Select Magnification' },{ value: '20X', text: '20X' },{ value: '40X', text: '40X' }]"></b-form-select>
                           <strong>Method: </strong><br><b-form-select v-model="test.method" required :options="[{ value: '', text: 'Select Method' }, { value: 'SOP QA 04.02', text: 'SOP QA 04.02' }]"></b-form-select>
+                        </b-card-body>
+                        <b-card-body v-if="spec_key === 'example_cofas'">
+                          <strong>Lot #: </strong><br><b-form-input v-show="!test.file_pointer" type="text" class="my-1" v-model="test.id_code" placeholder="Lot Number..."></b-form-input>
+                          <b-card-title v-show="test.file_pointer && test.id_code !== null && test.id_code.length > 3" class="my-1">{{ test.id_code }}</b-card-title>
+                          <strong>Notes: </strong><br><b-form-textarea class="my-1" rows="3" max-rows="3" v-model="test.statement" placeholder="Notes..."></b-form-textarea>
+                          <b-form-file no-drop required accept="image/png, image/jpeg, application/pdf" :disabled="test.id_code === null || test.id_code === '' || test.id_code.length < 3" type="file" class="my-2"  @change="onFileChange($event, test)"></b-form-file>
                         </b-card-body>
                         <b-card-body v-if="spec_key === 'organoleptic'">
                           <b-form-file no-drop required accept="image/png, image/jpeg" v-show="!test.url_preview && !test.file_pointer && test.id_code !== null && test.id_code.length > 3" type="file" class="my-2" @change="onFileChange($event, test)"></b-form-file>
@@ -204,7 +217,7 @@
                         <b-form-checkbox v-model="test.required_spec" class="mr-sm-2" style="font-size:1em;" pill v-bind:button-variant="(test.required_spec ? 'success' : 'warning')" button v-b-tooltip.hover title="Required Spec">
                           <strong>{{ test.required_spec ? 'YES' : 'NO' }}</strong>
                         </b-form-checkbox>
-                        <b-form-radio-group v-model="test.inequality" class="mr-2" buttons button-variant="outline-info" :aria-describedby="ariaDescribedby">
+                        <b-form-radio-group v-model="test.inequality" class="mr-2" buttons button-variant="outline-info">
                           <b-form-radio value=">">&#62;</b-form-radio> <!--  >  -->
                           <b-form-radio value="=">&#61;</b-form-radio> <!--  =  -->
                           <b-form-radio value="<">&#60;</b-form-radio> <!--  <  -->
@@ -244,7 +257,7 @@
 
               <!-- Spec Action Buttons -->
               <div class="d-flex mt-3" v-if="edit_specs">
-                <b-button variant="outline-info" class="m-2" v-on:click="addSpec(spec_key)">New Spec</b-button>
+                <b-button v-show="spec_key !== 'microscopic'" variant="outline-info" class="m-2" v-on:click="addSpec(spec_key)">{{spec_key != 'example_cofas'? 'New Spec':'New CofA'}}</b-button>
                 <b-button v-if="edit_specs" variant="outline-info" class="m-2" v-on:click="cancelEditSpecs()">Cancel</b-button>
                 <b-button type="submit" v-if="edit_specs" variant="primary" class="m-2" v-on:click="editSpecs(spec_key)">Save</b-button>
               </div>
@@ -275,6 +288,7 @@
 
 <script>
 import NamesComponent from './NamesComponent.vue'
+import CertBadge from '../../components/CertBadge.vue'
 import Grid from 'gridjs-vue'
 import { html } from 'gridjs'
 
@@ -282,6 +296,7 @@ export default {
   name: 'ComponentDetail',
   components: {
     NamesComponent,
+    CertBadge,
     Grid
   },
   data: function () {
@@ -402,8 +417,9 @@ export default {
     },
     getFile: function (filename) {
       if (filename) {
-        const fetchRequest = window.origin + '/api/v1/uploads/' + filename
-        return fetchRequest
+        const url = window.origin + '/api/v1/uploads/' + filename
+        console.log(url)
+        return url
       } else {
         return ''
       }
@@ -414,7 +430,8 @@ export default {
         'microscopic',
         'ftir',
         'hplc',
-        'hptlc'
+        'hptlc',
+        'example_cofas'
       ]
       return cardTypes.includes(specKey)
     },

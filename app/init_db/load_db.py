@@ -467,6 +467,7 @@ def main(force=False, drop_databases=False):
                     except Exception as e:
                         print(
                             "\033[31mInserting failed due to error: {}\033[0m".format(e))
+                        print(query)
                         loaded = False
                         break
 

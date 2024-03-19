@@ -97,7 +97,7 @@ def translate_data(template, data):
         old_spec_key = spec_key
         if spec_key == 'mesh_size':
             old_spec_key = 'foreign_matter'
-        if spec_key in ["ftir", "hplc", "organochlorines", "insecticides", "herbicides", "microscopic"]:
+        if spec_key in ["ftir", "hplc", "organochlorines", "insecticides", "herbicides", "microscopic", "example_cofas"]:
             continue
         
         # Translate Individual Specs

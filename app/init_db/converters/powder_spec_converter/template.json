@@ -515,6 +515,22 @@
                         }
                     ]
                 },
+                "example_cofas": {
+                    "date_issued": "",
+                    "date_revised": "",
+                    "file_pointer": "",
+                    "locations": {
+                        "in_house": true,
+                        "primary": "in_house",
+                        "supplier": true,
+                        "third_party_lab": false
+                    },
+                    "required_spec": true,
+                    "revision_number": 0,
+                    "id_code": "",
+                    "test_name": "Reference CofA's",
+                    "tests": []
+                },
                 "pesticides": {
                     "date_issued": "",
                     "date_revised": "",

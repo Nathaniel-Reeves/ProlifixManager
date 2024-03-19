@@ -51,7 +51,7 @@
             <div class="card" v-for="component in filterComponents" :key="component.component_id">
               <div class="card-header" v-bind:id="'heading' + component.component_id">
                 <h2 class="d-flex flex-row mb-0">
-                  <button class="btn btn-block text-left" type="button" data-toggle="collapse"
+                  <button class="btn btn-block text-left d-flex align-items-center" type="button" data-toggle="collapse"
                     v-bind:data-target="'#collapse' + component.component_id" aria-expanded="false"
                     v-bind:aria-controls="'collapse' + component.component_id" v-on:click="populateComponent(component.component_id)">
                     <b-container fluid class="d-flex justify-content-start flex-wrap">
@@ -60,8 +60,7 @@
                         .split('_')
                         .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
                         .join(' ') }}</div>
-                      <div class="p-2">{{ get_comopnent_primary_name(component) }}</div>
-                      <div class="p-2" v-show="component.certified_usda_organic">Certified Organic</div>
+                      <div class="p-2">{{ get_comopnent_primary_name(component) }}<CertBadge :data="component"></CertBadge></div>
                       <div class="p-2">{{ get_component_brand_name(component) }}</div>
                     </b-container>
                   </button>
@@ -91,7 +90,7 @@
 
 <style scoped>
 .my_component {
-    width: 75%;
+    width: 98%;
 }
 @media only screen and (max-width: 1024px) {
     .my_component {
@@ -102,9 +101,13 @@
 
 <script>
 // import FacilitiesGrid from './components/FacilitiesGrid.vue'
+import CertBadge from '../../components/CertBadge.vue'
 
 export default {
   name: 'ComponentsHome',
+  components: {
+    CertBadge
+  },
   data: function () {
     return {
       components_data: {},

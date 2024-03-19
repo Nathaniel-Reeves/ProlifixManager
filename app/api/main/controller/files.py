@@ -95,7 +95,7 @@ def save_file(file_data, session):
         str(file_data["page"]).replace(" ", "_").replace("/","-")
     )
 
-    filename = f"fn[{fn}]║id_code[{id_code}]║pg[{page}]║hash[{file_hash}]║"
+    filename = f"║fn[{fn}]║id_code[{id_code}]║pg[{page}]║hash[{file_hash}]║"
     
     if file_data["file_obj"]["content_type"] == "application/pdf":
         filename += ".pdf"

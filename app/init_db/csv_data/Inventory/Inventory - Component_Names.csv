@@ -198,713 +198,827 @@ name_id,component_id,component_name,primary_name,botanical_name
 197,197,82mm x 54mm clear PVC,1,0
 198,198,90mm x 25mm clear PVC,1,0
 199,199,66mm x 25mm SFYP perforated PVC,1,0
-200,200,Humulus Lupulus,0,1
-201,200,Hops,1,0
-202,200,Common Hop,0,0
-203,201,Brassica Oleracea,0,1
-204,201,Kale,1,0
-205,202,Ganoderma Lingzhi (lucidum),0,1
-206,202,Reishi,1,0
-207,202,Ganoderma Sichuanense,0,0
-208,202,Ganoderma Lucidum,0,0
-209,202,Mushroom of Immortality,0,0
-210,202,Varnish Shelf Mushroom,0,0
-211,203,Grifola Frondosa,0,1
-212,203,Maitake,1,0
-213,203,Hen-of-the-woods,0,0
-214,203,Hui-shu-hua,0,0
-215,204,Triticum Aestivum,0,1
-216,204,Wheatgrass Juice,1,0
-217,205,Urtica Dioica,0,1
-218,205,Nettle,1,0
-219,205,Common Nettle,0,0
-220,205,Stinging Nettle,0,0
-221,206,Pfaffia Paniculata,0,1
-222,206,Suma Root,1,0
-223,206,Brazilian Ginseng,0,0
-224,206,Para Todo,0,0
-225,207,N/a,0,1
-226,207,L-glutamine,1,0
-227,207,Glutamine,0,0
-228,208,White Pine Bark,1,0
-229,208,White Pine,0,0
-230,209,Hermidesmus Indicus & Smilax Officinalis,0,1
-231,209,Sarsaparilla,1,0
-232,209,Indian Sarsaparilla,0,0
-233,209,Sariva,0,0
-234,210,Gymnema Sylvestre,0,1
-235,210,Gymnema,1,0
-236,210,Gurmar Aka Sugar Destroyer,0,0
-237,211,N/a,0,1
-238,211,D-ribose,1,0
-239,211,Beta-d-ribofuranose,0,0
-240,211,D-ribosa,0,0
-241,211,Ribosa,0,0
-242,212,Ocimum Sanctum,0,1
-243,212,Holy Basil,1,0
-244,213,Siraitia Grosvenorii,0,1
-245,213,Monk Fruit Extract 25%,1,0
-246,213,Lo Han Guo,0,0
-247,214,Horseradish Root,1,0
-248,215,Artemisia Abisinthium,0,1
-249,215,Wormwood,1,0
-250,215,Common Wormwood,0,0
-251,215,Common Sagewort,0,0
-252,215,Absinthium,0,0
-253,216,Serenoa Repens,0,1
-254,216,Saw Palmetto,1,0
-255,216,Sabal Palmetto,0,0
-256,216,American Dwarf Palm Tree,0,0
-257,217,N/a,0,1
-258,217,L-ornithine Hcl,1,0
-259,218,Crataegus Oxyacantha,0,1
-260,218,Hawthorn Berry,1,0
-261,218,Haw,0,0
-262,218,Maybush,0,0
-263,219,Ilex Paraguariensis,0,1
-264,219,Yerba Mate,1,0
-265,219,Paraguyan Tea,0,0
-266,220,Juglans Cinerea,0,1
-267,220,Butternut Bark,1,0
-268,220,White Walnut,0,0
-269,220,Butternut,0,0
-270,221,Arthrospira Platensis,0,1
-271,221,Spirulina,1,0
-272,221,Blue Green Algae,0,0
-273,221,Blue Green Micro-algae,0,0
-274,222,Astragalus Membranaceus,0,1
-275,222,Astragalus,1,0
-276,223,Juglans Nigra,0,1
-277,223,Black Walnut Hull,1,0
-278,223,Eastern Black Walnut,0,0
-279,224,Phoenix Dactylifera,0,1
-280,224,Date Sugar,1,0
-281,224,Deglet Noor,0,0
-282,224,Deglet Nour,0,0
-283,225,Glycyrrhiza Glabra,0,1
-284,225,Licorice,1,0
-285,225,Glycyrrhiza Uralensis Fisch,0,0
-286,225,Common Licorice,0,0
-287,225,Sweetwood,0,0
-288,226,Kakadu,1,0
-289,226,Kakadu Gubinge,0,0
-290,226,Kakadu Plum,0,0
-291,227,Daucus Carota Var. Sativas,0,1
-292,227,Carrot,1,0
-293,228,Malpighia Glabra,0,1
-294,228,Acerola Cherry,1,0
-295,228,Wild Crape Myrtle,0,0
-296,228,Barbados Cherry,0,0
-297,228,West Indian Cherry,0,0
-298,228,Malpighia Emarginata (this Is the Cultivated Form of Acerola and Different From M. Glabra.),0,0
-299,229,Stevia Rebaudiana,0,1
-300,229,Stevia,1,0
-301,229,Candyleaf,0,0
-302,229,Sweetleaf,0,0
-303,229,Sugarleaf,0,0
-304,230,Vinca Rosa,0,1
-305,230,Periwinkle,1,0
-306,231,Magnolia Officinalis,0,1
-307,231,Magnolia Bark,1,0
-308,231,Houpu,0,0
-309,231,Magnolia Cortex,0,0
-310,232,Spinacea Oleracea,0,1
-311,232,Spinach,1,0
-312,233,Inonotus Obliquus,0,1
-313,233,Chaga,1,0
-314,233,Birch Conk,0,0
-315,233,Cinder Conk,0,0
-316,233,Pom Pom Mushroom,0,0
-317,234,Ilex Paraguariensis,0,1
-318,234,Yerba Mate,1,0
-319,234,Paraguyan Tea,0,0
-320,234,Jesuit's Brazil Tea,0,0
-321,234,Chimarrao,0,0
-322,235,Schisandra Chinensis,0,1
-323,235,Schisandra,1,0
-324,235,Wu Wei Zi,0,0
-325,235,Five-flavored Fruit,0,0
-326,235,Magnolia Vine,0,0
-327,236,Fucus Vesiculosus,0,1
-328,236,Bladderwrack,1,0
-329,236,Rockweed,0,0
-330,236,Sea Grape,0,0
-331,237,Carica Papaya L.,0,1
-332,237,Papaya Fruit,1,0
-333,238,Aloe Capensis,0,1
-334,238,Cape Aloe,1,0
-335,238,Aloe Ferox,0,0
-336,238,Bitter Aloe,0,0
-337,238,Red Aloe,0,0
-338,238,Tap Aloe,0,0
-339,239,Pea Protein,1,0
-340,240,Eleutherococcus Senticosus,0,1
-341,240,Siberian Eleuthero,1,0
-342,240,"Eleuthero,",0,0
-343,240,Siberian Ginseng,0,0
-344,240,Touch-me-not,0,0
-345,240,Wild Pepper,0,0
-346,240,Ciwujia,0,0
-347,241,Trametes Versicolor,0,1
-348,241,Turkey Tail,1,0
-349,241,Coriolus Versicolor,0,0
-350,241,Polyporus Versicolor,0,0
-351,241,Yun Zhi,0,0
-352,242,Opuntia Ficus-indica,0,1
-353,242,Prickly Pear,1,0
-354,242,Cactus Pear,0,0
-355,243,Garcinia Cambogia,0,1
-356,243,Garcinia P.e.,1,0
-357,243,Malamar Tamarind,0,0
-358,244,Allium Sativum,0,1
-359,244,Garlic,1,0
-360,244,Cultivated Garlic,0,0
-361,245,White Oak Bark,1,0
-362,246,Annona Muricata,0,1
-363,246,Graviola,1,0
-364,246,Guanabana,0,0
-365,246,Soursop,0,0
-366,247,N/a,0,1
-367,247,L-carnosine,1,0
-368,247,Carnosine,0,0
-369,248,N/a,0,1
-370,248,Magniesum Malate,1,0
-371,249,Phyllanthus Urinaria L.,0,1
-372,249,Chanca Piedra,1,0
-373,249,Stonebreaker,0,0
-374,249,Phyllanthus Niruri,0,0
-375,250,Phyllanthus Emblica,0,1
-376,250,Amla,1,0
-377,250,Indian Gooseberry,0,0
-378,250,Yu Gan Zi,0,0
-379,251,Crataegus Sp.,0,1
-380,251,Hawthorn Berry,1,0
-381,251,Haw,0,0
-382,251,Maybush,0,0
-383,252,Malus Spp/malus Domestica.,0,1
-384,252,Apple Fiber,1,0
-385,252,Apple Pectin,0,0
-386,252,Pectin,0,0
-387,253,Terminalia Arjuna,0,1
-388,253,Arjuna Bark,1,0
-389,253,Arjuna,0,0
-390,254,Coleus Forskohlii,0,1
-391,254,Forskohlii,1,0
-392,255,Tribulus Terestris,0,1
-393,255,Tribulus,1,0
-394,255,Puncture Vine,0,0
-395,255,Caltrop,0,0
-396,255,Goat's Head,0,0
-397,256,Emblica Offinalis,0,1
-398,256,Amla,1,0
-399,256,Indian Gooseberry,0,0
-400,256,Yu Gan Zi,0,0
-401,257,Lepidium Meyenii (walp.),0,1
-402,257,Maca Root,1,0
-403,257,Peruvian Ginseng,0,0
-404,257,Peppergrass,0,0
-405,257,Maka,0,0
-406,257,Maca-maca,0,0
-407,258,Psidium Guajava,0,1
-408,258,Guava,1,0
-409,259,Nigella Sativa,0,1
-410,259,Black Cumin Seed,1,0
-411,259,Black Seed,0,0
-412,259,Black Cumin,0,0
-413,259,Black Caraway,0,0
-414,260,Pinus,0,1
-415,260,Pine Nut,1,0
-416,260,Piñón,0,0
-417,260,Pinoli,0,0
-418,261,Unspecified on Supplier Certificate of Analysis,0,1
-419,261,Apple Peel,1,0
-420,261,Malus Spp.,0,0
-421,262,,1,1
-422,263,Brassica Oleracea Var. Italica,0,1
-423,263,Broccoli,1,0
-424,264,Arctium Lappa,0,1
-425,264,Burdock,1,0
-426,264,Ngau Pong,0,0
-427,264,Beggar's Buttons,0,0
-428,265,Ascophyllum Nodosum & Laminaria Digitata,0,1
-429,265,Kelp,1,0
-430,266,Curcuma Longa,0,1
-431,266,Turmeric,1,0
-432,266,Turmeric Root,0,0
-433,266,Indian Saffron,0,0
-434,266,Yellow Root,0,0
-435,267,,1,1
-436,268,Rehmannia Glutinosa,0,1
-437,268,Rehmannia,1,0
-438,268,Chinese Foxglove,0,0
-439,268,Shēng Dì Huáng,0,0
-440,269,Chenopodium Quinoa,0,1
-441,269,Quinoa,1,0
-442,269,Sprouted Quinoa,0,0
-443,270,Cordyceps Sinensis,0,1
-444,270,Cordyceps,1,0
-445,270,Cordyceps Militaris,0,0
-446,270,Caterpillar Mushroom,0,0
-447,270,Chinese Caterpillar,0,0
-448,271,Durio Zibethinus,0,1
-449,271,Durian,1,0
-450,272,Polygonum Multiflorum,0,1
-451,272,Fo-ti,1,0
-452,273,Hordeum Vulgare,0,1
-453,273,Barley Grass,1,0
-454,273,Common Barley,0,0
-455,274,Ilex Paraguariensis,0,1
-456,274,Yerba Mate,1,0
-457,275,Rubus Idaeus L.,0,1
-458,275,Red Raspberry,1,0
-459,275,European Red Raspberry,0,0
-460,276,Petroselinum Crispum,0,1
-461,276,Parsley Leaf,1,0
-462,277,Juniperus Communis,0,1
-463,277,Juniper Berry,1,0
-464,277,Common Juniper,0,0
-465,278,Trigonella Foenum-graecum,0,1
-466,278,Foenugreek Seed,1,0
-467,278,Fenugreek,0,0
-468,279,Tremella Fuciformis,0,1
-469,279,Tremella,1,0
-470,279,Snow Fungus,0,0
-471,279,Silver Ear Fungus,0,0
-472,279,Chrysanthemum Mushroom,0,0
-473,280,Rheum Palmatum,0,1
-474,280,Rhubarb Root,1,0
-475,280,Rheum Officinale,0,0
-476,280,Chinese Rhubarb,0,0
-477,280,Turkey Rhubarb,0,0
-478,281,Vanilla Extract,1,0
-479,282,Carica Papaya L.,0,1
-480,282,Papain,1,0
-481,282,Papaya Proteinase L.,0,0
-482,283,Glycyrrhiza Glabra,0,1
-483,283,Licorice,1,0
-484,283,Licorice Root,0,0
-485,284,Taraxacum Officinale,0,1
-486,284,Dandelion Root,1,0
-487,284,Taraxacum Mongolicum,0,0
-488,285,Avena Sativa,0,1
-489,285,Oatgrass,1,0
-490,285,Common Oat,0,0
-491,285,Wild Oats,0,0
-492,286,Lentinus Edodes,0,1
-493,286,Shiitake,1,0
-494,286,Fragrant Mushroom,0,0
-495,286,Black Forest Mushroom,0,0
-496,287,Lactuca Virosa,0,1
-497,287,Wild Lettuce,1,0
-498,287,Bitter Lettuce,0,0
-499,287,Opium Lettuce,0,0
-500,288,Horny Goat Weed,1,0
-501,289,Punica Granatum L.,0,1
-502,289,Pomegranate,1,0
-503,290,Petroselinum Crispum,0,1
-504,290,Parsley Root,1,0
-505,290,Garden Parsley,0,0
-506,290,Italian Parsley,0,0
-507,291,Ruscus Aculeantus,0,1
-508,291,Butcher's Broom,1,0
-509,291,Box Holly,0,0
-510,291,Sweet Broom,0,0
-511,291,Jew's Myrtle,0,0
-512,291,Knee Holly,0,0
-513,292,Beta Vulgaris,0,1
-514,292,Beet Root Juice,1,0
-515,292,Beetroot,0,0
-516,293,Hordeum Vulgare,0,1
-517,293,Activated Barley,1,0
-518,293,Common Barley,0,0
-519,293,Grain Barley,0,0
-520,293,Cereal Barley,0,0
-521,294,Urtica Dioica and Urtica Cannabina L.,0,1
-522,294,Nettle,1,0
-523,294,Hemp Nettle,0,0
-524,295,Fine Rice Bran,1,0
-525,296,Rosa Canina,0,1
-526,296,Rosehips,1,0
-527,296,Rose Haw,0,0
-528,296,Rose Hep,0,0
-529,297,Cayenne,1,0
-530,298,Portulaca Oleracea,0,1
-531,298,Purslane,1,0
-532,298,Garden Purslane,0,0
-533,298,Little Hogweed,0,0
-534,299,Trifolium Pratense,0,1
-535,299,Red Clover,1,0
-536,299,Wild Clover,0,0
-537,299,Three-leafed Grass,0,0
-538,299,Purple Clover,0,0
-539,300,Ginkgo Biloba L,0,1
-540,300,Ginkgo,1,0
-541,300,Maidenhair Tree,0,0
-542,301,Eleutherococcus Senticosus,0,1
-543,301,Siberian Eleuthero,1,0
-544,301,"Eleuthero,",0,0
-545,301,Siberian Ginseng,0,0
-546,301,Touch-me-not,0,0
-547,301,Wild Pepper,0,0
-548,301,Ciwujia,0,0
-549,302,Hebanthe Erianthos; Syn: Pfaffia Paniculata,0,1
-550,302,Suma,1,0
-551,302,Brazilian Ginseng,0,0
-552,302,Para Todo,0,0
-553,303,Vitis Vinifera L.,0,1
-554,303,Grape Seed Extract,1,0
-555,304,Arctium Lappa,0,1
-556,304,Burdock,1,0
-557,304,Ngau Pong,0,0
-558,304,Beggar's Buttons,0,0
-559,305,Stone Root,1,0
-560,306,Brown Rice Protein,1,0
-561,307,L. Acidophilus,1,0
-562,307,Lactobacillus Acidophilus,0,0
-563,308,Brassica Oleracea,0,1
-564,308,Broccoli,1,0
-565,309,Trifolium Pratense,0,1
-566,309,Red Clover,1,0
-567,309,Wild Clover,0,0
-568,309,Three-leafed Grass,0,0
-569,309,Purple Clover,0,0
-570,310,Ascophyllum Nodosum,0,1
-571,310,Kelp,1,0
-572,310,Laminaria Digitata,0,0
-573,310,Rockweed,0,0
-574,311,Arctostaphylos Uva-ursi,0,1
-575,311,Uva Ursi,1,0
-576,312,Nasturtium Officinale,0,1
-577,312,Watercress,1,0
-578,312,Water-cress,0,0
-579,313,Polygonum Cuspidatum,0,1
-580,313,Hu Zhang,1,0
-581,313,Japanese Knotweed,0,0
-582,314,"N/a. Produced By the Honeybee, Apis Mellifera L.",0,1
-583,314,Royal Jelly 1x,1,0
-584,314,Bee Saliva,0,0
-585,314,Royal Bee Jelly,0,0
-586,315,Hibiscus Sabdariffa,0,1
-587,315,Hibiscus,1,0
-588,315,Florida Cranberry,0,0
-589,315,October Hibiscus,0,0
-590,316,Ocimum Sanctum,0,1
-591,316,Holy Basil,1,0
-592,316,Tulsi,0,0
-593,316,Thai Basil,0,0
-594,317,Eurycoma Longifolia,0,1
-595,317,Tongkat Ali,1,0
-596,317,Long Jack,0,0
-597,317,Malaysia Ginseng,0,0
-598,317,Pasak Bumi,0,0
-599,317,Tung Saw,0,0
-600,318,Chlorella Pyrenoidosa,0,1
-601,318,,1,0
-602,318,Chlorella Algae,0,0
-603,319,Cucurbita Pepo,0,1
-604,319,Pumpkin Seed Powder,1,0
-605,319,Pepita,0,0
-606,320,Bupleurum Chinense,0,1
-607,320,Bupleurum,1,0
-608,320,Radix Bupleuri,0,0
-609,320,Kindling of the Barbarians,0,0
-610,321,Eugenia Caryophyllata,0,1
-611,321,Cloves,1,0
-612,321,Syzigium Aromaticum,0,0
-613,322,Chondrus Chamissoi,0,1
-614,322,Irish Moss,1,0
-615,322,Chondrus Crispus,0,0
-616,322,Carrageen Moss,0,0
-617,322,Curly Moss,0,0
-618,323,Aloe Ferox,0,1
-619,323,Cape Aloe,1,0
-620,324,Geranium Maculatum,0,1
-621,324,Geranium,1,0
-622,324,Wild Geranium,0,0
-623,324,Wood Geranium,0,0
-624,325,Lepidium Meyenii (walp.),0,1
-625,325,Red Maca,1,0
-626,325,Peruvian Ginseng,0,0
-627,325,Peppergrass,0,0
-628,325,Maka,0,0
-629,325,Maca-maca,0,0
-630,326,Rosemarinus Officinalis,0,1
-631,326,Rosemary,1,0
-632,327,Mentha Piperita,0,1
-633,327,Peppermint Flavor,1,0
-634,328,Inonotus Obliquus,0,1
-635,328,Chaga,1,0
-636,328,Birch Conk,0,0
-637,328,Cinder Conk,0,0
-638,328,Pom Pom Mushroom,0,0
-639,329,Ganoderma Lucidum,0,1
-640,329,Red Reishi,1,0
-641,329,Ling Zhi,0,0
-642,329,Mushroom of Immortality,0,0
-643,330,Cucurbita Pepo L,0,1
-644,330,Pumpkin Seed Protein,1,0
-645,330,Pepita,0,0
-646,331,Bambusa Vulgaris,0,1
-647,331,Bamboo,1,0
-648,331,Bambusoideae,0,0
-649,332,Juglans Cinerea,0,1
-650,332,Butternut Bark,1,0
-651,332,White Walnut,0,0
-652,332,Butternut,0,0
-653,333,Stellaria Media,0,1
-654,333,Chickweed,1,0
-655,333,Common Chickweed,0,0
-656,333,Starwort,0,0
-657,333,Winterweed,0,0
-658,334,Serenoa Repens,0,1
-659,334,Saw Palmetto,1,0
-660,334,Sabal Palmetto,0,0
-661,334,American Dwarf Palm Tree,0,0
-662,335,Diatomaceous Earth,1,0
-663,335,Kieselguhr,0,0
-664,335,Diatomite Celite,0,0
-665,336,Pueraria Montana Var. Lobata,0,1
-666,336,Kudzu Root,1,0
-667,337,Citrus Sinensis and Citrus Reticulata,0,1
-668,337,Orange Peel,1,0
-669,337,Mandarin Orange,0,0
-670,337,Navel Orange,0,0
-671,337,Sweet Orange,0,0
-672,337,Orange,0,0
-673,338,Citrus Limonum,0,1
-674,338,Lemon Peel,1,0
-675,339,Cinnamomum Verum,0,1
-676,339,Ceylon Cinnamon,1,0
-677,339,True Cinnamon,0,0
-678,340,Hydrangea,1,0
-679,341,N/a,0,1
-680,341,Vitamin B6,1,0
-681,341,Pyridoxine Hydrochloride,0,0
-682,341,Pyridoxine,0,0
-683,342,Hamamelis Virginiana,0,1
-684,342,Witch Hazel,1,0
-685,343,Beta Vulgaris,0,1
-686,343,Beet Powder,1,0
-687,343,Beetroot,0,0
-688,344,N/a,0,1
-689,344,Malic Acid,1,0
-690,345,Taraxacum Officinale,0,1
-691,345,Dandelion Leaf,1,0
-692,346,Vitis Labrusca,0,1
-693,346,Grape Juice,1,0
-694,347,Yucca Schidigera,0,1
-695,347,Yucca,1,0
-696,347,Mojave Yucca,0,0
-697,347,Spanish Dagger,0,0
-698,348,Gotu Kola,1,0
-699,349,Carica Papaya,0,1
-700,349,Papaya Juice,1,0
-701,349,Pawpaw,0,0
-702,349,Tapayas,0,0
-703,349,Papye,0,0
-704,350,Cannabis Sativa,0,1
-705,350,Hemp,1,0
-706,350,Hemp Protein,0,0
-707,351,Rhodiola Crenulata & Rhodiola Rosea,0,1
-708,351,Rhodiola,1,0
-709,351,Arctic Root,0,0
-710,351,Golden Root,0,0
-711,352,Arctostaphylos Uva-ursi,0,1
-712,352,Uva Ursi,1,0
-713,352,Bearberry,0,0
-714,353,Cocos Nucifera L.,0,1
-715,353,Coconut Water,1,0
-716,353,Coconut Tree,0,0
-717,354,Bertholletia Excelsa,0,1
-718,354,Brazil Nut,1,0
-719,354,Castanha-do-pará (pará Nut),0,0
-720,354,Cream Nut,0,0
-721,355,Chlorella Vulgaris,0,1
-722,355,Chlorella,1,0
-723,355,Chlorella Algae,0,0
-724,355,Cracked Cell Chlorella,0,0
-725,356,Lepidium Meyeneii (walp.),0,1
-726,356,Black Maca Root,1,0
-727,356,Peruvian Ginseng,0,0
-728,356,Peppergrass,0,0
-729,356,Maka,0,0
-730,356,Maca-maca,0,0
-731,357,Asparagus Officinalis L.,0,1
-732,357,Asparagus,1,0
-733,357,Asper Grass,0,0
-734,357,Spar Grass,0,0
-735,358,Zingiber Officinale,0,1
-736,358,Ginger Root,1,0
-737,359,Musa Nana Lour,0,1
-738,359,Banana Peel,1,0
-739,360,Sprouted Amaranth,1,0
-740,361,Plantago Asiatica & Plantago Major,0,1
-741,361,Plantain Leaf,1,0
-742,361,Broadleaf Plantain,0,0
-743,361,White Man's Footprint,0,0
-744,361,Greater Plantain,0,0
-745,362,Avena Sativa,0,1
-746,362,Oatgrass Juice,1,0
-747,362,Common Oat,0,0
-748,362,Cultivated Oats,0,0
-749,363,Quassia Amara,0,1
-750,363,Quassia Wood,1,0
-751,363,Bitter-ash,0,0
-752,363,Bitter Wood,0,0
-753,363,Amargo,0,0
-754,364,Prunus Dulcis,0,1
-755,364,Almond Flour,1,0
-756,364,Almond Meal,0,0
-757,364,Ground Almonds,0,0
-758,365,Chia Seed,1,0
-759,366,Schisandra Chinensis,0,1
-760,366,Schisandra,1,0
-761,366,Wu Wei Zi,0,0
-762,366,Five-flavored Fruit,0,0
-763,366,Magnolia Vine,0,0
-764,367,Lepidium Meyenii,0,1
-765,367,Maca,1,0
-766,367,Peruvian Ginseng,0,0
-767,367,Peppergrass,0,0
-768,367,Maka,0,0
-769,367,Maca-maca,0,0
-770,368,Medicago Sativa,0,1
-771,368,Alfalfa,1,0
-772,368,Buffalo Grass,0,0
-773,368,Purple Medick,0,0
-774,368,Chilean Clover,0,0
-775,369,Triticum Aestivum,0,1
-776,369,Wheatgrass,1,0
-777,369,Common Wheat,0,0
-778,370,Opuntia Streptacantha,0,1
-779,370,Nopal Cactus,1,0
-780,370,Indian Fig,0,0
-781,370,Cactus Pear,0,0
-782,371,Bentonite Clay,1,0
-783,371,Sodium Montmorillonite,0,0
-784,372,Punica Granatum L.,0,1
-785,372,Pomegranate,1,0
-786,373,Juniperus Communis,0,1
-787,373,,1,0
-788,374,Stevia Rebaudiana,0,1
-789,374,Stevia,1,0
-790,374,Candyleaf,0,0
-791,374,Sweetleaf,0,0
-792,374,Sugarleaf,0,0
-793,375,Passiflora Incarnata,0,1
-794,375,Passion Flower,1,0
-795,375,Passion Vine,0,0
-796,376,Cocos Nucifera,0,1
-797,376,Coconut Water,1,0
-798,376,Coconut Tree,0,0
-799,377,Juglans Nigra,0,1
-800,377,Black Walnut Hull,1,0
-801,377,Eastern Black Walnut,0,0
-802,378,Fucus Vesiculosus,0,1
-803,378,Bladderwrack,1,0
-804,378,Rockweed,0,0
-805,378,Sea Grape,0,0
-806,379,Medicago Sativa,0,1
-807,379,Alfalfa Juice,1,0
-808,379,Buffalo Grass,0,0
-809,379,Purple Medick,0,0
-810,379,Chilean Clover,0,0
-811,380,Plantago Sp.,0,1
-812,380,Plantain Leaf,1,0
-813,380,Broadleaf Plantain,0,0
-814,380,White Man's Footprint,0,0
-815,380,Greater Plantain,0,0
-816,381,Red Clover,1,0
-817,381,Wild Clover,0,0
-818,381,Three-leafed Grass,0,0
-819,381,Purple Clover,0,0
-820,382,Aloe Barbadensis,0,1
-821,382,Aloe Vera,1,0
-822,382,Aloe,0,0
-823,382,Medicinal Aloe,0,0
-824,382,Burn Plant,0,0
-825,383,Dan Shen,1,0
-826,383,Red Sage,0,0
-827,383,Redroot Sage,0,0
-828,383,Chinese Sage,0,0
-829,384,Hericum Erinaceus,0,1
-830,384,Lion's Mane,1,0
-831,384,Monkey Head Mushroom,0,0
-832,384,Bearded Tooth Mushroom,0,0
-833,384,Pom Pom Mushroom,0,0
-834,385,Tribulus Terestris,0,1
-835,385,Tribulus,1,0
-836,385,Puncture Vine,0,0
-837,385,Caltrop,0,0
-838,385,Goat's Head,0,0
-839,386,Mentha Piperita L.,0,1
-840,386,Peppermint Leaf,1,0
-841,386,Mint,0,0
-842,387,Moringa Oleifera,0,1
-843,387,Moringa Leaf,1,0
-844,387,Horseradish Tree,0,0
-845,387,Drumstick Tree,0,0
-846,387,Benzolive Tree,0,0
-847,387,African Moringa,0,0
-848,387,Arango,0,0
-849,388,Gynostemma Pentaphyllum,0,1
-850,388,Jiao Gu Lan,1,0
-851,388,Miracle Plant,0,0
-852,388,Gynostemma,0,0
-853,389,Mucuna Pruriens,0,1
-854,389,,1,0
-855,389,,0,0
-856,390,Ulmus Rubra,0,1
-857,390,Slippery Elm,1,0
-858,390,Ulmus Fulva,0,0
-859,390,Red Elm,0,0
-860,390,Soft Elm,0,0
-861,391,Hippophae Rhamnoides,0,1
-862,391,Sea Buckthorn,1,0
-863,391,Sallow Thorn,0,0
-864,391,Sand Thorn,0,0
-865,391,Seaberry,0,0
-866,392,Tmg Betaine Anhydrous,1,0
-867,392,Betaine,0,0
-868,392,Tmg/trimethyl Glycine,0,0
-869,393,Nigella Sativa,0,1
-870,393,Black Seed Oil,1,0
-871,393,Nigella Sativa Seed Oil,0,0
-872,393,Black Seed,0,0
-873,393,Black Cumin,0,0
-874,393,Black Caraway,0,0
-875,394,It's the Male Spore of Pinus Spp. The Supplier Certificate of Analysis Specifies Pinus Massoniana Lamb,0,1
-876,394,Pine Pollen,1,0
-877,394,Songhuang,0,0
-878,395,Rumex Crispus,0,1
-879,395,Yellowdock,1,0
-880,395,Curly Dock,0,0
-881,396,Pisum Sativum L.,0,1
-882,396,Pea Protein,1,0
-883,396,Field Peas,0,0
-884,396,Smooth Peas,0,0
-885,397,Agaricus Blazei,1,1
-886,397,Cogomelo Do Sol,0,0
-887,397,Himematsutake,0,0
-888,397,Almond Mushroom,0,0
-889,397,Royal Sun Agaricus,0,0
-890,398,Vicia Faba,0,1
-891,398,Fava Bean,1,0
-892,398,Broad Bean,0,0
-893,399,Withania Somnifera,0,1
-894,399,Ashwagandha,1,0
-895,399,Indian Ginseng,0,0
-896,399,Winter Cherry,0,0
-897,400,Spinacea Oleracea,0,1
-898,400,Spinach,1,0
-899,401,Ginkgo,1,0
-900,402,Galega Officinalis,0,1
-901,402,Goat's Rue,1,0
-902,402,Milkpea,0,0
-903,402,French Lilac,0,0
-904,403,Eruca Sativa Mill.,0,1
-905,403,Arugula,1,0
-906,403,Rocket,0,0
-907,404,Pea Fiber,1,0
-908,405,Rosa Canina,0,1
-909,405,Rosehip,1,0
+200,200,Serratiopeptidase,0,0
+201,200,Serratia E-15 Protease,0,0
+202,200,Serrapeptase,1,0
+203,201,Humulus Lupulus,0,1
+204,201,Hops,1,0
+205,201,Common Hop,0,0
+206,202,Kale,1,0
+207,202,Brassica Oleracea,0,1
+208,203,Varnish Shelf Mushroom,0,0
+209,203,Reishi,1,0
+210,203,Mushroom of Immortality,0,0
+211,203,Ganoderma Sichuanense,0,0
+212,203,Ganoderma Lucidum,0,0
+213,203,Ganoderma Lingzhi (lucidum),0,1
+214,204,Pumpkin Seed,1,0
+215,204,Pepita,0,0
+216,204,Cucurbita Pepo,0,1
+217,205,Maitake,1,0
+218,205,Hui-shu-hua,0,0
+219,205,Hen-of-the-woods,0,0
+220,205,Grifola Frondosa,0,1
+221,206,Wheatgrass Juice,1,0
+222,206,Triticum Aestivum,0,1
+223,207,Urtica Dioica,0,1
+224,207,Stinging Nettle,0,0
+225,207,Nettle,1,0
+226,207,Common Nettle,0,0
+227,208,Suma Root,1,0
+228,208,Pfaffia Paniculata,0,1
+229,208,Para Todo,0,0
+230,208,Brazilian Ginseng,0,0
+231,209,L-Glutamine,1,0
+232,209,Glutamine,0,0
+233,210,White Pine Bark,1,0
+234,210,White Pine,0,0
+235,210,Pinus Albicaulis,0,1
+236,211,Sarsaparilla,1,0
+237,211,Sariva,0,0
+238,211,Indian Sarsaparilla,0,0
+239,211,Hermidesmus Indicus & Smilax Officinalis,0,1
+240,212,Gymnema Sylvestre,0,1
+241,212,Gymnema,1,0
+242,212,Gurmar Aka Sugar Destroyer,0,0
+243,213,Ribosa,0,0
+244,213,D-Ribose,1,0
+245,213,D-Ribosa,0,0
+246,213,Beta-d-ribofuranose,0,0
+247,214,Tulsi,0,0
+248,214,Thai Basil,0,0
+249,214,Ocimum Sanctum,0,1
+250,214,Holy Basil,1,0
+251,215,Siraitia Grosvenorii,0,1
+252,215,Monk Fruit Extract 25%,1,0
+253,215,Lo Han Guo,0,0
+254,216,Horseradish Root,1,0
+255,216,Armoracia Rusticana,0,1
+256,217,Wormwood,1,0
+257,217,Common Wormwood,0,0
+258,217,Common Sagewort,0,0
+259,217,Artemisia Abisinthium,0,1
+260,217,Absinthium,0,0
+261,218,Serenoa Repens,0,1
+262,218,Saw Palmetto,1,0
+263,218,Sabal Palmetto,0,0
+264,218,American Dwarf Palm Tree,0,0
+265,219,L-Ornithine HCL,1,0
+266,220,Maybush,0,0
+267,220,Hawthorn Berry,1,0
+268,220,Haw,0,0
+269,220,Crataegus Oxyacantha,0,1
+270,221,Yerba Mate,1,0
+271,221,Paraguyan Tea,0,0
+272,221,Jesuit's Brazil Tea,0,0
+273,221,Ilex Paraguariensis,0,1
+274,221,Chimarrao,0,0
+275,222,White Walnut,0,0
+276,222,Juglans Cinerea,0,1
+277,222,Butternut Bark,1,0
+278,222,Butternut,0,0
+279,223,Spirulina,1,0
+280,223,Blue Green Micro-algae,0,0
+281,223,Blue Green Algae,0,0
+282,223,Arthrospira Platensis,0,1
+283,224,Astragalus Membranaceus,0,1
+284,224,Astragalus,1,0
+285,225,Juglans Nigra,0,1
+286,225,Eastern Black Walnut,0,0
+287,225,Black Walnut Hull,1,0
+288,226,Phoenix Dactylifera,0,1
+289,226,Deglet Nour,0,0
+290,226,Deglet Noor,0,0
+291,226,Date Sugar,1,0
+292,227,Sweetwood,0,0
+293,227,Licorice,1,0
+294,227,Glycyrrhiza Uralensis Fisch,0,0
+295,227,Glycyrrhiza Glabra,0,1
+296,227,Common Licorice,0,0
+297,228,Terminalia Ferdinandiana,0,1
+298,228,Murunga,0,0
+299,228,Kakadu Plum,0,0
+300,228,Kakadu Gubinge,0,0
+301,228,Kakadu,1,0
+302,228,Billygoat Plum,0,0
+303,229,Humulus Lupulus,0,1
+304,229,Hops,1,0
+305,229,Common Hop,0,0
+306,230,Daucus Carota Var. Sativas,0,1
+307,230,Carrot,1,0
+308,231,Wild Crape Myrtle,0,0
+309,231,West Indian Cherry,0,0
+310,231,Malpighia Glabra,0,1
+311,231,Malpighia Emarginata (this Is the Cultivated Form of Acerola and Different From M. Glabra.),0,0
+312,231,Barbados Cherry,0,0
+313,231,Acerola Cherry,1,0
+314,232,Sweetleaf,0,0
+315,232,Sugarleaf,0,0
+316,232,Stevia Rebaudiana,0,1
+317,232,Stevia,1,0
+318,232,Candyleaf,0,0
+319,233,Vinca Rosa,0,1
+320,233,Periwinkle,1,0
+321,234,Magnolia Officinalis,0,1
+322,234,Magnolia Cortex,0,0
+323,234,Magnolia Bark,1,0
+324,234,Houpu,0,0
+325,235,Spinach,1,0
+326,235,Spinacea Oleracea,0,1
+327,236,Pom Pom Mushroom,0,0
+328,236,Inonotus Obliquus,0,1
+329,236,Cinder Conk,0,0
+330,236,Chaga,1,0
+331,236,Birch Conk,0,0
+332,237,Yerba Mate,1,0
+333,237,Paraguyan Tea,0,0
+334,237,Jesuit's Brazil Tea,0,0
+335,237,Ilex Paraguariensis,0,1
+336,237,Chimarrao,0,0
+337,238,Wu Wei Zi,0,0
+338,238,Schisandra Chinensis,0,1
+339,238,Schisandra,1,0
+340,238,Magnolia Vine,0,0
+341,238,Five-flavored Fruit,0,0
+342,239,Sea Grape,0,0
+343,239,Rockweed,0,0
+344,239,Fucus Vesiculosus,0,1
+345,239,Bladderwrack,1,0
+346,240,Tapayas,0,0
+347,240,Pawpaw,0,0
+348,240,Papye,0,0
+349,240,Papaya Fruit,1,0
+350,240,Carica Papaya L.,0,1
+351,241,Tap Aloe,0,0
+352,241,Red Aloe,0,0
+353,241,Cape Aloe,1,0
+354,241,Bitter Aloe,0,0
+355,241,Aloe Ferox Miller,0,0
+356,241,Aloe Ferox,0,0
+357,241,Aloe Capensis,0,1
+358,242,Pea Protein,1,0
+359,243,Wild Pepper,0,0
+360,243,Touch-me-not,0,0
+361,243,Siberian Ginseng,0,0
+362,243,Siberian Eleuthero,1,0
+363,243,Eleutherococcus Senticosus,0,1
+364,243,Eleuthero,0,0
+365,243,Ciwujia,0,0
+366,244,Yun Zhi,0,0
+367,244,Turkey Tail,1,0
+368,244,Trametes Versicolor,0,1
+369,244,Polyporus Versicolor,0,0
+370,244,Coriolus Versicolor,0,0
+371,245,Prickly Pear,1,0
+372,245,Opuntia Ficus-indica,0,1
+373,245,Cactus Pear,0,0
+374,246,Malamar Tamarind,0,0
+375,246,Garcinia P.e.,1,0
+376,246,Garcinia Cambogia,0,1
+377,247,Garlic,1,0
+378,247,Cultivated Garlic,0,0
+379,247,Allium Sativum,0,1
+380,248,White Oak Bark,1,0
+381,248,Quercus Alba,0,1
+382,249,Soursop,0,0
+383,249,Guanabana,0,0
+384,249,Graviola,1,0
+385,249,Annona Muricata,0,1
+386,250,L-Carnosine,1,0
+387,250,Carnosine,0,0
+388,251,Magniesum Malate,1,0
+389,251,Magnesium; 2-hydroxybutanedioate,0,0
+390,252,Stonebreaker,0,0
+391,252,Phyllanthus Urinaria L.,0,1
+392,252,Phyllanthus Niruri,0,0
+393,252,Chanca Piedra,1,0
+394,253,Yu Gan Zi,0,0
+395,253,Phyllanthus Emblica,0,1
+396,253,Indian Gooseberry,0,0
+397,253,Amla,1,0
+398,254,Maybush,0,0
+399,254,Hawthorn Berry,1,0
+400,254,Haw,0,0
+401,254,Crataegus Sp.,0,1
+402,255,Pectin,0,0
+403,255,Malus Spp/malus Domestica.,0,1
+404,255,Apple Pectin,0,0
+405,255,Apple Fiber,1,0
+406,256,Terminalia Arjuna,0,1
+407,256,Arjuna Bark,1,0
+408,256,Arjuna,0,0
+409,257,Forskohlii,1,0
+410,257,Coleus Forskohlii,0,1
+411,258,Tribulus Terestris,0,1
+412,258,Tribulus,1,0
+413,258,Puncture Vine,0,0
+414,258,Goat's Head,0,0
+415,258,Caltrop,0,0
+416,259,Yu Gan Zi,0,0
+417,259,Indian Gooseberry,0,0
+418,259,Emblica Offinalis,0,1
+419,259,Amla,1,0
+420,260,Peruvian Ginseng,0,0
+421,260,Peppergrass,0,0
+422,260,Maka,0,0
+423,260,Maca-maca,0,0
+424,260,Maca Root,1,0
+425,260,Lepidium Meyenii (walp.),0,1
+426,261,Psidium Guajava,0,1
+427,261,Guava,1,0
+428,261,Common Guava,0,0
+429,262,Nigella Sativa,0,1
+430,262,Black Seed,0,0
+431,262,Black Cumin Seed,1,0
+432,262,Black Cumin,0,0
+433,262,Black Caraway,0,0
+434,263,Pinus,0,1
+435,263,Piñón,0,0
+436,263,Pinoli,0,0
+437,263,Pine Nut,1,0
+438,264,Unspecified on Supplier Certificate of Analysis,0,1
+439,264,Malus Spp.,0,0
+440,264,Apple Peel,1,0
+441,265,Roselle,0,0
+442,265,October Hibiscus,0,0
+443,265,Hibiscus Sabdariffa,0,1
+444,265,Hibiscus 4:1,1,0
+445,265,Florida Cranberry,0,0
+446,266,Broccoli,1,0
+447,266,Brassica Oleracea Var. Italica,0,1
+448,267,Ngau Pong,0,0
+449,267,Burdock,1,0
+450,267,Beggar's Buttons,0,0
+451,267,Arctium Lappa,0,1
+452,268,Rockweed,0,0
+453,268,Laminaria Digitata,0,0
+454,268,Kelp,1,0
+455,268,Ascophyllum Nodosum & Laminaria Digitata,0,1
+456,269,Yellow Root,0,0
+457,269,Turmeric Root,0,0
+458,269,Turmeric,1,0
+459,269,Indian Saffron,0,0
+460,269,Curcuma Longa,0,1
+461,270,Sweet Weed,0,0
+462,270,Marshmallow Root,1,0
+463,270,Althaea Root,0,0
+464,270,Althaea Officinalis,0,1
+465,271,Shēng Dì Huáng,0,0
+466,271,Rehmannia Glutinosa,0,1
+467,271,Rehmannia,1,0
+468,271,Chinese Foxglove,0,0
+469,272,Sprouted Quinoa,0,0
+470,272,Quinoa,1,0
+471,272,Chenopodium Quinoa,0,1
+472,273,Cordyceps Sinensis,0,1
+473,273,Cordyceps Militaris,0,0
+474,273,Cordyceps,1,0
+475,273,Chinese Caterpillar,0,0
+476,273,Caterpillar Mushroom,0,0
+477,274,Thurian,0,0
+478,274,Liu Lian,0,0
+479,274,King of the Fruits,0,0
+480,274,Durio Zibethinus,0,1
+481,274,Durian,1,0
+482,274,Duri,0,0
+483,274,Duirone,0,0
+484,275,Tuber Fleeceflower,0,0
+485,275,Shou Wu Pian,0,0
+486,275,"Polygonum Multiflorum; Reynoutria Multiflora, Syn: Fallopia Multiflora",0,1
+487,275,Ho Shou Wu,0,0
+488,275,He Shou Pian,0,0
+489,275,Fo-ti,1,0
+490,275,Chinese Knotweed,0,0
+491,276,Hordeum Vulgare,0,1
+492,276,Common Barley,0,0
+493,276,Barley Grass,1,0
+494,277,Yerba Mate,1,0
+495,277,Paraguyan Tea,0,0
+496,277,Jesuit's Brazil Tea,0,0
+497,277,Ilex Paraguariensis,0,1
+498,277,Chimarrao,0,0
+499,278,Rubus Idaeus L.,0,1
+500,278,Red Raspberry,1,0
+501,278,European Red Raspberry,0,0
+502,279,Petroselinum Crispum,0,1
+503,279,Parsley Leaf,1,0
+504,279,Italian Parsley,0,0
+505,279,Garden Parsley,0,0
+506,280,Juniperus Communis,0,1
+507,280,Juniper Berry,1,0
+508,280,Common Juniper,0,0
+509,281,Trigonella Foenum-graecum,0,1
+510,281,Foenugreek Seed,1,0
+511,281,Fenugreek,0,0
+512,282,Tremella Fuciformis,0,1
+513,282,Tremella,1,0
+514,282,Snow Fungus,0,0
+515,282,Silver Ear Fungus,0,0
+516,282,Chrysanthemum Mushroom,0,0
+517,283,Turkey Rhubarb,0,0
+518,283,Rhubarb Root,1,0
+519,283,Rheum Palmatum,0,1
+520,283,Rheum Officinale,0,0
+521,283,Chinese Rhubarb,0,0
+522,284,Vanilla Extract,1,0
+523,285,Papaya Proteinase L.,0,0
+524,285,Papain,1,0
+525,285,Carica Papaya L.,0,1
+526,286,Sweetwood,0,0
+527,286,Licorice,1,0
+528,286,Glycyrrhiza Uralensis Fisch,0,0
+529,286,Glycyrrhiza Glabra,0,1
+530,286,Common Licorice,0,0
+531,287,Taraxacum Officinale,0,1
+532,287,Taraxacum Mongolicum,0,0
+533,287,Dandelion Root,1,0
+534,288,Wild Oats,0,0
+535,288,Oatgrass,1,0
+536,288,Common Oat,0,0
+537,288,Avena Sativa,0,1
+538,289,Shiitake,1,0
+539,289,Lentinus Edodes,0,1
+540,289,Fragrant Mushroom,0,0
+541,289,Black Forest Mushroom,0,0
+542,290,Wild Lettuce,1,0
+543,290,Opium Lettuce,0,0
+544,290,Lactuca Virosa,0,1
+545,290,Bitter Lettuce,0,0
+546,291,Yin Yang Huo,0,0
+547,291,Horny Goat Weed,1,0
+548,291,Epimedium Sagittatum,0,1
+549,291,Bishop's Hat,0,0
+550,291,Barrenwort,0,0
+551,292,Punica Granatum L.,0,1
+552,292,Pomegranate,1,0
+553,293,Petroselinum Crispum,0,1
+554,293,Parsley Root,1,0
+555,293,Italian Parsley,0,0
+556,293,Garden Parsley,0,0
+557,294,Sweet Broom,0,0
+558,294,Ruscus Aculeantus,0,1
+559,294,Knee Holly,0,0
+560,294,Jew's Myrtle,0,0
+561,294,Butcher's Broom,1,0
+562,294,Box Holly,0,0
+563,295,Beta Vulgaris,0,1
+564,295,Beetroot,0,0
+565,295,Beet Root Juice,1,0
+566,296,Wild Crape Myrtle,0,0
+567,296,West Indian Cherry,0,0
+568,296,Malpighia Glabra,0,1
+569,296,Malpighia Emarginata (this Is the Cultivated Form of Acerola and Different From M. Glabra.),0,0
+570,296,Barbados Cherry,0,0
+571,296,Acerola Cherry 17 - 20%,1,0
+572,297,Hordeum Vulgare,0,1
+573,297,Grain Barley,0,0
+574,297,Common Barley,0,0
+575,297,Cereal Barley,0,0
+576,297,Activated Barley,1,0
+577,298,Urtica Dioica and Urtica Cannabina L.,0,1
+578,298,Nettle,1,0
+579,298,Hemp Nettle,0,0
+580,299,Fine Rice Bran,1,0
+581,300,Rosehips,1,0
+582,300,Rose Hep,0,0
+583,300,Rose Haw,0,0
+584,300,Rosa Canina,0,1
+585,301,Tabasco Pepper,0,0
+586,301,Cayenne,1,0
+587,301,Capsicum Annum,0,1
+588,301,African Chili,0,0
+589,302,Purslane,1,0
+590,302,Portulaca Oleracea,0,1
+591,302,Little Hogweed,0,0
+592,302,Garden Purslane,0,0
+593,303,Wild Clover,0,0
+594,303,Trifolium Pratense,0,1
+595,303,Three-leafed Grass,0,0
+596,303,Red Clover,1,0
+597,303,Purple Clover,0,0
+598,304,Maidenhair Tree,0,0
+599,304,Ginkgo Biloba L,0,1
+600,304,Ginkgo,1,0
+601,305,Wild Pepper,0,0
+602,305,Touch-me-not,0,0
+603,305,Siberian Ginseng,0,0
+604,305,Siberian Eleuthero,1,0
+605,305,Eleutherococcus Senticosus,0,1
+606,305,"Eleuthero,",0,0
+607,305,Ciwujia,0,0
+608,306,Suma,1,0
+609,306,Para Todo,0,0
+610,306,Hebanthe Erianthos; Syn: Pfaffia Paniculata,0,1
+611,306,Brazilian Ginseng,0,0
+612,307,Vitis Vinifera L.,0,1
+613,307,Grape Seed Extract,1,0
+614,308,Ngau Pong,0,0
+615,308,Burdock,1,0
+616,308,Beggar's Buttons,0,0
+617,308,Arctium Lappa,0,1
+618,309,Stone Root,1,0
+619,309,Richweed,0,0
+620,309,Ox-balm,0,0
+621,309,Horseweed,0,0
+622,309,Collinsonia Canadensis,0,1
+623,310,Brown Rice Protein,1,0
+624,311,Lactobacillus Acidophilus,0,0
+625,311,L. Acidophilus,1,0
+626,312,Broccoli,1,0
+627,312,Brassica Oleracea,0,1
+628,313,Wild Clover,0,0
+629,313,Trifolium Pratense,0,1
+630,313,Three-leafed Grass,0,0
+631,313,Red Clover,1,0
+632,313,Purple Clover,0,0
+633,314,Rockweed,0,0
+634,314,Laminaria Digitata,0,0
+635,314,Kelp,1,0
+636,314,Ascophyllum Nodosum,0,1
+637,315,Uva Ursi,1,0
+638,315,Bearberry,0,0
+639,315,Arctostaphylos Uva-ursi,0,1
+640,316,Watercress,1,0
+641,316,Water-cress,0,0
+642,316,Nasturtium Officinale,0,1
+643,317,Polygonum Cuspidatum,0,1
+644,317,Japanese Knotweed,0,0
+645,317,Hu Zhang,1,0
+646,318,Royal Jelly 1x,1,0
+647,318,Royal Bee Jelly,0,0
+648,318,"N/a. Produced By the Honeybee, Apis Mellifera L.",0,1
+649,318,Bee Saliva,0,0
+650,319,Roselle,0,0
+651,319,October Hibiscus,0,0
+652,319,Hibiscus Sabdariffa and Hibiscus Sinensis,0,1
+653,319,Hibiscus,1,0
+654,319,Florida Cranberry,0,0
+655,320,Tulsi,0,0
+656,320,Thai Basil,0,0
+657,320,Ocimum Sanctum,0,1
+658,320,Holy Basil,1,0
+659,321,Tung Saw,0,0
+660,321,Tongkat Ali,1,0
+661,321,Pasak Bumi,0,0
+662,321,Malaysia Ginseng,0,0
+663,321,Long Jack,0,0
+664,321,Eurycoma Longifolia,0,1
+665,322,Cracked Cell Chlorella,0,0
+666,322,Chlorella Pyrenoidosa,0,1
+667,322,Chlorella Algae,0,0
+668,323,Pumpkin Seed Powder,1,0
+669,323,Pepita,0,0
+670,323,Cucurbita Pepo,0,1
+671,324,Radix Bupleuri,0,0
+672,324,Kindling of the Barbarians,0,0
+673,324,Bupleurum Chinense,0,1
+674,324,Bupleurum,1,0
+675,325,Syzigium Aromaticum,0,0
+676,325,Eugenia Caryophyllata,0,1
+677,325,Cloves,1,0
+678,326,Irish Moss,1,0
+679,326,Curly Moss,0,0
+680,326,Chondrus Crispus,0,0
+681,326,Chondrus Chamissoi,0,1
+682,326,Carrageen Moss,0,0
+683,327,Tap Aloe,0,0
+684,327,Red Aloe,0,0
+685,327,Cape Aloe,1,0
+686,327,Bitter Aloe,0,0
+687,327,Aloe Ferox,0,1
+688,328,Wood Geranium,0,0
+689,328,Wild Geranium,0,0
+690,328,Geranium Maculatum,0,1
+691,328,Geranium,1,0
+692,329,Red Maca,1,0
+693,329,Peruvian Ginseng,0,0
+694,329,Peppergrass,0,0
+695,329,Maka,0,0
+696,329,Maca-maca,0,0
+697,329,Lepidium Meyenii (walp.),0,1
+698,330,Rosemary,1,0
+699,330,Rosemarinus Officinalis,0,1
+700,331,Peppermint Flavor,1,0
+701,331,Mentha Piperita,0,1
+702,332,Pom Pom Mushroom,0,0
+703,332,Inonotus Obliquus,0,1
+704,332,Cinder Conk,0,0
+705,332,Chaga,1,0
+706,332,Birch Conk,0,0
+707,333,Red Reishi,1,0
+708,333,Mushroom of Immortality,0,0
+709,333,Ling Zhi,0,0
+710,333,Ganoderma Lucidum,0,1
+711,334,Pumpkin Seed Protein,1,0
+712,334,Pepita,0,0
+713,334,Cucurbita Pepo L,0,1
+714,335,Bambusoideae,0,0
+715,335,Bambusa Vulgaris,0,1
+716,335,Bamboo,1,0
+717,336,White Walnut,0,0
+718,336,Juglans Cinerea,0,1
+719,336,Butternut Bark,1,0
+720,336,Butternut,0,0
+721,337,Winterweed,0,0
+722,337,Stellaria Media,0,1
+723,337,Starwort,0,0
+724,337,Common Chickweed,0,0
+725,337,Chickweed,1,0
+726,338,Serenoa Repens,0,1
+727,338,Saw Palmetto,1,0
+728,338,Sabal Palmetto,0,0
+729,338,American Dwarf Palm Tree,0,0
+730,339,Kieselguhr,0,0
+731,339,Diatomite Celite,0,0
+732,339,Diatomaceous Earth,1,0
+733,340,Vine-that-ate-the-south,0,0
+734,340,Pueraria Montana Var. Lobata,0,1
+735,340,Kudzu Vine,0,0
+736,340,Kudzu Root,1,0
+737,340,Kudzu Hemp,0,0
+738,340,Japanese Arrowroot,0,0
+739,341,Sweet Orange,0,0
+740,341,Orange Peel,1,0
+741,341,Orange,0,0
+742,341,Navel Orange,0,0
+743,341,Mandarin Orange,0,0
+744,341,Citrus Sinensis and Citrus Reticulata,0,1
+745,342,Lemon Peel,1,0
+746,342,Citrus Limonum,0,1
+747,343,True Cinnamon,0,0
+748,343,Cinnamomum Verum,0,1
+749,343,Ceylon Cinnamon,1,0
+750,344,Thorowax Root,0,0
+751,344,Radix Bupleuri,0,1
+752,344,Hydrangea,1,0
+753,344,Hare's Ear Root,0,0
+754,344,Chai Hu,0,0
+755,345,Vitamin B6,1,0
+756,345,Pyridoxine Hydrochloride,0,0
+757,345,Pyridoxine,0,0
+758,346,Witch Hazel,1,0
+759,346,Hamamelis Virginiana,0,1
+760,346,Common Witch Hazel,0,0
+761,347,Beta Vulgaris,0,1
+762,347,Beetroot,0,0
+763,347,Beet Powder,1,0
+764,348,Malic Acid,1,0
+765,348,Dl-malic Acid,0,0
+766,349,Taraxacum Officinale,0,1
+767,349,Lions-tooth,0,0
+768,349,Irish Daisy,0,0
+769,349,Dandelion Leaf,1,0
+770,349,Common Dandelion,0,0
+771,349,Cankerwort,0,0
+772,349,Blowball,0,0
+773,350,Vitis Labrusca,0,1
+774,350,Grape Juice,1,0
+775,350,Fox Grape,0,0
+776,351,Yucca Schidigera,0,1
+777,351,Yucca,1,0
+778,351,Spanish Dagger,0,0
+779,351,Mojave Yucca,0,0
+780,352,Spadeleaf,0,0
+781,352,Indian Pennywort,0,0
+782,352,Gotu Kola,1,0
+783,352,Coinwort,0,0
+784,352,Centella Asiatica,0,1
+785,352,Asiatic Pennywort,0,0
+786,353,Tapayas,0,0
+787,353,Pawpaw,0,0
+788,353,Papye,0,0
+789,353,Papaya Juice,1,0
+790,353,Carica Papaya,0,1
+791,354,Hemp Protein Flour,0,0
+792,354,Hemp Protein,0,0
+793,354,Hemp,1,0
+794,354,Cannabis Sativa,0,1
+795,355,Rhodiola Crenulata & Rhodiola Rosea,0,1
+796,355,Rhodiola,1,0
+797,355,Golden Root,0,0
+798,355,Arctic Root,0,0
+799,356,Uva Ursi,1,0
+800,356,Bearberry,0,0
+801,356,Arctostaphylos Uva-ursi,0,1
+802,357,Cocos Nucifera L.,0,1
+803,357,Coconut Water,1,0
+804,357,Coconut Tree,0,0
+805,358,Cream Nut,0,0
+806,358,Castanha-do-pará (pará Nut),0,0
+807,358,Brazil Nut,1,0
+808,358,Bertholletia Excelsa,0,1
+809,359,Cracked Cell Chlorella,0,0
+810,359,Chlorella Vulgaris,0,1
+811,359,Chlorella Algae,0,0
+812,359,Chlorella,1,0
+813,360,Peruvian Ginseng,0,0
+814,360,Peppergrass,0,0
+815,360,Maka,0,0
+816,360,Maca-maca,0,0
+817,360,Lepidium Meyeneii (walp.),0,1
+818,360,Black Maca Root,1,0
+819,361,Spar Grass,0,0
+820,361,Asper Grass,0,0
+821,361,Asparagus Officinalis L.,0,1
+822,361,Asparagus,1,0
+823,362,Zingiber Officinale,0,1
+824,362,True Ginger,0,0
+825,362,Stem Ginger,0,0
+826,362,Ginger Root,1,0
+827,362,Common Ginger,0,0
+828,363,Musa Nana Lour,0,1
+829,363,Banana Peel,1,0
+830,364,Sprouted Amaranth,1,0
+831,365,White Man's Footprint,0,0
+832,365,Plantain Leaf,1,0
+833,365,Plantago Asiatica & Plantago Major,0,1
+834,365,Greater Plantain,0,0
+835,365,Broadleaf Plantain,0,0
+836,366,Oatgrass Juice,1,0
+837,366,Cultivated Oats,0,0
+838,366,Common Oat,0,0
+839,366,Avena Sativa,0,1
+840,367,Quassia Wood,1,0
+841,367,Quassia Amara,0,1
+842,367,Bitter-ash,0,0
+843,367,Bitter Wood,0,0
+844,367,Amargo,0,0
+845,368,Prunus Dulcis,0,1
+846,368,Ground Almonds,0,0
+847,368,Almond Meal,0,0
+848,368,Almond Flour,1,0
+849,369,Chia Seed,1,0
+850,370,Wu Wei Zi,0,0
+851,370,Schisandra Chinensis,0,1
+852,370,Schisandra,1,0
+853,370,Magnolia Vine,0,0
+854,370,Five-flavored Fruit,0,0
+855,371,Peruvian Ginseng,0,0
+856,371,Peppergrass,0,0
+857,371,Maka,0,0
+858,371,Maca-maca,0,0
+859,371,Maca,1,0
+860,371,Lepidium Meyenii,0,1
+861,372,Purple Medick,0,0
+862,372,Medicago Sativa,0,1
+863,372,Chilean Clover,0,0
+864,372,Buffalo Grass,0,0
+865,372,Alfalfa,1,0
+866,373,Wheatgrass,1,0
+867,373,Triticum Aestivum,0,1
+868,373,Common Wheat,0,0
+869,374,Opuntia Streptacantha,0,1
+870,374,Nopal Cactus,1,0
+871,374,Indian Fig,0,0
+872,374,Cactus Pear,0,0
+873,375,Sodium Montmorillonite,0,0
+874,375,Bentonite Clay,1,0
+875,376,Punica Granatum L.,0,1
+876,376,Pomegranate,1,0
+877,377,Juniperus Communis,0,1
+878,377,Juniper,1,0
+879,377,Common Juniper,0,0
+880,378,Sweetleaf,0,0
+881,378,Sugarleaf,0,0
+882,378,Stevia Rebaudiana,0,1
+883,378,Stevia,1,0
+884,378,Candyleaf,0,0
+885,379,Milkvetch,0,0
+886,379,Huáng Qí,0,0
+887,379,Bei Qi,0,0
+888,379,Astragalus Membranaceus,0,1
+889,379,Astragalus,1,0
+890,380,Passion Vine,0,0
+891,380,Passion Flower,1,0
+892,380,Passiflora Incarnata,0,1
+893,381,Cocos Nucifera,0,1
+894,381,Coconut Water,1,0
+895,381,Coconut Tree,0,0
+896,382,Juglans Nigra,0,1
+897,382,Eastern Black Walnut,0,0
+898,382,Black Walnut Hull,1,0
+899,383,Sea Grape,0,0
+900,383,Rockweed,0,0
+901,383,Fucus Vesiculosus,0,1
+902,383,Bladderwrack,1,0
+903,384,Purple Medick,0,0
+904,384,Medicago Sativa,0,1
+905,384,Chilean Clover,0,0
+906,384,Buffalo Grass,0,0
+907,384,Alfalfa Juice,1,0
+908,385,White Man's Footprint,0,0
+909,385,Plantain Leaf,1,0
+910,385,Plantago Sp.,0,1
+911,385,Greater Plantain,0,0
+912,385,Broadleaf Plantain,0,0
+913,386,Wild Clover,0,0
+914,386,Trifolium Pratense,0,1
+915,386,Three-leafed Grass,0,0
+916,386,Red Clover,1,0
+917,386,Purple Clover,0,0
+918,387,Medicinal Aloe,0,0
+919,387,Burn Plant,0,0
+920,387,Aloe Vera,1,0
+921,387,Aloe Barbadensis,0,1
+922,387,Aloe,0,0
+923,388,Salvia Miltiorrhiza,0,1
+924,388,Redroot Sage,0,0
+925,388,Red Sage,0,0
+926,388,Dan Shen,1,0
+927,388,Chinese Sage,0,0
+928,389,Pom Pom Mushroom,0,0
+929,389,Monkey Head Mushroom,0,0
+930,389,Lion's Mane,1,0
+931,389,Hericum Erinaceus,0,1
+932,389,Bearded Tooth Mushroom,0,0
+933,390,Tribulus Terestris,0,1
+934,390,Tribulus,1,0
+935,390,Puncture Vine,0,0
+936,390,Goat's Head,0,0
+937,390,Caltrop,0,0
+938,391,Peppermint Leaf,1,0
+939,391,Mint,0,0
+940,391,Mentha Piperita L.,0,1
+941,392,Moringa Oleifera,0,1
+942,392,Moringa Leaf,1,0
+943,392,Horseradish Tree,0,0
+944,392,Drumstick Tree,0,0
+945,392,Benzolive Tree,0,0
+946,392,Arango,0,0
+947,392,African Moringa,0,0
+948,393,Miracle Plant,0,0
+949,393,Jiao Gu Lan,1,0
+950,393,Gynostemma Pentaphyllum,0,1
+951,393,Gynostemma,0,0
+952,394,Velvet Bean,0,0
+953,394,Mucuna Pruriens,0,1
+954,394,Mucuna,1,0
+955,394,Monkey Tamarind,0,0
+956,394,Cowhage,0,0
+957,395,Ulmus Rubra,0,1
+958,395,Ulmus Fulva,0,0
+959,395,Soft Elm,0,0
+960,395,Slippery Elm,1,0
+961,395,Red Elm,0,0
+962,396,Seaberry,0,0
+963,396,Sea Buckthorn,1,0
+964,396,Sand Thorn,0,0
+965,396,Sallow Thorn,0,0
+966,396,Hippophae Rhamnoides,0,1
+967,397,Tmg/trimethyl Glycine,0,0
+968,397,Tmg Betaine Anhydrous,1,0
+969,397,Betaine,0,0
+970,398,Nigella Sativa Seed Oil,0,0
+971,398,Nigella Sativa,0,1
+972,398,Black Seed Oil,1,0
+973,398,Black Seed,0,0
+974,398,Black Cumin,0,0
+975,398,Black Caraway,0,0
+976,399,Songhuang,0,0
+977,399,Pine Pollen,1,0
+978,399,It's the Male Spore of Pinus Spp. The Supplier Certificate of Analysis Specifies Pinus Massoniana Lamb,0,1
+979,400,Tuber Fleeceflower,0,0
+980,400,Shou Wu Pian,0,0
+981,400,Polygonum Multiflorum,0,1
+982,400,Ho Shou Wu,0,0
+983,400,He Shou Pian,0,0
+984,400,Fo-ti,1,0
+985,400,Chinese Knotweed,0,0
+986,401,Yellowdock,1,0
+987,401,Rumex Crispus,0,1
+988,401,Curly Dock,0,0
+989,402,Smooth Peas,0,0
+990,402,Pisum Sativum L.,0,1
+991,402,Pea Protein,1,0
+992,402,Field Peas,0,0
+993,403,Royal Sun Agaricus,0,0
+994,403,Himematsutake,0,0
+995,403,Cogomelo Do Sol,0,0
+996,403,Almond Mushroom,0,0
+997,403,Agaricus Blazei,1,1
+998,404,Vicia Faba,0,1
+999,404,Fava Bean,1,0
+1000,404,Broad Bean,0,0
+1001,405,Withania Somnifera,0,1
+1002,405,Winter Cherry,0,0
+1003,405,Indian Ginseng,0,0
+1004,405,Ashwagandha,1,0
+1005,406,Spinach,1,0
+1006,406,Spinacea Oleracea,0,1
+1007,407,Maidenhair Tree,0,0
+1008,407,Ginkgo Biloba,0,1
+1009,407,Ginkgo,1,0
+1010,408,Milkpea,0,0
+1011,408,Goat's Rue,1,0
+1012,408,Galega Officinalis,0,1
+1013,408,French Lilac,0,0
+1014,409,Rocket,0,0
+1015,409,Eruca Sativa Mill.,0,1
+1016,409,Arugula,1,0
+1017,410,Pea Fiber,1,0
+1018,411,Rosehip,1,0
+1019,411,Rose Hep,0,0
+1020,411,Rose Haw,0,0
+1021,411,Rosa Canina,0,1
+1022,411,Hipberry,0,0
+1023,411,Dog Rose,0,0
