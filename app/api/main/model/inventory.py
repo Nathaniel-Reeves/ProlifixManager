@@ -44,7 +44,7 @@ class Components(Base):
     certified_non_gmo: Mapped[bool] = mapped_column(default=False)
     certified_vegan: Mapped[bool] = mapped_column(default=False)
     date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    UnitTypes = ("grams", "kilograms", "units", "boxes", "poallets", "liters", "rolls", "totes", "barrels", "pounds")
+    UnitTypes = ("grams", "kilograms", "units", "boxes", "pallets", "liters", "rolls", "totes", "barrels", "pounds")
     units: Mapped[int] = mapped_column(Enum(
         *UnitTypes,
         name="UnitTypes",

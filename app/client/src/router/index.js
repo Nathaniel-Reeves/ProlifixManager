@@ -58,12 +58,22 @@ const routes = [
   {
     path: '/catalogue/components',
     name: 'catalogue',
-    component: () => import(/* webpackChunkName: "CatalogueHome" */ '../views/catalogue/CatalogueHome.vue')
+    component: () => import(/* webpackChunkName: "CatalogueHome" */ '../views/catalogue/ComponentHome.vue')
+  },
+  {
+    path: '/catalogue/components/create',
+    name: 'ComponentDetail',
+    component: () => import(/* webpackChunkName: "ComponentDetail" */ '../views/catalogue/NewComponent.vue')
   },
   {
     path: '/catalogue/components/:id',
     name: 'ComponentDetail',
     component: () => import(/* webpackChunkName: "ComponentDetail" */ '../views/catalogue/ComponentDetail.vue')
+  },
+  {
+    path: '/catalogue/components/create',
+    name: 'NewComponent',
+    component: () => import(/* webpackChunkName: "ComponentDetail" */ '../views/catalogue/NewComponent.vue')
   },
   {
     path: '/organizations',
