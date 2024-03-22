@@ -25,11 +25,8 @@ services:
 
   init_db:
     container_name: init_db
-    environment:
-      DB_USERNAME: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_HOST: '172.10.10.2'
-      DB_PORT: '3306'
+    env_file:
+      - .env
     restart: "no"
     volumes:
         - './init_db:/init_db'
