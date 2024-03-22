@@ -24,7 +24,7 @@
       </b-card>
 
       <b-card class="m-2" v-show="loaded">
-        <b-card-body id="nav-scroller" ref="content" style="position:relative; height:60vh; overflow-y:scroll;">
+        <b-card-body id="nav-scroller" ref="content" style="position:relative; height:85vh; overflow-y:scroll;">
 
           <!-- Alias Names -->
           <NamesComponent :data="component_data.Component_Names" :save-function="putComponent" naming-type="component"></NamesComponent>
@@ -464,9 +464,15 @@ export default {
         this.edit_specs = true
       } else {
         this.component_data.doc.specifications = {}
+        if (this.edit_specs_buffer.revision_number === 0) {
+          this.edit_specs_buffer.date_issued = new Date().toISOString() // Today
+        }
         this.edit_specs_buffer.revision_number++
         this.edit_specs_buffer.date_revised = new Date().toISOString() // Today
         if (subSpec !== undefined) {
+          if (this.edit_specs_buffer.revision_number === 0) {
+            this.edit_specs_buffer.specs[subSpec].date_issued = new Date().toISOString() // Today
+          }
           this.edit_specs_buffer.specs[subSpec].revision_number++
           this.edit_specs_buffer.specs[subSpec].date_revised = new Date().toISOString() // Today
         }
@@ -533,6 +539,7 @@ export default {
         },
         credentials: 'include'
       }).then(response => {
+        console.log(response.status)
         if (response.status === 200) {
           response.json().then(data => {
             this.component_data = Object.values(data.data[0])[0]
@@ -542,6 +549,8 @@ export default {
             console.log(this.component_data)
             this.loaded = true
           })
+        } else if (response.status === 404) {
+          this.$router.push({ path: '/404' })
         } else if (response.status === 401) {
           this.$router.push({
             name: 'login'
@@ -582,7 +591,6 @@ export default {
       formData.append('Component_Names', JSON.stringify(this.component_data.Component_Names))
       try {
         this.loaded = false
-        console.log(this.component_data)
         const response = await fetch(fetchRequest, {
           method: 'PUT',
           credentials: 'include',

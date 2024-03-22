@@ -117,9 +117,12 @@ def handle_post_components():
 
     # Validate Request
     required_keys = ["component_type", "brand_id", "units", "Component_Names"]
+    # brand_id is required, however it can be null.
     flag = False
     for key in required_keys:
         if key not in component.keys() or not component.get(key):
+            if component.get('brand_id') == None:
+                continue
             flag = True
             title = "Invalid Request."
             message = f"Missing {key} field."
@@ -138,23 +141,27 @@ def handle_post_components():
             component["Component_Names"] = json.loads(component["Component_Names"])
             primary_name = False
             primary_count = 0
-            required_keys = ["component_name", "primary_name"]
+            required_keys = ["component_name", "primary_name", "botanical_name", "name_id"]
             for name in component["Component_Names"]:
                 if (not isinstance(name, dict)) or \
-                    (list(name.keys()) != required_keys):
+                    (set(name.keys()) != set(required_keys)):
                     flag = True
-                    message = "Invalid Component Name Data."
+                    title = "Invalid Component Name Data."
+                    message = "Component name settings are in the wrong format."
                     custom_response.insert_flash_message(
                         FlashMessage(
+                            title=title,
                             message=message
                         )
                     )
                 if name["component_name"] and \
                         not isinstance(name["component_name"], str):
                     flag = True
-                    message = "Invalid Component Name."
+                    title = "Invalid Component Name."
+                    message = "The component name must be a string of text."
                     custom_response.insert_flash_message(
                         FlashMessage(
+                            title=title,
                             message=message
                         )
                     )
@@ -164,11 +171,15 @@ def handle_post_components():
                         name["primary_name"] == 1:
                     primary_name = True
                     primary_count += 1
+                if "name_id" in name.keys():
+                    name.pop("name_id")
             if not primary_name or primary_count != 1:
                 flag = True
+                title="Invalid Primary Name."
                 message = "At least one and only one primary name must be selected."
                 custom_response.insert_flash_message(
                     FlashMessage(
+                        title=title,
                         message=message
                     )
                 )
@@ -177,6 +188,12 @@ def handle_post_components():
         
     if flag:
         custom_response.set_status_code(400)
+        custom_response.insert_flash_message(
+            FlashMessage(
+                title="Proccessing Request Error.",
+                message="There was an error proccessing the component name."
+            )
+        )
         response = jsonify(custom_response.to_json())
         response.status_code = 400
         return response

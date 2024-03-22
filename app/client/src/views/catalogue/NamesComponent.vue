@@ -15,7 +15,7 @@
           v-model="name.component_name"
           ></b-form-input>
         <div v-on:click="radioNames(name.name_id, 'primary')">
-          <b-form-checkbox button button-variant="light" name="Primary Name" class="mb-2 mr-sm-2 mb-sm-0" v-model="name.primary_name">Primary Name</b-form-checkbox>
+          <b-form-checkbox :disabled="name.primary_name" button button-variant="light" name="Primary Name" class="mb-2 mr-sm-2 mb-sm-0" v-model="name.primary_name">Primary Name</b-form-checkbox>
         </div>
         <div v-show="'botanical_name' in name" v-on:click="radioNames(name.name_id, 'botanical')">
           <b-form-checkbox button button-variant="light" name="Botanical Name" class="mb-2 mr-sm-2 mb-sm-0" v-model="name.botanical_name">Botanical Name</b-form-checkbox>

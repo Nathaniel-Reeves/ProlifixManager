@@ -62,18 +62,13 @@ const routes = [
   },
   {
     path: '/catalogue/components/create',
-    name: 'ComponentDetail',
+    name: 'NewComponent',
     component: () => import(/* webpackChunkName: "ComponentDetail" */ '../views/catalogue/NewComponent.vue')
   },
   {
     path: '/catalogue/components/:id',
     name: 'ComponentDetail',
     component: () => import(/* webpackChunkName: "ComponentDetail" */ '../views/catalogue/ComponentDetail.vue')
-  },
-  {
-    path: '/catalogue/components/create',
-    name: 'NewComponent',
-    component: () => import(/* webpackChunkName: "ComponentDetail" */ '../views/catalogue/NewComponent.vue')
   },
   {
     path: '/organizations',
@@ -143,6 +138,11 @@ const routes = [
     path: '/login',
     name: 'login',
     component: () => import(/* webpackChunkName: "login" */ '../views/LogIn.vue')
+  },
+  {
+    path: '*',
+    name: 'NotFound',
+    component: () => import(/* webpackChunkName: "login" */ '../views/NotFound.vue')
   }
 ]
 

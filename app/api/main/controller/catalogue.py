@@ -143,6 +143,7 @@ def post_component(
         )
         raw_data = stream.all()
         new_component_id = raw_data[0][0].get_id()
+        new_component["component_id"] = new_component_id
         
         # Insert new component_id in Items Table
         stream = session.execute(
@@ -237,7 +238,6 @@ def put_component(
         
         session.commit()
     except Exception as e:
-        print(e)
         error = error_message()
         custom_response.insert_flash_message(error)
         custom_response.set_status_code(400)

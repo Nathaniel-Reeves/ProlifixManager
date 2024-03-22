@@ -167,7 +167,8 @@ CREATE TABLE IF NOT EXISTS `Inventory`.`Component_Names` (
   `primary_name` BOOL DEFAULT 0,
   `botanical_name` BOOL DEFAULT 0,
   PRIMARY KEY (`name_id`),
-  FOREIGN KEY (`component_id`) REFERENCES `Inventory`.`Components`(`component_id`),
+  CONSTRAINT `component_id`
+    FOREIGN KEY (`component_id`) REFERENCES `Inventory`.`Components`(`component_id`) ON DELETE CASCADE,
   INDEX ( `component_name` )
 );
 
