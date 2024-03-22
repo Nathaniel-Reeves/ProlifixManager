@@ -6,6 +6,7 @@ WORKDIR /init_db
 
 # Copy application files
 COPY ./init_db /init_db
+COPY ./.env ./.env
 
 
 # Prepare dependancies for mariadb-connector
