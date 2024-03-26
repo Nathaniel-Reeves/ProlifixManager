@@ -69,9 +69,6 @@ def get_organizations(custom_response, org_ids, org_type, populate, doc):
         
     stm = stm.where(db.Organization_Names.primary_name == True)
     
-    if 'components' in populate:
-        stm = stm.where(db.Component_Names.primary_name == True)
-    
     if org_type:
         if 'client' in org_type:
             stm = stm.where(db.Organizations.client == True)

@@ -6,20 +6,20 @@
         <b-collapse id="nav-collapse" is-nav>
           <b-navbar-nav>
             <b-nav-item to="/" active-class>Home</b-nav-item>
-            <b-nav-item-dropdown text="Orders" active-class>
+            <!-- <b-nav-item-dropdown text="Orders" active-class>
               <b-dropdown-item to="/orders">Orders List</b-dropdown-item>
-            </b-nav-item-dropdown>
-            <b-nav-item-dropdown text="Inventory" active-class>
+            </b-nav-item-dropdown> -->
+            <!-- <b-nav-item-dropdown text="Inventory" active-class>
                 <b-dropdown-item to="/inventory">Inventory</b-dropdown-item>
                 <b-dropdown-item to="/inventory/checkins">checkins</b-dropdown-item>
                 <b-dropdown-item to="/inventory/checkouts">checkouts</b-dropdown-item>
-              </b-nav-item-dropdown>
+              </b-nav-item-dropdown> -->
             <b-nav-item to="/organizations" text="Organizations" active-class>Organizations
             </b-nav-item>
             <b-nav-item-dropdown text="Catalogue" active-class>
               <b-dropdown-item to="/catalogue/components">Components</b-dropdown-item>
             </b-nav-item-dropdown>
-            <b-nav-item to="/barcodereader" active-class>barcodereader</b-nav-item>
+            <!-- <b-nav-item to="/barcodereader" active-class>barcodereader</b-nav-item> -->
           </b-navbar-nav>
         </b-collapse>
         <b-navbar-toggle class="ml-auto mr-2 border-0" target="nav-collapse">
@@ -85,7 +85,7 @@
       </div> -->
 
         <div class="text-center bg-dark p-3">
-          © 2023 Copyright  |  v0.0.1-beta
+          © 2024 Copyright  |  v1.0.0
         </div>
       </footer>
     </div>
@@ -225,5 +225,11 @@ export default {
 
 .no-shaddow {
   box-shadow: none;
+}
+
+@media print {
+  body {
+    margin: 25mm 25mm 25mm 25mm;
+  }
 }
 </style>

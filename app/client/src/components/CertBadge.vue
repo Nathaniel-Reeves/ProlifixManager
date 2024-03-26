@@ -2,7 +2,7 @@
   <span>
     <span v-for="cert, index in certs" :key="index">
       <span v-if="cert.key && data[cert.key]">
-        <b-img :id="'cert' + index" style="width:2em;" circle class="ml-2" :src="cert.img"></b-img>
+        <b-img :id="'cert' + index" style="width:4em;" circle class="mr-2 p-2" :src="cert.img"></b-img>
         <b-tooltip :target="'cert' + index" triggers="hover">{{ cert.alt }}</b-tooltip>
       </span>
     </span>

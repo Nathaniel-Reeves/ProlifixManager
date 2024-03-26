@@ -1,5 +1,5 @@
 <template>
-  <div class="organizations">
+  <div class="my_component">
     <div>
       <b-sidebar id="sidebar-right" title="Filter Options" :right="true" shadow :lazy="true" backdrop-variant="dark">
         <div class="px-3 py-2">
@@ -42,7 +42,7 @@
       <div class="card-body">
         <div class="input-group d-flex">
           <h2 class="card-title flex-grow-1">Organizations</h2>
-          <b-button v-b-tooltip.hover title="New Organization" v-b-toggle.sidebar-right style="border-width: 2px; border-color:#999999" v-bind:class="['btn', 'my-2', 'mx-1', filterActive ? 'btn-info' : 'btn-light']" type="button"
+          <b-button disabled title="New Organization" style="border-width: 2px; border-color:#999999" v-bind:class="['btn', 'my-2', 'mx-1', 'btn-light']" type="button"
                 id="button-addon2">
             <i class="bi bi-plus-lg"></i>
           </b-button>
@@ -71,13 +71,16 @@
                     </b-container>
                 </button>
                 <b-container fluid class="d-flex justify-content-end flex-wrap" style="max-width:10rem;">
-                  <button type="button" class="btn btn-light ms-auto" style="border-width: 2px; border-color:#999999">View Details</button>
+                  <button disabled type="button" class="btn btn-light ms-auto" style="border-width: 2px; border-color:#999999">View Details</button>
                 </b-container>
               </h2>
             </div>
 
             <div v-bind:id="'collapse' + org.organization_id" class="collapse"
               v-bind:aria-labelledby="'heading' + org.organization_id" data-parent="#accordionExample">
+              <div v-show="!org.populated" class="d-flex justify-content-center">
+                <div v-show="!org.populated" class="spinner-border text-primary mt-3" role="status"></div>
+              </div>
               <div class="card-body d-flex flex-wrap">
 
                 <div class="p-2" v-if="org.hasOwnProperty('Facilities')" v-show="Object.keys(org.Facilities).length !== 0">
@@ -116,11 +119,16 @@
 
 <style scoped>
 .my_component {
-    width: 90%;
+    width: 95%;
 }
-@media only screen and (max-width: 1024px) {
+@media (max-width: 1024px) {
     .my_component {
         width: 98%;
+    }
+}
+@media (max-width: 400px) {
+    .my_component {
+        width: 100%;
     }
 }
 </style>
@@ -150,7 +158,11 @@ export default {
       this.search_query = ''
     },
     populateOrg: function (orgId) {
-      const fetchRequest = window.origin + '/api/v1/organizations/?org-id=' + orgId + '&populate=facilities&populate=sales-orders&populate=purchase-orders&populate=people&populate=components&populate=products'
+      if (this.org_data[orgId].populated) {
+        return
+      }
+      // TODO: Fix Component Names and add them to Populate
+      const fetchRequest = window.origin + '/api/v1/organizations/?org-id=' + orgId + '&populate=facilities&populate=sales-orders&populate=purchase-orders&populate=people&populate=products'
       console.log(
         'GET ' + fetchRequest
       )
@@ -164,12 +176,30 @@ export default {
         if (response.status === 200) {
           response.json().then(data => {
             this.org_data[orgId] = Object.values(data.data[0])[0]
+            this.org_data[orgId].populated = true
           })
+        } else if (response.status === 404) {
+          this.org_data[orgId].populated = true
+          const errorToast = {
+            title: `'${this.org_data[orgId].Organization_Names[0].organization_name}' 404 Not Found.`,
+            message: 'Looks like there is no additional data to see here.',
+            variant: 'info',
+            visible: true,
+            noCloseButton: true,
+            noAutoHide: false,
+            autoHideDelay: 1.5,
+            appendToast: true,
+            solid: true,
+            toaster: 'b-toaster-bottom-right'
+          }
+          const createToast = this.$parent.createToast
+          createToast(errorToast)
         } else if (response.status === 401) {
           this.$router.push({
             name: 'login'
           })
         } else {
+          this.org_data[orgId].populated = true
           console.log('Looks like there was a problem. Status Code:' + response.status)
           console.log(response)
         }
@@ -190,6 +220,9 @@ export default {
         if (response.status === 200) {
           response.json().then(data => {
             this.org_data = data.data[0]
+            for (let i = 0; i < this.org_data.length; i++) {
+              this.org_data[i].populated = false
+            }
             console.log(this.org_data)
             this.loaded = true
           })

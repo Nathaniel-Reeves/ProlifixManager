@@ -1,6 +1,6 @@
 <template>
   <div class="my_component">
-    <div class="card m-2">
+    <div class="card my-2">
       <div class="card-body">
         <h2 class="card-title flex-grow-1">New Component Form</h2>
 
@@ -92,9 +92,14 @@
 .my_component {
     width: 60%;
 }
-@media only screen and (max-width: 1024px) {
+@media (max-width: 1024px) {
     .my_component {
         width: 98%;
+    }
+}
+@media (max-width: 400px) {
+    .my_component {
+        width: 100%;
     }
 }
 </style>

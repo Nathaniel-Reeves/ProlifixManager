@@ -1,6 +1,6 @@
 <template>
   <div class="my_component d-flex flex-wrap justify-content-center">
-    <div class="card m-2 p-2" v-show="!loaded">
+    <div class="card my-2" v-show="!loaded">
       <div class="card-body">
         <div class="d-flex justify-content-center">
           <div class="spinner-border text-primary" role="status"></div>
@@ -8,12 +8,16 @@
       </div>
     </div>
 
-    <b-container fluid>
-      <b-card class="m-2" v-show="loaded">
+    <b-container fluid class="p-0">
+      <b-card class=" my-2" v-show="loaded">
         <b-card-body>
-          <h2 class="card-title">{{ get_comopnent_primary_name(component_data) }} {{ format_string(component_data.component_type) }}<CertBadge :data="component_data"></CertBadge></h2>
-          <hr>
-          <b-nav pills card-header slot="header" v-b-scrollspy:nav-scroller class="text-nowrap">
+          <div class="card-title d-flex align-items-center flex-wrap">
+            <b-img style="max-width: 15rem;" class="d-none d-print-inline p-2" src="../../assets/Company Images/logos jpg/Cropped Logo.jpg"></b-img>
+            <h2 class="card-title">{{ get_comopnent_primary_name(component_data) }} {{ format_string(component_data.component_type) }}</h2>
+            <CertBadge :data="component_data"></CertBadge>
+          </div>
+          <hr class="d-print-none">
+          <b-nav pills card-header slot="header" v-b-scrollspy:nav-scroller class="text-nowrap d-print-none">
             <b-nav-item href="#Aliases" @click="scrollIntoView">Aliases</b-nav-item>
             <b-nav-item href="#Specifications" @click="scrollIntoView" v-if="component_data.doc.specifications !== undefined">Specifications</b-nav-item>
             <div v-for="(spec, spec_key) in component_data.doc.specifications.specs" :key="spec_key">
@@ -23,8 +27,8 @@
         </b-card-body>
       </b-card>
 
-      <b-card class="m-2" v-show="loaded">
-        <b-card-body id="nav-scroller" ref="content" style="position:relative; height:85vh; overflow-y:scroll;">
+      <b-card class=" my-2" v-show="loaded">
+        <b-card-body id="nav-scroller" ref="content" class="scrollbox">
 
           <!-- Alias Names -->
           <NamesComponent :data="component_data.Component_Names" :save-function="putComponent" naming-type="component"></NamesComponent>
@@ -32,7 +36,7 @@
 
           <!-- Specifications -->
           <div v-if="component_data.doc.specifications !== undefined">
-            <h3 id="Specifications">Specifications<b-button v-if="!edit_specs" v-b-tooltip.hover title="Edit Component Specifications" v-on:click="editSpecs()" class="btn p-1 ml-2 btn-light" type="button"><i class="bi bi-pencil-square"></i></b-button></h3>
+            <h3 id="Specifications">Specifications<b-button v-if="!edit_specs" v-b-tooltip.hover title="Edit Component Specifications" v-on:click="editSpecs()" class="btn p-1 ml-2 btn-light" type="button"><i class="bi bi-pencil-square d-print-none"></i></b-button></h3>
             <div v-if="!edit_specs">
               <p><strong>Spec Issued: </strong>{{ new Date(component_data.doc.specifications.date_issued).toDateString() }}</p>
               <p><strong>Spec Revised: </strong>{{ new Date(component_data.doc.specifications.date_revised).toDateString() }}</p>
@@ -67,10 +71,10 @@
             <hr>
 
             <!-- Generic Specifications -->
-            <div v-for="(spec, spec_key, index) in component_data.doc.specifications.specs" :key="index">
+            <div v-for="(spec, spec_key, index) in component_data.doc.specifications.specs" :key="index" style="break-inside: avoid;">
 
               <!-- Spec Header -->
-              <h3 :id="spec_key">{{ spec.test_name }}<b-button v-if="!edit_specs" v-b-tooltip.hover :title="'Edit Component ' + spec.test_name + ' Specifications'" v-on:click="editSpecs()" class="btn p-1ml-2 btn-light" type="button"><i class="bi bi-pencil-square"></i></b-button></h3>
+              <h3 :id="spec_key">{{ spec.test_name }}<b-button v-if="!edit_specs" v-b-tooltip.hover :title="'Edit Component ' + spec.test_name + ' Specifications'" v-on:click="editSpecs()" class="btn p-1ml-2 btn-light" type="button"><i class="bi bi-pencil-square d-print-none"></i></b-button></h3>
               <div v-if="!edit_specs">
                 <p v-if="spec_key != 'example_cofas'"><strong>Spec Issued: </strong>{{ new Date(spec.date_issued).toDateString() }}</p>
                 <p v-if="spec_key != 'example_cofas'"><strong>Spec Revised: </strong>{{ new Date(spec.date_revised).toDateString() }}</p>
@@ -119,7 +123,7 @@
                   <!-- Card Type Specs -->
                   <b-card-group deck v-if="useCardType(spec_key)">
                     <div v-for="test, test_key, index in spec.tests" :key="index">
-                      <b-card no-body style="max-width: 25rem;" class="my-3 no-shaddow">
+                      <b-card no-body style="max-width: 25rem;" class="my-3 no-shaddow d-print-block">
                         <b-link :href="getFile(test.file_pointer)" target="_blank"><b-card-img v-if="(spec_key === 'microscopic' || spec_key === 'organoleptic') && getFile(test.file_pointer)" :src="getFile(test.file_pointer)" top></b-card-img></b-link>
                         <b-card-body v-if="spec_key === 'microscopic'">
                           <b-card-title>{{ test.id_code }}</b-card-title>
@@ -155,7 +159,7 @@
 
                   <!-- Grid Type Specs -->
                   <div v-else>
-                    <Grid :rows="spec.tests" :cols="test_cols"></Grid>
+                    <Grid v-show="spec.tests.length > 0" :rows="spec.tests" :cols="test_cols"></Grid>
                   </div>
                 </div>
 
@@ -273,15 +277,37 @@
 </template>
 
 <style scoped>
+.scrollbox {
+  position:relative;
+  height:85vh;
+  overflow-y:scroll;
+}
+@media print {
+  .scrollbox {
+    height: 100%;
+    overflow-y:auto;
+  }
+  @page {
+    margin: 30mm 30mm 10mm 10mm;
+  }
+  body {
+    margin: 0px;
+  }
+}
 .bold {
     font-weight: bold;
 }
 .my_component {
     width: 95%;
 }
-@media only screen and (max-width: 1024px) {
+@media (max-width: 1024px) {
     .my_component {
         width: 98%;
+    }
+}
+@media (max-width: 400px) {
+    .my_component {
+        width: 100%;
     }
 }
 </style>

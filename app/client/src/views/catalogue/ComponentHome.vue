@@ -29,7 +29,7 @@
       </b-sidebar>
     </div>
 
-    <div class="card m-2">
+    <div class="card my-2">
       <div class="card-body">
         <div class="input-group d-flex">
           <h2 class="card-title flex-grow-1">Components Catalogue</h2>
@@ -50,31 +50,27 @@
         <div v-show="loaded" class="accordion overflow-auto border-top border-bottom" id="accordionExample" style="height:100vh;">
           <div class="card" v-for="component in filterPowderCerts" :key="component.component_id">
             <div class="card-header" v-bind:id="'heading' + component.component_id">
-              <h2 class="d-flex flex-row mb-0">
+              <h2 class="d-flex mb-0">
                 <button class="btn btn-block text-left" type="button" data-toggle="collapse" v-bind:data-target="'#collapse' + component.component_id" aria-expanded="false" v-bind:aria-controls="'collapse' + component.component_id" v-on:click="populateComponent(component.component_id)">
                   <b-container>
-                    <b-row cols="5" align-v="baseline">
-                      <b-col style="max-width: 1rem;"><i class="bi bi-chevron-down p-2"></i></b-col>
-                      <b-col style="max-width: 10rem;"><div class="p-2">{{ component.component_type.toLowerCase().split('_').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ') }}</div></b-col>
-                      <b-col cols="3"><div class="p-2">{{ get_comopnent_primary_name(component) }}</div></b-col>
-                      <b-col><div class="p-2"><CertBadge :data="component"></CertBadge></div></b-col>
-                      <b-col><div class="p-2">{{ get_component_brand_name(component) }}</div></b-col>
+                    <b-row align-v="baseline">
+                      <b-col sm style="max-width:1em;"><i class="bi bi-chevron-down p-2"></i></b-col>
+                      <b-col sm><div class="p-2">{{ component.component_type.toLowerCase().split('_').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ') }}</div></b-col>
+                      <b-col sm><div class="p-2">{{ get_comopnent_primary_name(component) }}</div></b-col>
+                      <b-col sm="2"><div class="p-2"><CertBadge :data="component"></CertBadge></div></b-col>
+                      <b-col sm><div class="p-2">{{ get_component_brand_name(component) }}</div></b-col>
                     </b-row>
                   </b-container>
                 </button>
-                <b-container fluid class="d-flex justify-content-end flex-wrap" style="max-width:10rem;">
-                  <router-link :to="{path:`/catalogue/components/${component.component_id}`}"><button type="button" class="btn btn-light ms-auto" style="border-width: 2px; border-color:#999999">View Details</button></router-link>
-                </b-container>
               </h2>
             </div>
 
             <div v-bind:id="'collapse' + component.component_id" class="collapse" v-bind:aria-labelledby="'heading' + component.component_id" data-parent="#accordionExample">
               <div class="card-body d-flex flex-wrap">
 
-                <!-- <div class="p-2" v-if="component.hasOwnProperty('Facilities')" v-show="Object.keys(component.Facilities).length !== 0">
-                  <h5>Facilities</h5>
-                  <FacilitiesGrid v-bind:Facilities="component.Facilities"></FacilitiesGrid>
-                </div> -->
+                <b-container fluid class="d-flex justify-content-end flex-wrap" style="max-width:10rem;">
+                  <router-link :to="{path:`/catalogue/components/${component.component_id}`}"><button type="button" class="btn btn-light ms-auto" style="border-width: 2px; border-color:#999999">View Details</button></router-link>
+                </b-container>
 
               </div>
             </div>
@@ -89,9 +85,14 @@
 .my_component {
     width: 80%;
 }
-@media only screen and (max-width: 1024px) {
+@media (max-width: 1024px) {
     .my_component {
         width: 98%;
+    }
+}
+@media (max-width: 400px) {
+    .my_component {
+        width: 100%;
     }
 }
 </style>

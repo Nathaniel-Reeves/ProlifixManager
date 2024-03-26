@@ -36,8 +36,8 @@ def handle_get_organizations():
     populate_request = request.args.getlist('populate')
     valid_populate = [
         'facilities',
-        'sales_orders',
-        'purchase_orders',
+        'sales-orders',
+        'purchase-orders',
         'people',
         'components',
         'products'

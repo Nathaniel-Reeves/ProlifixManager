@@ -15,29 +15,30 @@
     </div>
 
     <div class="container-fluid p-0">
-      <div class="d-flex flex-wrap justify-content-start">
+      <div class="d-flex flex-wrap justify-content-between">
 
         <div class="card custom-card">
           <div class="imgbox m-0">
               <img class="image-blured m-0" alt="Supplements Manufacturing" src="../assets/supplements_manufacturing.jpg">
             </div>
           <div class="specifies">
-            <h2>Production <br> <span>Lot# | History | BPRs</span></h2>
-            <div class="price"><i class="bi bi-arrow-down"></i></div> <label>Tables</label>
+            <h2>Production <br>
+              <span>Lot# | History | BPRs</span>
+            </h2>
+            <div class="price"><i class="bi bi-arrow-down"></i></div>
+            <label class="mb-0 mt-2">Product Lines</label>
             <ul>
-                <li>10MM</li>
-                <li>20MM</li>
-                <li>30MM</li>
-                <li>40MM</li>
-                <li>50MM</li>
-            </ul> <label>Charts</label>
+                <li>Powder Fill</li>
+                <li>Liquid Fill</li>
+                <li>Capsule Fill</li>
+            </ul>
+            <label class="mb-0 mt-2">Tools</label>
             <ul>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-            </ul> <button class="btn btn-light" style="width:100%;">Production Page</button>
+                <li>Lot#</li>
+                <li>BPR's'</li>
+                <li>MMR's</li>
+            </ul>
+            <button disabled class="btn btn-light my-2" style="width:100%;">All Production</button>
           </div>
         </div>
 
@@ -46,22 +47,23 @@
             <img class="image-blured m-0" alt="Supplements" src="../assets/supplements.jpg">
           </div>
           <div class="specifies">
-            <h2>Products <br> <span>Formulas | Specs</span></h2>
-            <div class="price"><i class="bi bi-arrow-down"></i></div> <label>Tables</label>
+            <h2>Products <br>
+              <span>Formulas | Specs</span>
+            </h2>
+            <div class="price"><i class="bi bi-arrow-down"></i></div>
+            <label class="mb-0 mt-2">Product Lines</label>
             <ul>
-                <li>10MM</li>
-                <li>20MM</li>
-                <li>30MM</li>
-                <li>40MM</li>
-                <li>50MM</li>
-            </ul> <label>Charts</label>
+              <li>Powder</li>
+              <li>Liquid</li>
+              <li>Capsule</li>
+            </ul>
+            <label class="mb-0 mt-2">Tools</label>
             <ul>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-            </ul> <button class="btn btn-light" style="width:100%;">Production Page</button>
+              <li>Specs</li>
+              <li>Formulas</li>
+              <li>Labels</li>
+            </ul>
+            <button disabled class="btn btn-light my-2" style="width:100%;">All Products</button>
           </div>
         </div>
 
@@ -70,22 +72,23 @@
             <img class="image-blured m-0" alt="Warehouse" src="../assets/inventory-warehouse-boxes.jpg">
           </div>
           <div class="specifies">
-            <h2>Inventory <br> <span>Components | Products</span></h2>
-            <div class="price"><i class="bi bi-arrow-down"></i></div> <label>Tables</label>
+            <h2>Inventory <br>
+              <span>Components | Products</span>
+            </h2>
+            <div class="price"><i class="bi bi-arrow-down"></i></div>
+            <label class="mb-0 mt-2">Product Lines</label>
             <ul>
-                <li>10MM</li>
-                <li>20MM</li>
-                <li>30MM</li>
-                <li>40MM</li>
-                <li>50MM</li>
-            </ul> <label>Charts</label>
+              <li>Ingredients</li>
+              <li>Components</li>
+              <li>Catalogue</li>
+            </ul>
+            <label class="mb-0 mt-2">Tools</label>
             <ul>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-            </ul> <button class="btn btn-light" style="width:100%;">Production Page</button>
+              <li>Ordering</li>
+              <li>Cycle Counts</li>
+              <li>Inventory</li>
+            </ul>
+            <button disabled class="btn btn-light my-2" style="width:100%;">All Inventory</button>
           </div>
         </div>
 
@@ -94,22 +97,23 @@
             <img class="image-blured m-0" alt="Hand Shake" src="../assets/Hand-shake.png">
           </div>
           <div class="specifies">
-            <h2>Organizations <br> <span>Clients | Suppliers | Labs</span></h2>
-            <div class="price"><i class="bi bi-arrow-down"></i></div> <label>Tables</label>
+            <h2>Organizations <br>
+              <span>Clients | Suppliers | Labs</span>
+            </h2>
+            <div class="price"><i class="bi bi-arrow-down"></i></div>
+            <label class="mb-0 mt-2">Catagories</label>
             <ul>
-                <li>10MM</li>
-                <li>20MM</li>
-                <li>30MM</li>
-                <li>40MM</li>
-                <li>50MM</li>
-            </ul> <label>Charts</label>
+              <li>Clients</li>
+              <li>Suppliers</li>
+              <li>labs</li>
+            </ul>
+            <label class="mb-0 mt-2">Tools</label>
             <ul>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-            </ul> <button class="btn btn-light" style="width:100%;">Production Page</button>
+              <li>People</li>
+              <li>Facilities</li>
+              <li>Status</li>
+            </ul>
+            <button disabled class="btn btn-light my-2" style="width:100%;">All Organizations</button>
           </div>
         </div>
 
@@ -118,22 +122,22 @@
             <img class="image-blured m-0" alt="Office Worker" src="../assets/orders.jpg">
           </div>
           <div class="specifies">
-            <h2>Orders <br> <span>POs | SOs</span></h2>
-            <div class="price"><i class="bi bi-arrow-down"></i></div> <label>Tables</label>
+            <h2>Orders <br>
+              <span>POs | SOs</span>
+            </h2>
+            <div class="price"><i class="bi bi-arrow-down"></i></div>
+            <label class="mb-0 mt-2">Product Lines</label>
             <ul>
-                <li>10MM</li>
-                <li>20MM</li>
-                <li>30MM</li>
-                <li>40MM</li>
-                <li>50MM</li>
-            </ul> <label>Charts</label>
+              <li>Purchase Orders</li>
+              <li>Sales Orders</li>
+            </ul>
+            <label class="mb-0 mt-2">Tools</label>
             <ul>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-            </ul> <button class="btn btn-light" style="width:100%;">Production Page</button>
+              <li>Lot#</li>
+              <li>PO Summary</li>
+              <li>Order List</li>
+            </ul>
+            <button disabled class="btn btn-light my-2" style="width:100%;">All Orders</button>
           </div>
         </div>
 
@@ -142,22 +146,23 @@
                 <img class="image-blured m-0" alt="Signing Documents" src="../assets/policy.jpg">
               </div>
           <div class="specifies">
-            <h2>Policies <br> <span>SOPs | GMPs</span></h2>
-            <div class="price"><i class="bi bi-arrow-down"></i></div> <label>Tables</label>
+            <h2>Policies <br>
+              <span>SOPs | GMPs</span>
+            </h2>
+            <div class="price"><i class="bi bi-arrow-down"></i></div>
+            <label class="mb-0 mt-2">Documents</label>
             <ul>
-                <li>10MM</li>
-                <li>20MM</li>
-                <li>30MM</li>
-                <li>40MM</li>
-                <li>50MM</li>
-            </ul> <label>Charts</label>
+              <li>SOPs</li>
+              <li>GMPs</li>
+              <li>Mission Statement</li>
+            </ul>
+            <label class="mb-0 mt-2">Tools</label>
             <ul>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-            </ul> <button class="btn btn-light" style="width:100%;">Production Page</button>
+              <li>Policy</li>
+              <li>Mission Statement'</li>
+              <li>Training App</li>
+            </ul>
+            <button disabled class="btn btn-light my-2" style="width:100%;">All Products</button>
           </div>
         </div>
       </div>
@@ -205,7 +210,6 @@
   border-radius: 5px;
   border: 0;
   margin-bottom: 24px;
-  margin-right: 24px;
   background:white;
   overflow: hidden
 }
@@ -226,7 +230,7 @@
 .specifies {
   position: absolute;
   width: 100%;
-  bottom: -145px;
+  bottom: -175px;
   background: #67803a;
   color: white;
   padding:10px;
