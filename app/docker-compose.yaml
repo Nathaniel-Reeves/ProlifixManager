@@ -23,22 +23,22 @@ services:
       timeout: 10s
       retries: 5
 
-  init_db:
-    container_name: init_db
-    env_file:
-      - .env
-    restart: "no"
-    volumes:
-        - './init_db:/init_db'
-    build:
-      context: .
-      dockerfile: init_db/Dockerfile
-    networks:
-      - mrp
-    depends_on:
-      mariadb:
-        condition: service_healthy
-    tty: true
+  # init_db:
+  #   container_name: init_db
+  #   env_file:
+  #     - .env
+  #   restart: "no"
+  #   volumes:
+  #       - './init_db:/init_db'
+  #   build:
+  #     context: .
+  #     dockerfile: init_db/Dockerfile
+  #   networks:
+  #     - mrp
+  #   depends_on:
+  #     mariadb:
+  #       condition: service_healthy
+  #   tty: true
 
   api:
     restart: unless-stopped
@@ -54,9 +54,9 @@ services:
       - "5000"
     networks:
       - mrp
-    depends_on:
-      init_db:
-        condition: service_completed_successfully
+    # depends_on:
+    #   init_db:
+    #     condition: service_completed_successfully
     tty: true
 
   # Nginx Service
