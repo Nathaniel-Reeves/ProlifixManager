@@ -48,17 +48,16 @@
         </div>
 
         <div v-show="loaded" class="accordion overflow-auto border-top border-bottom" id="accordionExample" style="height:100vh;">
-          <div class="card" v-for="component in filterPowderCerts" :key="component.component_id">
+          <div class="card" v-for="component in filteredComponents" :key="component.component_id">
             <div class="card-header" v-bind:id="'heading' + component.component_id">
               <h2 class="d-flex mb-0">
                 <button class="btn btn-block text-left" type="button" data-toggle="collapse" v-bind:data-target="'#collapse' + component.component_id" aria-expanded="false" v-bind:aria-controls="'collapse' + component.component_id" v-on:click="populateComponent(component.component_id)">
-                  <b-container>
+                  <b-container fluid class="m-0">
                     <b-row align-v="baseline">
-                      <b-col sm style="max-width:1em;"><i class="bi bi-chevron-down p-2"></i></b-col>
-                      <b-col sm><div class="p-2">{{ component.component_type.toLowerCase().split('_').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ') }}</div></b-col>
-                      <b-col sm><div class="p-2">{{ get_comopnent_primary_name(component) }}</div></b-col>
-                      <b-col sm="2"><div class="p-2"><CertBadge :data="component"></CertBadge></div></b-col>
-                      <b-col sm><div class="p-2">{{ get_component_brand_name(component) }}</div></b-col>
+                      <b-col sm="0.5"><i class="bi bi-chevron-down p-2"></i></b-col>
+                      <b-col sm="1.5"><div class="p-2">{{ component.component_type.toLowerCase().split('_').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ') }}</div></b-col>
+                      <b-col sm="4"><div class="p-2">{{ getPrimaryName(component) }}         {{ getBrandName(component) }}</div></b-col>
+                      <b-col><div class="p-2"><CertBadge :data="component"></CertBadge></div></b-col>
                     </b-row>
                   </b-container>
                 </button>
@@ -147,7 +146,7 @@ export default {
     clearSearch: function () {
       this.search_query = ''
     },
-    get_comopnent_primary_name: function (component) {
+    getPrimaryName: function (component) {
       if (component.Component_Names !== undefined && component.Component_Names.length > 0) {
         for (let i = 0; i < component.Component_Names.length; i++) {
           if (component.Component_Names[i].primary_name) {
@@ -157,7 +156,7 @@ export default {
       }
       return 'No Name'
     },
-    get_component_brand_name: function (component) {
+    getBrandName: function (component) {
       if (component.Organization_Names !== undefined && component.Organization_Names.length > 0) {
         for (let i = 0; i < component.Organization_Names.length; i++) {
           if (component.Organization_Names[i].primary_name) {
@@ -222,7 +221,7 @@ export default {
         }
       })
     },
-    compare: function (a, b) {
+    componentType: function (a, b) {
       if (a.component_type < b.component_type) {
         return -1
       }
@@ -231,8 +230,39 @@ export default {
       }
       return 0
     },
+    alphabetical: function (a, b) {
+      const aPrime = this.getPrimaryName(a)
+      const bPrime = this.getPrimaryName(b)
+      if (aPrime < bPrime) {
+        return -1
+      }
+      if (aPrime > bPrime) {
+        return 1
+      }
+      return 0
+    },
     toggleAllCerts: function (checked) {
       this.powder_cert_filter = checked ? this.powder_cert_options.map((obj) => obj.value).slice() : []
+    },
+    searchFilter: function (component) {
+      const prime = this.getPrimaryName(component)
+      if (prime.toLowerCase().includes(this.search_query.toLowerCase())) {
+        return true
+      }
+      return false
+    },
+    componentTypeFilter: function (component) {
+      if (component.component_type === this.type_filter) {
+        return true
+      }
+      return false
+    },
+    certFilter: function (component) {
+      let flag = false
+      for (let i = 0; i < this.powder_cert_options.length; i++) {
+        if (component[this.powder_cert_options[i].value] && this.powder_cert_filter.includes(this.powder_cert_options[i].value)) { flag = true }
+      }
+      return flag
     }
   },
   watch: {
@@ -252,54 +282,24 @@ export default {
   },
   computed: {
     filterActive: function () {
-      if (this.type_filter !== 'all') {
+      if (this.type_filter !== 'all' || this.search_query.length > 3) {
         return true
       }
       return false
     },
-    searchComponents: function () {
-      const searched = []
-      if (this.search_query) {
-        const list = Object.values(this.components_data)
-        list.forEach(component => {
-          if (component.Component_Names[0].component_name.toLowerCase().includes(this.search_query.toLowerCase())) {
-            searched.push(component)
-          }
-        })
-        return searched.sort(this.compare)
-      } else {
-        return Object.values(this.components_data).sort(this.compare)
+    filteredComponents: function () {
+      let list = Object.values(structuredClone(this.components_data))
+      if (this.search_query.length > 3) {
+        list = list.filter(this.searchFilter)
       }
-    },
-    filterComponentTypes: function () {
-      const filtered = []
-
-      if (this.type_filter === 'all') {
-        return Object.values(this.searchComponents).sort(this.compare)
+      if (this.type_filter !== 'all') {
+        list = list.filter(this.componentTypeFilter)
       }
-
-      this.searchComponents.forEach(component => {
-        if (component.component_type === this.type_filter) {
-          filtered.push(component)
-        }
-      })
-      return filtered.sort(this.compare)
-    },
-    filterPowderCerts: function () {
-      const filtered = []
-
-      if (this.type_filter === 'all' || this.powder_cert_filter.length === 0) {
-        return Object.values(this.filterComponentTypes).sort(this.compare)
+      if (this.type_filter === 'powder' && this.powder_cert_filter.length > 0) {
+        list = list.filter(this.certFilter)
       }
-
-      this.filterComponentTypes.forEach(component => {
-        this.powder_cert_options.forEach(cert => {
-          if (this.powder_cert_filter.includes(cert.value) && component[cert.value]) {
-            filtered.push(component)
-          }
-        })
-      })
-      return filtered.sort(this.compare)
+      list = list.sort(this.alphabetical).sort(this.componentType)
+      return list
     }
   },
   created: function () {

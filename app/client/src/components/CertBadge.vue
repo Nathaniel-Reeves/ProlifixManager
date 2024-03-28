@@ -19,6 +19,21 @@ export default {
     return {
       certs: [
         {
+          key: 'certified_usda_organic',
+          img: require('../assets/certifications/usda_organic.png'),
+          alt: 'Certified USDA Organic'
+        },
+        {
+          key: '',
+          img: require('../assets/certifications/wildcrafted.png'),
+          alt: 'Certified Wild Crafted'
+        },
+        {
+          key: '',
+          img: require('../assets/certifications/made_with_organic.png'),
+          alt: '70% Organic'
+        },
+        {
           key: '',
           img: require('../assets/certifications/fda_approved.png'),
           alt: 'FDA Approved'
@@ -52,21 +67,6 @@ export default {
           key: 'certified_us_pharmacopeia',
           img: require('../assets/certifications/us_pharmacopeia.png'),
           alt: 'US Pharmacopeia'
-        },
-        {
-          key: 'certified_usda_organic',
-          img: require('../assets/certifications/usda_organic.png'),
-          alt: 'Certified USDA Organic'
-        },
-        {
-          key: '',
-          img: require('../assets/certifications/wildcrafted.png'),
-          alt: 'Certified Wild Crafted'
-        },
-        {
-          key: '',
-          img: require('../assets/certifications/made_with_organic.png'),
-          alt: '70% Organic'
         },
         {
           key: 'certified_vegan',
