@@ -48,6 +48,7 @@
               <p v-if="component_data.doc.specifications.identity_statement.length > 0"><strong>Identity Statement</strong><br>{{ component_data.doc.specifications.identity_statement }}</p>
               <p v-if="component_data.doc.specifications.strength_statement.length > 0"><strong>Strength Statement</strong><br>{{ component_data.doc.specifications.strength_statement }}</p>
               <p v-if="component_data.doc.specifications.purity_statement.length > 0"><strong>Purity Statement</strong><br>{{ component_data.doc.specifications.purity_statement }}</p>
+              <p v-if="component_data.doc.specifications.parts_used.length > 0"><strong>Parts Used</strong><br>{{ component_data.doc.specifications.parts_used }}</p>
             </div>
             <div v-if="edit_specs">
               <b-form-group>
@@ -61,6 +62,8 @@
                 <b-form-textarea id="strength_statement" v-model="edit_specs_buffer.strength_statement" placeholder="Component strength statement..." rows="3" max-rows="6"></b-form-textarea>
                 <label for="purity_statement"><strong>Purity Statement</strong><br></label>
                 <b-form-textarea id="purity_statement" v-model="edit_specs_buffer.purity_statement" placeholder="Component purity statement..." rows="3"  max-rows="6"></b-form-textarea>
+                <label for="parts_used"><strong>Parts Used</strong><br></label>
+                <b-form-textarea id="parts_used" v-model="edit_specs_buffer.parts_used" placeholder="Parts used..." rows="1"  max-rows="2"></b-form-textarea>
               </b-form-group>
               <div class="d-flex">
                 <b-button v-if="edit_specs" variant="outline-info" class="m-2" v-on:click="cancelEditSpecs()">Cancel</b-button>
