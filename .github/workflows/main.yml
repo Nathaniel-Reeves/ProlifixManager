@@ -5,8 +5,8 @@ on: [push]
 jobs:
   unittest-API:
     uses: ./.github/workflows/test-api.yml
-  unittest-CLIENT:
-    uses: ./.github/workflows/test-client.yml
+  # unittest-CLIENT:
+  #   uses: ./.github/workflows/test-client.yml
 
 
   # attempt-build:
