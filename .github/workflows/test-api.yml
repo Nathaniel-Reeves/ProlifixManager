@@ -4,38 +4,54 @@ on: workflow_call
 
 jobs:
 
-  test-API:
+  Setup-Env-API:
 
     runs-on: self-hosted
 
     steps:
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
 
-      - name: Checkout Project
-        uses: actions/checkout@v4
-      - name: Install MariaDB Connector Dependencies
-        run: |
-          sudo apt install wget
-          sudo apt-get update
-          sudo wget https://dlm.mariadb.com/3/MariaDB/mariadb_repo_setup
-          # echo "935944a2ab2b2a48a47f68711b43ad2d698c97f1c3a7d074b34058060c2ad21b  mariadb_repo_setup" \
-          #   | sha256sum -c -
-          sudo chmod +x mariadb_repo_setup
-          sudo ./mariadb_repo_setup \
-            --mariadb-server-version="mariadb-10.6"
-          sudo apt-get install -y mariadb-server mariadb-client
-          sudo apt-get install -y python3-pip
-          sudo apt-get update
-          sudo apt install -y --no-install-recommends libmariadb3 libmariadb-dev && sudo rm -rf /var/lib/apt/lists/*
-          sudo apt-get update
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r app/api/tests/requirements.txt
-          pip install pytest pytest-cov
+    - name: Checkout Project
+      uses: actions/checkout@v4
+    - name: Install MariaDB Connector Dependencies
+      run: |
+        sudo apt install wget
+        sudo apt-get update
+        sudo wget https://dlm.mariadb.com/3/MariaDB/mariadb_repo_setup
+        # echo "935944a2ab2b2a48a47f68711b43ad2d698c97f1c3a7d074b34058060c2ad21b  mariadb_repo_setup" \
+        #   | sha256sum -c -
+        sudo chmod +x mariadb_repo_setup
+        sudo ./mariadb_repo_setup \
+          --mariadb-server-version="mariadb-10.6"
+        sudo apt-get install -y mariadb-server mariadb-client
+        sudo apt-get install -y python3-pip
+        sudo apt-get update
+        sudo apt install -y --no-install-recommends libmariadb3 libmariadb-dev && sudo rm -rf /var/lib/apt/lists/*
+        sudo apt-get update
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r app/api/tests/requirements.txt
+        pip install pytest pytest-cov
+
+  test-API:
+
+    needs: Setup-Env-API
+    runs-on: self-hosted
+
+    steps:
+      - name: Run Tests
+        run: pytest app/api/tests --spec --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+
+  Test-Coverage-and-Lint-API:
+
+    needs: Setup-Env-API
+    runs-on: self-hosted
+
+    steps:
       - name: Check Test Coverage
         run: |
           coverage run -m pytest app/api/tests || [ $? = 1 ]
@@ -47,9 +63,6 @@ jobs:
           fi
           coverage erase
           rm coverage.json
-        continue-on-error: true
       - name: Lint API
         run: pylint app/api/main --rcfile=app/api/tests/pylintrc.toml
         continue-on-error: true
-      - name: Run Tests
-        run: pytest app/api/tests --spec --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
