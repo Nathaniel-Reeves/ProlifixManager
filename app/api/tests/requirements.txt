@@ -53,3 +53,4 @@ Werkzeug==3.0.1
 wsproto==1.2.0
 zipp==3.17.0
 coverage==7.4.4
+pylint==2.15.9
