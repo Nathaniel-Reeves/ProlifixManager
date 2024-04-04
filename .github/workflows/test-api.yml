@@ -69,15 +69,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r app/api/tests/requirements.txt
           pip install pytest pytest-cov
-          apt install bc
       - name: Check Test Coverage
         shell: bash
         run: |
           coverage run -m pytest app/api/tests || true
           coverage json --omit */tests/*
-          coverage_percentage=$(jq -r '.totals.percent_covered' coverage.json)
+          coverage_percentage=$(jq -r '.totals.percent_covered_display' coverage.json)
           echo "Coverage %: $coverage_percentage%"
-          if [[ $(echo "$coverage_percentage < 100" | bc -l) ]]; then
+          if (( $coverage_percentage < 100 )); then
             echo "Coverage is below 100%: $coverage_percentage%";
             exit 1;
           fi
