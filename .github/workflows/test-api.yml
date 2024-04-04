@@ -69,17 +69,18 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r app/api/tests/requirements.txt
           pip install pytest pytest-cov
+          apt install bc
       - name: Check Test Coverage
+        shell: bash
         run: |
-          coverage run -m pytest app/api/tests || [ $? = 1 ]
-          coverage json  --omit */tests/*
+          coverage run -m pytest app/api/tests || true
+          coverage json --omit */tests/*
           coverage_percentage=$(jq -r '.totals.percent_covered' coverage.json)
-          if (( $(echo "$coverage_percentage < 100" | bc -l) )); then
-            echo "Coverage is below 100%: $coverage_percentage%"
-            exit 1
+          echo "Coverage %: $coverage_percentage%"
+          if [[ $(echo "$coverage_percentage < 100" | bc -l) ]]; then
+            echo "Coverage is below 100%: $coverage_percentage%";
+            exit 1;
           fi
-          coverage erase
-          rm coverage.json
   
   Lint-API:
 
@@ -98,5 +99,6 @@ jobs:
           pip install -r app/api/tests/requirements.txt
           pip install pytest pytest-cov
       - name: Lint API
-        run: pylint app/api/main --rcfile=pylint_conf/settings_conf.txt
-        continue-on-error: true
+        run: |
+          pylint app/api/main --rcfile=pylint_conf/.pylintrc --fail-under=8
+          echo "Pylint Passing Rate at: >8"
