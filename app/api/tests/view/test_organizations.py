@@ -391,7 +391,7 @@ def describe_Organizations_Endpoints():
                     client = app.test_client()
                     
                     # Stimulate Test
-                    url = api_url + '/organizations/?populate=sales_orders'
+                    url = api_url + '/organizations/?populate=sales-orders'
                     response = client.get(url)
                     
                     # Assert Response
@@ -400,8 +400,8 @@ def describe_Organizations_Endpoints():
                         CustomResponse(),
                         [],                 # org_ids
                         [],                 # org_types
-                        ['sales_orders'],   # populate
-                        False                # doc
+                        ['sales-orders'],   # populate
+                        False               # doc
                     ]
                     
                     assert args[1] == expected_args[1]
@@ -417,7 +417,7 @@ def describe_Organizations_Endpoints():
                     client = app.test_client()
                     
                     # Stimulate Test
-                    url = api_url + '/organizations/?populate=purchase_orders'
+                    url = api_url + '/organizations/?populate=purchase-orders'
                     response = client.get(url)
                     
                     # Assert Response
@@ -426,7 +426,7 @@ def describe_Organizations_Endpoints():
                         CustomResponse(),
                         [],                     # org_ids
                         [],                     # org_types
-                        ['purchase_orders'],    # populate
+                        ['purchase-orders'],    # populate
                         False                    # doc
                     ]
                     
@@ -521,7 +521,7 @@ def describe_Organizations_Endpoints():
                     client = app.test_client()
                     
                     # Stimulate Test
-                    url = api_url + '/organizations/?populate=facilities&populate=sales_orders'
+                    url = api_url + '/organizations/?populate=facilities&populate=sales-orders'
                     response = client.get(url)
                     
                     # Assert Response
@@ -530,7 +530,7 @@ def describe_Organizations_Endpoints():
                         CustomResponse(),
                         [],                 # org_ids
                         [],                 # org_types
-                        ['facilities','sales_orders'],     # populate
+                        ['facilities','sales-orders'],     # populate
                         False                # doc
                     ]
                     
@@ -547,7 +547,7 @@ def describe_Organizations_Endpoints():
                     client = app.test_client()
                     
                     # Stimulate Test
-                    url = api_url + '/organizations/?populate=facilities&populate=sales_orders&populate=purchase_orders&populate=people&populate=components&populate=products'
+                    url = api_url + '/organizations/?populate=facilities&populate=sales-orders&populate=purchase-orders&populate=people&populate=components&populate=products'
                     response = client.get(url)
                     
                     # Assert Response
@@ -556,7 +556,7 @@ def describe_Organizations_Endpoints():
                         CustomResponse(),
                         [],                 # org_ids
                         [],                 # org_types
-                        ['facilities','sales_orders', 'purchase_orders', 'people', 'components', 'products'],     # populate
+                        ['facilities','sales-orders', 'purchase-orders', 'people', 'components', 'products'],     # populate
                         False                # doc
                     ]
                     
@@ -573,7 +573,7 @@ def describe_Organizations_Endpoints():
                     client = app.test_client()
                     
                     # Stimulate Test
-                    url = api_url + '/organizations/?populate=facilities&populate=Injection&populate=purchase_orders'
+                    url = api_url + '/organizations/?populate=facilities&populate=Injection&populate=purchase-orders'
                     response = client.get(url)
                     
                     # Assert Response
@@ -582,7 +582,7 @@ def describe_Organizations_Endpoints():
                         CustomResponse(),
                         [],                 # org_ids
                         [],                 # org_types
-                        ['facilities', 'purchase_orders'],     # populate
+                        ['facilities', 'purchase-orders'],     # populate
                         False                # doc
                     ]
                     
@@ -733,7 +733,7 @@ def describe_Organizations_Endpoints():
                     client = app.test_client()
                     
                     # Stimulate Test
-                    url = api_url + '/organizations/?org-id=1&org-id=6&org-type=client&org-id=7&populate=facilities&doc=true&org-type=supplier&populate=purchase_orders'
+                    url = api_url + '/organizations/?org-id=1&org-id=6&org-type=client&org-id=7&populate=facilities&doc=true&org-type=supplier&populate=purchase-orders'
                     response = client.get(url)
                     
                     # Assert Response
@@ -742,7 +742,7 @@ def describe_Organizations_Endpoints():
                         CustomResponse(),
                         [1,6,7],             # org_ids
                         ['client', 'supplier'],      # org_types
-                        ['facilities','purchase_orders'],  # populate
+                        ['facilities','purchase-orders'],  # populate
                         True             # doc
                     ]
                     

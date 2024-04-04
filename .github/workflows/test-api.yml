@@ -38,3 +38,16 @@ jobs:
           pip install pytest pytest-cov
       - name: Run Tests
         run: pytest app/api/tests --spec --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+      - name: Check Test Coverage
+        run: |
+          coverage run -m pytest app/api/tests
+          coverage json  --omit */tests/*
+          coverage_percentage=$(jq -r '.totals.percent_covered' coverage.json)
+          if (( $(echo "$coverage_percentage < 80" | bc -l) )); then
+            echo "Coverage is below 80%: $coverage_percentage%"
+            exit 1
+          fi
+          coverage erase
+          rm coverage.json
+      - name: Lint API
+        run: pylint app/api/main --rcfile=app/api/tests/pylintrc.toml

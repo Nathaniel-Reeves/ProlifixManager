@@ -9,18 +9,18 @@ jobs:
     uses: ./.github/workflows/test-client.yml
 
 
-  attempt-build:
+  # attempt-build:
 
-    runs-on: self-hosted
+  #   runs-on: self-hosted
 
-    needs: [
-      unittest-API,
-      unittest-CLIENT
-    ]
+  #   needs: [
+  #     unittest-API,
+  #     unittest-CLIENT
+  #   ]
 
-    steps:
-      - name: Complete Tests
-        run: exit 0
+  #   steps:
+  #     - name: Complete Tests
+  #       run: exit 0
     
     # steps:
     #   - name: Checkout Project
