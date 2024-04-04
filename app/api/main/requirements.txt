@@ -11,5 +11,5 @@ typing-extensions==4.8.0
 # Flask-JWT-Extended==4.5.2
 gunicorn==21.2.0
 redis==5.0.1
-python-dotenv==1.0.1
+python-dotenv==1.0.0
 coverage==7.4.4
