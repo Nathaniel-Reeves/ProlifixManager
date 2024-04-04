@@ -15,6 +15,9 @@ https://testdriven.io/blog/developing-a-single-page-app-with-flask-and-vuejs/
 
 sudo docker compose up --scale server=5 --env-file development_conf.env
 
+# Test Github Actions Locally
+sudo ./act push -P self-hosted=ghcr.io/catthehacker/ubuntu:act-latest
+
 <!-- PROJECT SHIELDS -->
 <!--
 *** I'm using markdown "reference style" links for readability.
