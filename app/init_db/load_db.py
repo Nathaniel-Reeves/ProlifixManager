@@ -389,7 +389,7 @@ def main(force=False, drop_databases=False):
     print("\033[0mConnecting to the database...")
     try:
         session = mariadb.connect(
-            host=DB_HOST,
+            host='192.168.1.136',
             port=int(DB_PORT),
             user=DB_USER,
             password=DB_PASSWORD
