@@ -1,10 +1,10 @@
 from __future__ import annotations
-from typing import List, Optional
+from typing import List
 
-from sqlalchemy import Integer, Enum, ForeignKey, Column
+from sqlalchemy import Enum, ForeignKey, Column
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.ext.mutable import MutableDict
-from sqlalchemy.dialects.mysql import JSON, ENUM
+from sqlalchemy.dialects.mysql import JSON
 
 from .base import Base
 
@@ -12,9 +12,10 @@ import datetime
 
 
 class Product_Master(Base):
+    """Product Master ORM Model"""
     __tablename__ = 'Product_Master'
     __table_args__ = {'schema': 'Products'}
-    
+
     # Table Columns
     product_id: Mapped[int] = mapped_column(primary_key=True)
     organization_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
@@ -55,7 +56,7 @@ class Product_Master(Base):
     certified_us_pharmacopeia: Mapped[bool] = mapped_column(default=False)
     certified_non_gmo: Mapped[bool] = mapped_column(default=False)
     certified_vegan: Mapped[bool] = mapped_column(default=False)
-    
+
     doc = Column(MutableDict.as_mutable(JSON))
 
     # Relationships
@@ -63,11 +64,17 @@ class Product_Master(Base):
     # formulas: Mapped[List["Formula_Master"]] = relationship()
     # lot_numbers: Mapped[List["Lot_Numbers"]] = relationship()
     # items: Mapped[List["Item_id"]] = relationship()
-    
+
     def __repr__(self):
+        """Return a string representation of Object"""
         return f'<Product_Master id:{self.product_id} org_id:{self.organization_id} {self.product_name}>'
-    
+
     def to_dict(self):
+        """Converts Data to Dictionary representation
+
+        Returns:
+            Dict: Columns as Keys
+        """
         return {
             'product_id': self.product_id,
             'organization_id': self.organization_id,
@@ -90,32 +97,41 @@ class Product_Master(Base):
             'certified_vegan': self.certified_vegan,
             'doc': self.doc
         }
-    
+
     def get_id(self):
+        """Get Row Id"""
         return self.product_id
 
     def get_id_name(self):
+        """Get Primary ID Column Name"""
         return "product_id"
-    
+
 class Materials(Base):
+    """Materials ORM Model"""
     __tablename__ = 'Materials'
     __table_args__ = {'schema': 'Products'}
-    
+
     # Table Columns
     material_id: Mapped[int] = mapped_column(primary_key=True)
     material_qty_per_unit: Mapped[float] = mapped_column(default=0.0)
     current_default_component: Mapped[bool] = mapped_column(default=False)
     component_list_version: Mapped[int] = mapped_column(default=0)
     date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    
+
     # Relationships
     component_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'))
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
-    
+
     def __repr__(self):
+        """Return a string representation of Object"""
         return f'<Components id:{self.component_id} date_entered:{self.date_entered}>'
-    
+
     def to_dict(self):
+        """Converts Data to Dictionary representation
+
+        Returns:
+            Dict: Columns as Keys
+        """
         return {
           'material_id': self.material_id,
           'material_qty_per_unit': self.material_qty_per_unit,
@@ -125,38 +141,40 @@ class Materials(Base):
             'component_id': self.component_id,
             'product_id': self.product_id
         }
-    
+
     def get_id(self):
+        """Get Row Id"""
         return self.component_id
-    
+
     def get_id_name(self):
+        """Get Primary ID Column Name"""
         return "component_id"
 
 class Manufacturing_Process(Base):
+    """Manufacturing Process ORM Model"""
     __tablename__ = 'Manufacturing_Process'
     __table_args__ = {'schema': 'Manufacturing'}
-    
+
     # Table Columns
     process_spec_id: Mapped[int] = mapped_column(primary_key=True)
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
     date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     date_modified: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime)
-    
+
     doc = Column(MutableDict.as_mutable(JSON))
 
     # Relationships
-    
-    def __init__(self, process_spec_id, product_id, date_entered, date_modified, doc):
-        self.process_spec_id = process_spec_id
-        self.product_id = product_id
-        self.date_entered = date_entered
-        self.date_modified = date_modified
-        self.doc = doc
-        
+
     def __repr__(self):
+        """Return a string representation of Object"""
         return f'<Manufacturing_Process id:{self.process_spec_id} product_id:{self.product_id}>'
-    
+
     def to_dict(self):
+        """Converts Data to Dictionary representation
+
+        Returns:
+            Dict: Columns as Keys
+        """
         return {
             'process_spec_id': self.process_spec_id,
             'product_id': self.product_id,
@@ -164,9 +182,11 @@ class Manufacturing_Process(Base):
             'date_modified': self.date_modified,
             'doc': self.doc
         }
-    
+
     def get_id(self):
+        """Get Row Id"""
         return self.process_spec_id
-    
+
     def get_id_name(self):
+        """Get Primary ID Column Name"""
         return "process_spec_id"

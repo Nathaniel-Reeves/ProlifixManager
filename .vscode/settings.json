@@ -1,8 +1,8 @@
 {
-    "python.testing.pytestArgs": [
-        "--spec",
-        "./app/server/tests"
-    ],
+    "python.testing.pytestArgs": ["--spec", "./app/server/tests"],
+    "pylint.args": ["--rcfile=./pylint_conf/.pylintrc"],
+    "pylint.ignorePatterns":["*/tests/*"],
+    "files.trimTrailingWhitespace": true,
     "python.experiments.optInto": ["pythonTestAdapter"],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,

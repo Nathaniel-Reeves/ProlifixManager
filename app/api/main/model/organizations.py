@@ -1,22 +1,23 @@
 from __future__ import annotations
 from typing import List, Optional
 
-from sqlalchemy import Integer, Enum, ForeignKey, Column
+from sqlalchemy import Enum, ForeignKey, Column
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.ext.mutable import MutableDict
-from sqlalchemy.dialects.mysql import JSON, ENUM
+from sqlalchemy.dialects.mysql import JSON
 
 from .base import Base
 
 import datetime
 
 class Organizations(Base):
+    """Organizations ORM Model"""
     __tablename__ = 'Organizations'
     __table_args__ = {'schema': 'Organizations'}
-    
+
     # Primary Key
     organization_id: Mapped[int] = mapped_column(primary_key=True)
-    
+
     # Relationships
     organization_names: Mapped[List["Organization_Names"]] = relationship()
     people: Mapped[Optional["People"]] = relationship()
@@ -39,14 +40,20 @@ class Organizations(Base):
     lab: Mapped[bool] = mapped_column(default=False)
     courier: Mapped[bool] = mapped_column(default=False)
     other: Mapped[bool] = mapped_column(default=False)
-    
+
     doc = Column(MutableDict.as_mutable(JSON))
 
     # Common Methods
     def __repr__(self):
+        """Return a string representation of Object"""
         return f'<Organization {self.organization_id, self.website_url}>'
-    
+
     def to_dict(self):
+        """Converts Data to Dictionary representation
+
+        Returns:
+            Dict: Columns as Keys
+        """
         return {
             'organization_id': self.organization_id,
             'website_url': self.website_url,
@@ -61,33 +68,42 @@ class Organizations(Base):
             'other': self.other,
             'doc': self.doc
         }
-    
+
     def get_id(self):
+        """Get Row Id"""
         return self.organization_id
-    
+
     def get_id_name(self):
+        """Get Primary ID Column Name"""
         return "organization_id"
 
 class Organization_Names(Base):
+    """Organization Names ORM Model"""
     __tablename__ = 'Organization_Names'
     __table_args__ = {'schema': 'Organizations'}
-    
+
     # Primary Key
     name_id: Mapped[int] = mapped_column(primary_key=True)
-    
+
     # Relationships
     organization_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
-    
+
     # Table Columns
     organization_name: Mapped[str] = mapped_column(default=None)
     organization_initial: Mapped[str] = mapped_column(default=None)
     primary_name: Mapped[bool] = mapped_column(default=False)
-    
+
     # Common Methods
     def __repr__(self):
+        """Return a string representation of Object"""
         return f'<Organization_Name {self.name_id}, {self.organization_id}, {self.organization_name}>'
-    
+
     def to_dict(self):
+        """Converts Data to Dictionary representation
+
+        Returns:
+            Dict: Columns as Keys
+        """
         return {
             'name_id': self.name_id,
             'organization_id': self.organization_id,
@@ -95,26 +111,29 @@ class Organization_Names(Base):
             'organization_initial': self.organization_initial,
             'primary_name': self.primary_name
         }
-    
+
     def get_id(self):
+        """Get Row Id"""
         return self.name_id
-    
+
     def get_id_name(self):
+        """Get Primary ID Column Name"""
         return "name_id"
 
 class People(Base):
+    """People ORM Model"""
     __tablename__ = 'People'
     __table_args__ = {'schema': 'Organizations'}
-    
+
     # Primary Key
     person_id: Mapped[int] = mapped_column(primary_key=True)
-    
+
     # Relationships
     organization_id: Mapped[int] = mapped_column(
             ForeignKey('Organizations.Organizations.organization_id')
         )
     # user_id: Mapped[int] = mapped_column(ForeignKey('Organization.Users.user_id'))
-    
+
     # Table Columns
     first_name: Mapped[str] = mapped_column(default=None)
     last_name: Mapped[str] = mapped_column(default=None)
@@ -130,12 +149,18 @@ class People(Base):
     contract_date: Mapped[datetime.datetime] = mapped_column()
     termination_date: Mapped[datetime.datetime] = mapped_column()
     clock_number: Mapped[str] = mapped_column(default=None)
-    
+
     # Common Methods
     def __repr__(self):
+        """Return a string representation of Object"""
         return f'<Person {self.person_id}, {self.first_name}, {self.last_name}>'
-    
+
     def to_dict(self):
+        """Converts Data to Dictionary representation
+
+        Returns:
+            Dict: Columns as Keys
+        """
         return {
             'person_id': self.person_id,
             'organization_id': self.organization_id,
@@ -153,27 +178,30 @@ class People(Base):
             'termination_date': self.termination_date,
             'clock_number': self.clock_number
         }
-    
+
     def get_id(self):
+        """Get Row Id"""
         return self.person_id
-    
+
     def get_id_name(self):
         return "person_id"
-    
+
     # Table Specific Methods
     def getName(self):
+        """Get Primary ID Column Name"""
         return f'{self.first_name} {self.last_name}'
 
 class Users(Base):
+    """Users ORM Model"""
     __tablename__ = 'Users'
     __table_args__ = {'schema': 'Organizations'}
-    
+
     # Primary Key
     user_id: Mapped[int] = mapped_column(primary_key=True)
-    
+
     # Relationships
     person_id: Mapped[int] = mapped_column(ForeignKey('People.People.person_id'))
-    
+
     # Table Columns
     username: Mapped[str] = mapped_column(default=None)
     encrypted_password: Mapped[str] = mapped_column(default=None)
@@ -185,14 +213,20 @@ class Users(Base):
             create_constraint=True,
             validate_strings=True,
         ))
-    
+
     doc = Column(MutableDict.as_mutable(JSON))
-    
+
     # Common Methods
     def __repr__(self):
+        """Return a string representation of Object"""
         return f'<User {self.user_id}, {self.username}>'
-    
+
     def to_dict(self):
+        """Converts Data to Dictionary representation
+
+        Returns:
+            Dict: Columns as Keys
+        """
         return {
             'user_id': self.user_id,
             'person_id': self.person_id,
@@ -202,25 +236,28 @@ class Users(Base):
             'color_theme': self.color_theme,
             'doc': self.doc
         }
-    
+
     def get_id(self):
+        """Get Row Id"""
         return self.user_id
-    
+
     def get_id_name(self):
+        """Get Primary ID Column Name"""
         return "user_id"
 
 class Facilities(Base):
+    """Facilities ORM Model"""
     __tablename__ = 'Facilities'
     __table_args__ = {'schema': 'Organizations'}
-    
+
     # Primary Key
     facility_id: Mapped[int] = mapped_column(primary_key=True)
-    
+
     # Relationships
     organization_id: Mapped[int] = mapped_column(
             ForeignKey('Organizations.Organizations.organization_id')
         )
-    
+
     # Table Columns
     BuildingTypes = ("Head_Office", "Office", "Distribution_Warehouse", "Manufacture_Facility", "Storefront")
     building_type: Mapped[int] = mapped_column(Enum(
@@ -257,11 +294,17 @@ class Facilities(Base):
     ))
     ship_time_in_days: Mapped[int] = mapped_column()
     notes: Mapped[str] = mapped_column()
-        
+
     def __repr__(self):
+        """Return a string representation of Object"""
         return f'<Facility {self.facility_id}, {self.building_name}, {self.country}, {self.governing_district}, {self.city_town}>'
-    
+
     def to_dict(self):
+        """Converts Data to Dictionary representation
+
+        Returns:
+            Dict: Columns as Keys
+        """
         return {
             'facility_id': self.facility_id,
             'organization_id': self.organization_id,
@@ -289,9 +332,11 @@ class Facilities(Base):
             'ship_time_in_days': self.ship_time_in_days,
             'notes': self.notes
         }
-    
+
     def get_id(self):
+        """Get Row Id"""
         return self.facility_id
 
     def get_id_name(self):
+        """Get Primary ID Column Name"""
         return "facility_id"

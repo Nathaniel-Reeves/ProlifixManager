@@ -1,10 +1,9 @@
 from __future__ import annotations
-from typing import List, Optional
+from typing import List
 
-from sqlalchemy import Integer, Enum, ForeignKey, Column
+from sqlalchemy import Enum, ForeignKey, Column
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.ext.mutable import MutableDict
-from sqlalchemy.dialects.mysql import JSON, ENUM
+from sqlalchemy.dialects.mysql import JSON
 
 from .base import Base
 
@@ -12,12 +11,13 @@ import datetime
 
 
 class Components(Base):
+    """Components ORM Model"""
     __tablename__ = 'Components'
     __table_args__ = {'schema': 'Inventory'}
-    
+
     # Primary Key
     component_id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    
+
     # Relationsips
     item_id: Mapped[List["Item_id"]] = relationship()
     brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
@@ -26,7 +26,7 @@ class Components(Base):
     # purchase_order_detail: Mapped[List["Purchase_Order_Detail"]] = relationship()
     # formula_master: Mapped[List["Formula_Master"]] = relationship()
     # components: Mapped[List["Materials"]] = relationship()
-    
+
     # Table Columns
     ComponentTypes = ("powder", "liquid", "container", "pouch", "shrink_band", "lid", "label", "capsule", "misc", "scoop", "desiccant", "box", "carton", "packaging_material")
     component_type: Mapped[int] = mapped_column(Enum(
@@ -51,14 +51,20 @@ class Components(Base):
         create_constraint=True,
         validate_strings=True,
         ))
-    
+
     doc = Column(JSON, default={})
-    
+
     # Common Methods
     def __repr__(self):
+        """Return a string representation of Object"""
         return f'<Inventory.Component component_id:{self.component_id} {self.component_type} brand:{self.brand_id}>'
-    
+
     def to_dict(self):
+        """Converts Data to Dictionary representation
+
+        Returns:
+            Dict: Columns as Keys
+        """
         return {
             "component_id": self.component_id,
             "component_type": self.component_type,
@@ -74,33 +80,42 @@ class Components(Base):
             "units": self.units,
             "doc": self.doc
         }
-    
+
     def get_id(self):
+        """Get Row Id"""
         return self.component_id
-    
+
     def get_id_name(self):
+        """Get Primary ID Column Name"""
         return "component_id"
 
 class Component_Names(Base):
+    """Component Names ORM Model"""
     __tablename__ = 'Component_Names'
     __table_args__ = {'schema': 'Inventory'}
-    
+
     # Primary Key
     name_id: Mapped[int] = mapped_column(primary_key=True)
-    
+
     # Relationships
     component_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'))
-    
+
     # Table Columns
     component_name: Mapped[str] = mapped_column()
     primary_name: Mapped[bool] = mapped_column(default=False)
     botanical_name: Mapped[bool] = mapped_column(default=False)
-    
-    # Common Methods   
+
+    # Common Methods
     def __repr__(self):
+        """Return a string representation of Object"""
         return f'<Inventory.Component_Names name_id:{self.name_id} component_id:{self.component_id} Component_name:{self.component_name}>'
-    
+
     def to_dict(self):
+        """Converts Data to Dictionary representation
+
+        Returns:
+            Dict: Columns as Keys
+        """
         return {
             "name_id": self.name_id,
             "component_id": self.component_id,
@@ -108,57 +123,69 @@ class Component_Names(Base):
             "primary_name": self.primary_name,
             "botanical_name": self.botanical_name
         }
-    
+
     def get_id(self):
+        """Get Row Id"""
         return self.name_id
-    
+
     def get_id_name(self):
+        """Get Primary ID Column Name"""
         return "name_id"
 
 class Item_id(Base):
+    """Item ID ORM Model"""
     __tablename__ = 'Item_id'
     __table_args__ = {'schema': 'Inventory'}
-    
+
     # Primary Key
     item_id: Mapped[int] = mapped_column(primary_key=True)
-    
+
     # Relationships
     component_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'))
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
     inventory: Mapped[List["Inventory"]] = relationship()
-    
+
     # Table Columns
-    
+
     # Common Methods
     def __repr__(self):
+        """Return a string representation of Object"""
         return f'<Inventory.Item_id item_id:{self.item_id} component_id:{self.component_id} product_id:{self.product_id}>'
-    
+
     def to_dict(self):
+        """Converts Data to Dictionary representation
+
+        Returns:
+            Dict: Columns as Keys
+        """
         return {
             "item_id": self.item_id,
             "component_id": self.component_id,
             "product_id": self.product_id
         }
-        
+
     def get_id(self):
+        """Get Row Id"""
         return self.item_id
-    
+
     def get_id_name(self):
+        """Get Primary ID Column Name"""
         return "item_id"
-    
+
 class Inventory(Base):
+    """Inventory ORM Model"""
     __tablename__ = 'Inventory'
     __table_args__ = {'schema': 'Inventory'}
-    
+
     # Primary Key
     inv_id: Mapped[int] = mapped_column(primary_key=True)
-    
+
     # Relationships
     item_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Item_id.item_id'), primary_key=True)
     owner_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'), primary_key=True)
     recent_cycle_count_id: Mapped[int] = mapped_column(default=0)
     inventory_log: Mapped[List["Inventory_Log"]] = relationship()
-    
+
     # Table Columns
     is_component: Mapped[bool] = mapped_column(default=False)
     is_product: Mapped[bool] = mapped_column(default=False)
@@ -167,9 +194,15 @@ class Inventory(Base):
 
     # Common Methods
     def __repr__(self):
+        """Return a string representation of Object"""
         return f'<Inventory.Inventory inv_id:{self.inv_id} item_id:{self.item_id} actual_inv:{self.actual_inventory} theoretical_inv:{self.theoretical_inventory}>'
-    
+
     def to_dict(self):
+        """Converts Data to Dictionary representation
+
+        Returns:
+            Dict: Columns as Keys
+        """
         return {
             "inv_id": self.inv_id,
             "item_id": self.item_id,
@@ -180,20 +213,23 @@ class Inventory(Base):
             "actual_inventory": self.actual_inventory,
             "theoretical_inventory": self.theoretical_inventory
         }
-        
+
     def get_id(self):
+        """Get Row Id"""
         return self.inv_id
-    
+
     def get_id_name(self):
+        """Get Primary ID Column Name"""
         return "inv_id"
 
 class Inventory_Log(Base):
+    """Inventory Log ORM Model"""
     __tablename__ = 'Inventory_Log'
     __table_args__ = {'schema': 'Inventory'}
-    
+
     # Primary Key
     log_id: Mapped[int] = mapped_column(primary_key=True)
-    
+
     # Relationships
     inv_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Inventory.inv_id'))
     courier_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
@@ -202,7 +238,7 @@ class Inventory_Log(Base):
     po_detail_id: Mapped[int] = mapped_column(ForeignKey('Orders.Purchase_Order_Detail.po_detail_id'))
     so_detail_id: Mapped[int] = mapped_column(ForeignKey('Orders.Sale_Order_Detail.so_detail_id'))
     previous_log_id: Mapped[int] = mapped_column(default=None)
-    
+
     # Table Columns
     pre_change_actual_inventory: Mapped[float] = mapped_column(default=0.0)
     post_change_actual_inventory: Mapped[float] = mapped_column(default=0.0)
@@ -222,14 +258,20 @@ class Inventory_Log(Base):
         validate_strings=True,
         ))
     state_notes: Mapped[str] = mapped_column(default=None)
-    
+
     doc = Column(JSON, nullable=True)
-    
+
     # Common Methods
     def __repr__(self):
+        """Return a string representation of Object"""
         return f'<Inventory_Log log_id:{self.log_id} inv_id:{self.inv_id} state:{self.state}>'
-    
+
     def to_dict(self):
+        """Converts Data to Dictionary representation
+
+        Returns:
+            Dict: Columns as Keys
+        """
         return {
             "log_id": self.log_id,
             "inv_id": self.inv_id,
@@ -253,11 +295,11 @@ class Inventory_Log(Base):
             "state_notes": self.state_notes,
             "doc": self.doc
         }
-        
+
     def get_id(self):
+        """Get Row Id"""
         return self.log_id
-    
+
     def get_id_name(self):
+        """Get Primary ID Column Name"""
         return "log_id"
-        
-    

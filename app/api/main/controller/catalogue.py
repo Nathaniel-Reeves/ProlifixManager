@@ -7,7 +7,6 @@ from sqlalchemy import select, insert, update, delete
 from view.response import (
     VariantType,
     FlashMessage,
-    CustomResponse,
     error_message
 )
 import model as db
@@ -24,10 +23,10 @@ def get_components(
         populate,
         doc
     ):
-    
+
     # Build the query
     tables = [db.Components, db.Component_Names]
-    
+
     if 'product_materials' in populate:
         tables.append(db.Materials)
     if 'purchase_order_detail' in populate:
@@ -43,10 +42,10 @@ def get_components(
     if 'brand' in populate:
         tables.append(db.Organizations)
         tables.append(db.Organization_Names)
-        
+
     stm = select(*tables) \
         .join(db.Component_Names, isouter=True)
-    
+
     if 'product_materials' in populate:
         stm = stm.join(db.Materials, db.Components.component_id == db.Materials.component_id, isouter=True)
     if 'purchase_order_detail' in populate:
@@ -62,18 +61,18 @@ def get_components(
     if 'brand' in populate:
         stm = stm.join(db.Organizations, db.Components.brand_id == db.Organizations.organization_id, isouter=True)
         stm = stm.join(db.Organization_Names, db.Organizations.organization_id == db.Organization_Names.organization_id, isouter=True)
-        
+
     # stm = stm.where(db.Component_Names.primary_name == True)
-    
+
     if component_ids:
         stm = stm.where(db.Components.component_id.in_(component_ids))
-        
+
     if brand_ids:
         stm = stm.where(db.Components.brand_id.in_(brand_ids))
-    
+
     if component_types:
         stm = stm.where(db.Components.component_type.in_(component_types))
-    
+
     if certifications:
         if 'usda_organic' in certifications:
             stm = stm.where(db.Components.certified_usda_organic == True)
@@ -91,7 +90,7 @@ def get_components(
             stm = stm.where(db.Components.certified_non_gmo == True)
         if 'vegan' in certifications:
             stm = stm.where(db.Components.certified_vegan == True)
-    
+
     # Connect to the database
     try:
         session = get_session()
@@ -100,7 +99,7 @@ def get_components(
         custom_response.insert_flash_message(error)
         custom_response.set_status_code(500)
         return custom_response
-        
+
     # Execute the query
     try:
         stream = session.execute(stm)
@@ -110,7 +109,7 @@ def get_components(
         custom_response.insert_flash_message(error)
         custom_response.set_status_code(400)
         return custom_response
-    
+
     session.close()
     # Process and Package the data
     data, custom_response = package_data(raw_data, doc, custom_response)
@@ -121,7 +120,7 @@ def post_component(
         custom_response,
         component
     ):
-    
+
     # Connect to the database
     try:
         session = get_session()
@@ -130,12 +129,12 @@ def post_component(
         custom_response.insert_flash_message(error)
         custom_response.set_status_code(500)
         return custom_response
-        
+
     try:
-        
+
         # Save Files if Any
         new_component = save_files(component, session)
-        
+
         # Insert Component in Components Table
         stream = session.execute(
             insert(db.Components).returning(db.Components),
@@ -144,7 +143,7 @@ def post_component(
         raw_data = stream.all()
         new_component_id = raw_data[0][0].get_id()
         new_component["component_id"] = new_component_id
-        
+
         # Insert new component_id in Items Table
         stream = session.execute(
             insert(db.Item_id).returning(db.Item_id),
@@ -152,7 +151,7 @@ def post_component(
         )
         raw_data = stream.all()
         new_item_id = raw_data[0][0].get_id()
-        
+
         # Insert Component_Names in Component_Names Table
         for name in new_component["Component_Names"]:
             name["component_id"] = new_component_id
@@ -162,22 +161,22 @@ def post_component(
             )
             raw_data = stream.all()
             name["name_id"] = raw_data[0][0].get_id()
-        
+
         session.commit()
-    except Exception as e:
+    except Exception:
         error = error_message()
         custom_response.insert_flash_message(error)
         custom_response.set_status_code(400)
         session.rollback()
         return custom_response
-    
+
     session.close()
-    
+
     # Process and Package the data
     custom_response.insert_data(new_component)
     custom_response.set_status_code(201)
     flash_message = FlashMessage(
-        variant=VariantType.SUCCESS, 
+        variant=VariantType.SUCCESS,
         title="Success",
         message="Component Added Successfully"
     )
@@ -198,10 +197,10 @@ def put_component(
         return custom_response
 
     try:
-        
+
         # Save Files if Any
         update_component = save_files(component, session)
-        
+
         # Update Component Names
         component_names = json.loads(update_component.pop("Component_Names"))
         stream = session.execute(
@@ -219,7 +218,7 @@ def put_component(
                 delete(db.Component_Names)
                 .where(db.Component_Names.component_id == update_component["component_id"])
             )
-            
+
             # Add New Component Names
             for name in component_names:
                 name["name_id"] = None
@@ -227,31 +226,31 @@ def put_component(
                 insert(db.Component_Names)
                 .values(component_names)
             )
-        
+
         # Update Component Data
         session.execute(
             update(db.Components)
             .where(db.Components.component_id == update_component["component_id"])
             .values(update_component)
         )
-        
-        
+
+
         session.commit()
-    except Exception as e:
+    except Exception:
         error = error_message()
         custom_response.insert_flash_message(error)
         custom_response.set_status_code(400)
         session.rollback()
         return custom_response
-    
+
     session.close()
-    
+
     # Process and Package the data
     custom_response.insert_data(update_component)
     custom_response.set_status_code(201)
     flash_message = FlashMessage(
         variant=VariantType.SUCCESS,
-        title="Changes Saved!", 
+        title="Changes Saved!",
         message="Component Updated Successfully"
     )
     custom_response.insert_flash_message(flash_message)

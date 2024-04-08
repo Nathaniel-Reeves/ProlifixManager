@@ -2,9 +2,6 @@
 Package Data Gathered from Controlers through the Models.
 """
 from view.response import (
-    VariantType,
-    FlashMessage,
-    CustomResponse,
     error_message
 )
 
@@ -26,23 +23,23 @@ def package_data(raw_data, doc, custom_response):
         data = {}
         for i, row in enumerate(raw_data):
             parent_key = row[0].get_id()
-            
+
             if i == 0 or parent_key != raw_data[i - 1][0].get_id():
                 d = row[0].to_dict()
                 if not doc and ("doc" in list(d.keys())):
                     d["doc"] = {}
                 data[parent_key] = d
-            
+
             if len(row) > 1:
                 for j, table in enumerate(row, 0):
                     if j == 0:
                         continue
-                    if table == None:
+                    if table is None:
                         continue
 
                     if table.__tablename__ not in data[parent_key]:
                         data[parent_key][table.__tablename__] = []
-                        
+
                     entered_keys = []
                     for d in data[parent_key][table.__tablename__]:
                         if isinstance(table.get_id(), int):
@@ -55,7 +52,7 @@ def package_data(raw_data, doc, custom_response):
                                 d["sec_number"],
                                 d["suffix"]
                             ))
-                            
+
                     if table.get_id() not in entered_keys:
                         d = table.to_dict()
                         if not doc and ("doc" in list(d.keys())):

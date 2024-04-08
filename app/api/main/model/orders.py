@@ -1,31 +1,32 @@
 from __future__ import annotations
-from typing import List, Optional
+from typing import List
 
-from sqlalchemy import Integer, Enum, ForeignKey, Column, ForeignKeyConstraint
+from sqlalchemy import Enum, ForeignKey, Column, ForeignKeyConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.ext.mutable import MutableDict
-from sqlalchemy.dialects.mysql import JSON, ENUM
+from sqlalchemy.dialects.mysql import JSON
 
 from .base import Base
 
 import datetime
 
 class Sales_Orders(Base):
+    """Sales Orders ORM Model"""
     __tablename__ = 'Sales_Orders'
     __table_args__ = {'schema': 'Orders'}
-    
+
     # Primary Key
     prefix: Mapped[str] = mapped_column(primary_key=True)
     year: Mapped[int] = mapped_column(primary_key=True)
     month: Mapped[int] = mapped_column(primary_key=True)
     sec_number: Mapped[int] = mapped_column(primary_key=True)
     suffix: Mapped[str] = mapped_column(primary_key=True)
-    
+
     # Relationships
     organization_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
     sales_orders_payments: Mapped[List["Sales_Orders_Payments"]] = relationship()
     sale_order_detail: Mapped[List["Sale_Order_Detail"]] = relationship()
-    
+
     # Table Columns
     client_po_num: Mapped[str] = mapped_column(default=None)
     order_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
@@ -37,14 +38,20 @@ class Sales_Orders(Base):
     down_payment_actual: Mapped[float] = mapped_column(default=None)
     theoretical_po_amount: Mapped[float] = mapped_column(default=None)
     total_paid: Mapped[float] = mapped_column(default=None)
-    
+
     doc = Column(MutableDict.as_mutable(JSON))
-    
+
     # Common Methods
     def __repr__(self):
+        """Return a string representation of Object"""
         return f'<Sales_Order SO#{self.prefix}{self.year}~{self.month}~{self.sec_number}{self.suffix}>'
-    
+
     def to_dict(self):
+        """Converts Data to Dictionary representation
+
+        Returns:
+            Dict: Columns as Keys
+        """
         return {
             'prefix': self.prefix,
             'year': self.year,
@@ -64,11 +71,13 @@ class Sales_Orders(Base):
             'total_paid': self.total_paid,
             'doc': self.doc
         }
-    
+
     def get_id(self):
+        """Get Row Id"""
         return str(self.prefix) + str(self.year) + str(self.month) + str(self.sec_number)
-    
+
     def get_id_name(self):
+        """Get Primary ID Column Name"""
         return (
             "prefix",
             "year",
@@ -78,33 +87,34 @@ class Sales_Orders(Base):
         )
 
 class Sale_Order_Detail(Base):
+    """Sale Order Detail ORM Model"""
     __tablename__ = 'Sale_Order_Detail'
     __table_args__ = {'schema': 'Orders'}
-    
+
     # Primary Key
     so_detail_id: Mapped[int] = mapped_column(primary_key=True)
-    
+
     # Relationships
     prefix: Mapped[str] = mapped_column(nullable=False)
     year: Mapped[int] = mapped_column(nullable=False)
     month: Mapped[int] = mapped_column(nullable=False)
     sec_number: Mapped[int] = mapped_column(nullable=False)
     suffix: Mapped[str] = mapped_column(nullable=False)
-    fk_constraint = ForeignKeyConstraint( 
+    fk_constraint = ForeignKeyConstraint(
                     [
-                        prefix, 
-                        year, 
-                        month, 
+                        prefix,
+                        year,
+                        month,
                         sec_number,
                         suffix
-                    ], 
+                    ],
                     [
-                        "Orders.Sales_Orders.prefix", 
-                        "Orders.Sales_Orders.year", 
-                        "Orders.Sales_Orders.month", 
+                        "Orders.Sales_Orders.prefix",
+                        "Orders.Sales_Orders.year",
+                        "Orders.Sales_Orders.month",
                         "Orders.Sales_Orders.sec_number",
                         "Orders.Sales_Orders.suffix"
-                    ], 
+                    ],
                     name="Sales_Order_Number_fk"
                 )
     __table_args__ = (fk_constraint, {
@@ -112,7 +122,7 @@ class Sale_Order_Detail(Base):
     })
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
     lot_numbers: Mapped[List["Lot_Numbers"]] = relationship()
-    
+
     # Table Columns
     unit_order_qty: Mapped[int] = mapped_column(default=None)
     kilos_order_qty: Mapped[float] = mapped_column(default=None)
@@ -120,14 +130,20 @@ class Sale_Order_Detail(Base):
     date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     bit_price_per_unit: Mapped[float] = mapped_column(default=None)
     final_ship_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime)
-    
+
     doc = Column(MutableDict.as_mutable(JSON))
-    
+
     # Common Methods
     def __repr__(self):
+        """Return a string representation of Object"""
         return f'<Sales_Order_Detail SO#{self.prefix}{self.year}~{self.month}~{self.sec_number} Product_id:{self.product_id} Qty:{self.unit_order_qty}{self.kilos_order_qty}{self.suffix}>'
-    
+
     def to_dict(self):
+        """Converts Data to Dictionary representation
+
+        Returns:
+            Dict: Columns as Keys
+        """
         return {
             'prefix': self.prefix,
             'year': self.year,
@@ -143,47 +159,50 @@ class Sale_Order_Detail(Base):
             'final_ship_date': self.final_ship_date,
             'doc': self.doc
         }
-    
+
     def get_id(self):
+        """Get Row Id"""
         return self.so_detail_id
-    
+
     def get_id_name(self):
+        """Get Primary ID Column Name"""
         return "so_detail_id"
-    
+
 class Sales_Orders_Payments(Base):
+    """Sales Orders Payments ORM Model"""
     __tablename__ = 'Sales_Order_Payments'
     __table_args__ = {'schema': 'Orders'}
-    
+
     # Primay Key
     payment_id: Mapped[int] = mapped_column(primary_key=True)
-    
+
     # Relationships
     prefix: Mapped[str] = mapped_column(nullable=False)
     year: Mapped[int] = mapped_column(nullable=False)
     month: Mapped[int] = mapped_column(nullable=False)
     sec_number: Mapped[int] = mapped_column(nullable=False)
     suffix: Mapped[str] = mapped_column(nullable=False)
-    fk_constraint = ForeignKeyConstraint( 
+    fk_constraint = ForeignKeyConstraint(
                     [
-                        prefix, 
-                        year, 
-                        month, 
+                        prefix,
+                        year,
+                        month,
                         sec_number,
                         suffix
-                    ], 
+                    ],
                     [
-                        "Orders.Sales_Orders.prefix", 
-                        "Orders.Sales_Orders.year", 
-                        "Orders.Sales_Orders.month", 
+                        "Orders.Sales_Orders.prefix",
+                        "Orders.Sales_Orders.year",
+                        "Orders.Sales_Orders.month",
                         "Orders.Sales_Orders.sec_number",
                         "Orders.Sales_Orders.suffix"
-                    ], 
+                    ],
                     name="Sales_Order_Number_fk"
                 )
     __table_args__ = (fk_constraint, {
         'schema': 'Orders'
     })
-    
+
     # Table Columns
     payment_amount: Mapped[float] = mapped_column(default=None)
     PaymentTypes = ("down_payment", "other", "final_payment")
@@ -194,14 +213,20 @@ class Sales_Orders_Payments(Base):
         validate_strings=True,
         ))
     date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    
+
     doc = Column(MutableDict.as_mutable(JSON))
-    
+
     # Common Methods
     def __repr__(self):
+        """Return a string representation of Object"""
         return f'<Sales_Order_Payments SO#{self.prefix}{self.year}~{self.month}~{self.sec_number} Type:{self.payment_type} Amount:{self.payment_amount}{self.suffix}>'
-    
+
     def to_dict(self):
+        """Converts Data to Dictionary representation
+
+        Returns:
+            Dict: Columns as Keys
+        """
         return {
             'prefix': self.prefix,
             'year': self.year,
@@ -213,28 +238,31 @@ class Sales_Orders_Payments(Base):
             'date_entered': self.date_entered,
             'doc': self.doc
         }
-    
+
     def get_id(self):
+        """Get Row Id"""
         return self.payment_id
-    
+
     def get_id_name(self):
+        """Get Primary ID Column Name"""
         return "payment_id"
-    
+
 class Lot_Numbers(Base):
+    """Lot Numbers ORM Model"""
     __tablename__ = 'Lot_Numbers'
     __table_args__ = {'schema': 'Orders'}
-    
+
     # Primary Key
     prefix: Mapped[str] = mapped_column(primary_key=True)
     year: Mapped[int] = mapped_column(primary_key=True)
     month: Mapped[int] = mapped_column(primary_key=True)
     sec_number: Mapped[int] = mapped_column(primary_key=True)
     suffix: Mapped[str] = mapped_column(primary_key=True)
-    
+
     # Relationships
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
     so_detail_id: Mapped[int] = mapped_column(ForeignKey('Orders.Sale_Order_Detail.so_detail_id'))
-    
+
     # Table Columns
     target_unit_yield: Mapped[int] = mapped_column(default=None)
     actual_unit_yield: Mapped[int] = mapped_column(default=None)
@@ -251,14 +279,20 @@ class Lot_Numbers(Base):
         create_constraint=True,
         validate_strings=True,
         ))
-    
+
     doc = Column(MutableDict.as_mutable(JSON))
-    
+
     # Common Methods
     def __repr__(self):
+        """Return a string representation of Object"""
         return f'<Lot_Numbers Lot#:{self.prefix} {self.year}{self.month}{self.sec_number} {self.suffix} Product_id:{self.product_id} >'
-    
+
     def to_dict(self):
+        """Converts Data to Dictionary representation
+
+        Returns:
+            Dict: Columns as Keys
+        """
         return {
             'prefix': self.prefix,
             'year': self.year,
@@ -277,11 +311,13 @@ class Lot_Numbers(Base):
             'exp_type': self.exp_type,
             'doc': self.doc
         }
-    
+
     def get_id(self):
+        """Get Row Id"""
         return str(self.prefix) + str(self.year) + str(self.month) + str(self.sec_number)
-    
+
     def get_id_name(self):
+        """Get Primary ID Column Name"""
         return (
             "prefix",
             "year",
@@ -291,33 +327,40 @@ class Lot_Numbers(Base):
         )
 
 class Purchase_Orders(Base):
+    """Purchase Orders ORM Model"""
     __tablename__ = 'Purchase_Orders'
     __table_args__ = {'schema': 'Orders'}
-    
+
     # Primary Key
     prefix: Mapped[str] = mapped_column(primary_key=True)
     year: Mapped[int] = mapped_column(primary_key=True)
     month: Mapped[int] = mapped_column(primary_key=True)
     sec_number: Mapped[int] = mapped_column(primary_key=True)
     suffix: Mapped[str] = mapped_column(primary_key=True)
-    
+
     # Relationships
     organization_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
     purchase_order_details: Mapped[List["Purchase_Order_Detail"]] = relationship()
-    
+
     # Table Columns
     supplier_so_num: Mapped[str] = mapped_column(default=None)
     order_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     eta_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime)
     date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    
+
     doc = Column(MutableDict.as_mutable(JSON))
 
     # Common Methods
     def __repr__(self):
+        """Return a string representation of Object"""
         return f'<Purchase_Orders PO#:{self.prefix} {self.year}{self.month}{self.sec_number} >'
-    
+
     def to_dict(self):
+        """Converts Data to Dictionary representation
+
+        Returns:
+            Dict: Columns as Keys
+        """
         return {
             'prefix': self.prefix,
             'year': self.year,
@@ -330,11 +373,13 @@ class Purchase_Orders(Base):
             'date_entered': self.date_entered,
             'doc': self.doc
         }
-    
+
     def get_id(self):
+        """Get Row Id"""
         return str(self.prefix) + str(self.year) + str(self.month) + str(self.sec_number)
-    
+
     def get_id_name(self):
+        """Get Primary ID Column Name"""
         return (
             "prefix",
             "year",
@@ -343,12 +388,13 @@ class Purchase_Orders(Base):
         )
 
 class Purchase_Order_Detail(Base):
+    """Purchase Order Detail ORM Model"""
     __tablename__ = 'Purchase_Order_Detail'
     __table_args__ = {'schema': 'Orders'}
-    
+
     # Primary Key
     po_detail_id: Mapped[int] = mapped_column(primary_key=True)
-    
+
     # Relationships
     po_detail_id: Mapped[int] = mapped_column(primary_key=True)
     prefix: Mapped[str] = mapped_column(nullable=False)
@@ -356,19 +402,19 @@ class Purchase_Order_Detail(Base):
     month: Mapped[int] = mapped_column(nullable=False)
     suffix: Mapped[str] = mapped_column(nullable=False)
     sec_number: Mapped[int] = mapped_column(nullable=False)
-    fk_constraint = ForeignKeyConstraint( 
+    fk_constraint = ForeignKeyConstraint(
                     [
-                        prefix, 
-                        year, 
-                        month, 
+                        prefix,
+                        year,
+                        month,
                         sec_number
-                    ], 
+                    ],
                     [
-                        "Orders.Purchase_Orders.prefix", 
-                        "Orders.Purchase_Orders.year", 
-                        "Orders.Purchase_Orders.month", 
+                        "Orders.Purchase_Orders.prefix",
+                        "Orders.Purchase_Orders.year",
+                        "Orders.Purchase_Orders.month",
                         "Orders.Purchase_Orders.sec_number"
-                    ], 
+                    ],
                     name="Purchase_Order_Number_fk"
                 )
     __table_args__ = (fk_constraint, {
@@ -383,14 +429,20 @@ class Purchase_Order_Detail(Base):
     date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     bid_price_per_unit: Mapped[float] = mapped_column(default=None)
     bid_price_per_kilo: Mapped[float] = mapped_column(default=None)
-    
+
     doc = Column(MutableDict.as_mutable(JSON))
 
-    # Common Methods    
+    # Common Methods
     def __repr__(self):
+        """Return a string representation of Object"""
         return f'<Purchase_Order_Detail PO#:{self.prefix} {self.year}{self.month}{self.sec_number} >'
-    
+
     def to_dict(self):
+        """Converts Data to Dictionary representation
+
+        Returns:
+            Dict: Columns as Keys
+        """
         return {
             'po_detail_id': self.po_detail_id,
             'prefix': self.prefix,
@@ -406,11 +458,11 @@ class Purchase_Order_Detail(Base):
             'bid_price_per_kilo': self.bid_price_per_kilo,
             'doc': self.doc
         }
-    
+
     def get_id(self):
+        """Get Row Id"""
         return self.po_detail_id
-    
+
     def get_id_name(self):
+        """Get Primary ID Column Name"""
         return "po_detail_id"
-    
-    

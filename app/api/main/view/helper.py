@@ -3,23 +3,21 @@ import datetime
 import time
 import os
 import shutil
+import json
 from flask import (
     current_app as app
 )
 from .response import (
     VariantType,
     FlashMessage,
-    CustomResponse,
     error_message
 )
 from werkzeug.utils import secure_filename
-import json
-import copy
 
 def collect_form_data(request):
     """
     Converts form data and file data into one dictionary.
-    
+
     if files and 'doc' key in form data are present, it will store data as such:
       {
           ... (other form data with keys)
@@ -84,7 +82,7 @@ def collect_form_data(request):
                         "content": file_data[file_key].read()
                     }
                     doc["files"][file_key]["file_obj"] = file_obj
-        
+
         form_data["doc"] = doc
     return form_data
 
@@ -100,6 +98,7 @@ def only_integers(iterable):
             pass
 
 def allowed_file(filename):
+    """Check if the filename/extestion is allowed."""
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower(
            ) in app.config['ALLOWED_EXTENSIONS']
@@ -120,57 +119,56 @@ def save_files(doc, file_objects, custom_response, location=""):
         custom_response (CustomResponse): CustomResponse object.
     """
 
-    NOT_FOUND = FlashMessage(
+    not_found = FlashMessage(
         message="No Files Uploaded",
         variant=VariantType.WARNING
     )
 
     # Check if uploads are empty
     if not doc or not file_objects:
-        custom_response.insert_flash_message(NOT_FOUND)
+        custom_response.insert_flash_message(not_found)
         return doc, custom_response
 
-    else:
-        try:
-            new_doc = []
-            for file_detail in doc:
-                uploaded_files = [x.filename for x in file_objects.values()]
-                if file_detail["filename"] not in uploaded_files:
-                    custom_response.insert_flash_message(NOT_FOUND)
-                else:
-                    # Create Directory if it doesn't already exist
-                    if location != "":
-                        directory = os.path.join(
-                            app.config['UPLOAD_FOLDER'], location
-                        )
-                        pathlib.Path(
-                            directory
-                        ).mkdir(exist_ok=True, parents=True)
-
-                    # Save file to directory
-                    filename = secure_filename(
-                                    file_detail["filename"]
-                                )
-
-                    file_objects[file_detail["id"]].save(
-                        os.path.join(
-                            app.config['UPLOAD_FOLDER'], location, filename
-                        )
+    try:
+        new_doc = []
+        for file_detail in doc:
+            uploaded_files = [x.filename for x in file_objects.values()]
+            if file_detail["filename"] not in uploaded_files:
+                custom_response.insert_flash_message(not_found)
+            else:
+                # Create Directory if it doesn't already exist
+                if location != "":
+                    directory = os.path.join(
+                        app.config['UPLOAD_FOLDER'], location
                     )
+                    pathlib.Path(
+                        directory
+                    ).mkdir(exist_ok=True, parents=True)
 
-                    # Update and return doc
-                    file_detail["date_uploaded"] = str(
-                        datetime.datetime.utcnow())
-                    file_detail["link"] = os.path.join(location, filename)
-                    file_detail.pop("id")
-                    new_doc.append(file_detail)
+                # Save file to directory
+                filename = secure_filename(
+                                file_detail["filename"]
+                            )
 
-            return new_doc, custom_response
+                file_objects[file_detail["id"]].save(
+                    os.path.join(
+                        app.config['UPLOAD_FOLDER'], location, filename
+                    )
+                )
 
-        except Exception:
-            error = error_message()
-            custom_response.insert_flash_message(error)
-            return doc, custom_response
+                # Update and return doc
+                file_detail["date_uploaded"] = str(
+                    datetime.datetime.utcnow())
+                file_detail["link"] = os.path.join(location, filename)
+                file_detail.pop("id")
+                new_doc.append(file_detail)
+
+        return new_doc, custom_response
+
+    except Exception:
+        error = error_message()
+        custom_response.insert_flash_message(error)
+        return doc, custom_response
 
 
 def delete_directory(location, custom_response, flash_message=None):
@@ -202,26 +200,26 @@ def delete_directory(location, custom_response, flash_message=None):
         custom_response.insert_flash_message(error)
         return False, custom_response
 
-def validate_float_in_dict(dict, field, min=0, max=999999, equal_to=True):
+def validate_float_in_dict(dictionary, field, minimum=0, maximum=999999, equal_to=True):
     '''
     Validates that the value of a field in a dictionary
     is a float.
     '''
-    if field not in dict:
+    if field not in dictionary:
         return False
     try:
-        float(dict[field])
+        float(dictionary[field])
     except ValueError:
         return False
     if equal_to:
-        if float(dict[field]) <= min:
+        if float(dictionary[field]) <= minimum:
             return False
-        if float(dict[field]) >= max:
+        if float(dictionary[field]) >= maximum:
             return False
         return True
-    if float(dict[field]) < min:
+    if float(dictionary[field]) < minimum:
         return False
-    if float(dict[field]) > max:
+    if float(dictionary[field]) > maximum:
         return False
     return True
 

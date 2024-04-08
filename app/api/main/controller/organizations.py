@@ -17,8 +17,8 @@ from .package import package_data
 def get_organizations(custom_response, org_ids, org_type, populate, doc):
     """
     Fetch Organizaiton from the database.
-    Populate them and filter them if requested.
-    
+    Populate and filter Organizations if requested.
+
     Args:
         custom_response (CustomResponse): CustomResponse object
         org_ids (list): List of organization ids
@@ -28,14 +28,14 @@ def get_organizations(custom_response, org_ids, org_type, populate, doc):
         populate (list): List of tables to populate (enum)
             ('facilities','sales-orders', 'purchase-orders', 'people', 'components', 'products')
         doc (bool): Whether or not to include the document column in the response
-        
+
     Returns:
         custom_response (CustomResponse): CustomResponse object containing the data and relivant error messages.
     """
-    
+
     # Build the query
     tables = [db.Organizations, db.Organization_Names]
-    
+
     if 'facilities' in populate:
         tables.append(db.Facilities)
     if 'sales_orders' in populate:
@@ -52,7 +52,7 @@ def get_organizations(custom_response, org_ids, org_type, populate, doc):
 
     stm = select(*tables) \
         .join(db.Organization_Names, isouter=True)
-            
+
     if 'facilities' in populate:
         stm = stm.join(db.Facilities, db.Organizations.organization_id == db.Facilities.organization_id, isouter=True)
     if 'sales_orders' in populate:
@@ -66,22 +66,22 @@ def get_organizations(custom_response, org_ids, org_type, populate, doc):
         stm = stm.join(db.Component_Names, db.Components.component_id == db.Component_Names.component_id, isouter=True)
     if 'products' in populate:
         stm = stm.join(db.Product_Master, db.Organizations.organization_id == db.Product_Master.organization_id, isouter=True)
-        
-    stm = stm.where(db.Organization_Names.primary_name == True)
-    
+
+    stm = stm.where(db.Organization_Names.primary_name is True)
+
     if org_type:
         if 'client' in org_type:
-            stm = stm.where(db.Organizations.client == True)
+            stm = stm.where(db.Organizations.client is True)
         if 'supplier' in org_type:
-            stm = stm.where(db.Organizations.supplier == True)
+            stm = stm.where(db.Organizations.supplier is True)
         if 'lab' in org_type:
-            stm = stm.where(db.Organizations.lab == True)
+            stm = stm.where(db.Organizations.lab is True)
         if 'courier' in org_type:
-            stm = stm.where(db.Organizations.courier == True)
-    
+            stm = stm.where(db.Organizations.courier is True)
+
     if org_ids:
         stm = stm.where(db.Organizations.organization_id.in_(org_ids))
-            
+
     # Connect to the database
     try:
         session = get_session()
@@ -90,7 +90,7 @@ def get_organizations(custom_response, org_ids, org_type, populate, doc):
         custom_response.insert_flash_message(error)
         custom_response.set_status_code(500)
         return custom_response
-        
+
     # Execute the query
     try:
         stream = session.execute(stm)
@@ -100,9 +100,9 @@ def get_organizations(custom_response, org_ids, org_type, populate, doc):
         custom_response.insert_flash_message(error)
         custom_response.set_status_code(500)
         return custom_response
-    
+
     session.close()
-    
+
     # Process and Package the data
     data, custom_response = package_data(raw_data, doc, custom_response)
     custom_response.insert_data(data)
@@ -160,10 +160,9 @@ def check_org_exists_levenshtein(search_name):
 
         # Execute Query
         result = session.execute(
-            text(base_query), 
+            text(base_query),
             {"search_name":search_name}
         )
-        print(result)
 
         # Return Results
         levensthein_results = []

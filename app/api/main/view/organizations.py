@@ -7,10 +7,10 @@ from flask import (
     request,
     jsonify
 )
+from controller import organizations as org
 from .auth import check_authenticated
 from .helper import only_integers, check_type
 from .response import CustomResponse
-from controller import organizations as org
 
 bp = Blueprint('organizations', __name__, url_prefix='/organizations')
 
@@ -47,7 +47,7 @@ def handle_get_organizations():
         populate_request,
         empty_means_all=False
     )
-        
+
     doc = False
     document = request.args.get('doc')
     if document == "true":
@@ -56,9 +56,9 @@ def handle_get_organizations():
     # Get Organizations from the database
     custom_response = CustomResponse()
     custom_response = org.get_organizations(
-        custom_response, 
-        org_ids, 
-        org_types, 
+        custom_response,
+        org_ids,
+        org_types,
         populate,
         doc
     )
@@ -79,7 +79,7 @@ def handle_org_exists():
     names = request.json['names']
 
     custom_response = org.organization_exists(names, custom_response)
-    
+
     response = jsonify(custom_response.to_json())
     response.status_code = custom_response.get_status_code()
 

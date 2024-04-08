@@ -41,21 +41,21 @@ Sale_Order_Detail.inventory_log = relationship(Inventory_Log, primaryjoin=Sale_O
 #         .join(Organizations)\
 #         .join(Organization_Names)\
 #         .where(Organization_Names.organization_name == "Markus")
-    
+
 # print(stm)
 
 if __name__ == '__main__':
     db = get_session()
-    
+
     stm = select(Product_Master.product_name, Product_Master.type)\
         .join(Organizations)\
         .join(Organization_Names)\
         .where(Organization_Names.organization_name == "Markus")
-    
+
     # stm = select(Organizations, Organization_Names)\
     #       .join(Organization_Names)\
     #       .where(Organization_Names.organization_name == "Markus")
-    
+
     print(stm)
 
     test = db.execute(stm).all()

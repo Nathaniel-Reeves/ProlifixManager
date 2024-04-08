@@ -51,11 +51,11 @@ class Message:
         self.link = link
 
         self.set_variant(variant, debug_code)
-        
+
         # Require Title
         if not self.title:
             raise ValueError("Missing Title")
-        
+
         # Require Message
         if not self.message:
             raise ValueError("Missing Message")
@@ -115,11 +115,11 @@ class Message:
         """
         Returns a JSON representation of the message
         """
-        
+
         # Require Title
         if not self.title:
             raise ValueError("Missing Title")
-        
+
         # Require Message
         if not self.message:
             raise ValueError("Missing Message")
@@ -214,11 +214,11 @@ class FlashMessage(Message):
         """
 
         message_obj = super().to_json()
-        
+
         # Require Title
         if not message_obj["title"]:
             raise ValueError("Missing Title")
-        
+
         message_obj["auto_hide_delay"] = self.auto_hide_delay
         message_obj["no_auto_hide"] = self.no_auto_hide
         message_obj["no_close_button"] = self.no_close_button

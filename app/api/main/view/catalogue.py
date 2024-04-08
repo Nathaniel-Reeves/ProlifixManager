@@ -43,11 +43,12 @@ def handle_get_components():
 
     types_request = request.args.getlist('type')
     valid_types = [
-        'powder', 'liquid', 'container', 'pouch','shrink_band', 'lid', 'label', 'capsule','misc','scoop', 'desiccant', 'box', 'carton',
-        'packaging_material'
+        'powder', 'liquid', 'container', 'pouch','shrink_band',
+        'lid', 'label', 'capsule','misc','scoop', 'desiccant',
+        'box', 'carton', 'packaging_material'
     ]
     component_types = check_type(valid_types, types_request)
-    
+
     certifications_request = request.args.getlist('certification')
     valid_certifications = [
         'usda_organic',
@@ -59,15 +60,15 @@ def handle_get_components():
         'non_gmo',
         'vegan'
     ]
-    
+
     certifications = check_type(
         valid_certifications,
         certifications_request,
         empty_means_all=False
     )
-    
+
     brand_ids = list(only_integers(request.args.getlist('brand-id')))
-    
+
     populate_request = request.args.getlist('populate')
     valid_populate = [
         'product_materials',
@@ -83,7 +84,7 @@ def handle_get_components():
         populate_request,
         empty_means_all=False
     )
-    
+
     doc = False
     document = request.args.get('doc')
     if document == "true":
@@ -91,7 +92,7 @@ def handle_get_components():
 
     # Get Components from Database
     custom_response = CustomResponse()
-    
+
     custom_response = cat.get_components(
         custom_response,
         component_ids,
@@ -109,7 +110,7 @@ def handle_get_components():
 
 
 def handle_post_components():
-    
+
     # Clean the Request
     custom_response = CustomResponse()
 
@@ -185,7 +186,7 @@ def handle_post_components():
                 )
         except:
             flag = True
-        
+
     if flag:
         custom_response.set_status_code(400)
         custom_response.insert_flash_message(
@@ -197,31 +198,31 @@ def handle_post_components():
         response = jsonify(custom_response.to_json())
         response.status_code = 400
         return response
-    
+
     # Post Components to Database
     custom_response = cat.post_component(
         custom_response,
         component
     )
-    
+
     response = jsonify(custom_response.to_json())
     response.status_code = custom_response.get_status_code()
 
     return response
 
 def handle_put_components():
-    
+
     # Clean the Request
     component = collect_form_data(request)
-    
+
     # Get Components from Database
     custom_response = CustomResponse()
-    
+
     custom_response = cat.put_component(
         custom_response,
         component
     )
-    
+
     response = jsonify(custom_response.to_json())
     response.status_code = custom_response.get_status_code()
 

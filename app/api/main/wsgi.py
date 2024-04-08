@@ -23,6 +23,7 @@ parent_dir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(parent_dir)
 
 def print_config():
+    """Prints Env Variables"""
     print()
     print("App Configurations:")
     for v in env_variables:
@@ -33,28 +34,27 @@ def print_config():
 # Set env variables
 print("Loading Environment Variables")
 app_dir = os.path.split(os.path.split(parent_dir)[0])[0]
-print(f"Env Location: ", os.path.join(app_dir,".env"))
+print("Env Location: ", os.path.join(app_dir,".env"))
 load_dotenv(os.path.join(app_dir,".env"), override=True)
 env_variables = os.environ.items()
 print_config()
 
 def create_app():
-    
+    """
+    Builds the Flask Application
+    """
+
     app = Flask(__name__)
     app.config['MAX_CONTENT_LENGTH'] = 6000 * 6024  # 4000 KB in bytes
     app.config['MAX_CONTENT_PATH'] = 1024  # Example value, adjust as needed
 
-    """
-    Database Connection Settings
-    """
+    # Database Connection Settings
     app.config['DB_HOST'] = os.environ.get('DB_HOST')
     app.config['DB_PORT'] = os.environ.get('DB_PORT')
     app.config['DB_USER'] = os.environ.get('DB_USER')
     app.config['DB_PASSWORD'] = os.environ.get('DB_PASSWORD')
-    
-    """
-    File Settings
-    """
+
+    # File Settings
     UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER')
     if UPLOAD_FOLDER == "DEFAULT":
         project_dir = os.path.split(os.getcwd())[0]
@@ -63,9 +63,7 @@ def create_app():
         app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     app.config['ALLOWED_EXTENSIONS'] = ("application/pdf","image/png","image/jpeg")
 
-    """
-    Redis Connection Settings
-    """
+    # Redis Connection Settings
     app.config['REDIS_HOST'] = os.environ.get('REDIS_HOST')
     app.config['REDIS_PORT'] = os.environ.get('REDIS_PORT')
     app.config['REDIS_PASSWORD'] = os.environ.get('REDIS_PASSWORD')
@@ -74,9 +72,9 @@ def create_app():
     app.config['SESSION_USE_SIGNER'] = True
     app.config['SESSION_EXPIRE'] = timedelta(days=7)
 
-    CORS(app, supports_credentials=True, 
+    CORS(app, supports_credentials=True,
         allow_headers=[
-            "Content-Type", 
+            "Content-Type",
             "Access-Control-Allow-Origin",
             "Access-Control-Allow-Credentials"
         ],
@@ -107,7 +105,7 @@ def create_app():
     #  Set the API prefix to a falsey (empty string) value to
     #  send/recive traffic from the development client,
     #  $ export API_PREFIX=
-    
+
     API_PREFIX = os.environ.get('API_PREFIX')
     if API_PREFIX == 'True':
         API_PREFIX = '/'
@@ -116,28 +114,23 @@ def create_app():
 
 
     api_blueprint = Blueprint('api', __name__, url_prefix=API_PREFIX)
-    
-    """
-    Import Views
-    """
+
+    # Import Views
     from view.organizations import bp as organizations_bp
     api_blueprint.register_blueprint(organizations_bp)
-    
+
     from view.catalogue import bp_cat as catalogue_bp
     api_blueprint.register_blueprint(catalogue_bp)
-    
+
     from view.auth import bp as auth_bp
     api_blueprint.register_blueprint(auth_bp)
 
-    """
-    Sanity Check Routes
-    """
+    # Sanity Check Routes
     @api_blueprint.route('/ping', methods=['GET'])
     def ping_pong():
         """
         ping pong route
         """
-
         return jsonify('pong!')
 
     @api_blueprint.route('/server_id', methods=['GET'])
@@ -145,7 +138,6 @@ def create_app():
         """
         server id route
         """
-
         return f"Container ID: {socket.gethostname()}"
 
     # @api_blueprint.route('/redis')
@@ -153,7 +145,7 @@ def create_app():
     #     redis.incr('hits')
     #     counter = str(redis.get('hits'), 'utf-8')
     #     return "Welcome to this webpage!, This webpage has been viewed "+counter+" time(s)"
-    
+
     @api_blueprint.route('/uploads/<path:subpath>')
     def upload(subpath):
         return send_from_directory(app.config['UPLOAD_FOLDER'], escape(subpath))
@@ -168,7 +160,7 @@ if __name__ == "__main__":
     app = create_app()
     print('~~~ SERVER START ~~~')
     app.run(
-        debug=True, 
-        port=5000, 
+        debug=True,
+        port=5000,
         host="localhost"
     )

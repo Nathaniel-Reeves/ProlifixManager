@@ -5,16 +5,11 @@ import os
 import pathlib
 from werkzeug.utils import secure_filename
 import hashlib
-from sqlalchemy import select, insert, text
-from view.response import (
-    VariantType,
-    FlashMessage,
-    CustomResponse,
-    error_message
-)
+from sqlalchemy import select, insert
 import model as db
 
 def matchup_recursive(data, file_meta_key, file_meta_value, updates, finished):
+    """Recursivly search through request data for each saved file_data to matchup the file_data to the request data"""
     if finished:
         return data, updates, finished
     if isinstance(data, dict):
@@ -37,10 +32,11 @@ def matchup_recursive(data, file_meta_key, file_meta_value, updates, finished):
     return data, updates, finished
 
 def matchup_saved_file_to_data(data):
+    """Recursivly search through request data for each saved file_data to matchup the file_data to the request data"""
     for file_meta_key, file_meta_value in data["doc"]["files"].items():
         updates = 0
         data, updates, finished = matchup_recursive(data, file_meta_key, file_meta_value, updates, False)
-        if updates < 1:
+        if updates < 1 or not finished:
             raise NameError("Could not update file.")
         if updates > 1:
             raise NameError("Too many file updates.  Should only have one, found: " + updates)
@@ -48,9 +44,23 @@ def matchup_saved_file_to_data(data):
     return data
 
 def save_files(data, session):
+    """Save files from form request while pairing file with database records.
+
+    Args:
+        data: dictionary
+        session: database session
+
+    Note: this function expects the following format for data:
+    TODO: Finish Docstring
+    {
+        <key>: {}
+        files: {
+
+        }
+    }
+    """
     if 'doc' in data.keys():
         if "files" in data["doc"].keys():
-            pop_list = []
             if len(data["doc"]["files"]) > 0:
                 save = {}
                 for file in data["doc"]["files"].keys():
@@ -72,10 +82,23 @@ def save_files(data, session):
     return data
 
 def save_file(file_data, session):
-    
+    """Save file to server filesystem and to Files database
+
+    Args:
+        file_data (Dict): _description_
+        session (Session): _description_
+
+    Raises:
+        Exception: _description_
+        Exception: _description_
+
+    Returns:
+        Tuple: (file_hash, file_name, file_pointer)
+    """
+
     # Get File Hash
     file_hash = md5_from_file(file_data["file_obj"])
-    
+
     # Check if File Exists in DB, Save if not
     stream = session.execute(
         select(db.Files).where(db.Files.file_hash == file_hash)
@@ -83,7 +106,7 @@ def save_file(file_data, session):
     raw_data = stream.all()
 
     # Save File to Filesystem
-    
+
     # Create File Name
     fn = secure_filename(
         str(file_data["filename"]).replace(" ", "_").replace("/","-")
@@ -96,7 +119,7 @@ def save_file(file_data, session):
     )
 
     filename = f"║fn[{fn}]║id_code[{id_code}]║pg[{page}]║hash[{file_hash}]║"
-    
+
     if file_data["file_obj"]["content_type"] == "application/pdf":
         filename += ".pdf"
     elif file_data["file_obj"]["content_type"] == "image/jpeg":
@@ -105,22 +128,22 @@ def save_file(file_data, session):
         filename += ".png"
     else:
         raise Exception("Invalid File Type")
-    
+
     if len(raw_data) > 0:
         # Do not save the file to the filesystem if it already exists.
         return raw_data[0][0].get_id(), raw_data[0][0].file_name, raw_data[0][0].file_pointer
-    
+
     # Create Directory if it doesn't already exist
     directory = os.path.join(
         app.config['UPLOAD_FOLDER'], file_data["type"]
     )
-    
+
     pointer = os.path.join(file_data["type"], filename)
 
     pathlib.Path(
         directory
     ).mkdir(exist_ok=True, parents=True)
-    
+
     path = os.path.join(
         directory, filename
     )
@@ -128,7 +151,7 @@ def save_file(file_data, session):
     # Save File
     with open(path, 'wb') as file:
         file.write(file_data["file_obj"]["content"])
-    
+
     # Save File Info in DB
     stream = session.execute(
         insert(db.Files).returning(db.Files),
@@ -152,6 +175,7 @@ def save_file(file_data, session):
     return file_hash, filename, pointer
 
 def md5_from_file(file, block_size=2**14):
+    """Creates md5 Hash from file contents."""
     md5 = hashlib.md5()
     content_copy = file["content"][:]
     while True:
@@ -160,5 +184,5 @@ def md5_from_file(file, block_size=2**14):
             break
         md5.update(data)
         content_copy = content_copy[block_size:]
-        
+
     return md5.hexdigest()
