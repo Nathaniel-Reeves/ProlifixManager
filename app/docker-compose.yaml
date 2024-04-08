@@ -8,6 +8,11 @@ services:
     restart: always
     env_file:
       - .env
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_ROOT_HOST: '%'
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - './db/mariadb_data/:/var/lib/mysql/'
       - ./db:/docker-entrypoint-initdb.d
