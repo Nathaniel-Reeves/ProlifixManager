@@ -6,9 +6,8 @@ services:
     container_name: mariadb
     image: mariadb:10.11
     restart: always
-    environment:
-      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MARIADB_ROOT_HOST: '%'
+    env_file:
+      - .env
     volumes:
       - './db/mariadb_data/:/var/lib/mysql/'
       - ./db:/docker-entrypoint-initdb.d
@@ -18,7 +17,7 @@ services:
       mrp:
         ipv4_address: 172.10.10.2
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "172.10.10.2", "--port", "3306", "-p${DB_ROOT_PASSWORD}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "172.10.10.2", "--port", "3306", "-p${MARIADB_ROOT_PASSWORD}"]
       interval: 30s
       timeout: 10s
       retries: 5

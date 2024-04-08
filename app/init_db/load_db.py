@@ -27,9 +27,9 @@ from dotenv import load_dotenv
 # DB_PASSWORD = os.environ.get('DB_PASSWORD')
 # if DB_PASSWORD is None:
 #     DB_PASSWORD = "ClientPassword!5"
-    
+
 parent_dir = os.path.dirname(os.path.realpath(__file__))
-    
+
 def print_config():
     print()
     print("App Configurations:")
@@ -331,7 +331,7 @@ def delete_database_schema(session):
     return flag
 
 def main(force=False, drop_databases=False):
-    
+
     print("\033[0mStarting Program...")
     # Handle Force Run Overide Argument
     if not force:
@@ -340,7 +340,7 @@ def main(force=False, drop_databases=False):
                 force = sys.argv[1] == "force"
             else:
                 force = True
-        except IndexError: 
+        except IndexError:
             force = False
 
     if not drop_databases:
@@ -349,7 +349,7 @@ def main(force=False, drop_databases=False):
                 drop_databases = sys.argv[2] == "drop_databases"
             else:
                 drop_databases = True
-        except IndexError: 
+        except IndexError:
             drop_databases = False
 
     if not force:
@@ -377,8 +377,8 @@ def main(force=False, drop_databases=False):
     print("\033[0m    Password: {}".format(DB_PASSWORD))
 
     # Comment this line for debugging connection
-    # check = input("Are these credentials correct (Y/N)?\n")
-    check = "y"
+    check = input("Are these credentials correct (Y/N)?\n")
+    # check = "y"
 
     print()
     if check.lower() != "y":
