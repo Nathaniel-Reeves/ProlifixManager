@@ -10,10 +10,10 @@ services:
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
       MARIADB_ROOT_HOST: '%'
     volumes:
-      - './db/mariadb_data/:/var/lib/mysql/'
+      - ./db/mariadb_data/:/var/lib/mysql/
       - ./db:/docker-entrypoint-initdb.d
       - ./.env:/.env
-      - ./db:/
+      - ./db/configure_users.sh:/configure_users.sh
     ports:
       - 3306:3306
     networks:
