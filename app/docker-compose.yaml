@@ -6,16 +6,14 @@ services:
     container_name: mariadb
     image: mariadb:10.11
     restart: always
-    env_file:
-      - .env
     environment:
-      MYSQL_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
-      MYSQL_ROOT_HOST: '%'
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_ROOT_HOST: '%'
     volumes:
       - './db/mariadb_data/:/var/lib/mysql/'
       - ./db:/docker-entrypoint-initdb.d
+      - ./.env:/.env
+      - ./db:/
     ports:
       - 3306:3306
     networks:
