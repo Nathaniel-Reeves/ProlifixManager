@@ -38,8 +38,8 @@
           <div v-if="component_data.doc.specifications !== undefined">
             <h3 id="Specifications">Specifications<b-button v-if="!edit_specs" v-b-tooltip.hover title="Edit Component Specifications" v-on:click="editSpecs()" class="btn p-1 ml-2 btn-light" type="button"><i class="bi bi-pencil-square d-print-none"></i></b-button></h3>
             <div v-if="!edit_specs">
-              <p><strong>Spec Issued: </strong>{{ new Date(component_data.doc.specifications.date_issued).toDateString() }}</p>
-              <p><strong>Spec Revised: </strong>{{ new Date(component_data.doc.specifications.date_revised).toDateString() }}</p>
+              <p><strong>Spec Issued: </strong>{{ component_data.doc.specifications.date_issued !== undefined && component_data.doc.specifications.date_issued !== '' ? new Date(component_data.doc.specifications.date_issued).toDateString() : "No Spec" }}</p>
+              <p><strong>Spec Revised: </strong>{{ component_data.doc.specifications.date_revised !== undefined && component_data.doc.specifications.date_revised !== '' ? new Date(component_data.doc.specifications.date_revised).toDateString() : "No Spec" }}</p>
               <p><strong>Revision Number: </strong>{{ component_data.doc.specifications.revision_number }}</p>
             </div>
             <div v-if="!edit_specs">
@@ -79,8 +79,8 @@
               <!-- Spec Header -->
               <h3 :id="spec_key">{{ spec.test_name }}<b-button v-if="!edit_specs" v-b-tooltip.hover :title="'Edit Component ' + spec.test_name + ' Specifications'" v-on:click="editSpecs()" class="btn p-1ml-2 btn-light" type="button"><i class="bi bi-pencil-square d-print-none"></i></b-button></h3>
               <div v-if="!edit_specs">
-                <p v-if="spec_key != 'example_cofas'"><strong>Spec Issued: </strong>{{ new Date(spec.date_issued).toDateString() }}</p>
-                <p v-if="spec_key != 'example_cofas'"><strong>Spec Revised: </strong>{{ new Date(spec.date_revised).toDateString() }}</p>
+                <p v-if="spec_key != 'example_cofas'"><strong>Spec Issued: </strong>{{ spec.date_issued !== undefined && spec.date_issued !== '' ? new Date(spec.date_issued).toDateString() : "No Spec" }}</p>
+                <p v-if="spec_key != 'example_cofas'"><strong>Spec Revised: </strong>{{ spec.date_revised !== undefined && spec.date_revised !== '' ? new Date(spec.date_revised).toDateString() : "No Spec" }}</p>
                 <p v-if="spec_key != 'example_cofas'"><strong>Revision Number: </strong>{{ spec.revision_number }}</p>
                 <p v-if="spec_key != 'example_cofas'"><strong>Accepted Testing Sources: </strong>
                   <b-badge variant="secondary" pill class="ml-2" style="font-size:1em;" v-show="spec.locations.in_house">In House</b-badge>
@@ -363,7 +363,7 @@ export default {
           name: 'Spec',
           formatter: (_, row) => (
             (row.cells[2].data === '=' ? '' : row.cells[2].data) +
-            row.cells[3].data +
+            row.cells[3].data.toString() +
             ' ' +
             row.cells[4].data
           ),
@@ -417,6 +417,7 @@ export default {
       this.edit_specs_buffer.specs[specKey].tests.splice(index, 1)
     },
     newTest: function () {
+      const today = new Date().toISOString()
       return {
         test_name: null,
         type: null,
@@ -439,8 +440,8 @@ export default {
         id_code: null,
         file_pointer: null,
         file_preview_pointer: null,
-        date_issued: new Date().toISOString(),
-        date_revised: new Date().toISOString(),
+        date_issued: today,
+        date_revised: today,
         url_preview: null
       }
     },
@@ -499,7 +500,7 @@ export default {
         this.edit_specs_buffer.revision_number++
         this.edit_specs_buffer.date_revised = new Date().toISOString() // Today
         if (subSpec !== undefined) {
-          if (this.edit_specs_buffer.revision_number === 0) {
+          if (this.edit_specs_buffer.specs[subSpec].revision_number === 0) {
             this.edit_specs_buffer.specs[subSpec].date_issued = new Date().toISOString() // Today
           }
           this.edit_specs_buffer.specs[subSpec].revision_number++

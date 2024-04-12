@@ -58,6 +58,7 @@
                       <b-col sm="1.5"><div class="p-2">{{ component.component_type.toLowerCase().split('_').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ') }}</div></b-col>
                       <b-col sm="4"><div class="p-2">{{ getPrimaryName(component) }}         {{ getBrandName(component) }}</div></b-col>
                       <b-col><div class="p-2"><CertBadge :data="component"></CertBadge></div></b-col>
+                      <b-col sm="0.5"><div class="p-1"><b-badge class="p-1" v-show="verifySpecs(component)" variant="warning">Incomplete Specs</b-badge></div></b-col>
                     </b-row>
                   </b-container>
                 </button>
@@ -108,7 +109,7 @@ export default {
   data: function () {
     return {
       components_data: {},
-      search_query: '',
+      search_query: 'fake',
       loaded: false,
       type_filter: 'all',
       type_filter_options: [
@@ -143,6 +144,15 @@ export default {
     }
   },
   methods: {
+    verifySpecs: function (component) {
+      return component.component_type === 'powder' && (
+        component.doc.specifications.revision_number > 0 &&
+        component.doc.specifications.specs.microbiological.revision_number > 0 &&
+        component.doc.specifications.specs.heavy_metals.revision_number > 0 &&
+        component.doc.specificaitons.specs.organoleptic.revision_number > 0 &&
+        component.doc.specifications.microscopic.revision_number > 0
+      )
+    },
     clearSearch: function () {
       this.search_query = ''
     },
@@ -194,7 +204,7 @@ export default {
       })
     },
     getComponentData: function () {
-      const fetchRequest = window.origin + '/api/v1/catalogue/components/?populate=brand'
+      const fetchRequest = window.origin + '/api/v1/catalogue/components/?populate=brand&doc=true'
       console.log(
         'GET ' + fetchRequest
       )
