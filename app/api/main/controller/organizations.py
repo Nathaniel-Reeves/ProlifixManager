@@ -67,17 +67,17 @@ def get_organizations(custom_response, org_ids, org_type, populate, doc):
     if 'products' in populate:
         stm = stm.join(db.Product_Master, db.Organizations.organization_id == db.Product_Master.organization_id, isouter=True)
 
-    stm = stm.where(db.Organization_Names.primary_name is True)
+    stm = stm.where(db.Organization_Names.primary_name == True)
 
     if org_type:
         if 'client' in org_type:
-            stm = stm.where(db.Organizations.client is True)
+            stm = stm.where(db.Organizations.client == True)
         if 'supplier' in org_type:
-            stm = stm.where(db.Organizations.supplier is True)
+            stm = stm.where(db.Organizations.supplier == True)
         if 'lab' in org_type:
-            stm = stm.where(db.Organizations.lab is True)
+            stm = stm.where(db.Organizations.lab == True)
         if 'courier' in org_type:
-            stm = stm.where(db.Organizations.courier is True)
+            stm = stm.where(db.Organizations.courier == True)
 
     if org_ids:
         stm = stm.where(db.Organizations.organization_id.in_(org_ids))

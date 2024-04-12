@@ -39,7 +39,7 @@ def get_session_token(request):
 # Login & Authenication Wrapper Functions
 
 # Remove the authentication requirement for all endpoints (False)
-# Enable the authentication requirement for endpoints (True) 
+# Enable the authentication requirement for endpoints (True)
 # This is for development purposes only
 AUTH_REQUIRED = True
 
@@ -59,12 +59,12 @@ def check_authenticated(authentication_required=False, database_priveleges=None)
                     port=app.config['REDIS_PORT'],
                     password=app.config['REDIS_PASSWORD'],
                     socket_connect_timeout=1)
-                
+
                 redis_connection.ping()
 
                 # Check if user has a session token, Create one if not
                 session_token = get_session_token(request)
-                
+
                 if (session_token is None) or (not redis_connection.exists(session_token)):
                     session_token = create_session()
                     if isinstance(session_token, FlashMessage):
