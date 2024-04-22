@@ -58,7 +58,11 @@ def handle_get_components():
         'national_sanitation_foundation',
         'us_pharmacopeia',
         'non_gmo',
-        'vegan'
+        'vegan',
+        'wildcrafted',
+        'made_with_organic',
+        'gmp',
+        'fda'
     ]
 
     certifications = check_type(

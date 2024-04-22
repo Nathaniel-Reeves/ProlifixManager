@@ -35,6 +35,10 @@ class Components(Base):
         create_constraint=True,
         validate_strings=True,
         ))
+    certified_fda: Mapped[bool] = mapped_column(default=False)
+    certified_gmp: Mapped[bool] = mapped_column(default=False)
+    certified_made_with_organic: Mapped[bool] = mapped_column(default=False)
+    certified_wildcrafted: Mapped[bool] = mapped_column(default=False)
     certified_usda_organic: Mapped[bool] = mapped_column(default=False)
     certified_halal: Mapped[bool] = mapped_column(default=False)
     certified_kosher: Mapped[bool] = mapped_column(default=False)
@@ -68,6 +72,10 @@ class Components(Base):
         return {
             "component_id": self.component_id,
             "component_type": self.component_type,
+            "certified_fda": self.certified_fda,
+            "certified_gmp": self.certified_gmp,
+            "certified_made_with_organic": self.certified_made_with_organic,
+            "certified_wildcrafted": self.certified_wildcrafted,
             "certified_usda_organic": self.certified_usda_organic,
             "certified_halal": self.certified_halal,
             "certified_kosher": self.certified_kosher,

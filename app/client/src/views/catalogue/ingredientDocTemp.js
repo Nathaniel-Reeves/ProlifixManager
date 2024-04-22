@@ -189,23 +189,6 @@ const ingredientDoc = {
           }
         ]
       },
-      herbicides: {
-        date_issued: '',
-        date_revised: '',
-        file_pointer: '',
-        locations: {
-          in_house: false,
-          primary: 'supplier',
-          supplier: true,
-          third_party_lab: true
-        },
-        required_spec: false,
-        revision_number: 1,
-        id_code: '',
-        statement: '',
-        test_name: 'Herbicides',
-        tests: []
-      },
       hplc: {
         date_issued: '',
         date_revised: '',

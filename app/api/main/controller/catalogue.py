@@ -90,6 +90,14 @@ def get_components(
             stm = stm.where(db.Components.certified_non_gmo == True)
         if 'vegan' in certifications:
             stm = stm.where(db.Components.certified_vegan == True)
+        if 'wildcrafted' in certifications:
+            stm = stm.where(db.Components.certified_wildcrafted == True)
+        if 'made_with_organic' in certifications:
+            stm = stm.where(db.Components.certified_made_with_organic == True)
+        if 'gmp' in certifications:
+            stm = stm.where(db.Components.certified_gmp == True)
+        if 'fda' in certifications:
+            stm = stm.where(db.Components.certified_fda == True)
 
     # Connect to the database
     try:

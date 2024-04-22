@@ -18,6 +18,7 @@ class Files(Base):
     file_pointer: Mapped[str] = mapped_column()
     id_code: Mapped[str] = mapped_column()
     pg: Mapped[str] = mapped_column()
+    ref_count: Mapped[int] = mapped_column()
 
     # Common Methods
     def __repr__(self):
@@ -35,7 +36,8 @@ class Files(Base):
             "file_type": self.file_type,
             "file_pointer": self.file_pointer,
             "id_code": self.id_code,
-            "pg": self.pg
+            "pg": self.pg,
+            "ref_count": self.ref_count
         }
 
     def get_id(self):

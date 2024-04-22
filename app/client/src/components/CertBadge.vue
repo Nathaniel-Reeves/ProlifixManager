@@ -24,17 +24,17 @@ export default {
           alt: 'Certified USDA Organic'
         },
         {
-          key: '',
+          key: 'certified_wildcrafted',
           img: require('../assets/certifications/wildcrafted.png'),
           alt: 'Certified Wild Crafted'
         },
         {
-          key: '',
+          key: 'certified_made_with_organic',
           img: require('../assets/certifications/made_with_organic.png'),
           alt: '70% Organic'
         },
         {
-          key: '',
+          key: 'certified_fda',
           img: require('../assets/certifications/fda_approved.png'),
           alt: 'FDA Approved'
         },
@@ -44,7 +44,7 @@ export default {
           alt: 'Certified Gluten Free'
         },
         {
-          key: '',
+          key: 'certified_gmp',
           img: require('../assets/certifications/good_manufacturing_practice.png'),
           alt: 'Certified Good Manufacturing Practice'
         },
