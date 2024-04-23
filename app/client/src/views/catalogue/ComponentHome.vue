@@ -68,6 +68,28 @@
             <div v-bind:id="'collapse' + component.component_id" class="collapse" v-bind:aria-labelledby="'heading' + component.component_id" data-parent="#accordionExample">
               <div class="card-body d-flex flex-wrap">
 
+                <!-- Alias Names -->
+                <NamesComponent :data="component.Component_Names" naming-type="component" :allow-edit="false"></NamesComponent>
+                <hr>
+
+                <!-- Specifications -->
+                <div v-if="component.doc.specifications !== undefined">
+                  <h3 id="Specifications">Specifications</h3>
+                  <div>
+                    <p><strong>Spec Issued: </strong>{{ component.doc.specifications.date_issued !== undefined && component.doc.specifications.date_issued !== '' ? new Date(component.doc.specifications.date_issued).toDateString() : "No Spec" }}</p>
+                    <p><strong>Spec Revised: </strong>{{ component.doc.specifications.date_revised !== undefined && component.doc.specifications.date_revised !== '' ? new Date(component.doc.specifications.date_revised).toDateString() : "No Spec" }}</p>
+                    <p><strong>Revision Number: </strong>{{ component.doc.specifications.revision_number }}</p>
+                  </div>
+                  <div>
+                    <p v-if="component.doc.specifications.description_statement.length > 0"><strong>Component Description</strong><br>{{ component.doc.specifications.description_statement }}</p>
+                    <p v-if="component.doc.specifications.origin.length > 0"><strong>Origin</strong><br>{{ component.doc.specifications.origin }}</p>
+                    <p v-if="component.doc.specifications.identity_statement.length > 0"><strong>Identity Statement</strong><br>{{ component.doc.specifications.identity_statement }}</p>
+                    <p v-if="component.doc.specifications.strength_statement.length > 0"><strong>Strength Statement</strong><br>{{ component.doc.specifications.strength_statement }}</p>
+                    <p v-if="component.doc.specifications.purity_statement.length > 0"><strong>Purity Statement</strong><br>{{ component.doc.specifications.purity_statement }}</p>
+                    <p v-if="component.doc.specifications.parts_used.length > 0"><strong>Parts Used</strong><br>{{ component.doc.specifications.parts_used }}</p>
+                  </div>
+                </div>
+
                 <b-container fluid class="d-flex justify-content-end flex-wrap" style="max-width:10rem;">
                   <router-link :to="{path:`/catalogue/components/${component.component_id}`}"><button type="button" class="btn btn-light ms-auto" style="border-width: 2px; border-color:#999999">View Details</button></router-link>
                 </b-container>
@@ -100,18 +122,27 @@
 <script>
 // import FacilitiesGrid from './components/FacilitiesGrid.vue'
 import CertBadge from '../../components/CertBadge.vue'
+import NamesComponent from './NamesComponent.vue'
 
 export default {
   name: 'ComponentsHome',
   components: {
-    CertBadge
+    CertBadge,
+    NamesComponent
+  },
+  props: {
+    type: {
+      default: 'all',
+      type: String
+    }
   },
   data: function () {
     return {
       components_data: {},
       search_query: '',
       loaded: false,
-      type_filter: 'all',
+      type_filter: this.type,
+      fetched_all_components: this.type === 'all',
       type_filter_options: [
         { value: 'all', text: 'All Components' },
         { value: 'powder', text: 'Powders' },
@@ -205,7 +236,12 @@ export default {
       })
     },
     getComponentData: function () {
-      const fetchRequest = window.origin + '/api/v1/catalogue/components/?populate=brand&doc=true'
+      let fetchRequest = window.origin + '/api/v1/catalogue/components/?populate=brand&doc=true'
+      if (this.type_filter !== 'all') {
+        fetchRequest += '&type=' + this.type_filter
+      } else {
+        this.fetched_all_components = true
+      }
       console.log(
         'GET ' + fetchRequest
       )
@@ -225,6 +261,10 @@ export default {
         } else if (response.status === 401) {
           this.$router.push({
             name: 'login'
+          })
+        } else if (response.status === 404) {
+          this.$router.push({
+            name: 'NotFound'
           })
         } else {
           console.log('Looks like there was a problem. Status Code:' + response.status)
@@ -256,9 +296,12 @@ export default {
       this.powder_cert_filter = checked ? this.powder_cert_options.map((obj) => obj.value).slice() : []
     },
     searchFilter: function (component) {
-      const prime = this.getPrimaryName(component)
-      if (prime.toLowerCase().includes(this.search_query.toLowerCase())) {
-        return true
+      if (component.Component_Names !== undefined && component.Component_Names.length > 0) {
+        for (let i = 0; i < component.Component_Names.length; i++) {
+          if (component.Component_Names[i].component_name.toLowerCase().includes(this.search_query.toLowerCase())) {
+            return true
+          }
+        }
       }
       return false
     },
@@ -289,6 +332,13 @@ export default {
         this.powderCertIndeterminate = true
         this.allPowderCertSelected = false
       }
+    },
+    type_filter: function (newVaule, oldValue) {
+      if (this.fetch_all_components) {
+        return
+      }
+      this.loaded = false
+      this.getComponentData()
     }
   },
   computed: {

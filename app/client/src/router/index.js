@@ -58,6 +58,7 @@ const routes = [
   {
     path: '/catalogue/components',
     name: 'catalogue',
+    props: route => ({ type: route.query.type }),
     component: () => import(/* webpackChunkName: "CatalogueHome" */ '../views/catalogue/ComponentHome.vue')
   },
   {

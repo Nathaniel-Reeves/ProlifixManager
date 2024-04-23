@@ -31,7 +31,7 @@
         <b-card-body id="nav-scroller" ref="content" class="scrollbox">
 
           <!-- Alias Names -->
-          <NamesComponent :data="component_data.Component_Names" :save-function="putComponent" naming-type="component"></NamesComponent>
+          <NamesComponent :data="component_data.Component_Names" :save-function="putComponent" naming-type="component" :allow-edit="true"></NamesComponent>
           <hr>
 
           <!-- Specifications -->

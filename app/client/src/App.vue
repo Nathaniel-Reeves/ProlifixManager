@@ -18,6 +18,21 @@
             </b-nav-item>
             <b-nav-item-dropdown text="Catalogue" active-class>
               <b-dropdown-item to="/catalogue/components">All Components</b-dropdown-item>
+              <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'powder' } });$router.go()">Powders</b-dropdown-item>
+              <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'liquid' } });$router.go()">Liquids</b-dropdown-item>
+              <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'container' } });$router.go()">Containers</b-dropdown-item>
+              <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'pouch' } });$router.go()">Pouches</b-dropdown-item>
+              <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'shrink_band' } });$router.go()">Shrink Bands</b-dropdown-item>
+              <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'lid' } });$router.go()">Lids</b-dropdown-item>
+              <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'label' } });$router.go()">Labels</b-dropdown-item>
+              <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'capsule' } });$router.go()">Capsules</b-dropdown-item>
+              <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'misc' } });$router.go()">Miscellaneous</b-dropdown-item>
+              <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'scoop' } });$router.go()">Scoops</b-dropdown-item>
+              <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'desiccant' } });$router.go()">Desiccants</b-dropdown-item>
+              <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'box' } });$router.go()">Boxes</b-dropdown-item>
+              <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'carton' } });$router.go()">Cartons</b-dropdown-item>
+              <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'packaging_material' } });$router.go()">Packaging
+                Materials</b-dropdown-item>
             </b-nav-item-dropdown>
             <!-- <b-nav-item to="/barcodereader" active-class>barcodereader</b-nav-item> -->
           </b-navbar-nav>
@@ -53,7 +68,7 @@
       <div class="container-fluid">
         <div class="row justify-content-center">
           <!-- This is the link that vue uses to include other templates, Do not Delete! -->
-          <router-view @login="updateUserData"/>
+          <router-view @login="updateUserData" />
         </div>
       </div>
     </div>
@@ -85,7 +100,7 @@
       </div> -->
 
         <div class="text-center bg-dark p-3">
-          © 2024 Copyright  |  v1.2.2
+          © 2024 Copyright | v1.2.2
         </div>
       </footer>
     </div>
