@@ -72,6 +72,11 @@ export default {
           key: 'certified_vegan',
           img: require('../assets/certifications/vegan.png'),
           alt: 'Certified Vegan'
+        },
+        {
+          key: 'certified_non_gmo',
+          img: require('../assets/certifications/non_gmo.png'),
+          alt: 'Non-GMO'
         }
       ]
     }
