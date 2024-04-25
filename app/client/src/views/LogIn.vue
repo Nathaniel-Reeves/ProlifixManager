@@ -51,7 +51,7 @@ export default {
   methods: {
     login: function () {
       const fetchRequest = window.origin + '/api/v1/auth/sessions'
-
+      // eslint-disable-next-line
       console.log(
         'POST ' + fetchRequest
       )
@@ -67,7 +67,6 @@ export default {
         })
       }).then(response => {
         response.json().then(jsonData => {
-          console.log(jsonData)
           if (response.status === 201) {
             this.userData = jsonData
             this.$emit('login', jsonData)
@@ -85,8 +84,10 @@ export default {
           }
         })
       }).catch(error => {
+        // eslint-disable-next-line
         console.log(error)
         this.flash_errors.push(error)
+        // eslint-disable-next-line
         console.log(this.flash_errors)
       })
     }

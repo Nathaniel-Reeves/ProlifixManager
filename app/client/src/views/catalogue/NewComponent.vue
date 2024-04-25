@@ -168,6 +168,7 @@ export default {
   methods: {
     postComponent: async function () {
       const fetchRequest = window.origin + '/api/v1/catalogue/components'
+      // eslint-disable-next-line
       console.log(
         'POST ' + fetchRequest
       )
@@ -218,6 +219,7 @@ export default {
       } catch (error) {
         const err = error
         this.loaded = true
+        // eslint-disable-next-line
         console.error('There has been a problem with your fetch operation: ', err)
         const errorToast = {
           title: 'Failure to save changes.',

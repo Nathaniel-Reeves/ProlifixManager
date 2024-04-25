@@ -128,6 +128,7 @@ export default {
   methods: {
     logout: function () {
       const fetchRequest = window.origin + '/api/v1/auth/sessions'
+      // eslint-disable-next-line
       console.log(
         'DELETE ' + fetchRequest
       )
@@ -154,24 +155,25 @@ export default {
           }
           this.$router.push({ name: 'login' })
         } else {
+          // eslint-disable-next-line
           console.log(response)
         }
       }).catch(error => {
+        // eslint-disable-next-line
         console.log(error)
       })
     },
     updateUserData: function (userDataFromLogin) {
-      console.log('Update Login Status: ', userDataFromLogin.data[0])
       this.userData = userDataFromLogin.data[0]
       this.loggedInState = true
     },
     getUser: function () {
       // Get session cookie data
       const sessionToken = getCookie('session')
-      console.log('Saved Session Token: ', sessionToken)
 
       // Get user data
       const fetchRequest = window.origin + '/api/v1/auth/sessions?session-token=' + sessionToken
+      // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest
       )
@@ -182,21 +184,24 @@ export default {
         if (response.status === 200) {
           response.json().then(jsonData => {
             this.userData = jsonData.data[0]
-            console.log(this.userData)
+            // eslint-disable-next-line
+            console.log("User Data: ", this.userData)
             if (this.userData.user_id !== '') {
               this.loggedInState = true
             } else {
               this.loggedInState = false
             }
             const sessionToken = getCookie('session')
+            // eslint-disable-next-line
             console.log('Session Token: ', sessionToken)
           })
         } else {
+          // eslint-disable-next-line
           console.log('Looks like there was a problem. Status Code:' + response.status)
           response.json().then(jsonData => {
-            console.log(jsonData)
             this.loggedInState = false
             const sessionToken = getCookie('session')
+            // eslint-disable-next-line
             console.log('New Session Token: ', sessionToken)
           })
         }

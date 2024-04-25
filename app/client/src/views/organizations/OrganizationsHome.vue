@@ -163,6 +163,7 @@ export default {
       }
       // TODO: Fix Component Names and add them to Populate
       const fetchRequest = window.origin + '/api/v1/organizations/?org-id=' + orgId + '&populate=facilities&populate=sales-orders&populate=purchase-orders&populate=people&populate=products'
+      // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest
       )
@@ -200,13 +201,16 @@ export default {
           })
         } else {
           this.org_data[orgId].populated = true
+          // eslint-disable-next-line
           console.log('Looks like there was a problem. Status Code:' + response.status)
+          // eslint-disable-next-line
           console.log(response)
         }
       })
     },
     getOrgData: function () {
       const fetchRequest = window.origin + '/api/v1/organizations'
+      // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest
       )
@@ -223,6 +227,7 @@ export default {
             for (let i = 0; i < this.org_data.length; i++) {
               this.org_data[i].populated = false
             }
+            // eslint-disable-next-line
             console.log(this.org_data)
             this.loaded = true
           })
@@ -231,7 +236,9 @@ export default {
             name: 'login'
           })
         } else {
+          // eslint-disable-next-line
           console.log('Looks like there was a problem. Status Code:' + response.status)
+          // eslint-disable-next-line
           console.log(response)
         }
       })

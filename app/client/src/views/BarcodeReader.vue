@@ -46,7 +46,6 @@ export default {
   },
   methods: {
     onDecode (a, b, c) {
-      console.log(a, b, c)
       this.text = a
       if (this.id) clearTimeout(this.id)
       this.id = setTimeout(() => {
@@ -56,6 +55,7 @@ export default {
       }, 5000)
     },
     onLoaded () {
+      // eslint-disable-next-line
       console.log('load')
     }
   }

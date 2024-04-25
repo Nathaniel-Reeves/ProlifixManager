@@ -114,6 +114,7 @@ export default {
     },
     fetchInventoryData () {
       const fetchRequest = window.origin + '/api/v1/inventory'
+      // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest
       )
@@ -128,11 +129,14 @@ export default {
         if (response.status === 200) {
           response.json().then(data => {
             this.inv_data = data.data[0]
+            // eslint-disable-next-line
             console.log(this.inv_data)
             this.loaded = true
           })
         } else {
+          // eslint-disable-next-line
           console.log('Looks like there was a problem. Status Code:' + response.status)
+          // eslint-disable-next-line
           console.log(response)
         }
       })

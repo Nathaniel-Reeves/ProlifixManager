@@ -210,6 +210,7 @@ export default {
     },
     populateComponent: function (componentId) {
       const fetchRequest = window.origin + '/api/v1/catalogue/components?component-id=' + componentId + '&populate=product_materials&populate=purchase_order_detail&populate=label_formula_master&populate=ingredient_formula_master&populate=item_id&populate=inventory&populate=brand&doc=true'
+      // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest
       )
@@ -223,6 +224,7 @@ export default {
         if (response.status === 200) {
           response.json().then(data => {
             this.components_data[componentId] = Object.values(data.data[0])[0]
+            // eslint-disable-next-line
             console.log(this.components_data[componentId])
           })
         } else if (response.status === 401) {
@@ -230,7 +232,9 @@ export default {
             name: 'login'
           })
         } else {
+          // eslint-disable-next-line
           console.log('Looks like there was a problem. Status Code:' + response.status)
+          // eslint-disable-next-line
           console.log(response)
         }
       })
@@ -242,6 +246,7 @@ export default {
       } else {
         this.fetched_all_components = true
       }
+      // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest
       )
@@ -255,6 +260,7 @@ export default {
         if (response.status === 200) {
           response.json().then(data => {
             this.components_data = data.data[0]
+            // eslint-disable-next-line
             console.log(this.components_data)
             this.loaded = true
           })
@@ -267,7 +273,9 @@ export default {
             name: 'NotFound'
           })
         } else {
+          // eslint-disable-next-line
           console.log('Looks like there was a problem. Status Code:' + response.status)
+          // eslint-disable-next-line
           console.log(response)
         }
       })

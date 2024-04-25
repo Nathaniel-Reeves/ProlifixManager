@@ -320,6 +320,8 @@ import NamesComponent from './NamesComponent.vue'
 import CertBadge from '../../components/CertBadge.vue'
 import Grid from 'gridjs-vue'
 import { html } from 'gridjs'
+// eslint-disable-next-line
+debugger
 
 export default {
   name: 'ComponentDetail',
@@ -363,7 +365,7 @@ export default {
           name: 'Spec',
           formatter: (_, row) => (
             (row.cells[2].data === '=' ? '' : row.cells[2].data) +
-            row.cells[3].data.toString() +
+            row.cells[3].data.toLocaleString() +
             ' ' +
             row.cells[4].data
           ),
@@ -391,6 +393,7 @@ export default {
       edit_specs: false,
       edit_specs_buffer: {},
       upload_files_buffer: {},
+      remove_files_buffer: [],
       flash_messages: [],
       file_index: 1
     }
@@ -409,10 +412,13 @@ export default {
       this.edit_specs_buffer.specs[specKey].tests.push(test)
     },
     removeTest: function (index, specKey) {
-      for (const pair in this.edit_files_buffer) {
+      for (const pair in this.upload_files_buffer) {
         if (this.edit_specs_buffer.specs[specKey].tests[index].file_pointer === pair[0]) {
-          this.edit_files_buffer.splice(pair[0], 1)
+          this.upload_files_buffer.splice(pair[0], 1)
         }
+      }
+      if (this.edit_specs_buffer.specs[specKey].tests[index].file_hash) {
+        this.remove_files_buffer.push(this.edit_specs_buffer.specs[specKey].tests[index].file_hash)
       }
       this.edit_specs_buffer.specs[specKey].tests.splice(index, 1)
     },
@@ -448,7 +454,6 @@ export default {
     getFile: function (filename) {
       if (filename) {
         const url = window.origin + '/api/v1/uploads/' + filename
-        console.log(url)
         return url
       } else {
         return ''
@@ -512,6 +517,7 @@ export default {
           if (outcome === true) {
             this.edit_specs_buffer = []
             this.upload_files_buffer = {}
+            this.remove_files_buffer = []
             this.edit_specs = false
           } else {
             this.component_data.doc.specifications = original
@@ -521,6 +527,8 @@ export default {
     },
     cancelEditSpecs: function () {
       this.edit_specs_buffer = []
+      this.edit_files_buffer = {}
+      this.remove_files_buffer = []
       this.edit_specs = false
     },
     scrollIntoView: function (event) {
@@ -559,6 +567,7 @@ export default {
     },
     getComponentData: function () {
       const fetchRequest = window.origin + '/api/v1/catalogue/components?component-id=' + this.id + '&populate=product_materials&populate=purchase_order_detail&populate=label_formula_master&populate=ingredient_formula_master&populate=item_id&populate=inventory&populate=brand&doc=true'
+      // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest
       )
@@ -569,13 +578,13 @@ export default {
         },
         credentials: 'include'
       }).then(response => {
-        console.log(response.status)
         if (response.status === 200) {
           response.json().then(data => {
             this.component_data = Object.values(data.data[0])[0]
             if (this.component_data.doc === null) {
               this.component_data.doc = {}
             }
+            // eslint-disable-next-line
             console.log(this.component_data)
             this.loaded = true
           })
@@ -586,13 +595,16 @@ export default {
             name: 'login'
           })
         } else {
+          // eslint-disable-next-line
           console.log('Looks like there was a problem. Status Code:' + response.status)
+          // eslint-disable-next-line
           console.log(response)
         }
       })
     },
     putComponent: async function () {
       const fetchRequest = window.origin + '/api/v1/catalogue/components'
+      // eslint-disable-next-line
       console.log(
         'PUT ' + fetchRequest
       )
@@ -609,6 +621,7 @@ export default {
       formData.append('certified_vegan', this.component_data.certified_vegan)
       formData.append('brand_id', this.component_data.brand_id)
       formData.append('units', this.component_data.units)
+      this.component_data.doc.remove_files = this.remove_files_buffer
       for (const pair of Object.entries(this.component_data.doc.files)) {
         const key = pair[0]
         const value = pair[1]
@@ -654,6 +667,7 @@ export default {
       } catch (error) {
         const err = error
         this.loaded = true
+        // eslint-disable-next-line
         console.error('There has been a problem with your fetch operation: ', err)
         const errorToast = {
           title: 'Failure to save changes.',

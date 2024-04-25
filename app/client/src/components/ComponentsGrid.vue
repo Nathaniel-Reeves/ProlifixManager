@@ -57,7 +57,6 @@ export default {
   },
   methods: {
     view_row: function (cell, row) {
-      console.log(cell, row)
       const id = row.cells[0].data // get component id from first (hidden) id column
       this.$router.push({
         name: 'ComponentDetail',

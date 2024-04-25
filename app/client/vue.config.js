@@ -9,3 +9,10 @@ module.exports = defineConfig({
     }
   }
 })
+
+// client: {
+//   overlay: {
+//     warnings: true,
+//     errors: true
+//   }
+// },

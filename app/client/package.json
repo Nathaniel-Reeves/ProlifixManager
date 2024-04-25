@@ -62,12 +62,16 @@
     },
     "extends": [
       "plugin:vue/essential",
-      "@vue/standard"
+      "@vue/standard",
+      "eslint:recommended"
     ],
     "parserOptions": {
       "parser": "@babel/eslint-parser"
     },
-    "rules": {},
+    "rules": {
+      "no-console": 1,
+      "no-debugger": 1
+    },
     "overrides": [
       {
         "files": [

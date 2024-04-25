@@ -22,7 +22,7 @@ class Files(Base):
 
     # Common Methods
     def __repr__(self):
-        return f'<File Record hash:{self.file_hash}'
+        return f'<File Record hash:{self.file_hash}>'
 
     def to_dict(self):
         """Converts Data to Dictionary representation

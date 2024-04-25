@@ -5,7 +5,7 @@ import os
 import pathlib
 from werkzeug.utils import secure_filename
 import hashlib
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, update, delete
 import model as db
 
 def matchup_recursive(data, file_meta_key, file_meta_value, updates, finished):
@@ -60,6 +60,12 @@ def save_files(data, session):
     }
     """
     if 'doc' in data.keys():
+        if "remove_files" in data["doc"].keys() and data['doc']['remove_files']:
+            print(data['doc']['remove_files'])
+            for remove_hash in data['doc']['remove_files']:
+                remove_file(remove_hash, session)
+        if "remove_files" in data["doc"].keys():
+            data['doc'].pop("remove_files")
         if "files" in data["doc"].keys():
             if len(data["doc"]["files"]) > 0:
                 save = {}
@@ -81,6 +87,46 @@ def save_files(data, session):
                 return matchup_saved_file_to_data(data)
     return data
 
+def remove_file(file_hash, session):
+    """Remove file from server if no more references exist, decrement ref counter
+    Args:
+        file_hash (string): Hash of file to remove
+        session (Session): Database Session
+    """
+    # Check if File Exists in DB and increment ref count, Save if not
+    stream = session.execute(
+        select(db.Files).where(db.Files.file_hash == file_hash)
+    )
+    raw_data = stream.all()
+
+    if len(raw_data) <= 0:
+        raise ValueError("Invalid File Hash to Remove: " + file_hash)
+
+    if (raw_data[0][0].to_dict()["ref_count"] > 1):
+        stm = (
+            update(db.Files)
+            .where(db.Files.file_hash == file_hash)
+            .values(ref_count=raw_data[0][0].to_dict()["ref_count"] - 1)
+        )
+        session.execute(stm)
+        session.commit()
+        return
+    else:
+        pointer = os.path.join(
+            app.config['UPLOAD_FOLDER'], raw_data[0][0].to_dict()["file_pointer"]
+        )
+        os.remove(pointer)
+
+        stm = (
+            delete(db.Files)
+            .where(db.Files.file_hash == file_hash)
+        )
+        session.execute(stm)
+        session.commit()
+        return
+
+
+
 def save_file(file_data, session):
     """Save file to server filesystem and to Files database
 
@@ -99,7 +145,7 @@ def save_file(file_data, session):
     # Get File Hash
     file_hash = md5_from_file(file_data["file_obj"])
 
-    # Check if File Exists in DB, Save if not
+    # Check if File Exists in DB and increment ref count, Save if not
     stream = session.execute(
         select(db.Files).where(db.Files.file_hash == file_hash)
     )
@@ -131,6 +177,14 @@ def save_file(file_data, session):
 
     if len(raw_data) > 0:
         # Do not save the file to the filesystem if it already exists.
+        # Increment Ref Counter
+        stm = (
+            update(db.Files)
+            .where(db.Files.file_hash == file_hash)
+            .values(ref_count=raw_data[0][0].to_dict()["ref_count"] + 1)
+        )
+        session.execute(stm)
+        session.commit()
         return raw_data[0][0].get_id(), raw_data[0][0].file_name, raw_data[0][0].file_pointer
 
     # Create Directory if it doesn't already exist
@@ -161,7 +215,7 @@ def save_file(file_data, session):
             "file_type": file_data["type"],
             "file_pointer": pointer,
             "id_code": file_data["id_code"],
-            "pg": file_data["page"],
+            "pg": file_data["page"]
         }
     )
     raw_data = stream.all()
