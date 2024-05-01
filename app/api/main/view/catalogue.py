@@ -236,3 +236,107 @@ def handle_put_components():
 bp_cat = Blueprint('catalogue', __name__, url_prefix='/catalogue')
 bp_cat.register_blueprint(bp_comp)
 
+bp_prod = Blueprint('products', __name__, url_prefix='/products')
+@bp_prod.route('/', methods=['GET', 'POST', 'PUT'])
+@check_authenticated(authentication_required=True)
+def handle_productss():
+
+    if request.method == 'GET':
+        return handle_get_products()
+    elif request.method == 'POST':
+        return handle_post_products()
+    elif request.method == 'PUT':
+        return handle_put_products()
+    else:
+        r = CustomResponse()
+        r.set_status_code(404)
+        response = jsonify(r.to_json())
+        response.status_code = r.get_status_code()
+        return response
+
+def handle_get_products():
+    """
+    GET api/v/catalogue/products/ Endpoint
+    """
+
+    # Clean Request
+    component_ids = list(only_integers(request.args.getlist('component-id')))
+
+    types_request = request.args.getlist('type')
+    valid_types = [
+        'powder', 'liquid', 'container', 'other'
+    ]
+    component_types = check_type(valid_types, types_request)
+
+    certifications_request = request.args.getlist('certification')
+    valid_certifications = [
+        'usda_organic',
+        'halal',
+        'kosher',
+        'gluten_free',
+        'national_sanitation_foundation',
+        'us_pharmacopeia',
+        'non_gmo',
+        'vegan',
+        'wildcrafted',
+        'made_with_organic',
+        'gmp',
+        'fda'
+    ]
+
+    certifications = check_type(
+        valid_certifications,
+        certifications_request,
+        empty_means_all=False
+    )
+
+    client_ids = list(only_integers(request.args.getlist('client-id')))
+
+    populate_request = request.args.getlist('populate')
+    valid_populate = [
+        'organizations',
+        'lot_numbers',
+        'default_formula',
+        'formula_master',
+        'manufacturing_process'
+        'item_id',
+        'inventory'
+    ]
+    populate = check_type(
+        valid_populate,
+        populate_request,
+        empty_means_all=False
+    )
+
+    doc = False
+    document = request.args.get('doc')
+    if document == "true":
+        doc = True
+
+    # Get Products from Database
+    custom_response = CustomResponse()
+
+    custom_response = cat.get_products(
+        custom_response,
+        component_ids,
+        component_types,
+        certifications,
+        client_ids,
+        populate,
+        doc
+    )
+
+    response = jsonify(custom_response.to_json())
+    response.status_code = custom_response.get_status_code()
+
+    return response
+
+def handle_post_products():
+    raise NotImplementedError
+
+def handle_put_products():
+    raise NotImplementedError
+
+bp_cat = Blueprint('catalogue', __name__, url_prefix='/catalogue')
+bp_cat.register_blueprint(bp_comp)
+bp_cat.register_blueprint(bp_prod)

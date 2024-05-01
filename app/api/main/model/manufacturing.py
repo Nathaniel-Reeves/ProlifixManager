@@ -33,7 +33,7 @@ class Equipment(Base):
     date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     date_modified: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime)
 
-    doc = Column(MutableDict.as_mutable(JSON))
+    equipment_history = Column(MutableDict.as_mutable(JSON))
 
     # Common Methods
     def __repr__(self):
@@ -53,7 +53,7 @@ class Equipment(Base):
             "status": self.status,
             "date_entered": self.date_entered,
             "date_modified": self.date_modified,
-            "doc": self.doc
+            "equipment_history": self.equipment_history
         }
 
     def get_id(self):
@@ -80,8 +80,16 @@ class Processes(Base):
     process_sop: Mapped[str] = mapped_column()
     date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     date_modified: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime)
-
-    doc = Column(MutableDict.as_mutable(JSON))
+    rework_process: Mapped[bool] = mapped_column(default=False)
+    min_personnel: Mapped[int] = mapped_column(default=0)
+    max_personnel: Mapped[int] = mapped_column(default=0)
+    ComponentTypes = ("container", "pouch", "shrink_band", "lid", "label", "capsule", "misc", "scoop", "desiccant", "box", "carton", "packaging_material")
+    component_type: Mapped[int] = mapped_column(Enum(
+        *ComponentTypes,
+        name="ComponentTypes",
+        create_constraint=True,
+        validate_strings=True,
+        ))
 
     # Common Methods
     def __repr__(self):
@@ -100,7 +108,10 @@ class Processes(Base):
             "process_sop": self.process_sop,
             "date_entered": self.date_entered,
             "date_modified": self.date_modified,
-            "doc": self.doc
+            "rework_process": self.rework_process,
+            "min_personnel": self.min_personnel,
+            "max_personnel": self.max_personnel,
+            "component_type": self.component_type
         }
 
     def get_id(self):
