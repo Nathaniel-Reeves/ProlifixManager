@@ -75,7 +75,6 @@ def handle_get_components():
 
     populate_request = request.args.getlist('populate')
     valid_populate = [
-        'product_materials',
         'purchase_order_detail',
         'label_formula_master',
         'ingredient_formula_detail',

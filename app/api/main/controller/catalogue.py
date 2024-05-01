@@ -27,8 +27,6 @@ def get_components(
     # Build the query
     tables = [db.Components, db.Component_Names]
 
-    if 'product_materials' in populate:
-        tables.append(db.Materials)
     if 'purchase_order_detail' in populate:
         tables.append(db.Purchase_Order_Detail)
     if 'label_formula-master' in populate:
@@ -46,8 +44,6 @@ def get_components(
     stm = select(*tables) \
         .join(db.Component_Names, isouter=True)
 
-    if 'product_materials' in populate:
-        stm = stm.join(db.Materials, db.Components.component_id == db.Materials.component_id, isouter=True)
     if 'purchase_order_detail' in populate:
         stm = stm.join(db.Purchase_Order_Detail, db.Components.component_id == db.Purchase_Order_Detail.component_id, isouter=True)
     if 'label_formula_master' in populate:
