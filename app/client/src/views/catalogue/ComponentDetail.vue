@@ -566,7 +566,7 @@ export default {
       return ''
     },
     getComponentData: function () {
-      const fetchRequest = window.origin + '/api/v1/catalogue/components?component-id=' + this.id + '&populate=product_materials&populate=purchase_order_detail&populate=label_formula_master&populate=ingredient_formula_master&populate=item_id&populate=inventory&populate=brand&doc=true'
+      const fetchRequest = window.origin + '/api/v1/catalogue/components?component-id=' + this.id + '&populate=product_materials&populate=purchase_order_detail&populate=item_id&populate=inventory&populate=brand&doc=true'
       // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest

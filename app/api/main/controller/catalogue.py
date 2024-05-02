@@ -29,10 +29,6 @@ def get_components(
 
     if 'purchase_order_detail' in populate:
         tables.append(db.Purchase_Order_Detail)
-    if 'label_formula-master' in populate:
-        tables.append(db.Formula_Master)
-    if 'ingredient_formula_detail' in populate:
-        tables.append(db.Formula_Detail)
     if 'item_id' in populate or 'inventory' in populate:
         tables.append(db.Item_id)
     if 'inventory' in populate:
@@ -46,10 +42,6 @@ def get_components(
 
     if 'purchase_order_detail' in populate:
         stm = stm.join(db.Purchase_Order_Detail, db.Components.component_id == db.Purchase_Order_Detail.component_id, isouter=True)
-    if 'label_formula_master' in populate:
-        stm = stm.join(db.Formula_Master, db.Components.component_id == db.Formula_Master.label_id, isouter=True)
-    if 'ingredient-formula-detail' in populate:
-        stm = stm.join(db.Formula_Detail, db.Components.component_id == db.Formula_Detail.ingredient_id, isouter=True)
     if 'item_id' in populate or 'inventory' in populate:
         stm = stm.join(db.Item_id, db.Components.component_id == db.Item_id.component_id, isouter=True)
     if 'inventory' in populate:
