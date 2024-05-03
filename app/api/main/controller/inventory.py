@@ -16,7 +16,7 @@ from .files import save_files
 
 def get_components(
         custom_response,
-        component_ids,
+        product_ids,
         component_types,
         certifications,
         brand_ids,
@@ -52,8 +52,8 @@ def get_components(
 
     # stm = stm.where(db.Component_Names.primary_name == True)
 
-    if component_ids:
-        stm = stm.where(db.Components.component_id.in_(component_ids))
+    if product_ids:
+        stm = stm.where(db.Components.component_id.in_(product_ids))
 
     if brand_ids:
         stm = stm.where(db.Components.brand_id.in_(brand_ids))
@@ -250,114 +250,4 @@ def put_component(
         message="Component Updated Successfully"
     )
     custom_response.insert_flash_message(flash_message)
-    return custom_response
-
-def get_products(
-        custom_response,
-        component_ids,
-        component_types,
-        certifications,
-        client_ids,
-        populate,
-        doc
-    ):
-
-    # Build the query
-    tables = [db.Product_Master]
-
-    if 'organizations' in populate:
-        tables.append(db.Organizations)
-        tables.append(db.Organization_Names)
-    if 'lot_numbers' in populate:
-        tables.append(db.Lot_Numbers)
-    if 'default_formula' in populate or 'all_formulas' in populate:
-        tables.append(db.Formula_Master)
-        tables.append(db.Formula_Detail)
-    if 'item_id' in populate or 'inventory' in populate:
-        tables.append(db.Item_id)
-    if 'inventory' in populate:
-        tables.append(db.Inventory)
-    if 'brand' in populate:
-        tables.append(db.Organizations)
-        tables.append(db.Organization_Names)
-
-    stm = select(*tables) \
-        .join(db.Component_Names, isouter=True)
-
-    if 'product_materials' in populate:
-        stm = stm.join(db.Materials, db.Components.component_id == db.Materials.component_id, isouter=True)
-    if 'purchase_order_detail' in populate:
-        stm = stm.join(db.Purchase_Order_Detail, db.Components.component_id == db.Purchase_Order_Detail.component_id, isouter=True)
-    if 'label_formula_master' in populate:
-        stm = stm.join(db.Formula_Master, db.Components.component_id == db.Formula_Master.label_id, isouter=True)
-    if 'ingredient-formula-detail' in populate:
-        stm = stm.join(db.Formula_Detail, db.Components.component_id == db.Formula_Detail.ingredient_id, isouter=True)
-    if 'item_id' in populate or 'inventory' in populate:
-        stm = stm.join(db.Item_id, db.Components.component_id == db.Item_id.component_id, isouter=True)
-    if 'inventory' in populate:
-        stm = stm.join(db.Inventory, db.Item_id.item_id == db.Inventory.item_id, isouter=True)
-    if 'brand' in populate:
-        stm = stm.join(db.Organizations, db.Components.brand_id == db.Organizations.organization_id, isouter=True)
-        stm = stm.join(db.Organization_Names, db.Organizations.organization_id == db.Organization_Names.organization_id, isouter=True)
-
-    # stm = stm.where(db.Component_Names.primary_name == True)
-
-    if component_ids:
-        stm = stm.where(db.Components.component_id.in_(component_ids))
-
-    if brand_ids:
-        stm = stm.where(db.Components.brand_id.in_(brand_ids))
-
-    if component_types:
-        stm = stm.where(db.Components.component_type.in_(component_types))
-
-    if certifications:
-        if 'usda_organic' in certifications:
-            stm = stm.where(db.Components.certified_usda_organic == True)
-        if 'halal' in certifications:
-            stm = stm.where(db.Components.certified_halal == True)
-        if 'kosher' in certifications:
-            stm = stm.where(db.Components.certified_kosher == True)
-        if 'gluten_free' in certifications:
-            stm = stm.where(db.Components.certified_gluten_free == True)
-        if 'national-sanitation-foundation' in certifications:
-            stm = stm.where(db.Components.certified_national_sanitation_foundation == True)
-        if 'us-pharmocopeia' in certifications:
-            stm = stm.where(db.Components.certified_us_pharmacopeia == True)
-        if 'non_gmo' in certifications:
-            stm = stm.where(db.Components.certified_non_gmo == True)
-        if 'vegan' in certifications:
-            stm = stm.where(db.Components.certified_vegan == True)
-        if 'wildcrafted' in certifications:
-            stm = stm.where(db.Components.certified_wildcrafted == True)
-        if 'made_with_organic' in certifications:
-            stm = stm.where(db.Components.certified_made_with_organic == True)
-        if 'gmp' in certifications:
-            stm = stm.where(db.Components.certified_gmp == True)
-        if 'fda' in certifications:
-            stm = stm.where(db.Components.certified_fda == True)
-
-    # Connect to the database
-    try:
-        session = get_session()
-    except Exception:
-        error = error_message()
-        custom_response.insert_flash_message(error)
-        custom_response.set_status_code(500)
-        return custom_response
-
-    # Execute the query
-    try:
-        stream = session.execute(stm)
-        raw_data = stream.all()
-    except Exception:
-        error = error_message()
-        custom_response.insert_flash_message(error)
-        custom_response.set_status_code(400)
-        return custom_response
-
-    session.close()
-    # Process and Package the data
-    data, custom_response = package_data(raw_data, doc, custom_response)
-    custom_response.insert_data(data)
     return custom_response

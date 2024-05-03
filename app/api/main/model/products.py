@@ -17,7 +17,7 @@ class Product_Master(Base):
     product_id: Mapped[int] = mapped_column(primary_key=True)
     organization_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
     product_name: Mapped[str] = mapped_column()
-    ProductTypes = ("Powder", "Capsule", "Liquid", "Other")
+    ProductTypes = ("powder", "capsule", "liquid")
     type: Mapped[int] = mapped_column(Enum(
         *ProductTypes,
         name="ProductTypes",
@@ -26,7 +26,6 @@ class Product_Master(Base):
         ))
     current_product: Mapped[bool] = mapped_column()
     date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    spec_issue_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     spec_revise_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     TimeUnits = ("Years", "Months", "Days")
     exp_unit: Mapped[int] = mapped_column(Enum(
@@ -58,7 +57,7 @@ class Product_Master(Base):
     certified_non_gmo: Mapped[bool] = mapped_column(default=False)
     certified_vegan: Mapped[bool] = mapped_column(default=False)
 
-    lab_specifications = Column(MutableDict.as_mutable(JSON))
+    doc = Column(MutableDict.as_mutable(JSON))
 
     # Relationships
     # formulas: Mapped[List["Formula_Master"]] = relationship()
@@ -99,7 +98,7 @@ class Product_Master(Base):
             'certified_us_pharmacopeia': self.certified_us_pharmacopeia,
             'certified_non_gmo': self.certified_non_gmo,
             'certified_vegan': self.certified_vegan,
-            'lab_specifications': self.lab_specifications
+            'doc': self.doc
         }
 
     def get_id(self):
@@ -174,6 +173,15 @@ class Formula_Master(Base):
     total_milliliters_per_unit: Mapped[float] = mapped_column()
     fill_min: Mapped[float] = mapped_column()
     fill_max: Mapped[float] = mapped_column()
+    total_mg_per_capsule: Mapped[float] = mapped_column()
+    mg_empty_capsule: Mapped[float] = mapped_column()
+    CapsuleSizes = ("1","2","0","00")
+    capsule_size: Mapped[int] = mapped_column(Enum(
+        *CapsuleSizes,
+        name="CapsuleSizes",
+        create_constraint=True,
+        validate_strings=True,
+        ))
 
     # Relationships
 
@@ -197,7 +205,10 @@ class Formula_Master(Base):
             'total_capsules_per_unit': self.total_capsules_per_unit,
             'total_milliliters_per_unit': self.total_milliliters_per_unit,
             'fill_min': self.fill_min,
-            'fill_max': self.fill_max
+            'fill_max': self.fill_max,
+            'total_mg_per_capsule': self.total_mg_per_capsule,
+            'mg_empty_capsule': self.mg_empty_capsule,
+            'capsule_size': self.capsule_size
         }
 
     def get_id(self):
@@ -221,8 +232,6 @@ class Formula_Detail(Base):
     ml_per_unit: Mapped[float] = mapped_column()
     grams_per_unit: Mapped[float] = mapped_column()
     notes: Mapped[str] = mapped_column(default=None)
-    approved_brands: Mapped[int] = mapped_column()
-    approved_ingredients: Mapped[int] = mapped_column()
     specific_brand_required: Mapped[bool] = mapped_column(default=False)
     specific_ingredient_required: Mapped[bool] = mapped_column(default=False)
 
@@ -246,8 +255,6 @@ class Formula_Detail(Base):
             'ml_per_unit': self.ml_per_unit,
             'grams_per_unit': self.grams_per_unit,
             'notes': self.notes,
-            'approved_brands': self.approved_brands,
-            'approved_ingredients': self.approved_ingredients,
             'specific_brand_required': self.specific_brand_required,
             'specific_ingredient_required': self.specific_ingredient_required
         }
@@ -326,8 +333,7 @@ class Ingredients_Join(Base):
             '_id': self._id,
             'formula_ingredient_id': self.formula_ingredient_id,
             'ingredient_id': self.ingredient_id,
-            'priority': self.priority,
-            'ml_per_unit': self.ml_per_unit
+            'priority': self.priority
         }
 
     def get_id(self):
@@ -386,7 +392,7 @@ class Components_Join(Base):
     # Table Columns
     _id: Mapped[int] = mapped_column(primary_key=True)
     process_component_id: Mapped[int] = mapped_column(ForeignKey('Products.Process_Components.process_component_id'))
-    ingredient_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'))
+    component_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'))
     priority: Mapped[int] = mapped_column()
 
     # Relationships

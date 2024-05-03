@@ -1,7 +1,7 @@
 DROP SCHEMA `Formulas`;
 DROP SCHEMA `Manufacturing`;
-ALTER TABLE Products.Product_Master MODIFY COLUMN `type` enum('Powder','Capsule','Liquid') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;
-ALTER TABLE Products.Product_Master CHANGE doc lab_specifications longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL NULL;
+ALTER TABLE Products.Product_Master MODIFY COLUMN `type` enum('powder','capsule','liquid') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL;
+-- ALTER TABLE Products.Product_Master CHANGE doc lab_specifications longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL NULL;
 DROP TABLE Products.Materials;
 DROP TABLE Products.Manufacturing_Process;
 CREATE SCHEMA `Manufacturing`;
@@ -109,11 +109,11 @@ CREATE TABLE `Products`.`Process_Components` (
 CREATE TABLE `Products`.`Components_Join` (
   `_id` INT UNSIGNED AUTO_INCREMENT,
   `process_component_id` INT UNSIGNED,
-  `ingredient_id` INT UNSIGNED,
+  `component_id` INT UNSIGNED,
   `priority` INT,
   PRIMARY KEY (`_id`),
   FOREIGN KEY (`process_component_id`) REFERENCES `Products`.`Process_Components`(`process_component_id`),
-  FOREIGN KEY (`ingredient_id`) REFERENCES `Inventory`.`Components`(`component_id`)
+  FOREIGN KEY (`component_id`) REFERENCES `Inventory`.`Components`(`component_id`)
 );
 
 CREATE TABLE `Products`.`Component_Brands_Join` (

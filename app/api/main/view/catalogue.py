@@ -10,10 +10,12 @@ from flask import (
 from .auth import check_authenticated
 from .helper import only_integers, check_type, collect_form_data
 from .response import CustomResponse, FlashMessage
-from controller import catalogue as cat
+from controller import inventory as inv
+from controller import products as prod
 
+bp_cat = Blueprint('catalogue', __name__, url_prefix='/catalogue')
 bp_comp = Blueprint('components', __name__, url_prefix='/components')
-
+bp_prod = Blueprint('products', __name__, url_prefix='/products')
 
 @bp_comp.route('/', methods=['GET', 'POST', 'PUT'])
 @check_authenticated(authentication_required=True)
@@ -32,6 +34,26 @@ def handle_components():
         response.status_code = r.get_status_code()
         return response
 
+bp_cat.register_blueprint(bp_comp)
+
+@bp_prod.route('/', methods=['GET', 'POST', 'PUT'])
+@check_authenticated(authentication_required=True)
+def handle_productss():
+
+    if request.method == 'GET':
+        return handle_get_products()
+    elif request.method == 'POST':
+        return handle_post_products()
+    elif request.method == 'PUT':
+        return handle_put_products()
+    else:
+        r = CustomResponse()
+        r.set_status_code(404)
+        response = jsonify(r.to_json())
+        response.status_code = r.get_status_code()
+        return response
+
+bp_cat.register_blueprint(bp_prod)
 
 def handle_get_components():
     """
@@ -94,7 +116,7 @@ def handle_get_components():
     # Get Components from Database
     custom_response = CustomResponse()
 
-    custom_response = cat.get_components(
+    custom_response = inv.get_components(
         custom_response,
         component_ids,
         component_types,
@@ -201,7 +223,7 @@ def handle_post_components():
         return response
 
     # Post Components to Database
-    custom_response = cat.post_component(
+    custom_response = inv.post_component(
         custom_response,
         component
     )
@@ -219,7 +241,7 @@ def handle_put_components():
     # Get Components from Database
     custom_response = CustomResponse()
 
-    custom_response = cat.put_component(
+    custom_response = inv.put_component(
         custom_response,
         component
     )
@@ -229,41 +251,19 @@ def handle_put_components():
 
     return response
 
-
-bp_cat = Blueprint('catalogue', __name__, url_prefix='/catalogue')
-bp_cat.register_blueprint(bp_comp)
-
-bp_prod = Blueprint('products', __name__, url_prefix='/products')
-@bp_prod.route('/', methods=['GET', 'POST', 'PUT'])
-@check_authenticated(authentication_required=True)
-def handle_productss():
-
-    if request.method == 'GET':
-        return handle_get_products()
-    elif request.method == 'POST':
-        return handle_post_products()
-    elif request.method == 'PUT':
-        return handle_put_products()
-    else:
-        r = CustomResponse()
-        r.set_status_code(404)
-        response = jsonify(r.to_json())
-        response.status_code = r.get_status_code()
-        return response
-
 def handle_get_products():
     """
     GET api/v/catalogue/products/ Endpoint
     """
 
     # Clean Request
-    component_ids = list(only_integers(request.args.getlist('component-id')))
+    product_ids = list(only_integers(request.args.getlist('product-id')))
 
     types_request = request.args.getlist('type')
     valid_types = [
-        'powder', 'liquid', 'container', 'other'
+        'powder', 'liquid', 'capsule'
     ]
-    component_types = check_type(valid_types, types_request)
+    product_types = check_type(valid_types, types_request)
 
     certifications_request = request.args.getlist('certification')
     valid_certifications = [
@@ -291,13 +291,11 @@ def handle_get_products():
 
     populate_request = request.args.getlist('populate')
     valid_populate = [
-        'organizations',
-        'lot_numbers',
-        'default_formula',
-        'formula_master',
-        'manufacturing_process'
-        'item_id',
-        'inventory'
+        'lot-numbers',
+        'inventory',
+        'default-formula',
+        'components',
+        'manufacturing-process'
     ]
     populate = check_type(
         valid_populate,
@@ -313,10 +311,10 @@ def handle_get_products():
     # Get Products from Database
     custom_response = CustomResponse()
 
-    custom_response = cat.get_products(
+    custom_response = prod.get_products(
         custom_response,
-        component_ids,
-        component_types,
+        product_ids,
+        product_types,
         certifications,
         client_ids,
         populate,
@@ -333,7 +331,3 @@ def handle_post_products():
 
 def handle_put_products():
     raise NotImplementedError
-
-bp_cat = Blueprint('catalogue', __name__, url_prefix='/catalogue')
-bp_cat.register_blueprint(bp_comp)
-bp_cat.register_blueprint(bp_prod)
