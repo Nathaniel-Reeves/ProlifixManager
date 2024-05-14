@@ -36,7 +36,7 @@
 
           <!-- Specifications -->
           <div v-if="component_data.doc.specifications !== undefined">
-            <h3 id="Specifications">Specifications<b-button v-if="!edit_specs" v-b-tooltip.hover title="Edit Component Specifications" v-on:click="editSpecs()" class="btn p-1 ml-2 btn-light" type="button"><i class="bi bi-pencil-square d-print-none"></i></b-button></h3>
+            <h3 id="Specifications">Specifications<b-button v-if="!edit_specs" v-b-tooltip.hover title="Edit Component Specifications" v-on:click="editSpecs()" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
             <div v-if="!edit_specs">
               <p><strong>Spec Issued: </strong>{{ component_data.doc.specifications.date_issued !== undefined && component_data.doc.specifications.date_issued !== '' ? new Date(component_data.doc.specifications.date_issued).toDateString() : "No Spec" }}</p>
               <p><strong>Spec Revised: </strong>{{ component_data.doc.specifications.date_revised !== undefined && component_data.doc.specifications.date_revised !== '' ? new Date(component_data.doc.specifications.date_revised).toDateString() : "No Spec" }}</p>
@@ -77,7 +77,7 @@
             <div v-for="(spec, spec_key, index) in component_data.doc.specifications.specs" :key="index" style="break-inside: avoid;">
 
               <!-- Spec Header -->
-              <h3 :id="spec_key">{{ spec.test_name }}<b-button v-if="!edit_specs" v-b-tooltip.hover :title="'Edit Component ' + spec.test_name + ' Specifications'" v-on:click="editSpecs()" class="btn p-1ml-2 btn-light" type="button"><i class="bi bi-pencil-square d-print-none"></i></b-button></h3>
+              <h3 :id="spec_key">{{ spec.test_name }}<b-button v-if="!edit_specs" v-b-tooltip.hover :title="'Edit Component ' + spec.test_name + ' Specifications'" v-on:click="editSpecs()" class="btn p-1ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
               <div v-if="!edit_specs">
                 <p v-if="spec_key != 'example_cofas'"><strong>Spec Issued: </strong>{{ spec.date_issued !== undefined && spec.date_issued !== '' ? new Date(spec.date_issued).toDateString() : "No Spec" }}</p>
                 <p v-if="spec_key != 'example_cofas'"><strong>Spec Revised: </strong>{{ spec.date_revised !== undefined && spec.date_revised !== '' ? new Date(spec.date_revised).toDateString() : "No Spec" }}</p>

@@ -31,8 +31,7 @@
               <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'desiccant' } });$router.go()">Desiccants</b-dropdown-item>
               <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'box' } });$router.go()">Boxes</b-dropdown-item>
               <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'carton' } });$router.go()">Cartons</b-dropdown-item>
-              <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'packaging_material' } });$router.go()">Packaging
-                Materials</b-dropdown-item>
+              <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'packaging_material' } });$router.go()">PackagingMaterials</b-dropdown-item>
             </b-nav-item-dropdown>
             <!-- <b-nav-item to="/barcodereader" active-class>barcodereader</b-nav-item> -->
           </b-navbar-nav>
@@ -54,11 +53,11 @@
       <div>
         <b-sidebar id="account-sidebar-right" title="Account Options" :right="true" shadow :lazy="true" backdrop-variant="dark">
           <div class="px-3 py-2">
-            <router-link v-if="!loggedInState" class="p-2 nav-link px-0" to="/login">
+            <RouterLink v-if="!loggedInState" class="p-2 nav-link px-0" to="/login">
               <b-button variant="light">
                 Login
               </b-button>
-            </router-link>
+            </RouterLink>
             <b-button v-else variant="light" class="p-2 nav-link px-0" v-on:click="logout">
               Logout
             </b-button>
@@ -68,7 +67,7 @@
       <div class="container-fluid">
         <div class="row justify-content-center">
           <!-- This is the link that vue uses to include other templates, Do not Delete! -->
-          <router-view @login="updateUserData" />
+          <RouterView @login="updateUserData" />
         </div>
       </div>
     </div>
@@ -116,7 +115,6 @@ function getCookie (name) {
   const parts = value.split(`; ${name}=`)
   if (parts.length === 2) return parts.pop().split(';').shift()
 }
-
 export default {
   name: 'AppFrame',
   data: function () {

@@ -7,7 +7,7 @@
             <input v-model="search_query" type="text" class="form-control" placeholder="Search Inventory..."
               aria-label="Search Inventory" aria-describedby="button-addon2">
             <div class="input-group-append">
-              <button class="btn btn-outline-secondary" type="button" id="button-addon2" v-on:click="clearSearch()"><i class="bi bi-x"></i></button>
+              <button class="btn btn-outline-secondary" type="button" id="button-addon2" v-on:click="clearSearch()"><b-icon icon="x"></b-icon></button>
             </div>
           </div>
 
@@ -37,7 +37,7 @@
         <div class="input-group d-flex justify-content-between">
           <h2 class="card-title mr-2">Inventory</h2>
             <b-button v-b-toggle.sidebar-right v-bind:class="['btn', 'my-2', filterActive ? 'btn-info' : 'btn-light']" type="button" id="button-addon2">
-              <i class="bi bi-filter"></i>
+              <b-icon icon="filter"></b-icon>
             </b-button>
         </div>
 

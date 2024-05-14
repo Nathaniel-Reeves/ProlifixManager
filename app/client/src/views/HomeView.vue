@@ -1,7 +1,8 @@
 <template>
   <div class="home">
     <div class="card p-0 mt-2 mb-4 bg-image boarder-0" style="border:0px;">
-      <div class="card-img custom-background-image m-0" v-bind:style="{'background-position-y':'bottom', 'background-image': 'url(' + require('../assets/supplements_stock_photo.jpg')+')'}">
+      <div class="card-img custom-background-image m-0"
+        v-bind:style="{'background-position-y':'bottom', 'background-image': 'url(' + require('../assets/supplements_stock_photo.jpg')+')'}">
         <div class="d-flex justify-content-center align-items-center" style="
           background-color: rgb(255 255 255 / 0.75);
           max-height: 10rem;
@@ -9,7 +10,8 @@
           align-self:center;
           transform: translate(0%, 40%);
           backdrop-filter: blur(1)">
-          <img style="max-height: 10rem; align-self:center;" alt="Prolifix Nutrition Logo" src="../assets/Company Images/logos png/Transparent Logo.png">
+          <img style="max-height: 10rem; align-self:center;" alt="Prolifix Nutrition Logo"
+            src="../assets/Company Images/logos png/Transparent Logo.png">
         </div>
       </div>
     </div>
@@ -19,24 +21,24 @@
 
         <div class="card custom-card">
           <div class="imgbox m-0">
-              <img class="image-blured m-0" alt="Supplements Manufacturing" src="../assets/supplements_manufacturing.jpg">
-            </div>
+            <img class="image-blured m-0" alt="Supplements Manufacturing" src="../assets/supplements_manufacturing.jpg">
+          </div>
           <div class="specifies">
             <h2>Production <br>
               <span>Lot# | History | BPRs</span>
             </h2>
-            <div class="price"><i class="bi bi-arrow-down"></i></div>
+            <div class="price"><b-icon icon="arrow-down"></b-icon></div>
             <label class="mb-0 mt-2">Product Lines</label>
             <ul>
-                <li>Powder Fill</li>
-                <li>Liquid Fill</li>
-                <li>Capsule Fill</li>
+              <li>Powder Fill</li>
+              <li>Liquid Fill</li>
+              <li>Capsule Fill</li>
             </ul>
             <label class="mb-0 mt-2">Tools</label>
             <ul>
-                <li>Lot#</li>
-                <li>BPR's'</li>
-                <li>MMR's</li>
+              <li>Lot#</li>
+              <li>BPR's'</li>
+              <li>MMR's</li>
             </ul>
             <button disabled class="btn btn-light my-2" style="width:100%;">All Production</button>
           </div>
@@ -50,7 +52,7 @@
             <h2>Products <br>
               <span>Formulas | Specs</span>
             </h2>
-            <div class="price"><i class="bi bi-arrow-down"></i></div>
+            <div class="price"><b-icon icon="arrow-down"></b-icon></div>
             <label class="mb-0 mt-2">Product Lines</label>
             <ul>
               <li>Powder</li>
@@ -75,7 +77,7 @@
             <h2>Inventory <br>
               <span>Components | Products</span>
             </h2>
-            <div class="price"><i class="bi bi-arrow-down"></i></div>
+            <div class="price"><b-icon icon="arrow-down"></b-icon></div>
             <label class="mb-0 mt-2">Product Lines</label>
             <ul>
               <li>Ingredients</li>
@@ -100,7 +102,7 @@
             <h2>Organizations <br>
               <span>Clients | Suppliers | Labs</span>
             </h2>
-            <div class="price"><i class="bi bi-arrow-down"></i></div>
+            <div class="price"><b-icon icon="arrow-down"></b-icon></div>
             <label class="mb-0 mt-2">Catagories</label>
             <ul>
               <li>Clients</li>
@@ -125,7 +127,7 @@
             <h2>Orders <br>
               <span>POs | SOs</span>
             </h2>
-            <div class="price"><i class="bi bi-arrow-down"></i></div>
+            <div class="price"><b-icon icon="arrow-down"></b-icon></div>
             <label class="mb-0 mt-2">Product Lines</label>
             <ul>
               <li>Purchase Orders</li>
@@ -143,13 +145,13 @@
 
         <div class="card custom-card">
           <div class="imgbox m-0">
-                <img class="image-blured m-0" alt="Signing Documents" src="../assets/policy.jpg">
-              </div>
+            <img class="image-blured m-0" alt="Signing Documents" src="../assets/policy.jpg">
+          </div>
           <div class="specifies">
             <h2>Policies <br>
               <span>SOPs | GMPs</span>
             </h2>
-            <div class="price"><i class="bi bi-arrow-down"></i></div>
+            <div class="price"><b-icon icon="arrow-down"></b-icon></div>
             <label class="mb-0 mt-2">Documents</label>
             <ul>
               <li>SOPs</li>

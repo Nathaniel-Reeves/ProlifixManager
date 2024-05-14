@@ -1,18 +1,48 @@
-const { defineConfig } = require('@vue/cli-service')
-module.exports = defineConfig({
+// const { defineConfig } = require('@vue/cli-service')
+// module.exports = defineConfig({
+//   transpileDependencies: true,
+//   devServer: {
+//     proxy:{
+//       '^/api':{
+//         target:'http://localhost:5000'
+//       }
+//     }
+//   }
+// })
+
+module.exports = {
   transpileDependencies: true,
   devServer: {
-    proxy:{
-      '^/api':{
-        target:'http://localhost:5000'
+    proxy: {
+      '^/api': {
+        target: 'http://localhost:5000'
       }
     }
-  }
-})
+  },
+  chainWebpack: config => {
+    config.resolve.alias.set('vue', '@vue/compat')
 
-// client: {
-//   overlay: {
-//     warnings: true,
-//     errors: true
-//   }
-// },
+    config.plugin('define').tap((definitions) => {
+      Object.assign(definitions[0], {
+        __VUE_OPTIONS_API__: 'true',
+        __VUE_PROD_DEVTOOLS__: 'false',
+        __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'false'
+      })
+      return definitions
+    })
+
+    config.module
+      .rule('vue')
+      .use('vue-loader')
+      .tap(options => {
+        return {
+          ...options,
+          compilerOptions: {
+            compatConfig: {
+              MODE: 2
+            }
+          }
+        }
+      })
+  }
+}

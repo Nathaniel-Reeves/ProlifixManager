@@ -7,7 +7,7 @@
             <input v-model="search_query" type="text" class="form-control" placeholder="Search Organizations..."
               aria-label="Search Organizations" aria-describedby="button-addon2">
             <div class="input-group-append">
-              <button class="btn btn-outline-secondary" type="button" id="button-addon2" v-on:click="clearSearch()"><i class="bi bi-x"></i></button>
+              <button class="btn btn-outline-secondary" type="button" id="button-addon2" v-on:click="clearSearch()"><b-icon icon="x"></b-icon></button>
             </div>
           </div>
           <div class="input-group mb-3">
@@ -44,11 +44,11 @@
           <h2 class="card-title flex-grow-1">Organizations</h2>
           <b-button disabled title="New Organization" style="border-width: 2px; border-color:#999999" v-bind:class="['btn', 'my-2', 'mx-1', 'btn-light']" type="button"
                 id="button-addon2">
-            <i class="bi bi-plus-lg"></i>
+            <b-icon icon="plus"></b-icon>
           </b-button>
           <b-button v-b-tooltip.hover title="Filter" v-b-toggle.sidebar-right style="border-width: 2px; border-color:#999999" v-bind:class="['btn', 'my-2', 'mx-1', filterActive ? 'btn-info' : 'btn-light']" type="button"
               id="button-addon2">
-            <i class="bi bi-filter"></i>
+            <b-icon icon="filter"></b-icon>
           </b-button>
         </div>
 
@@ -66,7 +66,7 @@
                   v-bind:data-target="'#collapse' + org.organization_id" aria-expanded="false"
                   v-bind:aria-controls="'collapse' + org.organization_id" v-on:click="populateOrg(org.organization_id)">
                   <b-container fluid class="d-flex justify-content-start flex-wrap">
-                      <i class="bi bi-chevron-down p-2"></i>
+                      <b-icon icon="chevron-down"></b-icon>
                       <div class="p-2">{{ org.Organization_Names[0].organization_name }}</div>
                     </b-container>
                 </button>
