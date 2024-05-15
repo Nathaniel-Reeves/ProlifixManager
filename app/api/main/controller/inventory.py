@@ -104,6 +104,7 @@ def get_components(
         error = error_message()
         custom_response.insert_flash_message(error)
         custom_response.set_status_code(400)
+        session.close()
         return custom_response
 
     session.close()
@@ -164,6 +165,7 @@ def post_component(
         custom_response.insert_flash_message(error)
         custom_response.set_status_code(400)
         session.rollback()
+        session.close()
         return custom_response
 
     session.close()
@@ -237,6 +239,7 @@ def put_component(
         custom_response.insert_flash_message(error)
         custom_response.set_status_code(400)
         session.rollback()
+        session.close()
         return custom_response
 
     session.close()

@@ -99,6 +99,7 @@ def get_organizations(custom_response, org_ids, org_type, populate, doc):
         error = error_message()
         custom_response.insert_flash_message(error)
         custom_response.set_status_code(500)
+        session.close()
         return custom_response
 
     session.close()

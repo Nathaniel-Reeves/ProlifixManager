@@ -44,6 +44,8 @@ def package_data(raw_data, doc, custom_response):
                     for d in data[parent_key][table.__tablename__]:
                         if isinstance(table.get_id(), int):
                             entered_keys.append(d[table.get_id_name()])
+                        elif isinstance(table.get_id(), tuple):
+                            entered_keys.append((d["source"], d["target"]))
                         else:
                             entered_keys.append((
                                 d["prefix"],

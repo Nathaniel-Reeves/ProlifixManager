@@ -37,3 +37,5 @@ mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host 172.10.10.2 -e "INSTALL SONAME
 mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host 172.10.10.2 -e "SHOW ENGINES;"
 
 echo "OQGraph engine is installed."
+
+exit 0
