@@ -12,7 +12,7 @@ services:
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
       MARIADB_ROOT_HOST: '%'
     volumes:
-      - ./db/mariadb_data/:/var/lib/mysql/
+      - ./var/lib/mysql/:/var/lib/mysql/
       - ./db:/docker-entrypoint-initdb.d
       - ./.env:/.env
     ports:
