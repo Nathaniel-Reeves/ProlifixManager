@@ -6,7 +6,7 @@
           <div class="input-group mb-3">
             <input v-model="search_query" type="text" class="form-control" placeholder="Search Components..." aria-label="Search Components" aria-describedby="button-addon2">
             <div class="input-group-append">
-              <button class="btn btn-outline-secondary" type="button" id="button-addon2" v-on:click="clearSearch()"><i class="bi bi-x"></i></button>
+              <button class="btn btn-outline-secondary" type="button" id="button-addon2" v-on:click="clearSearch()"><b-icon icon="x"></b-icon></button>
             </div>
           </div>
 
@@ -34,10 +34,10 @@
         <div class="input-group d-flex">
           <h2 class="card-title flex-grow-1">Components Catalogue</h2>
           <b-button :to="{ name: 'NewComponent'}" v-b-tooltip.hover title="New Component" style="border-width: 2px; border-color:#999999" class="btn my-2 mx-1 btn-light" type="button">
-            <i class="bi bi-plus-lg"></i>
+            <b-icon icon="plus"></b-icon>
           </b-button>
           <b-button v-b-tooltip.hover title="Filter" v-b-toggle.sidebar-right style="border-width: 2px; border-color:#999999" v-bind:class="['btn', 'my-2', 'mx-1', filterActive ? 'btn-info' : 'btn-light']" type="button" id="button-addon2">
-            <i class="bi bi-filter"></i>
+            <b-icon icon="filter"></b-icon>
           </b-button>
         </div>
 
@@ -54,7 +54,7 @@
                 <button class="btn btn-block text-left" type="button" data-toggle="collapse" v-bind:data-target="'#collapse' + component.component_id" aria-expanded="false" v-bind:aria-controls="'collapse' + component.component_id" v-on:click="populateComponent(component.component_id)">
                   <b-container fluid class="m-0">
                     <b-row align-v="baseline">
-                      <b-col sm="0.5"><i class="bi bi-chevron-down p-2"></i></b-col>
+                      <b-col sm="0.5"><b-icon icon="chevron-down"></b-icon></b-col>
                       <b-col sm="1.5"><div class="p-2">{{ component.component_type.toLowerCase().split('_').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ') }}</div></b-col>
                       <b-col sm="4"><div class="p-2">{{ getPrimaryName(component) }}         {{ getBrandName(component) }}</div></b-col>
                       <b-col><div class="p-2"><CertBadge :data="component"></CertBadge></div></b-col>

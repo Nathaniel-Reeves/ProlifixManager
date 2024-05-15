@@ -1,14 +1,10 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-
-Vue.use(VueRouter)
+import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomeView
+    component: () => import(/* webpackChunkName: "barchart" */ '../views/HomeView.vue')
   },
   {
     path: '/about',
@@ -141,15 +137,25 @@ const routes = [
     component: () => import(/* webpackChunkName: "login" */ '../views/LogIn.vue')
   },
   {
-    path: '*',
+    path: '/interactflow',
+    name: 'interactflow',
+    component: () => import(/* webpackChunkName: "login" */ '../views/VueFlowInteraction.vue')
+  },
+  {
+    path: '/basicflow',
+    name: 'basicflow',
+    component: () => import(/* webpackChunkName: "login" */ '../views/VueFlowBasic.vue')
+  },
+  {
+    path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import(/* webpackChunkName: "login" */ '../views/NotFound.vue')
   }
 ]
 
-const router = new VueRouter({
-  mode: 'history',
-  routes: routes
+const router = createRouter({
+  history: createWebHistory(),
+  routes
 })
 
 export default router

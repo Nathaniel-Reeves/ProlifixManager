@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import List
 
-from sqlalchemy import Enum, ForeignKey, Column
+from sqlalchemy import Enum, ForeignKey, Column, ForeignKeyConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.mysql import JSON
 
@@ -199,6 +199,7 @@ class Inventory(Base):
     is_product: Mapped[bool] = mapped_column(default=False)
     actual_inventory: Mapped[float] = mapped_column(default=0.0)
     theoretical_inventory: Mapped[float] = mapped_column(default=0.0)
+    lot_number: Mapped[str] = mapped_column(primary_key=True)
 
     # Common Methods
     def __repr__(self):
@@ -219,7 +220,8 @@ class Inventory(Base):
             "is_component": self.is_component,
             "is_product": self.is_product,
             "actual_inventory": self.actual_inventory,
-            "theoretical_inventory": self.theoretical_inventory
+            "theoretical_inventory": self.theoretical_inventory,
+            "lot_number": self.lot_number
         }
 
     def get_id(self):
@@ -245,7 +247,6 @@ class Inventory_Log(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Users.user_id'))
     po_detail_id: Mapped[int] = mapped_column(ForeignKey('Orders.Purchase_Order_Detail.po_detail_id'))
     so_detail_id: Mapped[int] = mapped_column(ForeignKey('Orders.Sale_Order_Detail.so_detail_id'))
-    previous_log_id: Mapped[int] = mapped_column(default=None)
 
     # Table Columns
     pre_change_actual_inventory: Mapped[float] = mapped_column(default=0.0)
@@ -266,6 +267,8 @@ class Inventory_Log(Base):
         validate_strings=True,
         ))
     state_notes: Mapped[str] = mapped_column(default=None)
+    position: Mapped[str] = mapped_column()
+    type: Mapped[str] = mapped_column()
 
     doc = Column(JSON, nullable=True)
 
@@ -288,7 +291,6 @@ class Inventory_Log(Base):
             "user_id": self.user_id,
             "po_detail_id": self.po_detail_id,
             "so_detail_id": self.so_detail_id,
-            "previous_log_id": self.previous_log_id,
             "pre_change_actual_inventory": self.pre_change_actual_inventory,
             "post_change_actual_inventory": self.post_change_actual_inventory,
             "pre_change_theoretical_inventory": self.pre_change_theoretical_inventory,
@@ -301,7 +303,9 @@ class Inventory_Log(Base):
             "date_entered": self.date_entered,
             "state": self.state,
             "state_notes": self.state_notes,
-            "doc": self.doc
+            "doc": self.doc,
+            "position": self.position,
+            "type": self.type
         }
 
     def get_id(self):
@@ -311,3 +315,57 @@ class Inventory_Log(Base):
     def get_id_name(self):
         """Get Primary ID Column Name"""
         return "log_id"
+
+class Inventory_Log_Edges(Base):
+    """Inventory Log Edges ORM Model"""
+    __tablename__ = 'Inventory_Log_Edges'
+
+    # Primary Key
+    source: Mapped[int] = mapped_column(primary_key=True)
+    target: Mapped[int] = mapped_column(primary_key=True)
+
+    __table_args__ = (ForeignKeyConstraint([source, target],
+                                           [Inventory_Log.log_id, Inventory_Log.log_id]),
+                      {'schema': 'Inventory'})
+
+    # Relationships
+    inv_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Inventory.inv_id'))
+
+    # Table Columns
+    label: Mapped[str] = mapped_column()
+    animated: Mapped[bool] = mapped_column(default=False)
+    ArrowStates = ("Arrow","ArrowClosed")
+    marker_end: Mapped[int] = mapped_column(Enum(
+        *ArrowStates,
+        name="ArrowStates",
+        create_constraint=True,
+        validate_strings=True,
+        ))
+
+    # Common Methods
+    def __repr__(self):
+        """Return a string representation of Object"""
+        return f'<Inventory_Log_Edge source:{self.source} target:{self.target} inv_id:{self.inv_id}>'
+
+    def to_dict(self):
+        """Converts Data to Dictionary representation
+
+        Returns:
+            Dict: Columns as Keys
+        """
+        return {
+            "source": self.source,
+            "target": self.target,
+            "inv_id": self.inv_id,
+            "label": self.label,
+            "animated": self.animated,
+            "marker_end": self.marker_end
+        }
+
+    def get_id(self):
+        """Get Row Id"""
+        return (self.source, self.target)
+
+    def get_id_name(self):
+        """Get Primary ID Column Name"""
+        return "(source, target)"

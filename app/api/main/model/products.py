@@ -1,7 +1,7 @@
 from __future__ import annotations
 import datetime
 
-from sqlalchemy import Enum, ForeignKey, Column
+from sqlalchemy import Enum, ForeignKey, Column, ForeignKeyConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.dialects.mysql import JSON
@@ -17,13 +17,6 @@ class Product_Master(Base):
     product_id: Mapped[int] = mapped_column(primary_key=True)
     organization_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
     product_name: Mapped[str] = mapped_column()
-    ProductTypes = ("powder", "capsule", "liquid")
-    type: Mapped[int] = mapped_column(Enum(
-        *ProductTypes,
-        name="ProductTypes",
-        create_constraint=True,
-        validate_strings=True,
-        ))
     current_product: Mapped[bool] = mapped_column()
     date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     spec_revise_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
@@ -56,6 +49,10 @@ class Product_Master(Base):
     certified_us_pharmacopeia: Mapped[bool] = mapped_column(default=False)
     certified_non_gmo: Mapped[bool] = mapped_column(default=False)
     certified_vegan: Mapped[bool] = mapped_column(default=False)
+    default_formula_version: Mapped[int] = mapped_column(default=1)
+    num_formula_versions: Mapped[int] = mapped_column(default=1)
+    default_manufacturing_version: Mapped[int] = mapped_column(default=1)
+    num_manufacturing_versions: Mapped[int] = mapped_column(default=1)
 
     doc = Column(MutableDict.as_mutable(JSON))
 
@@ -78,7 +75,6 @@ class Product_Master(Base):
             'product_id': self.product_id,
             'organization_id': self.organization_id,
             'product_name': self.product_name,
-            'type': self.type,
             'current_product': self.current_product,
             'date_entered': self.date_entered,
             'exp_unit': self.exp_unit,
@@ -98,7 +94,11 @@ class Product_Master(Base):
             'certified_us_pharmacopeia': self.certified_us_pharmacopeia,
             'certified_non_gmo': self.certified_non_gmo,
             'certified_vegan': self.certified_vegan,
-            'doc': self.doc
+            'doc': self.doc,
+            'default_formula_version': self.default_formula_version,
+            'num_formula_versions': self.num_formula_versions,
+            'default_manufacturing_version': self.default_manufacturing_version,
+            'num_manufacturing_versions': self.num_manufacturing_versions
         }
 
     def get_id(self):
@@ -124,6 +124,9 @@ class Manufacturing_Process(Base):
     special_instruction: Mapped[str] = mapped_column(default=None)
     manufacturing_process_id: Mapped[int] = mapped_column()
     process_bid_cost: Mapped[float] = mapped_column(default=None)
+    manufacturing_process_version: Mapped[int] = mapped_column(default=None)
+    position: Mapped[str] = mapped_column(default=None)
+    type: Mapped[str] = mapped_column(default=None)
 
     # Relationships
 
@@ -146,7 +149,10 @@ class Manufacturing_Process(Base):
             'process_order': self.process_order,
             'special_instruction': self.special_instruction,
             'manufacturing_process_id': self.manufacturing_process_id,
-            'process_bid_cost': self.process_bid_cost
+            'process_bid_cost': self.process_bid_cost,
+            'manufacturing_process_version': self.manufacturing_process_version,
+            'position': self.position,
+            'type': self.type
         }
 
     def get_id(self):
@@ -459,3 +465,57 @@ class Component_Brands_Join(Base):
     def get_id_name(self):
         """Get Primary ID Column Name"""
         return "_id"
+
+class Manufacturing_Process_Edges(Base):
+    """Manufacturing Process Edges ORM Model"""
+    __tablename__ = 'Manufacturing_Process_Edges'
+
+    # Primary Key
+    source: Mapped[int] = mapped_column(primary_key=True)
+    target: Mapped[int] = mapped_column(primary_key=True)
+
+    __table_args__ = (ForeignKeyConstraint([source, target],
+                                           [Manufacturing_Process.process_spec_id, Manufacturing_Process.process_spec_id]),
+                      {'schema': 'Products'})
+
+    # Relationships
+    product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
+
+    # Table Columns
+    label: Mapped[str] = mapped_column()
+    animated: Mapped[bool] = mapped_column(default=False)
+    ArrowStates = ("Arrow","ArrowClosed")
+    marker_end: Mapped[int] = mapped_column(Enum(
+        *ArrowStates,
+        name="ArrowStates",
+        create_constraint=True,
+        validate_strings=True,
+        ))
+
+    # Common Methods
+    def __repr__(self):
+        """Return a string representation of Object"""
+        return f'<Manufacturing_Process_Edge source:{self.source} target:{self.target} product_id:{self.product_id}>'
+
+    def to_dict(self):
+        """Converts Data to Dictionary representation
+
+        Returns:
+            Dict: Columns as Keys
+        """
+        return {
+            "source": self.source,
+            "target": self.target,
+            "product_id": self.product_id,
+            "label": self.label,
+            "animated": self.animated,
+            "marker_end": self.marker_end
+        }
+
+    def get_id(self):
+        """Get Row Id"""
+        return (self.source, self.target)
+
+    def get_id_name(self):
+        """Get Primary ID Column Name"""
+        return "(source, target)"

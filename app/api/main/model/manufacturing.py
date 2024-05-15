@@ -83,13 +83,8 @@ class Processes(Base):
     rework_process: Mapped[bool] = mapped_column(default=False)
     min_personnel: Mapped[int] = mapped_column(default=0)
     max_personnel: Mapped[int] = mapped_column(default=0)
-    ComponentTypes = ("container", "pouch", "shrink_band", "lid", "label", "capsule", "misc", "scoop", "desiccant", "box", "carton", "packaging_material")
-    component_type: Mapped[int] = mapped_column(Enum(
-        *ComponentTypes,
-        name="ComponentTypes",
-        create_constraint=True,
-        validate_strings=True,
-        ))
+    bpr_page_template: Mapped[str] = mapped_column()
+    bpr_data_template = Column(MutableDict.as_mutable(JSON))
 
     # Common Methods
     def __repr__(self):
@@ -111,7 +106,8 @@ class Processes(Base):
             "rework_process": self.rework_process,
             "min_personnel": self.min_personnel,
             "max_personnel": self.max_personnel,
-            "component_type": self.component_type
+            "bpr_page_template": self.bpr_page_template,
+            "bpr_data_template": self.bpr_data_template
         }
 
     def get_id(self):
