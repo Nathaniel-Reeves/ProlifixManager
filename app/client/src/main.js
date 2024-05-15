@@ -46,6 +46,6 @@ const app = createApp(App)
 app.use(router)
 app.use(jquery)
 app.component('qr-code', VueQRCodeComponent)
-
 app.mount('#app')
+
 // router.isReady().then(() => app.mount('#app'))

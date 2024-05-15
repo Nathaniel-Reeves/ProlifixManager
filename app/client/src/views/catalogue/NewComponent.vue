@@ -195,7 +195,7 @@ export default {
         if (response.status === 201) {
           const data = await response.json()
           this.flash_messages = data.messages.flash
-          const createToast = this.$parent.createToast
+          const createToast = this.$root.createToast
           this.flash_messages.forEach(function (message) {
             createToast(message)
           })
@@ -208,7 +208,7 @@ export default {
         } else {
           response.json().then(data => {
             this.flash_messages = data.messages.flash
-            const createToast = this.$parent.createToast
+            const createToast = this.$root.createToast
             this.flash_messages.forEach(function (message) {
               createToast(message)
             })
@@ -233,7 +233,7 @@ export default {
           solid: true,
           toaster: 'b-toaster-bottom-right'
         }
-        const createToast = this.$parent.createToast
+        const createToast = this.$root.createToast
         createToast(errorToast)
         return false
       }

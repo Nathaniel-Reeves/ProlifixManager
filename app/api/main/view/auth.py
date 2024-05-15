@@ -289,9 +289,10 @@ def login():
         response.set_cookie('session', session_token)
         return response
 
-    except Exception:
+    except Exception as e:
         error = error_message()
         custom_response.insert_flash_message(error)
+        print(e)
         return jsonify(custom_response.to_json()), 500
 
     finally:

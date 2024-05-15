@@ -193,7 +193,7 @@ export default {
             solid: true,
             toaster: 'b-toaster-bottom-right'
           }
-          const createToast = this.$parent.createToast
+          const createToast = this.$root.createToast
           createToast(errorToast)
         } else if (response.status === 401) {
           this.$router.push({

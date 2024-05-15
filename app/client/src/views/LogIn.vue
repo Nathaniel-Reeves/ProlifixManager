@@ -74,12 +74,10 @@ export default {
           } else if (response.status === 401) {
             this.form_messages = jsonData.messages.form
           } else {
-            response.json().then(data => {
-              this.flash_messages = data.messages.flash
-              const createToast = this.$parent.createToast
-              this.flash_messages.forEach(function (message) {
-                createToast(message)
-              })
+            this.flash_messages = jsonData.messages.flash
+            const createToast = this.$root.createToast
+            this.flash_messages.forEach(function (message) {
+              createToast(message)
             })
           }
         })

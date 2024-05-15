@@ -47,11 +47,11 @@
           </div>
         </div>
 
-        <div v-show="loaded" class="accordion overflow-auto border-top border-bottom" id="accordionExample" style="height:100vh;">
-          <div class="card" v-for="component in filteredComponents" :key="component.component_id">
-            <div class="card-header" v-bind:id="'heading' + component.component_id">
+        <div v-show="loaded" class="accordion overflow-auto border-top border-bottom" role="tablist" style="height:100vh;">
+          <b-card no-body class="mb-1" v-for="component in filteredComponents" :key="component.component_id">
+            <b-card-header v-bind:id="'heading' + component.component_id">
               <h2 class="d-flex mb-0">
-                <button class="btn btn-block text-left" type="button" data-toggle="collapse" v-bind:data-target="'#collapse' + component.component_id" aria-expanded="false" v-bind:aria-controls="'collapse' + component.component_id" v-on:click="populateComponent(component.component_id)">
+                <b-button class="text-left" v-b-toggle="'collapse' + component.component_id" variant="light" style="width:100%;">
                   <b-container fluid class="m-0">
                     <b-row align-v="baseline">
                       <b-col sm="0.5"><b-icon icon="chevron-down"></b-icon></b-col>
@@ -61,11 +61,11 @@
                       <b-col sm="0.5"><div class="p-1"><b-badge class="p-1" v-show="!verifySpecs(component)" variant="warning">Incomplete Specs</b-badge></div></b-col>
                     </b-row>
                   </b-container>
-                </button>
+                </b-button>
               </h2>
-            </div>
+            </b-card-header>
 
-            <div v-bind:id="'collapse' + component.component_id" class="collapse" v-bind:aria-labelledby="'heading' + component.component_id" data-parent="#accordionExample">
+            <b-collapse v-bind:id="'collapse' + component.component_id">
               <div class="card-body d-flex flex-wrap">
 
                 <!-- Alias Names -->
@@ -95,8 +95,8 @@
                 </b-container>
 
               </div>
-            </div>
-          </div>
+            </b-collapse>
+          </b-card>
         </div>
       </div>
     </div>
@@ -341,7 +341,7 @@ export default {
         this.allPowderCertSelected = false
       }
     },
-    type_filter: function (newVaule, oldValue) {
+    type_filter: function (newValue, oldValue) {
       if (this.fetch_all_components) {
         return
       }

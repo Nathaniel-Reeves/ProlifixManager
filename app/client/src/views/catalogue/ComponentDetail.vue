@@ -1,6 +1,6 @@
 <template>
   <div class="my_component d-flex flex-wrap justify-content-center">
-    <div class="card my-2" v-show="!loaded">
+    <div class="card my-2" v-if="!loaded">
       <div class="card-body">
         <div class="d-flex justify-content-center">
           <div class="spinner-border text-primary" role="status"></div>
@@ -9,7 +9,7 @@
     </div>
 
     <b-container fluid class="p-0">
-      <b-card class=" my-2" v-show="loaded">
+      <b-card class=" my-2" v-if="loaded">
         <b-card-body>
           <div class="card-title d-flex align-items-center flex-wrap">
             <b-img style="max-width: 15rem;" class="d-none d-print-inline p-2" src="../../assets/Company Images/logos jpg/Cropped Logo.jpg"></b-img>
@@ -27,7 +27,7 @@
         </b-card-body>
       </b-card>
 
-      <b-card class=" my-2" v-show="loaded">
+      <b-card class=" my-2" v-if="loaded">
         <b-card-body id="nav-scroller" ref="content" class="scrollbox">
 
           <!-- Alias Names -->
@@ -320,8 +320,6 @@ import NamesComponent from './NamesComponent.vue'
 import CertBadge from '../../components/CertBadge.vue'
 import Grid from 'gridjs-vue'
 import { html } from 'gridjs'
-// eslint-disable-next-line
-debugger
 
 export default {
   name: 'ComponentDetail',
@@ -642,7 +640,7 @@ export default {
         if (response.status === 201) {
           const data = await response.json()
           this.flash_messages = data.messages.flash
-          const createToast = this.$parent.createToast
+          const createToast = this.$root.createToast
           this.flash_messages.forEach(function (message) {
             createToast(message)
           })
@@ -656,7 +654,7 @@ export default {
         } else {
           response.json().then(data => {
             this.flash_messages = data.messages.flash
-            const createToast = this.$parent.createToast
+            const createToast = this.$root.createToast
             this.flash_messages.forEach(function (message) {
               createToast(message)
             })
@@ -681,7 +679,7 @@ export default {
           solid: true,
           toaster: 'b-toaster-bottom-right'
         }
-        const createToast = this.$parent.createToast
+        const createToast = this.$root.createToast
         createToast(errorToast)
         return false
       }
