@@ -49,7 +49,7 @@
 
         <p>{{ productTypeSelected }}</p>
 
-        <InventoryGrid v-bind:inventory="inv_data"></InventoryGrid>
+        <!-- <InventoryGrid v-bind:inventory="inv_data"></InventoryGrid> -->
 
       </div>
     </div>
@@ -63,7 +63,6 @@
 </style>
 
 <script>
-import InventoryGrid from '../../components/InventoryGrid.vue'
 
 export default {
   name: 'InventoryHome',
@@ -162,9 +161,6 @@ export default {
         this.productTypeSelected = productTypeSelected
       }
     }
-  },
-  components: {
-    InventoryGrid
   },
   created: function () {
     this.fetchInventoryData()

@@ -30,11 +30,6 @@ const routes = [
     component: () => import(/* webpackChunkName: "bootstrap" */ '../views/BootstrapFour.vue')
   },
   {
-    path: '/gridchart',
-    name: 'gridchart',
-    component: () => import(/* webpackChunkName: "gridchart" */ '../views/GridChart.vue')
-  },
-  {
     path: '/inventory',
     name: 'inventory',
     component: () => import(/* webpackChunkName: "inventory" */ '../views/inventory/InventoryHome.vue'),

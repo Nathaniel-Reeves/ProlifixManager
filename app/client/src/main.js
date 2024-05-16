@@ -13,6 +13,10 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 // Qr Code Generator
 import VueQRCodeComponent from 'vue-qr-generator'
 
+// Easy Data Table   https://hc200ok.github.io/vue3-easy-data-table-doc/getting-started.html
+import Vue3EasyDataTable from 'vue3-easy-data-table'
+import 'vue3-easy-data-table/dist/style.css'
+
 // Bootstrap is not ready for vue3 yet, it is piggy backing on the migration 'Compat' tool.
 // Many of the vue warn console messages are from bootstrap code.  I am turning off the
 // console messages from compat untill boostrap-vue is ready for vue 3.  (Line Bellow)
@@ -45,7 +49,8 @@ Vue.use(IconsPlugin)
 const app = createApp(App)
 app.use(router)
 app.use(jquery)
+app.component('EasyDataTable', Vue3EasyDataTable)
 app.component('qr-code', VueQRCodeComponent)
-app.mount('#app')
 
+app.mount('#app')
 // router.isReady().then(() => app.mount('#app'))

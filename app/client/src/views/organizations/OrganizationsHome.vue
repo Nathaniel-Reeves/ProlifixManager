@@ -85,27 +85,27 @@
 
                 <div class="p-2" v-if="org.hasOwnProperty('Facilities')" v-show="Object.keys(org.Facilities).length !== 0">
                   <h5>Facilities</h5>
-                  <FacilitiesGrid v-bind:Facilities="org.Facilities"></FacilitiesGrid>
+                  <!-- <FacilitiesGrid v-bind:Facilities="org.Facilities"></FacilitiesGrid> -->
                 </div>
                 <div class="p-2" v-if="org.hasOwnProperty('Sales_Orders')" v-show="Object.keys(org.Sales_Orders).length !== 0">
                   <h5>Sales Orders</h5>
-                  <SalesOrdersGrid v-bind:Sales_Orders="org.Sales_Orders"></SalesOrdersGrid>
+                  <!-- <SalesOrdersGrid v-bind:Sales_Orders="org.Sales_Orders"></SalesOrdersGrid> -->
                 </div>
                 <div class="p-2" v-if="org.hasOwnProperty('Purchase_Orders')" v-show="Object.keys(org.Purchase_Orders).length !== 0">
                   <h5>Purchase Orders</h5>
-                  <PurchaseOrdersGrid v-bind:Purchase_Orders="org.Purchase_Orders"></PurchaseOrdersGrid>
+                  <!-- <PurchaseOrdersGrid v-bind:Purchase_Orders="org.Purchase_Orders"></PurchaseOrdersGrid> -->
                 </div>
                 <div class="p-2" v-if="org.hasOwnProperty('People')" v-show="Object.keys(org.People).length !== 0">
                   <h5>People</h5>
-                  <PeopleGrid v-bind:People="org.People"></PeopleGrid>
+                  <!-- <PeopleGrid v-bind:People="org.People"></PeopleGrid> -->
                 </div>
                 <div class="p-2" v-if="org.hasOwnProperty('Components')" v-show="Object.keys(org.Components).length !== 0">
                   <h5>Components</h5>
-                  <ComponentsGrid v-bind:Components="org.Components" v-bind:Component_Names="org.Component_Names"></ComponentsGrid>
+                  <!-- <ComponentsGrid v-bind:Components="org.Components" v-bind:Component_Names="org.Component_Names"></ComponentsGrid> -->
                 </div>
                 <div class="p-2" v-if="org.hasOwnProperty('Products')" v-show="Object.keys(org.Products).length !== 0">
                   <h5>Products</h5>
-                  <ProductsGrid v-bind:Products="org.Products"></ProductsGrid>
+                  <!-- <ProductsGrid v-bind:Products="org.Products"></ProductsGrid> -->
                 </div>
 
               </div>
@@ -134,12 +134,6 @@
 </style>
 
 <script>
-import FacilitiesGrid from '../../components/FacilitiesGrid.vue'
-import SalesOrdersGrid from '../../components/SalesOrdersGrid.vue'
-import PurchaseOrdersGrid from '../../components/PurchaseOrdersGrid.vue'
-import PeopleGrid from '../../components/PeopleGrid.vue'
-import ComponentsGrid from '../../components/ComponentsGrid.vue'
-import ProductsGrid from '../../components/ProductsGrid.vue'
 
 export default {
   name: 'OrganizationsHome',
@@ -306,14 +300,6 @@ export default {
     clients_filter_prop: Boolean,
     suppliers_filter_prop: Boolean,
     labs_filter_prop: Boolean
-  },
-  components: {
-    FacilitiesGrid,
-    SalesOrdersGrid,
-    PurchaseOrdersGrid,
-    PeopleGrid,
-    ComponentsGrid,
-    ProductsGrid
   }
 }
 </script>

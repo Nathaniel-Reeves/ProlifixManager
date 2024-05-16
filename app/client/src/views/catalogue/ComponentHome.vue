@@ -48,7 +48,7 @@
         </div>
 
         <div v-show="loaded" class="accordion overflow-auto border-top border-bottom" role="tablist" style="height:100vh;">
-          <b-card no-body class="mb-1" v-for="component in filteredComponents" :key="component.component_id">
+          <b-card no-body class="mb-1" style="box-shadow: 0px 0px;" v-for="component in filteredComponents" :key="component.component_id">
             <b-card-header v-bind:id="'heading' + component.component_id">
               <h2 class="d-flex mb-0">
                 <b-button class="text-left" v-b-toggle="'collapse' + component.component_id" variant="light" style="width:100%;">
