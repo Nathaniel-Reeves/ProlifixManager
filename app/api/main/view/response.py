@@ -244,6 +244,10 @@ class CustomResponse:
         self.json = data or []
         self.status_code = 200
 
+    def get_data(self):
+        """Returns the data."""
+        return self.json
+
     def insert_flash_message(self, flash_message):
         """
         Args:
@@ -257,6 +261,10 @@ class CustomResponse:
             flash_messages (list): List of FlashMessage Objects
         """
         self.flash_messages += flash_messages
+
+    def get_flash_messages(self):
+        """Return Flash Messages"""
+        return self.flash_messages
 
     def insert_form_message(self, form_id, message):
         """

@@ -259,12 +259,6 @@ def handle_get_products():
     # Clean Request
     product_ids = list(only_integers(request.args.getlist('product-id')))
 
-    types_request = request.args.getlist('type')
-    valid_types = [
-        'powder', 'liquid', 'capsule'
-    ]
-    product_types = check_type(valid_types, types_request)
-
     certifications_request = request.args.getlist('certification')
     valid_certifications = [
         'usda_organic',
@@ -293,9 +287,9 @@ def handle_get_products():
     valid_populate = [
         'lot-numbers',
         'inventory',
-        'default-formula',
+        'formulas',
         'components',
-        'manufacturing-process'
+        'manufacturing'
     ]
     populate = check_type(
         valid_populate,
@@ -314,7 +308,6 @@ def handle_get_products():
     custom_response = prod.get_products(
         custom_response,
         product_ids,
-        product_types,
         certifications,
         client_ids,
         populate,
