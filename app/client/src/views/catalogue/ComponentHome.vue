@@ -4,15 +4,21 @@
       <b-sidebar id="sidebar-right" title="Filter Options" :right="true" shadow :lazy="true" backdrop-variant="dark">
         <div class="px-3 py-2">
           <div class="input-group mb-3">
-            <input v-model="search_query" type="text" class="form-control" placeholder="Search Components..." aria-label="Search Components" aria-describedby="button-addon2">
-            <div class="input-group-append">
+            <input v-model="search_query_buff" type="text" class="form-control" placeholder="Search Components..." aria-label="Search Components" aria-describedby="button-addon2" v-on:keyup.enter="search()">
+            <div class="input-group-append" v-if="search_query.length > 0">
               <button class="btn btn-outline-secondary" type="button" id="button-addon2" v-on:click="clearSearch()"><b-icon icon="x"></b-icon></button>
+            </div>
+            <div class="input-group-append" v-else>
+              <button class="btn btn-outline-secondary" type="button" id="button-addon2" v-on:click="search()"><b-icon icon="search"></b-icon></button>
             </div>
           </div>
 
-          <b-form-select v-model="type_filter" :options="type_filter_options"></b-form-select>
+          <!-- <b-form-select v-model="type_filter" :options="type_filter_options"></b-form-select> -->
+          <select v-model="type_filter" class="custom-select" id="__BVID__1418">
+            <option v-for="option in type_filter_options" :key="option.value" :value="option.value">{{ option.text }}</option>
+          </select>
 
-          <b-form-group class="mt-2" v-show="type_filter === 'powder'">
+          <!-- <b-form-group class="mt-2" v-show="type_filter === 'powder'">
             <template #label>
               <b>Powder Certification Filter:</b><br>
               <b-form-checkbox v-model="allPowderCertSelected" :indeterminate="powderCertIndeterminate" aria-describedby="powder_cert_options" aria-controls="powder_cert_options" @change="toggleAllCerts">
@@ -23,7 +29,16 @@
             <template v-slot="{ ariaDescribedby }">
               <b-form-checkbox-group id="powder_cert_filter" v-model="powder_cert_filter" :options="powder_cert_options" name="powder_cert_filter" class="ml-4" aria-label="Individual Certifications" :aria-describedby="ariaDescribedby" stacked></b-form-checkbox-group>
             </template>
-          </b-form-group>
+          </b-form-group> -->
+          <form class="mt-2" v-show="type_filter === 'powder'">
+            <b>Powder Certification Filter:</b><br>
+            <div class="custom-control custom-checkbox" v-for="cert in powder_cert_options" :key="cert.value">
+              <input class="custom-control-input" type="checkbox" :id="cert.value" :value="cert.value" v-model="powder_cert_filter">
+              <label class="custom-control-label" :for="cert.value">
+                <span>{{ cert.text }}</span>
+              </label>
+            </div>
+          </form>
 
         </div>
       </b-sidebar>
@@ -140,6 +155,7 @@ export default {
     return {
       components_data: {},
       search_query: '',
+      search_query_buff: '',
       loaded: false,
       type_filter: this.type,
       fetched_all_components: this.type === 'all',
@@ -161,13 +177,13 @@ export default {
         { value: 'packaging_material', text: 'Packaging Materials' }
       ],
       powder_cert_options: [
-        { value: 'certified_usda_organic', text: 'Certified USDA Organic' },
-        { value: 'certified_halal', text: 'Certified Halal' },
-        { value: 'certified_kosher', text: 'Certified Kosher' },
-        { value: 'certified_national_sanitation_foundation', text: 'Certified NSF' },
-        { value: 'certified_us_pharmacopeia', text: 'Certified US Pharma' },
-        { value: 'certified_non_gmo', text: 'Certified Non-GMO' },
-        { value: 'certified_vegan', text: 'Certified Vegan' }
+        { value: 'certified_usda_organic', text: 'Certified USDA Organic', active: false },
+        { value: 'certified_halal', text: 'Certified Halal', active: false },
+        { value: 'certified_kosher', text: 'Certified Kosher', active: false },
+        { value: 'certified_national_sanitation_foundation', text: 'Certified NSF', active: false },
+        { value: 'certified_us_pharmacopeia', text: 'Certified US Pharma', active: false },
+        { value: 'certified_non_gmo', text: 'Certified Non-GMO', active: false },
+        { value: 'certified_vegan', text: 'Certified Vegan', active: false }
       ],
       powder_cert_filter: [],
       allPowderCertSelected: false,
@@ -187,6 +203,10 @@ export default {
     },
     clearSearch: function () {
       this.search_query = ''
+      this.search_query_buff = ''
+    },
+    search: function () {
+      this.search_query = this.search_query_buff
     },
     getPrimaryName: function (component) {
       if (component.Component_Names !== undefined && component.Component_Names.length > 0) {
@@ -250,6 +270,7 @@ export default {
       console.log(
         'GET ' + fetchRequest
       )
+      this.loaded = false
       fetch(fetchRequest, {
         method: 'GET',
         headers: {
@@ -328,6 +349,11 @@ export default {
     }
   },
   watch: {
+    search_query_buff: function (newValue, oldValue) {
+      if (newValue.length === 0) {
+        this.search_query = ''
+      }
+    },
     powder_cert_filter: function (newValue, oldValue) {
       // Handle changes in individual flavour checkboxes
       if (newValue.length === 0) {
@@ -347,6 +373,9 @@ export default {
       }
       this.loaded = false
       this.getComponentData()
+    },
+    type: function (newValue, oldValue) {
+      this.type_filter = newValue
     }
   },
   computed: {
@@ -361,11 +390,10 @@ export default {
       if (this.search_query.length > 3) {
         list = list.filter(this.searchFilter)
       }
-      if (this.type_filter !== 'all') {
-        list = list.filter(this.componentTypeFilter)
-      }
       if (this.type_filter === 'powder' && this.powder_cert_filter.length > 0) {
         list = list.filter(this.certFilter)
+      } else if (this.type_filter !== 'all') {
+        list = list.filter(this.componentTypeFilter)
       }
       list = list.sort(this.alphabetical).sort(this.componentType)
       return list

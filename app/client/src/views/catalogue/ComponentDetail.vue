@@ -380,9 +380,9 @@ export default {
       search_query: '',
       loaded: false,
       headers: [
-        { text: 'Test', value: 'test_name', width: 250 },
-        { text: 'Rqd', value: 'required_spec', width: 30 },
-        { text: 'Spec', value: 'generated', width: 80 },
+        { text: 'Test', value: 'test_name', width: 230 },
+        { text: 'Rqd', value: 'required_spec', width: 20 },
+        { text: 'Spec', value: 'generated', width: 100 },
         { text: 'Methods', value: 'methods', width: 110 },
         { text: 'Statement', value: 'statement', width: 250 }
       ],
