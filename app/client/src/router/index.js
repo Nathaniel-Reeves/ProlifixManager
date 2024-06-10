@@ -48,7 +48,7 @@ const routes = [
   },
   {
     path: '/catalogue/components',
-    name: 'catalogue',
+    name: 'components',
     props: route => ({ type: route.query.type }),
     component: () => import(/* webpackChunkName: "CatalogueHome" */ '../views/catalogue/ComponentHome.vue')
   },
@@ -61,6 +61,16 @@ const routes = [
     path: '/catalogue/components/:id',
     name: 'ComponentDetail',
     component: () => import(/* webpackChunkName: "ComponentDetail" */ '../views/catalogue/ComponentDetail.vue')
+  },
+  {
+    path: '/catalogue/products',
+    name: 'products',
+    component: () => import(/* webpackChunkName: "ProductHome" */ '../views/catalogue/ProductHome.vue')
+  },
+  {
+    path: '/catalogue/products/:id',
+    name: 'ProductDetail',
+    component: () => import(/* webpackChunkName: "ProductDetail" */ '../views/catalogue/ProductDetail.vue')
   },
   {
     path: '/organizations',

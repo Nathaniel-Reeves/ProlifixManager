@@ -23,7 +23,7 @@ class Equipment(Base):
 
     # Table Columns
     equipment_sn: Mapped[str] = mapped_column()
-    StatusTypes = ("Working Order", "Broken", "Removed")
+    StatusTypes = ("Working_Order", "Broken", "Removed")
     status: Mapped[int] = mapped_column(Enum(
         *StatusTypes,
         name="StatusTypes",

@@ -175,6 +175,7 @@
                         {{ item.inequality === '=' ? '' : item.inequality }}{{ item.count.toLocaleString() }} {{ item.unit_of_measure }}
                       </template>
                       <template #item-methods="{ methods }">
+                        <!-- {{ methods }} -->
                         <!-- {{ methods.join(', ') }} -->
                         <div v-for="method in methods" :key="method">
                           {{ method }}

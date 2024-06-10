@@ -300,8 +300,7 @@ class Ingredient_Brands_Join(Base):
             '_id': self._id,
             'formula_ingredient_id': self.formula_ingredient_id,
             'brand_id': self.brand_id,
-            'priority': self.priority,
-            'ml_per_unit': self.ml_per_unit
+            'priority': self.priority
         }
 
     def get_id(self):
@@ -405,7 +404,7 @@ class Components_Join(Base):
 
     def __repr__(self):
         """Return a string representation of Object"""
-        return f'<Components_Join id:{self._id} process_component_id:{self.process_component_id} ingredient_id:{self.ingredient_id}>'
+        return f'<Components_Join id:{self._id} process_component_id:{self.process_component_id} component_id:{self.component_id}>'
 
     def to_dict(self):
         """Converts Data to Dictionary representation
@@ -416,7 +415,7 @@ class Components_Join(Base):
         return {
             '_id': self._id,
             'process_component_id': self.process_component_id,
-            'ingredient_id': self.ingredient_id,
+            'component_id': self.component_id,
             'priority': self.priority
         }
 
@@ -504,6 +503,7 @@ class Manufacturing_Process_Edges(Base):
             Dict: Columns as Keys
         """
         return {
+            "id": f"{self.source}-{self.target}",
             "source": self.source,
             "target": self.target,
             "product_id": self.product_id,

@@ -12,6 +12,22 @@ const ingredientDoc = {
     origin: '',
     parts_used: '',
     specs: {
+      example_cofas: {
+        date_issued: '',
+        date_revised: '',
+        file_pointer: '',
+        id_code: '',
+        locations: {
+          in_house: true,
+          primary: 'in_house',
+          supplier: true,
+          third_party_lab: false
+        },
+        required_spec: true,
+        revision_number: 0,
+        test_name: 'Reference CofA\'s',
+        tests: []
+      },
       mesh_size: {
         date_issued: '',
         date_revised: '',
@@ -224,23 +240,6 @@ const ingredientDoc = {
         id_code: '',
         statement: '',
         test_name: 'HPTLC',
-        tests: []
-      },
-      insecticides: {
-        date_issued: '',
-        date_revised: '',
-        file_pointer: '',
-        locations: {
-          in_house: false,
-          primary: 'supplier',
-          supplier: true,
-          third_party_lab: true
-        },
-        required_spec: false,
-        revision_number: 0,
-        id_code: '',
-        statement: '',
-        test_name: 'Insecticides',
         tests: []
       },
       microbiological: {
