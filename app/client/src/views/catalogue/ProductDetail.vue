@@ -20,6 +20,11 @@
           <b-nav pills card-header slot="header" v-b-scrollspy:nav-scroller class="text-nowrap d-print-none">
             <b-nav-item href="#Formulas" @click="scrollIntoView">Formulas</b-nav-item>
             <b-nav-item href="#Manufacturing" @click="scrollIntoView">Manufacturing</b-nav-item>
+            <b-nav-item href="#Specifications" @click="scrollIntoView"
+              v-if="product_data.doc.specifications !== undefined">Specifications</b-nav-item>
+            <div v-for="(spec, spec_key) in product_data.doc.specifications.specs" :key="spec_key">
+              <b-nav-item :href="'#'+spec_key" @click="scrollIntoView">{{ spec.test_name }}</b-nav-item>
+            </div>
           </b-nav>
         </b-card-body>
       </b-card>
@@ -38,6 +43,8 @@
           <hr>
           <h3 id="Manufacturing">Manufacturing<b-button v-if="!edit_specs" v-b-tooltip.hover title="Edit Manufacturing Process" v-on:click="edit_manufacturing = !edit_manufacturing" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
           <ProductManufacturing :manufacturing="product_data.manufacturing" :edit="edit_manufacturing"></ProductManufacturing>
+          <hr>
+          <SpecificationsComponent :data="product_data.doc" :spectype="'product'" :name="product_data.product_name" @update-spec-buffer="update_spec_buffer" @update-file-buffer="update_file_buffer" @update-remove-file-buffer="update_remove_file_buffer" @save-specs="save_specs"></SpecificationsComponent>
           <hr>
         </b-card-body>
       </b-card>
@@ -88,25 +95,48 @@
 import CertBadge from '../../components/CertBadge.vue'
 import ProductFormula from './ProductFormula.vue'
 import ProductManufacturing from './ProductManufacturing.vue'
+import SpecificationsComponent from './SpecificationsComponent.vue'
 
 export default {
   name: 'ProductsDetail',
   components: {
     CertBadge,
     ProductFormula,
-    ProductManufacturing
+    ProductManufacturing,
+    SpecificationsComponent
   },
   data: function () {
     return {
       loaded: false,
-      edit_specs: false,
       id: this.$route.params.id,
       product_data: {},
       edit_formulas: false,
-      edit_manufacturing: false
+      edit_manufacturing: false,
+      edit_specs_buffer: {},
+      upload_files_buffer: {},
+      remove_files_buffer: []
     }
   },
   methods: {
+    update_spec_buffer: function (data) {
+      this.edit_specs_buffer = data
+    },
+    update_file_buffer: function (data) {
+      this.upload_files_buffer = data
+    },
+    update_remove_file_buffer: function (data) {
+      this.remove_files_buffer = data
+    },
+    save_specs: function () {
+      const original = structuredClone(this.component_data.doc.specifications) // Deep Copy
+      this.component_data.doc.specifications = structuredClone(this.edit_specs_buffer) // Deep Copy
+      this.component_data.doc.files = structuredClone(this.upload_files_buffer) // Deep Copy
+      this.putComponent().then(outcome => {
+        if (outcome !== true) {
+          this.component_data.doc.specifications = original
+        }
+      })
+    },
     scrollIntoView: function (event) {
       event.preventDefault()
       const href = event.target.getAttribute('href')

@@ -1,16 +1,89 @@
 <template>
   <b-card class="m-2">
-    <b-card-title>{{ formulaType[0] }} - Version {{ formula.formulation_version }}  <b-badge variant="primary" pill class="ml-2" style="font-size:0.8em;" v-show="primary">Primary Formula</b-badge></b-card-title>
+    <b-card-title>Version {{ formula.formulation_version }}  <b-badge variant="primary" pill class="ml-2" style="font-size:0.8em;" v-show="primary">Primary Formula</b-badge></b-card-title>
     <b-card-sub-title class="mb-3">{{ new Date(formula.date_entered).toLocaleDateString() }} {{ new Date(formula.date_entered).toLocaleTimeString() }}</b-card-sub-title>
     <b-card-text>
-      <b-row class="mb-3">
-        <b-col v-if="formula.fill_max !== null" md="3"><strong>Tolerance Max: </strong><br>{{ formula.fill_max }}{{ formulaType[1] }}</b-col>
-        <b-col v-if="formulaType[0] === 'Powder Fill'" md="3"><strong>Target g per Product</strong><br>{{ formula.total_grams_per_unit }}g</b-col>
-        <b-col v-if="formulaType[0] === 'Liquid Fill'" md="3"><strong>Target ml per Product</strong><br>{{ formula.total_milliliters_per_unit }}ml</b-col>
-        <b-col v-if="formulaType[0] === 'Capsule Fill'" md="3"><strong>Target mg per Capsule</strong><br>{{ formula.total_mg_per_capsule }}mg</b-col>
-        <b-col v-if="formula.fill_min !== null" md="3"><strong>Tolerance Min</strong><br>{{ formula.fill_min }}{{ formulaType[1] }}</b-col>
-        <b-col v-if="formulaType[0] === 'Capsule Fill'" md="3"><strong>Capsule Count</strong><br>{{ formula.total_capsules_per_unit }}ct</b-col>
-      </b-row>
+      <p v-show="formula.notes != null || formula.notes?.length > 0"><strong>Notes:</strong><br>{{ formula.notes }}</p>
+      <b-card-group deck class="mb-3">
+        <b-card>
+          <b-card-title>Powder Fill</b-card-title>
+          <b-card-text>
+            <b-row>
+              <b-col><strong>Tolerance Max:</strong></b-col>
+              <b-col>{{ formula.min_grams_per_unit }}g</b-col>
+            </b-row>
+            <b-row>
+              <b-col><strong>Target g per Product:</strong></b-col>
+              <b-col>{{ formula.total_grams_per_unit }}g</b-col>
+            </b-row>
+            <b-row>
+              <b-col><strong>Tolerance Min:</strong></b-col>
+              <b-col>{{ formula.max_grams_per_unit }}g</b-col>
+            </b-row>
+          </b-card-text>
+        </b-card>
+        <b-card>
+          <b-card-title>Liquid Fill</b-card-title>
+          <b-card-text>
+            <b-row>
+              <b-col><strong>Tolerance Max:</strong></b-col>
+              <b-col>{{ formula.min_milliliters_per_unit }}ml</b-col>
+            </b-row>
+            <b-row>
+              <b-col><strong>Target ml per Product:</strong></b-col>
+              <b-col>{{ formula.total_milliliters_per_unit }}ml</b-col>
+            </b-row>
+            <b-row>
+              <b-col><strong>Tolerance Min:</strong></b-col>
+              <b-col>{{ formula.max_milliliters_per_unit }}ml</b-col>
+            </b-row>
+          </b-card-text>
+        </b-card>
+        <b-card>
+          <b-card-title>Capsule Fill</b-card-title>
+          <b-card-text>
+            <b-row>
+              <b-col><strong>Tolerance Max:</strong></b-col>
+              <b-col>{{ formula.min_mg_per_capsule }}mg</b-col>
+            </b-row>
+            <b-row>
+              <b-col><strong>Target mg per Cap:</strong></b-col>
+              <b-col>{{ formula.total_mg_per_capsule }}mg</b-col>
+            </b-row>
+            <b-row>
+              <b-col><strong>Tolerance Min:</strong></b-col>
+              <b-col>{{ formula.max_mg_per_capsule }}mg</b-col>
+            </b-row>
+            <hr>
+            <b-row>
+              <b-col><strong>Tolerance Max:</strong></b-col>
+              <b-col>{{ (formula.min_mg_per_capsule + formula.capsule_weight) * 10 / 1000 }}g</b-col>
+            </b-row>
+            <b-row>
+              <b-col><strong>Target per 10 Caps:</strong></b-col>
+              <b-col>{{ (formula.total_mg_per_capsule + formula.capsule_weight) * 10 / 1000 }}g</b-col>
+            </b-row>
+            <b-row>
+              <b-col><strong>Tolerance Min:</strong></b-col>
+              <b-col>{{ (formula.max_mg_per_capsule + formula.capsule_weight) * 10 / 1000 }}g</b-col>
+            </b-row>
+            <hr>
+            <b-row>
+              <b-col><strong>Capsule Count:</strong></b-col>
+              <b-col>{{ formula.total_capsules_per_unit }}ct</b-col>
+            </b-row>
+            <b-row>
+              <b-col><strong>Capsule Size:</strong></b-col>
+              <b-col>{{ formula.capsule_size }}</b-col>
+            </b-row>
+            <b-row>
+              <b-col><strong>Capsule Weight:</strong></b-col>
+              <b-col>{{ formula.capsule_weight }}mg</b-col>
+            </b-row>
+          </b-card-text>
+        </b-card>
+      </b-card-group>
+
       <b-table-lite :items="formula['formula_detail']" :fields="fields" stacked="md" striped bordered>
         <template #cell(ingredients_detail)="ingredients">
           <div v-for="(ing, index) in ingredients.value" :key="ing.component_id+'-ingredient'">
@@ -105,20 +178,6 @@ export default {
     }
   },
   methods: {
-  },
-  computed: {
-    formulaType: function () {
-      if (this.formula.total_grams_per_unit !== null) {
-        return ['Powder Fill', 'g']
-      }
-      if (this.formula.total_milliliters_per_unit !== null) {
-        return ['Liquid Fill', 'ml']
-      }
-      if (this.formula.total_mg_per_capsule !== null) {
-        return ['Capsule Fill', 'mg']
-      }
-      return ['Unknown Formula Type', '']
-    }
   }
 }
 </script>
