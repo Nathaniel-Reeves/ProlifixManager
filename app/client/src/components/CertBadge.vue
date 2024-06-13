@@ -1,5 +1,5 @@
 <template>
-  <span>
+  <span v-if="data != null">
     <span v-for="cert, index in certs" :key="index">
       <span v-if="cert.key && data[cert.key]">
         <b-img :id="'cert' + index + cert.r" style="width:4em;" circle class="mr-2 p-2" :src="cert.img"></b-img>
@@ -12,9 +12,7 @@
 <script>
 export default {
   name: 'CertBadge',
-  props: {
-    data: Object
-  },
+  props: ['data'],
   data: function () {
     return {
       certs: [

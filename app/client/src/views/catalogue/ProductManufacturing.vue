@@ -1,23 +1,26 @@
 <template>
-  <div class="my_component d-flex flex-wrap justify-content-center">
-    <div class="d-flex justify-content-center" style="width: 100%; height: 700px">
-      <VueFlow @pane-ready="onPaneReady" class="vue-flow-basic-example" :nodes="nodes" :edges="edges" :nodesConnectable="false" :nodesDraggable="false" :max-zoom="2" :min-zoom="0.3" :zoom-on-double-click="true" :no-wheel-class-name="false" :prevent-scrolling="false">
-        <Background />
-        <Panel position="top-right">
-          <b-button-group>
-            <b-button variant="light" style="border-width: 1px; border-color:#999999" @click="zoomin()"><b-icon icon="zoom-in"></b-icon></b-button>
-            <b-button variant="light" style="border-width: 1px; border-color:#999999" @click="zoomout()"><b-icon icon="zoom-out"></b-icon></b-button>
-            <b-button variant="light" style="border-width: 1px; border-color:#999999" @click="zoomfit()"><b-icon icon="fullscreen"></b-icon></b-button>
-          </b-button-group>
-        </Panel>
-        <Panel position="bottom-left">
-          <b-button variant="light" style="border-width: 1px; border-color:#999999">New Process</b-button>
-        </Panel>
-        <MiniMap />
-        <template #node-manufacturing-process="node_data">
-          <ManufacturingProcess :id="node_data.id" :node_data="node_data" />
-        </template>
-      </VueFlow>
+  <div>
+    <h3 id="Manufacturing">Manufacturing<b-button v-if="!edit_manufacturing" v-b-tooltip.hover title="Edit Manufacturing Process" v-on:click="edit_manufacturing = !edit_manufacturing" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
+    <div class="my_component d-flex flex-wrap justify-content-center">
+      <div class="d-flex justify-content-center" style="width: 100%; height: 700px">
+        <VueFlow @pane-ready="onPaneReady" class="vue-flow-basic-example" :nodes="nodes" :edges="edges" :nodesConnectable="false" :nodesDraggable="false" :max-zoom="2" :min-zoom="0.3" :zoom-on-double-click="true" :no-wheel-class-name="false" :prevent-scrolling="false">
+          <Background />
+          <Panel position="top-right">
+            <b-button-group>
+              <b-button variant="light" style="border-width: 1px; border-color:#999999" @click="zoomin()"><b-icon icon="zoom-in"></b-icon></b-button>
+              <b-button variant="light" style="border-width: 1px; border-color:#999999" @click="zoomout()"><b-icon icon="zoom-out"></b-icon></b-button>
+              <b-button variant="light" style="border-width: 1px; border-color:#999999" @click="zoomfit()"><b-icon icon="fullscreen"></b-icon></b-button>
+            </b-button-group>
+          </Panel>
+          <Panel position="bottom-left">
+            <b-button variant="light" style="border-width: 1px; border-color:#999999">New Process</b-button>
+          </Panel>
+          <MiniMap />
+          <template #node-manufacturing-process="node_data">
+            <ManufacturingProcess :id="node_data.id" :node_data="node_data" />
+          </template>
+        </VueFlow>
+      </div>
     </div>
   </div>
 </template>
@@ -52,7 +55,8 @@ export default {
   data: function () {
     return {
       nodes: [],
-      edges: []
+      edges: [],
+      edit_manufacturing: this.edit
     }
   },
   methods: {

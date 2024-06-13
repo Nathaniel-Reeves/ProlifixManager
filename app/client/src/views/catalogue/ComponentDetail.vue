@@ -13,7 +13,7 @@
         <b-card-body>
           <div class="card-title d-flex align-items-center flex-wrap">
             <b-img style="max-width: 15rem;" class="d-none d-print-inline p-2" src="../../assets/Company Images/logos jpg/Cropped Logo.jpg"></b-img>
-            <h2 class="card-title">{{ get_comopnent_primary_name(component_data) }} {{ format_string(component_data.component_type) }}</h2>
+            <h2 class="card-title">{{ get_component_primary_name(component_data) }} {{ format_string(component_data.component_type) }}</h2>
             <CertBadge :data="component_data"></CertBadge>
           </div>
           <hr class="d-print-none">
@@ -37,7 +37,7 @@
           <hr>
 
           <!-- Specifications -->
-          <SpecificationsComponent :data="component_data.doc" :spectype="'component'" :name="get_comopnent_primary_name(component_data)" @update-spec-buffer="update_spec_buffer" @update-file-buffer="update_file_buffer" @update-remove-file-buffer="update_remove_file_buffer" @save-specs="save_specs"></SpecificationsComponent>
+          <SpecificationsComponent :data="component_data.doc" :spectype="'component'" :name="get_component_primary_name(component_data)" @update-spec-buffer="update_spec_buffer" @update-file-buffer="update_file_buffer" @update-remove-file-buffer="update_remove_file_buffer" @save-specs="save_specs"></SpecificationsComponent>
 
         </b-card-body>
       </b-card>
@@ -112,7 +112,6 @@ export default {
   },
   methods: {
     update_spec_buffer: function (data) {
-      console.log('UPDATE_SPECS', data)
       this.edit_specs_buffer = data
     },
     update_file_buffer: function (data) {
@@ -145,7 +144,7 @@ export default {
       }
       return type.toLowerCase().split('_').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')
     },
-    get_comopnent_primary_name: function (component) {
+    get_component_primary_name: function (component) {
       if (component.Component_Names !== undefined && component.Component_Names.length > 0) {
         for (let i = 0; i < component.Component_Names.length; i++) {
           if (component.Component_Names[i].primary_name) {

@@ -31,17 +31,8 @@
 
       <b-card class=" my-2" v-if="loaded">
         <b-card-body id="nav-scroller" ref="content" class="scrollbox">
-          <h3 id="Formulas">Formulas<b-button v-if="!edit_formulas" v-b-tooltip.hover title="Edit Product Formulas" v-on:click="edit_formulas = !edit_formulas" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
-          <b-tabs content-class="mt-3">
-            <b-tab v-for="f in product_data.formulas" :key="'formula-id-' + f.formula_id">
-              <template #title>
-                <strong>{{ f.formulation_version+'V' }}<b-badge variant="primary" pill class="ml-2" style="font-size:0.8em;" v-show="f.formulation_version === product_data.default_formula_version">PF</b-badge></strong>
-              </template>
-              <ProductFormula :formula="f" :edit="edit_formulas" :primary="f.formulation_version === product_data.default_formula_version"></ProductFormula>
-            </b-tab>
-          </b-tabs>
+          <ProductFormula :formulas="product_data.formulas" :primary="product_data.default_formula_version" :num-versions="product_data.num_formula_versions"></ProductFormula>
           <hr>
-          <h3 id="Manufacturing">Manufacturing<b-button v-if="!edit_specs" v-b-tooltip.hover title="Edit Manufacturing Process" v-on:click="edit_manufacturing = !edit_manufacturing" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
           <ProductManufacturing :manufacturing="product_data.manufacturing" :edit="edit_manufacturing"></ProductManufacturing>
           <hr>
           <SpecificationsComponent :data="product_data.doc" :spectype="'product'" :name="product_data.product_name" @update-spec-buffer="update_spec_buffer" @update-file-buffer="update_file_buffer" @update-remove-file-buffer="update_remove_file_buffer" @save-specs="save_specs"></SpecificationsComponent>
@@ -110,7 +101,6 @@ export default {
       loaded: false,
       id: this.$route.params.id,
       product_data: {},
-      edit_formulas: false,
       edit_manufacturing: false,
       edit_specs_buffer: {},
       upload_files_buffer: {},

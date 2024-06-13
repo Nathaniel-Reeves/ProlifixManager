@@ -93,6 +93,7 @@ export default {
       top: Position.Top,
       bottom: Position.Bottom,
       process: this.node_data.data,
+      edit_manufacturing: false,
       fields: [
         { label: 'Component', key: 'components', tdClass: 'custom-row' },
         { label: 'Brands', key: 'brands', tdClass: 'custom-row' },

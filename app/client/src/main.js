@@ -23,6 +23,10 @@ import 'vue3-easy-data-table/dist/style.css'
 // TODO: Complete Migration to Vue 3
 // Guides: https://www.vuemastery.com/blog/vue-3-migration-build/?gad_source=1&gclid=Cj0KCQjwltKxBhDMARIsAG8KnqV3ss66yYwav1VNO5LBhaCEO9wytKyEBp4othQmkZgdt5YwotWstNUaAmoDEALw_wcB
 // Guides: https://www.vuemastery.com/blog/migration/
+
+// import vue-select css
+import 'vue-select/dist/vue-select.css'
+
 configureCompat({
   WATCH_ARRAY: 'suppress-warning',
   RENDER_FUNCTION: 'suppress-warning',
