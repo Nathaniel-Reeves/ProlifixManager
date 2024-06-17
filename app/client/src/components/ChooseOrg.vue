@@ -1,10 +1,14 @@
 <template>
   <div class="mb-3">
-    <v-select :options="organizations" label="organization_initial" v-model="selected_org" :loading="!orgs_loaded" :clearable="selected_org != null" :placeholder="!orgs_loaded ? 'Loading...':'Choose...'" style="width: 150px;">
-      <template #option="{ organization_name, organization_initial }">
-        <div>{{ organization_name }} | {{ organization_initial }}</div>
+    <v-select :id="id" :options="organizations" label="organization_initial" v-model="selected_org" :loading="!orgs_loaded" :clearable="selected_org != null" :placeholder="!orgs_loaded ? 'Loading...':'Choose...'" style="width: 150px;">
+      <template #option="{ organization_id, organization_name, organization_initial }">
+        <div style="display:flex; flex-direction: row; align-items: center; min-height: 60px;">
+          <b-button v-on:click.stop class="mr-2" variant="light" :to="'/organizations/'+organization_id" target="_blank"><b-icon icon="box"></b-icon></b-button>
+          <div>{{ organization_name }} | {{ organization_initial }}</div>
+        </div>
       </template>
     </v-select>
+    <b-tooltip v-if="selected_org != null && selected_org.organization_id != 0" :target="id" triggers="hover">{{ selected_org.organization_name }}</b-tooltip>
   </div>
 </template>
 
@@ -30,7 +34,8 @@ export default {
   ],
   data: function () {
     return {
-      selected_org: null
+      selected_org: null,
+      id: Math.floor(Math.random() * 100000) + '-org-name'
     }
   },
   methods: {

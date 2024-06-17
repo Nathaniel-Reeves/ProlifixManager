@@ -1,25 +1,37 @@
 <template>
   <div>
+    {{ active_tab_index }}
     <h3 id="Formulas">Formulas<b-button v-if="!edit_formulas" v-b-tooltip.hover title="Edit Product Formulas" v-on:click="edit_formulas = !edit_formulas" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
-    <b-tabs content-class="mt-3">
-      <b-tab v-for="f in formulas" :key="'formula-id-' + f.formula_id">
+
+    <b-tabs content-class="mt-3" v-model="active_tab_index">
+      <b-tab v-for="f in formulas" :key="'formula-id-' + f.formula_id" :disabled="edit_formulas && active_tab_index != numVersions">
         <template #title>
-          <strong>{{ f.formulation_version+'V' }}<b-badge variant="primary" pill class="ml-2" style="font-size:0.8em;" v-show="f.formulation_version === primary">PF</b-badge></strong>
+          <strong>{{ f.formulation_version+'V' }}<b-badge variant="primary" pill class="ml-2" style="font-size:0.8em;" v-show="f.formula_id === primary">PF</b-badge></strong>
         </template>
         <b-card class="m-2">
-          <b-card-title>Version {{ f.formulation_version }}  <b-badge variant="primary" pill class="ml-2" style="font-size:0.8em;" v-show="primary">Primary Formula</b-badge></b-card-title>
+          <b-card-title>Version {{ f.formulation_version }}  <b-badge variant="primary" pill class="ml-2" style="font-size:0.8em;" v-show="f.formula_id === primary">Primary Formula</b-badge></b-card-title>
           <b-card-sub-title class="mb-3">{{ new Date(f.date_entered).toLocaleDateString() }} {{ new Date(f.date_entered).toLocaleTimeString() }}</b-card-sub-title>
           <b-card-text>
-            <p v-show="f.notes != null || f.notes?.length > 0"><strong>Notes:</strong><br>{{ f.notes }}</p>
+            <strong v-show="f.notes != null || f.notes?.length > 0">Notes:</strong>
+            <b-form-textarea
+              v-show="f.notes != null || f.notes?.length > 0"
+              v-model="f.notes"
+              placeholder="Notes..."
+              rows="3"
+              max-rows="6"
+              id="new-formula-notes"
+              class="mb-3"
+              disabled
+            ></b-form-textarea>
             <b-card-group deck class="mb-3">
               <b-card>
                 <b-card-title>Powder Fill</b-card-title>
                 <b-card-text>
                   <b-row>
-                    <b-col><label for="max_grams_per_unit"><strong>Tolerance Max:</strong></label></b-col>
+                    <b-col><label :for="'max_grams_per_unit_'+f.formulation_version"><strong>Tolerance Max:</strong></label></b-col>
                     <b-col>
                       <div class="input-group mb-2">
-                        <input id="max_grams_per_unit" type="number" class="form-control" disabled v-model="f.max_grams_per_unit" required>
+                        <input :id="'max_grams_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.max_grams_per_unit" required>
                         <div class="input-group-append">
                           <span class="input-group-text">g</span>
                         </div>
@@ -27,10 +39,10 @@
                     </b-col>
                   </b-row>
                   <b-row>
-                    <b-col><label for="total_grams_per_unit"><strong>Target g per Product:</strong></label></b-col>
+                    <b-col><label :for="'total_grams_per_unit_'+f.formulation_version"><strong>Target g per Product:</strong></label></b-col>
                     <b-col>
                       <div class="input-group mb-2">
-                        <input id="total_grams_per_unit" type="number" class="form-control" disabled v-model="f.total_grams_per_unit" required>
+                        <input :id="'total_grams_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.total_grams_per_unit" required>
                         <div class="input-group-append">
                           <span class="input-group-text">g</span>
                         </div>
@@ -38,10 +50,10 @@
                     </b-col>
                   </b-row>
                   <b-row>
-                    <b-col><label for="min_grams_per_unit"><strong>Tolerance Min:</strong></label></b-col>
+                    <b-col><label :for="'min_grams_per_unit_'+f.formulation_version"><strong>Tolerance Min:</strong></label></b-col>
                     <b-col>
                       <div class="input-group mb-2">
-                        <input id="min_grams_per_unit" type="number" class="form-control" disabled v-model="f.min_grams_per_unit" required>
+                        <input :id="'min_grams_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.min_grams_per_unit" required>
                         <div class="input-group-append">
                           <span class="input-group-text">g</span>
                         </div>
@@ -54,10 +66,10 @@
                 <b-card-title>Liquid Fill</b-card-title>
                 <b-card-text>
                   <b-row>
-                    <b-col><label for="max_milliliters_per_unit"><strong>Tolerance Max:</strong></label></b-col>
+                    <b-col><label :for="'max_milliliters_per_unit_'+f.formulation_version"><strong>Tolerance Max:</strong></label></b-col>
                     <b-col>
                       <div class="input-group mb-2">
-                        <input id="max_milliliters_per_unit" type="number" class="form-control" disabled v-model="f.max_milliliters_per_unit" required>
+                        <input :id="'max_milliliters_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.max_milliliters_per_unit" required>
                         <div class="input-group-append">
                           <span class="input-group-text">ml</span>
                         </div>
@@ -65,10 +77,10 @@
                     </b-col>
                   </b-row>
                   <b-row>
-                    <b-col><label for="total_milliliters_per_unit"><strong>Target ml per Product:</strong></label></b-col>
+                    <b-col><label :for="'total_milliliters_per_unit_'+f.formulation_version"><strong>Target ml per Product:</strong></label></b-col>
                     <b-col>
                       <div class="input-group mb-2">
-                        <input id="total_milliliters_per_unit" type="number" class="form-control" disabled v-model="f.total_milliliters_per_unit" required>
+                        <input :id="'total_milliliters_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.total_milliliters_per_unit" required>
                         <div class="input-group-append">
                           <span class="input-group-text">ml</span>
                         </div>
@@ -76,10 +88,10 @@
                     </b-col>
                   </b-row>
                   <b-row>
-                    <b-col><label for="min_milliliters_per_unit"><strong>Tolerance Min:</strong></label></b-col>
+                    <b-col><label :for="'min_milliliters_per_unit_'+f.formulation_version"><strong>Tolerance Min:</strong></label></b-col>
                     <b-col>
                       <div class="input-group mb-2">
-                        <input id="min_milliliters_per_unit" type="number" class="form-control" disabled v-model="f.min_milliliters_per_unit" required>
+                        <input :id="'min_milliliters_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.min_milliliters_per_unit" required>
                         <div class="input-group-append">
                           <span class="input-group-text">ml</span>
                         </div>
@@ -92,10 +104,10 @@
                 <b-card-title>Capsule Fill</b-card-title>
                 <b-card-text>
                   <b-row>
-                    <b-col><label for="max_mg_per_capsule"><strong>Tolerance Max:</strong></label></b-col>
+                    <b-col><label :for="'max_mg_per_capsule_'+f.formulation_version"><strong>Tolerance Max:</strong></label></b-col>
                     <b-col>
                       <div class="input-group mb-2">
-                        <input id="max_mg_per_capsule" type="number" class="form-control" disabled v-model="f.max_mg_per_capsule" required>
+                        <input :id="'max_mg_per_capsule_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.max_mg_per_capsule" required>
                         <div class="input-group-append">
                           <span class="input-group-text">mg</span>
                         </div>
@@ -103,10 +115,10 @@
                     </b-col>
                   </b-row>
                   <b-row>
-                    <b-col><label for="total_mg_per_capsule"><strong>Target mg per Cap:</strong></label></b-col>
+                    <b-col><label :for="'total_mg_per_capsule_'+f.formulation_version"><strong>Target mg per Cap:</strong></label></b-col>
                     <b-col>
                       <div class="input-group mb-2">
-                        <input id="total_mg_per_capsule" type="number" class="form-control" disabled v-model="f.total_mg_per_capsule" required>
+                        <input :id="'total_mg_per_capsule_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.total_mg_per_capsule" required>
                         <div class="input-group-append">
                           <span class="input-group-text">mg</span>
                         </div>
@@ -114,10 +126,10 @@
                     </b-col>
                   </b-row>
                   <b-row>
-                    <b-col><label for="min_mg_per_capsule"><strong>Tolerance Min:</strong></label></b-col>
+                    <b-col><label :for="'min_mg_per_capsule_'+f.formulation_version"><strong>Tolerance Min:</strong></label></b-col>
                     <b-col>
                       <div class="input-group mb-2">
-                        <input id="min_mg_per_capsule" type="number" class="form-control" disabled v-model="f.min_mg_per_capsule" required>
+                        <input :id="'min_mg_per_capsule_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.min_mg_per_capsule" required>
                         <div class="input-group-append">
                           <span class="input-group-text">mg</span>
                         </div>
@@ -126,10 +138,10 @@
                   </b-row>
                   <hr>
                   <b-row>
-                    <b-col><label for="total_capsules_per_unit"><strong>Capsule Count:</strong></label></b-col>
+                    <b-col><label :for="'total_capsules_per_unit_'+f.formulation_version"><strong>Capsule Count:</strong></label></b-col>
                     <b-col>
                       <div class="input-group mb-2">
-                        <input id="total_capsules_per_unit" type="number" class="form-control" disabled v-model="f.total_capsules_per_unit" required>
+                        <input :id="'total_capsules_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.total_capsules_per_unit" required>
                         <div class="input-group-append">
                           <span class="input-group-text">ct</span>
                         </div>
@@ -137,8 +149,8 @@
                     </b-col>
                   </b-row>
                   <b-row>
-                    <b-col><label for="capsule_size"><strong>Capsule Size:</strong></label></b-col>
-                    <b-col><select disabled v-model="f.capsule_size" class="form-control form-control-md mb-3 hidedropdownarrow">
+                    <b-col><label :for="'capsule_size_'+f.formulation_version"><strong>Capsule Size:</strong></label></b-col>
+                    <b-col><select :id="'capsule_size_'+f.formulation_version" disabled v-model="f.capsule_size" class="form-control form-control-md mb-3 hidedropdownarrow">
                       <option value="1">1</option>
                       <option value="2">2</option>
                       <option value="0">0</option>
@@ -146,10 +158,10 @@
                     </select></b-col>
                   </b-row>
                   <b-row>
-                    <b-col><label for="capsule_weight"><strong>Capsule Weight:</strong></label></b-col>
+                    <b-col><label :for="'capsule_weight_'+f.formulation_version"><strong>Capsule Weight:</strong></label></b-col>
                     <b-col>
                       <div class="input-group mb-2">
-                        <input id="capsule_weight" type="number" class="form-control" disabled v-model="f.capsule_weight" required>
+                        <input :id="'capsule_weight_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.capsule_weight" required>
                         <div class="input-group-append">
                           <span class="input-group-text">mg</span>
                         </div>
@@ -160,58 +172,74 @@
               </b-card>
             </b-card-group>
 
-            <b-table-lite :items="f['formula_detail']" :fields="fields" stacked="md" striped bordered sticky-header>
-              <template #cell(ingredients_detail)="ingredients">
-                <div v-for="(ing, index) in ingredients.value" :key="ing.component_id+'-ingredient'">
+            <b-table-lite :items="f['formula_detail']" :fields="fields" striped bordered sticky-header foot-clone head-variant="light" style="min-height: 600px;">
+              <template #cell(ingredients_detail)="ingredients_detail">
+                <div v-for="(ing, index) in ingredients_detail.value" :key="ing.component_id+'-ingredient'">
                   <b-row style="height:80px;" align-v="center">
                     <b-col cols="1">
-                      <b-badge :id="ing.component_id+'-ingredient-priority'" v-bind:variant="(ing.priority === 1 ? 'primary' : 'light')" pill class="ml-2">{{ ing.priority }}</b-badge>
-                      <b-tooltip :target="ing.component_id+'-ingredient-priority'" triggers="hover">Priority Level: {{ ing.priority }}</b-tooltip>
+                      <b-badge :id="f.formulation_version+'-'+ingredients_detail.item.formula_ingredient_id+'-'+ing.component_id+'-ingredient-priority'" v-bind:variant="(ing.priority === 1 ? 'primary' : 'light')" pill class="ml-2">{{ ing.priority }}</b-badge>
+                      <b-tooltip :target="f.formulation_version+'-'+ingredients_detail.item.formula_ingredient_id+'-'+ing.component_id+'-ingredient-priority'" triggers="hover">Priority Level: {{ ing.priority }}</b-tooltip>
                     </b-col>
                     <b-col cols="3"><b-link :to="'/catalogue/components/'+ing.component_id" target="_blank">{{ ing.component_name }}</b-link></b-col>
                     <b-col><CertBadge :data="ing"></CertBadge></b-col>
                   </b-row>
-                  <hr v-show="index < ingredients.value.length-1">
+                  <hr v-show="index < ingredients_detail.value.length-1">
                 </div>
               </template>
+              <template #foot(ingredients_detail)=""></template>
               <template #cell(brands)="brands">
                 <div v-for="(brand, index) in brands.value" :key="brand.organization_id+'-org'">
                   <div class="py-3" style="height:80px;">
-                    <b-badge :id="brand.organization_id+'-org-priority'" v-bind:variant="(brand.priority === 1 ? 'primary' : 'light')" pill class="mr-2">{{ brand.priority }}</b-badge>
-                    <b-tooltip :target="brand.organization_id+'-org-priority'" triggers="hover">Priority Level: {{ brand.priority }}</b-tooltip>
-                    <span :id="brand.organization_id+'-org-name'">{{ brand.organization_initial }}</span>
-                    <b-tooltip :target="brand.organization_id+'-org-name'" triggers="hover">{{ brand.organization_name }}</b-tooltip>
+                    <b-badge :id="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" v-bind:variant="(brand.priority === 1 ? 'primary' : 'light')" pill class="mr-2">{{ brand.priority }}</b-badge>
+                    <b-tooltip :target="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" triggers="hover">Priority Level: {{ brand.priority }}</b-tooltip>
+                    <span :id="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-name'">{{ brand.organization_initial }}</span>
+                    <b-tooltip :target="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-name'" triggers="hover">{{ brand.organization_name }}</b-tooltip>
                   </div>
                   <hr v-show="index < brands.value.length-1">
                 </div>
               </template>
+              <template #foot(brands)=""></template>
               <template #cell(percent)="percent">
                 <strong style="font-size: 1.5em;">{{ percent.value }}%</strong>
+              </template>
+              <template #foot(percent)="">
+                <span :class="calc_total(f['formula_detail']) !== 100 ? 'text-danger':''">= {{ calc_total(f['formula_detail']) }}%</span>
               </template>
               <template #cell(specific_brand_required)="specific_brand_required">
                 <span v-if="specific_brand_required.value" class="badge badge-success badge-pill" style="font-size: 1.5em;">Yes</span>
                 <span v-else class="badge badge-warning badge-pill" style="font-size: 1.5em;">No</span>
               </template>
+              <template #foot(specific_brand_required)=""></template>
               <template #cell(specific_ingredient_required)="specific_ingredient_required">
                 <span v-if="specific_ingredient_required.value" class="badge badge-success badge-pill" style="font-size: 1.5em;">Yes</span>
                 <span v-else class="badge badge-warning badge-pill" style="font-size: 1.5em;">No</span>
               </template>
+              <template #foot(specific_ingredient_required)=""></template>
               <template #cell(notes)="notes">
                 {{ notes.value }}
               </template>
+              <template #foot(notes)=""></template>
             </b-table-lite>
           </b-card-text>
         </b-card>
       </b-tab>
 
-      <b-tab v-show="edit_formulas" title="New Formula">
+      <b-tab title="New Formula" :disabled="edit_formulas && active_tab_index != numVersions">
         <b-card class="m-2">
           <b-card-title>New Formula Version {{ numVersions + 1 }}</b-card-title>
-          <select class="form-control form-control-lg mb-3" v-model="new_version_select"  @click="set_formula_buffer()" :disabled="disable_version_select">
+          <select id="new_version_selector" class="form-control form-control-lg mb-3" v-model="new_version_select"  @click="set_formula_buffer()" :disabled="disable_version_select">
             <option v-for="option in versions" :key="option.value" :value="option.value">{{ option.text }}</option>
           </select>
           <div v-if="disable_version_select">
-            <!-- <p v-show="f.notes != null || f.notes?.length > 0"><strong>Notes:</strong><br>{{ f.notes }}</p> -->
+            <strong>Notes:</strong>
+            <b-form-textarea
+              v-model="new_formula_buffer.notes"
+              placeholder="Notes..."
+              rows="3"
+              max-rows="6"
+              id="new-formula-notes"
+              class="mb-3"
+            ></b-form-textarea>
             <b-card-group deck class="mb-3">
               <b-card>
                 <b-card-title>Powder Fill</b-card-title>
@@ -339,7 +367,7 @@
                   </b-row>
                   <b-row>
                     <b-col><label for="capsule_size"><strong>Capsule Size:</strong></label></b-col>
-                    <b-col><select v-model="new_formula_buffer.capsule_size" class="form-control form-control-md mb-3">
+                    <b-col><select id="capsule_size" v-model="new_formula_buffer.capsule_size" class="form-control form-control-md mb-3">
                       <option value="1">1</option>
                       <option value="2">2</option>
                       <option value="0">0</option>
@@ -360,13 +388,13 @@
                 </b-card-text>
               </b-card>
             </b-card-group>
-            <b-table-lite :items="new_formula_buffer.formula_detail" :fields="fields" stacked="md" striped bordered sticky-header>
+            <b-table-lite :items="new_formula_buffer.formula_detail" :fields="fields" striped bordered foot-clone sticky-header head-variant="light" style="min-height: 600px;">
               <template #cell(ingredients_detail)="ingredients">
                 <div v-for="(ing, index) in ingredients.value" :key="ing.component_id+'-ingredient'">
                   <b-row style="height:80px;">
                     <b-col cols="1">
-                      <b-badge :id="ing.component_id+'-ingredient-priority'" v-bind:variant="(ing.priority === 1 ? 'primary' : 'light')" pill class="mr-1 mt-4">{{ ing.priority }}</b-badge>
-                      <b-tooltip :target="ing.component_id+'-ingredient-priority'" triggers="hover">Priority Level: {{ ing.priority }}</b-tooltip>
+                      <b-badge :id="(numVersions+1)+'-'+ingredients.item.formula_ingredient_id+'-'+ing.component_id+'-ingredient-priority'" v-bind:variant="(ing.priority === 1 ? 'primary' : 'light')" pill class="mr-1 mt-4">{{ ing.priority }}</b-badge>
+                      <b-tooltip :target="(numVersions+1)+'-'+ingredients.item.formula_ingredient_id+'-'+ing.component_id+'-ingredient-priority'" triggers="hover">Priority Level: {{ ing.priority }}</b-tooltip>
                     </b-col>
                     <b-col><ChooseIngredient class="py-3" @ing="(i) => select_ing(i, ingredients.item.ingredients_detail, index)" :ingredients="ingredient_options" :selected="ing.component_id === 0 ? null : ing"></ChooseIngredient></b-col>
                   </b-row>
@@ -374,44 +402,51 @@
                 </div>
                 <b-button variant="outline-info" @click="add_ing(ingredients.item.ingredients_detail)">Add Ingredient</b-button>
               </template>
+              <template #foot(ingredients_detail)=""></template>
               <template #cell(brands)="brands">
                 <div v-for="(brand, index) in brands.value" :key="brand.organization_id+'-org'">
                   <b-row class="py-3" style="height:80px;">
                     <b-col cols="1">
-                      <b-badge :id="brand.organization_id+'-org-priority'" v-bind:variant="(brand.priority === 1 ? 'primary' : 'light')" pill class="mr-2">{{ brand.priority }}</b-badge>
-                      <b-tooltip :target="brand.organization_id+'-org-priority'" triggers="hover">Priority Level: {{ brand.priority }}</b-tooltip>
+                      <b-badge :id="(numVersions+1)+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" v-bind:variant="(brand.priority === 1 ? 'primary' : 'light')" pill class="mr-2">{{ brand.priority }}</b-badge>
+                      <b-tooltip :target="(numVersions+1)+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" triggers="hover">Priority Level: {{ brand.priority }}</b-tooltip>
                     </b-col>
                     <b-col>
-                      <ChooseOrg :id="brand.organization_id+'-org-name'" @org="(o) => select_brand(o, brands.item.brands, index)" :organizations="organization_options" :selected="brand.organization_id === 0 ? null : brand"></ChooseOrg>
-                      <b-tooltip v-if="brand.organization_id != 0" :target="brand.organization_id+'-org-name'" triggers="hover">{{ brand.organization_name }}</b-tooltip>
+                      <ChooseOrg @org="(o) => select_brand(o, brands.item.brands, index)" :organizations="organization_options" :selected="brand.organization_id === 0 ? null : brand"></ChooseOrg>
                     </b-col>
                   </b-row>
                   <hr v-show="index < brands.value.length">
                 </div>
                 <b-button variant="outline-info" @click="add_brand(brands.item.brands)">Add Brand</b-button>
               </template>
+              <template #foot(brands)=""></template>
               <template #cell(percent)="percent">
                 <div class="input-group mb-2" style="font-size: 1.5em; width: 80px;">
-                  <strong><input id="max_grams_per_unit" type="number" class="form-control" v-model="percent.item.percent" required min="0" max="100"></strong>
+                  <strong><input :id="percent.item.formula_ingredient_id+'-percent'" type="number" class="form-control" v-model="percent.item.percent" required min="0" max="100"></strong>
                 </div>
+              </template>
+              <template #foot(percent)="">
+                <span :class="calc_total(new_formula_buffer.formula_detail) !== 100 ? 'text-danger':''">= {{ calc_total(new_formula_buffer.formula_detail) }}%</span>
               </template>
               <template #cell(specific_brand_required)="specific_brand_required">
                 <b-button @click="specific_brand_required.item.specific_brand_required = false" v-show="specific_brand_required.value" class="badge badge-success badge-pill" style="font-size: 1.5em;">Yes</b-button>
                 <b-button @click="specific_brand_required.item.specific_brand_required = true" v-show="!specific_brand_required.value" class="badge badge-warning badge-pill" style="font-size: 1.5em;">No</b-button>
               </template>
+              <template #foot(specific_brand_required)=""></template>
               <template #cell(specific_ingredient_required)="specific_ingredient_required">
                 <b-button @click="specific_ingredient_required.item.specific_ingredient_required = false" v-show="specific_ingredient_required.value" class="badge badge-success badge-pill" style="font-size: 1.5em;">Yes</b-button>
                 <b-button @click="specific_ingredient_required.item.specific_ingredient_required = true" v-show="!specific_ingredient_required.value" class="badge badge-warning badge-pill" style="font-size: 1.5em;">No</b-button>
               </template>
+              <template #foot(specific_ingredient_required)=""></template>
               <template #cell(notes)="notes">
                 <b-form-textarea
-                  id="textarea"
                   v-model="notes.item.notes"
                   placeholder="Notes..."
                   rows="3"
                   max-rows="6"
+                  :id="notes.item.formula_ingredient_id+'-notes'"
                 ></b-form-textarea>
               </template>
+              <template #foot(notes)=""></template>
             </b-table-lite>
           </div>
           <b-button :disabled="!disable_version_select" class="mr-2" variant="outline-success" @click="save_new_formula()">Save</b-button>
@@ -419,6 +454,13 @@
           <b-button variant="outline-danger" @click="disable_version_select = !disable_version_select; new_version_select = ''; new_formula_buffer = {}">Cancel</b-button>
         </b-card>
       </b-tab>
+
+      <template #empty>
+        <div class="text-center text-muted">
+          There are not formulas yet.<br>
+          Create a new formula using the <b>New Formula</b> button above.
+        </div>
+      </template>
     </b-tabs>
   </div>
 </template>
@@ -473,22 +515,30 @@ export default {
       new_version_select: '',
       disable_version_select: false,
       new_formula_buffer: {},
-      temp1: null,
       fields: [
         { label: 'Ingredient', key: 'ingredients_detail', tdClass: 'custom-row' },
         { label: 'Brands', key: 'brands', tdClass: 'custom-row' },
         { label: '%', key: 'percent', tdClass: ['align-middle', 'custom-row'], class: 'text-center' },
         { label: 'Brand Specific', key: 'specific_brand_required', tdClass: ['align-middle', 'custom-row'], class: 'text-center' },
         { label: 'Cert Specific', key: 'specific_ingredient_required', tdClass: ['align-middle', 'custom-row'], class: 'text-center' },
-        { label: 'Notes', key: 'notes', tdClass: 'custom-row' }
+        { label: 'Notes', key: 'notes', tdClass: ['align-middle', 'custom-row'] }
       ],
       versions: [],
       organization_options: [],
       ingredient_options: [],
-      temp: null
+      new_formula_id: Math.floor(Math.random() * 100000),
+      new_formula_ingredient_id_index: 0,
+      active_tab_index: 0
     }
   },
   methods: {
+    calc_total: function (formulaDetail) {
+      let total = 0
+      for (const f in formulaDetail) {
+        total += formulaDetail[f].percent
+      }
+      return Math.round(total * 100) / 100
+    },
     save_new_formula: function () {
       console.log(this.new_formula_buffer)
     },
@@ -526,8 +576,8 @@ export default {
           organization_id: 0,
           priority: 1
         }],
-        formula_id: 0,
-        formula_ingredient_id: 0,
+        formula_id: 't-' + this.new_formula_id,
+        formula_ingredient_id: 't-' + this.new_formula_id + this.new_formula_ingredient_id_index,
         grams_per_unit: null,
         ingredients_detail: [{
           component_id: 0,
@@ -540,6 +590,7 @@ export default {
         specific_brand_required: false,
         specific_ingredient_required: false
       }
+      this.new_formula_ingredient_id_index++
       this.new_formula_buffer.formula_detail.push(row)
     },
     set_formula_buffer: function () {
@@ -569,7 +620,7 @@ export default {
     },
     build_formula_versions: function () {
       for (const f in this.formulas) {
-        this.versions.push({ value: this.formulas[f].formulation_version, text: 'Copy V' + this.formulas[f].formulation_version + (this.formulas[f].formulation_version === this.primary ? ' (PRIMARY)' : '') })
+        this.versions.push({ value: this.formulas[f].formulation_version, text: 'Copy V' + this.formulas[f].formulation_version + (this.formulas[f].formula_id === this.primary ? ' (PRIMARY)' : '') })
       }
       this.versions.push({ value: 'NEW', text: 'New Formula' })
     },

@@ -31,7 +31,7 @@
 
       <b-card class=" my-2" v-if="loaded">
         <b-card-body id="nav-scroller" ref="content" class="scrollbox">
-          <ProductFormula :formulas="product_data.formulas" :primary="product_data.default_formula_version" :num-versions="product_data.num_formula_versions"></ProductFormula>
+          <ProductFormula :formulas="product_data.formulas" :primary="product_data.default_formula_id" :num-versions="product_data.num_formula_versions"></ProductFormula>
           <hr>
           <ProductManufacturing :manufacturing="product_data.manufacturing" :edit="edit_manufacturing"></ProductManufacturing>
           <hr>
