@@ -8,7 +8,11 @@
           <strong>{{ f.formulation_version+'V' }}<b-badge variant="primary" pill class="ml-2" style="font-size:0.8em;" v-show="f.formula_id === primary">PF</b-badge></strong>
         </template>
         <b-card class="m-2">
-          <b-card-title>Version {{ f.formulation_version }}  <b-badge variant="primary" pill class="ml-2" style="font-size:0.8em;" v-show="f.formula_id === primary">Primary Formula</b-badge></b-card-title>
+          <b-card-title>
+            Version {{ f.formulation_version }}
+            <b-badge variant="primary" pill class="ml-2" style="font-size:0.8em;" v-show="f.formula_id === primary">Primary Formula</b-badge>
+            <b-button v-show="f.formula_id !== primary && edit_formulas" variant="outline-primary" pill class="ml-2" style="font-size:0.8em;" @click="set_primary(f.formula_id)">Set as Primary</b-button>
+          </b-card-title>
           <b-card-sub-title class="mb-3">{{ new Date(f.date_entered).toLocaleDateString() }} {{ new Date(f.date_entered).toLocaleTimeString() }}</b-card-sub-title>
           <b-card-text>
             <strong v-show="f.notes != null || f.notes?.length > 0">Notes:</strong>
@@ -420,7 +424,7 @@
                 </b-card-text>
               </b-card>
             </b-card-group>
-            <b-table-lite :items="new_formula_buffer.formula_detail" :fields="fields" striped bordered foot-clone sticky-header head-variant="light" style="min-height: 600px;">
+            <b-table-lite :items="new_formula_buffer.formula_detail" :fields="fields" striped bordered foot-clone sticky-header head-variant="light" style="max-height: 600px;">
               <template #cell(ingredients_detail)="ingredients">
                 <div v-for="(ing, index) in ingredients.value" :key="ing.component_id+'-ingredient'">
                   <b-row style="height:80px;">
@@ -566,6 +570,9 @@ export default {
     }
   },
   methods: {
+    set_primary: function (version) {
+      this.$emit('update:primary', version)
+    },
     update_formula: function (formula, index) {
       this.$emit('update:formulas', tap(cloneDeep(this.formulas), v => v.splice(index, 1, formula)))
       this.toggle_edit_formulas()
