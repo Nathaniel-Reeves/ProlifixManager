@@ -1,10 +1,9 @@
 <template>
   <div>
-    {{ active_tab_index }}
-    <h3 id="Formulas">Formulas<b-button v-if="!edit_formulas" v-b-tooltip.hover title="Edit Product Formulas" v-on:click="edit_formulas = !edit_formulas" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
+    <h3 id="Formulas">Formulas<b-button v-if="!edit_formulas" v-b-tooltip.hover title="Edit Product Formulas" @click="toggle_edit_formulas()" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
 
     <b-tabs content-class="mt-3" v-model="active_tab_index">
-      <b-tab v-for="f in formulas" :key="'formula-id-' + f.formula_id" :disabled="edit_formulas && active_tab_index != numVersions">
+      <b-tab v-for="(f, index) in formulas" :key="'formula-id-' + index" :disabled="active_tab_index !== index && edit_formulas">
         <template #title>
           <strong>{{ f.formulation_version+'V' }}<b-badge variant="primary" pill class="ml-2" style="font-size:0.8em;" v-show="f.formula_id === primary">PF</b-badge></strong>
         </template>
@@ -21,7 +20,7 @@
               max-rows="6"
               id="new-formula-notes"
               class="mb-3"
-              disabled
+              :disabled="!edit_formulas"
             ></b-form-textarea>
             <b-card-group deck class="mb-3">
               <b-card>
@@ -188,14 +187,31 @@
               </template>
               <template #foot(ingredients_detail)=""></template>
               <template #cell(brands)="brands">
-                <div v-for="(brand, index) in brands.value" :key="brand.organization_id+'-org'">
-                  <div class="py-3" style="height:80px;">
-                    <b-badge :id="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" v-bind:variant="(brand.priority === 1 ? 'primary' : 'light')" pill class="mr-2">{{ brand.priority }}</b-badge>
-                    <b-tooltip :target="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" triggers="hover">Priority Level: {{ brand.priority }}</b-tooltip>
-                    <span :id="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-name'">{{ brand.organization_initial }}</span>
-                    <b-tooltip :target="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-name'" triggers="hover">{{ brand.organization_name }}</b-tooltip>
+                <div v-if="!edit_formulas">
+                  <div v-for="(brand, index) in brands.value" :key="brand.organization_id+'-org'">
+                    <div class="py-3" style="height:80px;">
+                      <b-badge :id="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" v-bind:variant="(brand.priority === 1 ? 'primary' : 'light')" pill class="mr-2">{{ brand.priority }}</b-badge>
+                      <b-tooltip :target="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" triggers="hover">Priority Level: {{ brand.priority }}</b-tooltip>
+                      <span :id="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-name'">{{ brand.organization_initial }}</span>
+                      <b-tooltip :target="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-name'" triggers="hover">{{ brand.organization_name }}</b-tooltip>
+                    </div>
+                    <hr v-show="index < brands.value.length-1">
                   </div>
-                  <hr v-show="index < brands.value.length-1">
+                </div>
+                <div v-else>
+                  <div v-for="(brand, index) in brands.value" :key="brand.organization_id+'-org'">
+                    <b-row class="py-3" style="height:80px;">
+                      <b-col cols="1">
+                        <b-badge :id="(numVersions+1)+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" v-bind:variant="(brand.priority === 1 ? 'primary' : 'light')" pill class="mr-2">{{ brand.priority }}</b-badge>
+                        <b-tooltip :target="(numVersions+1)+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" triggers="hover">Priority Level: {{ brand.priority }}</b-tooltip>
+                      </b-col>
+                      <b-col>
+                        <ChooseOrg @org="(o) => select_brand(o, brands.item.brands, index)" :organizations="organization_options" :selected="brand.organization_id === 0 ? null : brand"></ChooseOrg>
+                      </b-col>
+                    </b-row>
+                    <hr v-show="index < brands.value.length">
+                  </div>
+                  <b-button variant="outline-info" @click="add_brand(brands.item.brands)">Add Brand</b-button>
                 </div>
               </template>
               <template #foot(brands)=""></template>
@@ -211,23 +227,39 @@
               </template>
               <template #foot(specific_brand_required)=""></template>
               <template #cell(specific_ingredient_required)="specific_ingredient_required">
-                <span v-if="specific_ingredient_required.value" class="badge badge-success badge-pill" style="font-size: 1.5em;">Yes</span>
-                <span v-else class="badge badge-warning badge-pill" style="font-size: 1.5em;">No</span>
+                <div v-if="!edit_formulas">
+                  <span v-if="specific_ingredient_required.value" class="badge badge-success badge-pill" style="font-size: 1.5em;">Yes</span>
+                  <span v-else class="badge badge-warning badge-pill" style="font-size: 1.5em;">No</span>
+                </div>
+                <div v-else>
+                  <b-button @click="specific_ingredient_required.item.specific_ingredient_required = false" v-show="specific_ingredient_required.value" class="badge badge-success badge-pill" style="font-size: 1.5em;">Yes</b-button>
+                  <b-button @click="specific_ingredient_required.item.specific_ingredient_required = true" v-show="!specific_ingredient_required.value" class="badge badge-warning badge-pill" style="font-size: 1.5em;">No</b-button>
+                </div>
               </template>
               <template #foot(specific_ingredient_required)=""></template>
               <template #cell(notes)="notes">
-                {{ notes.value }}
+                <div v-if="!edit_formulas">{{ notes.value }}</div>
+                <b-form-textarea
+                  v-else
+                  v-model="notes.item.notes"
+                  placeholder="Notes..."
+                  rows="3"
+                  max-rows="6"
+                  :id="notes.item.formula_ingredient_id+'-notes'"
+                ></b-form-textarea>
               </template>
               <template #foot(notes)=""></template>
             </b-table-lite>
           </b-card-text>
+          <b-button v-show="edit_formulas" class="mr-2" variant="outline-success" @click="update_formula(f, index)">Save</b-button>
+          <b-button variant="outline-danger" v-show="edit_formulas" @click="toggle_edit_formulas()">Cancel</b-button>
         </b-card>
       </b-tab>
 
-      <b-tab title="New Formula" :disabled="edit_formulas && active_tab_index != numVersions">
+      <b-tab title="New Formula" :disabled="edit_formulas && active_tab_index !== numVersions">
         <b-card class="m-2">
           <b-card-title>New Formula Version {{ numVersions + 1 }}</b-card-title>
-          <select id="new_version_selector" class="form-control form-control-lg mb-3" v-model="new_version_select"  @click="set_formula_buffer()" :disabled="disable_version_select">
+          <select id="new_version_selector" class="form-control form-control-lg mb-3" v-model="new_version_select"  @change="set_formula_buffer()" :disabled="disable_version_select">
             <option v-for="option in versions" :key="option.value" :value="option.value">{{ option.text }}</option>
           </select>
           <div v-if="disable_version_select">
@@ -451,7 +483,7 @@
           </div>
           <b-button :disabled="!disable_version_select" class="mr-2" variant="outline-success" @click="save_new_formula()">Save</b-button>
           <b-button :disabled="!disable_version_select" class="mr-2" variant="outline-info" @click="add_row()">Add Row</b-button>
-          <b-button variant="outline-danger" @click="disable_version_select = !disable_version_select; new_version_select = ''; new_formula_buffer = {}">Cancel</b-button>
+          <b-button :disabled="!disable_version_select" variant="outline-danger" @click="cancel_new_formula()">Cancel</b-button>
         </b-card>
       </b-tab>
 
@@ -487,6 +519,7 @@
 import CertBadge from '../../components/CertBadge.vue'
 import ChooseIngredient from '../../components/ChooseIngredient.vue'
 import ChooseOrg from '../../components/ChooseOrg.vue'
+import { cloneDeep, tap } from 'lodash'
 
 export default {
   name: 'ProductFormula',
@@ -497,7 +530,7 @@ export default {
   },
   props: {
     formulas: {
-      type: Object,
+      type: Array,
       required: true
     },
     primary: {
@@ -509,6 +542,7 @@ export default {
       required: true
     }
   },
+  emits: ['update:formulas', 'update:primary', 'update:numVersions'],
   data: function () {
     return {
       edit_formulas: false,
@@ -526,21 +560,44 @@ export default {
       versions: [],
       organization_options: [],
       ingredient_options: [],
-      new_formula_id: Math.floor(Math.random() * 100000),
+      new_formula_id: ('t-' + Math.floor(Math.random() * 100000)),
       new_formula_ingredient_id_index: 0,
       active_tab_index: 0
     }
   },
   methods: {
+    update_formula: function (formula, index) {
+      this.$emit('update:formulas', tap(cloneDeep(this.formulas), v => v.splice(index, 1, formula)))
+      this.toggle_edit_formulas()
+    },
+    save_new_formula: function () {
+      this.$emit('update:numVersions', this.numVersions + 1)
+      this.$emit('update:formulas', tap(cloneDeep(this.formulas), v => v.push(cloneDeep(this.new_formula_buffer))))
+      this.cancel_new_formula()
+      this.toggle_edit_formulas()
+      this.$nextTick(() => {
+        this.versions = []
+        this.build_formula_versions()
+      })
+    },
+    toggle_edit_formulas: function () {
+      this.edit_formulas = !this.edit_formulas
+      this.$emit('editFormulas', this.edit_formulas)
+    },
+    cancel_new_formula: function () {
+      this.disable_version_select = false
+      this.new_version_select = ''
+      this.new_formula_buffer = {}
+      this.$nextTick(() => {
+        this.toggle_edit_formulas()
+      })
+    },
     calc_total: function (formulaDetail) {
       let total = 0
       for (const f in formulaDetail) {
         total += formulaDetail[f].percent
       }
       return Math.round(total * 100) / 100
-    },
-    save_new_formula: function () {
-      console.log(this.new_formula_buffer)
     },
     add_brand: function (brands) {
       const brand = {
@@ -576,8 +633,8 @@ export default {
           organization_id: 0,
           priority: 1
         }],
-        formula_id: 't-' + this.new_formula_id,
-        formula_ingredient_id: 't-' + this.new_formula_id + this.new_formula_ingredient_id_index,
+        formula_id: this.new_formula_id,
+        formula_ingredient_id: this.new_formula_id + '-' + this.new_formula_ingredient_id_index,
         grams_per_unit: null,
         ingredients_detail: [{
           component_id: 0,
@@ -596,7 +653,8 @@ export default {
     set_formula_buffer: function () {
       if (this.new_version_select === 'NEW') {
         this.new_formula_buffer = {
-          formulation_version: 0,
+          formulation_version: this.numVersions + 1,
+          formula_id: 't-' + this.new_formula_id,
           date_entered: new Date(),
           notes: '',
           min_grams_per_unit: 0,
@@ -613,10 +671,14 @@ export default {
           capsule_weight: 0,
           formula_detail: []
         }
+        this.disable_version_select = true
       } else {
         this.new_formula_buffer = structuredClone(this.formulas.find(f => f.formulation_version === this.new_version_select))
+        this.new_formula_buffer.formulation_version = this.numVersions + 1
+        this.new_formula_buffer.formula_id = this.new_formula_id
+        this.new_formula_buffer.date_entered = new Date()
+        this.disable_version_select = true
       }
-      this.disable_version_select = this.new_version_select !== ''
     },
     build_formula_versions: function () {
       for (const f in this.formulas) {
@@ -728,7 +790,10 @@ export default {
       })
     }
   },
-  computed: {
+  watch: {
+    new_version_select: function () {
+      this.toggle_edit_formulas()
+    }
   },
   created: function () {
     this.build_formula_versions()

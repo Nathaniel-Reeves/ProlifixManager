@@ -32,8 +32,8 @@
               <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'box' } })">Boxes</b-dropdown-item>
               <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'carton' } })">Cartons</b-dropdown-item>
               <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'packaging_material' } })">Packaging Materials</b-dropdown-item>
-              <!-- <hr> -->
-              <!-- <b-dropdown-item @click="$router.push({ path: '/catalogue/products' })">All Products</b-dropdown-item> -->
+              <hr>
+              <b-dropdown-item @click="$router.push({ path: '/catalogue/products' })">All Products</b-dropdown-item>
             </b-nav-item-dropdown>
             <!-- <b-nav-item to="/barcodereader" active-class>barcodereader</b-nav-item> -->
           </b-navbar-nav>

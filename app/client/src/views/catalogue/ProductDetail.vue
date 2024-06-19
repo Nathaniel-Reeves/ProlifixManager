@@ -19,11 +19,10 @@
           <hr class="d-print-none">
           <b-nav pills card-header slot="header" v-b-scrollspy:nav-scroller class="text-nowrap d-print-none">
             <b-nav-item href="#Formulas" @click="scrollIntoView">Formulas</b-nav-item>
-            <b-nav-item href="#Manufacturing" @click="scrollIntoView">Manufacturing</b-nav-item>
-            <b-nav-item href="#Specifications" @click="scrollIntoView"
-              v-if="product_data.doc.specifications !== undefined">Specifications</b-nav-item>
+            <b-nav-item href="#Manufacturing" @click="scrollIntoView" :disabled="edit_formulas">Manufacturing</b-nav-item>
+            <b-nav-item href="#Specifications" @click="scrollIntoView" v-if="product_data.doc.specifications !== undefined" :disabled="edit_formulas">Specifications</b-nav-item>
             <div v-for="(spec, spec_key) in product_data.doc.specifications.specs" :key="spec_key">
-              <b-nav-item :href="'#'+spec_key" @click="scrollIntoView">{{ spec.test_name }}</b-nav-item>
+              <b-nav-item :href="'#'+spec_key" @click="scrollIntoView" :disabled="edit_formulas">{{ spec.test_name }}</b-nav-item>
             </div>
           </b-nav>
         </b-card-body>
@@ -31,11 +30,11 @@
 
       <b-card class=" my-2" v-if="loaded">
         <b-card-body id="nav-scroller" ref="content" class="scrollbox">
-          <ProductFormula :formulas="product_data.formulas" :primary="product_data.default_formula_id" :num-versions="product_data.num_formula_versions"></ProductFormula>
-          <hr>
-          <ProductManufacturing :manufacturing="product_data.manufacturing" :edit="edit_manufacturing"></ProductManufacturing>
-          <hr>
-          <SpecificationsComponent :data="product_data.doc" :spectype="'product'" :name="product_data.product_name" @update-spec-buffer="update_spec_buffer" @update-file-buffer="update_file_buffer" @update-remove-file-buffer="update_remove_file_buffer" @save-specs="save_specs"></SpecificationsComponent>
+          <ProductFormula :v-key="formula_key" v-model:formulas="product_data.formulas" v-model:primary="product_data.default_formula_id" v-model:num-versions="product_data.num_formula_versions" @edit-formulas="(e) => {edit_formulas = e}"></ProductFormula>
+          <hr v-show="!edit_formulas">
+          <ProductManufacturing v-show="!edit_formulas" :manufacturing="product_data.manufacturing" :edit="edit_manufacturing"></ProductManufacturing>
+          <hr v-show="!edit_formulas">
+          <SpecificationsComponent v-show="!edit_formulas" :data="product_data.doc" :spectype="'product'" :name="product_data.product_name" @update-spec-buffer="update_spec_buffer" @update-file-buffer="update_file_buffer" @update-remove-file-buffer="update_remove_file_buffer" @save-specs="save_specs"></SpecificationsComponent>
           <hr>
         </b-card-body>
       </b-card>
@@ -102,9 +101,11 @@ export default {
       id: this.$route.params.id,
       product_data: {},
       edit_manufacturing: false,
+      edit_formulas: false,
       edit_specs_buffer: {},
       upload_files_buffer: {},
-      remove_files_buffer: []
+      remove_files_buffer: [],
+      formula_key: 0
     }
   },
   methods: {
@@ -170,6 +171,13 @@ export default {
           console.log(response)
         }
       })
+    }
+  },
+  watch: {
+    product_data: function () {
+      // refresh product formula if the formula data has changed in the parent.
+      this.formula_key += 1
+      this.edit_formulas = false
     }
   },
   created: function () {
