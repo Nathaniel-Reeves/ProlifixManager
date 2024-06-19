@@ -136,7 +136,7 @@
 
 <script>
 // import FacilitiesGrid from './components/FacilitiesGrid.vue'
-import CertBadge from '../../components/CertBadge.vue'
+import CertBadge from '../../../components/CertBadge.vue'
 import NamesComponent from './NamesComponent.vue'
 
 export default {

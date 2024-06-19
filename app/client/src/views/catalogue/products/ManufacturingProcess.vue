@@ -83,7 +83,7 @@
 <script>
 import { Handle, Position } from '@vue-flow/core'
 import { NodeToolbar } from '@vue-flow/node-toolbar'
-import CertBadge from '../../components/CertBadge.vue'
+import CertBadge from '../../../components/CertBadge.vue'
 
 export default {
   data: function () {

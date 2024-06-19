@@ -12,7 +12,7 @@
       <b-card class=" my-2" v-if="loaded">
         <b-card-body>
           <div class="card-title d-flex align-items-center flex-wrap">
-            <b-img style="max-width: 15rem;" class="d-none d-print-inline p-2" src="../../assets/Company Images/logos jpg/Cropped Logo.jpg"></b-img>
+            <b-img style="max-width: 15rem;" class="d-none d-print-inline p-2" src="../../../assets/Company Images/logos jpg/Cropped Logo.jpg"></b-img>
             <h2 class="card-title">{{ get_component_primary_name(component_data) }} {{ format_string(component_data.component_type) }}</h2>
             <CertBadge :data="component_data"></CertBadge>
           </div>
@@ -86,8 +86,8 @@
 
 <script>
 import NamesComponent from './NamesComponent.vue'
-import CertBadge from '../../components/CertBadge.vue'
-import SpecificationsComponent from './SpecificationsComponent.vue'
+import CertBadge from '../../../components/CertBadge.vue'
+import SpecificationsComponent from '../SpecificationsComponent.vue'
 
 export default {
   name: 'ComponentDetail',

@@ -50,27 +50,27 @@ const routes = [
     path: '/catalogue/components',
     name: 'components',
     props: route => ({ type: route.query.type }),
-    component: () => import(/* webpackChunkName: "CatalogueHome" */ '../views/catalogue/ComponentHome.vue')
+    component: () => import(/* webpackChunkName: "CatalogueHome" */ '../views/catalogue/components/ComponentHome.vue')
   },
   {
     path: '/catalogue/components/create',
     name: 'NewComponent',
-    component: () => import(/* webpackChunkName: "ComponentDetail" */ '../views/catalogue/NewComponent.vue')
+    component: () => import(/* webpackChunkName: "ComponentDetail" */ '../views/catalogue/components/NewComponent.vue')
   },
   {
     path: '/catalogue/components/:id',
     name: 'ComponentDetail',
-    component: () => import(/* webpackChunkName: "ComponentDetail" */ '../views/catalogue/ComponentDetail.vue')
+    component: () => import(/* webpackChunkName: "ComponentDetail" */ '../views/catalogue/components/ComponentDetail.vue')
   },
   {
     path: '/catalogue/products',
     name: 'products',
-    component: () => import(/* webpackChunkName: "ProductHome" */ '../views/catalogue/ProductHome.vue')
+    component: () => import(/* webpackChunkName: "ProductHome" */ '../views/catalogue/products/ProductHome.vue')
   },
   {
     path: '/catalogue/products/:id',
     name: 'ProductDetail',
-    component: () => import(/* webpackChunkName: "ProductDetail" */ '../views/catalogue/ProductDetail.vue')
+    component: () => import(/* webpackChunkName: "ProductDetail" */ '../views/catalogue/products/ProductDetail.vue')
   },
   {
     path: '/organizations',

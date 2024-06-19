@@ -5,13 +5,13 @@
     <b-tabs content-class="mt-3" v-model="active_tab_index">
       <b-tab v-for="(f, index) in formulas" :key="'formula-id-' + index" :disabled="active_tab_index !== index && edit_formulas">
         <template #title>
-          <strong>{{ f.formulation_version+'V' }}<b-badge variant="primary" pill class="ml-2" style="font-size:0.8em;" v-show="f.formula_id === primary">PF</b-badge></strong>
+          <strong>{{ f.formulation_version+'V' }}<b-badge variant="primary" pill class="ml-2" style="font-size:0.8em;" v-show="f.formula_id === defaultFormulaId">PF</b-badge></strong>
         </template>
         <b-card class="m-2">
           <b-card-title>
             Version {{ f.formulation_version }}
-            <b-badge variant="primary" pill class="ml-2" style="font-size:0.8em;" v-show="f.formula_id === primary">Primary Formula</b-badge>
-            <b-button v-show="f.formula_id !== primary && edit_formulas" variant="outline-primary" pill class="ml-2" style="font-size:0.8em;" @click="set_primary(f.formula_id)">Set as Primary</b-button>
+            <b-badge variant="primary" pill class="ml-2" style="font-size:0.8em;" v-show="f.formula_id === defaultFormulaId">Primary Formula</b-badge>
+            <b-button v-show="f.formula_id !== defaultFormulaId && edit_formulas" variant="outline-primary" pill class="ml-2" style="font-size:0.8em;" @click="set_default_formula_id(f.formula_id)">Set as Primary</b-button>
           </b-card-title>
           <b-card-sub-title class="mb-3">{{ new Date(f.date_entered).toLocaleDateString() }} {{ new Date(f.date_entered).toLocaleTimeString() }}</b-card-sub-title>
           <b-card-text>
@@ -520,9 +520,9 @@
 </style>
 
 <script>
-import CertBadge from '../../components/CertBadge.vue'
-import ChooseIngredient from '../../components/ChooseIngredient.vue'
-import ChooseOrg from '../../components/ChooseOrg.vue'
+import CertBadge from '../../../components/CertBadge.vue'
+import ChooseIngredient from '../../../components/ChooseIngredient.vue'
+import ChooseOrg from '../../../components/ChooseOrg.vue'
 import { cloneDeep, tap } from 'lodash'
 
 export default {
@@ -537,16 +537,20 @@ export default {
       type: Array,
       required: true
     },
-    primary: {
+    defaultFormulaId: {
       type: Number,
       required: true
     },
     numVersions: {
       type: Number,
       required: true
+    },
+    productId: {
+      type: String,
+      required: true
     }
   },
-  emits: ['update:formulas', 'update:primary', 'update:numVersions'],
+  emits: ['update:formulas', 'update:defaultFormulaId', 'update:numVersions'],
   data: function () {
     return {
       edit_formulas: false,
@@ -570,8 +574,8 @@ export default {
     }
   },
   methods: {
-    set_primary: function (version) {
-      this.$emit('update:primary', version)
+    set_default_formula_id: function (version) {
+      this.$emit('update:defaultFormulaId', version)
     },
     update_formula: function (formula, index) {
       this.$emit('update:formulas', tap(cloneDeep(this.formulas), v => v.splice(index, 1, formula)))
@@ -689,7 +693,7 @@ export default {
     },
     build_formula_versions: function () {
       for (const f in this.formulas) {
-        this.versions.push({ value: this.formulas[f].formulation_version, text: 'Copy V' + this.formulas[f].formulation_version + (this.formulas[f].formula_id === this.primary ? ' (PRIMARY)' : '') })
+        this.versions.push({ value: this.formulas[f].formulation_version, text: 'Copy V' + this.formulas[f].formulation_version + (this.formulas[f].formula_id === this.defaultFormulaId ? ' (PRIMARY)' : '') })
       }
       this.versions.push({ value: 'NEW', text: 'New Formula' })
     },

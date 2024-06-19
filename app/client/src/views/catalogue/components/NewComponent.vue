@@ -44,37 +44,37 @@
             <label><strong>Certifications</strong><br></label>
             <div>
               <b-form-checkbox class="my-1 mr-4" button button-variant="outline-success" v-model="certified_usda_organic">
-                <b-img circle style="width:9em;" :src="require('../../assets/certifications/usda_organic.png')"></b-img>
+                <b-img circle style="width:9em;" :src="require('../../../assets/certifications/usda_organic.png')"></b-img>
               </b-form-checkbox>
               <b-form-checkbox class="my-1 mr-4" button button-variant="outline-success" v-model="certified_made_with_organic">
-                <b-img circle style="width:9em;" :src="require('../../assets/certifications/made_with_organic.png')"></b-img>
+                <b-img circle style="width:9em;" :src="require('../../../assets/certifications/made_with_organic.png')"></b-img>
               </b-form-checkbox>
               <b-form-checkbox class="my-1 mr-4" button button-variant="outline-success" v-model="certified_wildcrafted">
-                <b-img circle style="width:9em;" :src="require('../../assets/certifications/wildcrafted.png')"></b-img>
+                <b-img circle style="width:9em;" :src="require('../../../assets/certifications/wildcrafted.png')"></b-img>
               </b-form-checkbox>
               <b-form-checkbox class="my-1 mr-4" button button-variant="outline-success" v-model="certified_fda">
-                <b-img circle style="width:9em;" :src="require('../../assets/certifications/fda_approved.png')"></b-img>
+                <b-img circle style="width:9em;" :src="require('../../../assets/certifications/fda_approved.png')"></b-img>
               </b-form-checkbox>
               <b-form-checkbox class="my-1 mr-4" button button-variant="outline-success" v-model="certified_gmp">
-                <b-img circle style="width:9em;" :src="require('../../assets/certifications/good_manufacturing_practice.png')"></b-img>
+                <b-img circle style="width:9em;" :src="require('../../../assets/certifications/good_manufacturing_practice.png')"></b-img>
               </b-form-checkbox>
               <b-form-checkbox class="my-1 mr-4" button button-variant="outline-success" v-model="certified_halal">
-                <b-img circle style="width:9em;" :src="require('../../assets/certifications/halal_certified.png')"></b-img>
+                <b-img circle style="width:9em;" :src="require('../../../assets/certifications/halal_certified.png')"></b-img>
               </b-form-checkbox>
               <b-form-checkbox class="my-1 mr-4" button button-variant="outline-success" v-model="certified_kosher">
-                <b-img circle style="width:9em;" :src="require('../../assets/certifications/kosher_certified.png')"></b-img>
+                <b-img circle style="width:9em;" :src="require('../../../assets/certifications/kosher_certified.png')"></b-img>
               </b-form-checkbox>
               <b-form-checkbox class="my-1 mr-4" button button-variant="outline-success" v-model="certified_gluten_free">
-                <b-img circle style="width:9em;" :src="require('../../assets/certifications/gluten_free.png')"></b-img>
+                <b-img circle style="width:9em;" :src="require('../../../assets/certifications/gluten_free.png')"></b-img>
               </b-form-checkbox>
               <b-form-checkbox class="my-1 mr-4" button button-variant="outline-success" v-model="certified_national_sanitation_foundation">
-                <b-img circle style="width:9em;" :src="require('../../assets/certifications/nsf_international_logo.png')"></b-img>
+                <b-img circle style="width:9em;" :src="require('../../../assets/certifications/nsf_international_logo.png')"></b-img>
               </b-form-checkbox>
               <b-form-checkbox class="my-1 mr-4" button button-variant="outline-success" v-model="certified_us_pharmacopeia">
-                <b-img circle style="width:9em;" :src="require('../../assets/certifications/us_pharmacopeia.png')"></b-img>
+                <b-img circle style="width:9em;" :src="require('../../../assets/certifications/us_pharmacopeia.png')"></b-img>
               </b-form-checkbox>
               <b-form-checkbox class="my-1 mr-4" button button-variant="outline-success" v-model="certified_vegan">
-                <b-img circle style="width:9em;" :src="require('../../assets/certifications/vegan.png')"></b-img>
+                <b-img circle style="width:9em;" :src="require('../../../assets/certifications/vegan.png')"></b-img>
               </b-form-checkbox>
             </div>
           </div>

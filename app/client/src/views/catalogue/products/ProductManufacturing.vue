@@ -156,7 +156,7 @@ export default {
 @import '@vue-flow/controls/dist/style.css';
 @import '@vue-flow/minimap/dist/style.css';
 @import '@vue-flow/node-resizer/dist/style.css';
-@import '../../assets/vue-flow-css/index.css';
+@import '../../../assets/vue-flow-css/index.css';
 
 .vue-flow__minimap {
   transform: scale(75%);

@@ -82,7 +82,7 @@
 </style>
 
 <script>
-import CertBadge from '../../components/CertBadge.vue'
+import CertBadge from '../../../components/CertBadge.vue'
 
 export default {
   name: 'ProductHome',

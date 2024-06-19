@@ -443,6 +443,7 @@ export default {
       if (!this.edit_specs) {
         this.edit_specs_buffer = structuredClone(this.data.specifications) // Deep Copy
         this.edit_specs = true
+        this.$emit('editSpecs', this.edit_specs)
       } else {
         if (this.edit_specs_buffer.revision_number === 0) {
           this.edit_specs_buffer.date_issued = new Date().toISOString() // Today
@@ -464,6 +465,7 @@ export default {
         this.upload_files_buffer = {}
         this.remove_files_buffer = []
         this.edit_specs = false
+        this.$emit('editSpecs', this.edit_specs)
       }
     },
     cancelEditSpecs: function () {
@@ -471,6 +473,7 @@ export default {
       this.edit_files_buffer = {}
       this.remove_files_buffer = []
       this.edit_specs = false
+      this.$emit('editSpecs', this.edit_specs)
     },
     format_string: function (type) {
       if (type === undefined) {
