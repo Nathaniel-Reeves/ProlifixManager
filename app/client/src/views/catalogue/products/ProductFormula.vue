@@ -178,13 +178,13 @@
             <b-table-lite :items="f['formula_detail']" :fields="fields" striped bordered sticky-header foot-clone head-variant="light" style="min-height: 600px;">
               <template #cell(ingredients_detail)="ingredients_detail">
                 <div v-for="(ing, index) in ingredients_detail.value" :key="ing.component_id+'-ingredient'">
-                  <b-row style="height:80px;" align-v="center">
-                    <b-col cols="1">
+                  <b-row align-v="center">
+                    <b-col style="margin: 5px; padding: 0px; margin-left: 10px; max-width: 22px;">
                       <b-badge :id="f.formulation_version+'-'+ingredients_detail.item.formula_ingredient_id+'-'+ing.component_id+'-ingredient-priority'" v-bind:variant="(ing.priority === 1 ? 'primary' : 'light')" pill class="ml-2">{{ ing.priority }}</b-badge>
                       <b-tooltip :target="f.formulation_version+'-'+ingredients_detail.item.formula_ingredient_id+'-'+ing.component_id+'-ingredient-priority'" triggers="hover">Priority Level: {{ ing.priority }}</b-tooltip>
                     </b-col>
-                    <b-col cols="3"><b-link :to="'/catalogue/components/'+ing.component_id" target="_blank">{{ ing.component_name }}</b-link></b-col>
-                    <b-col><CertBadge :data="ing"></CertBadge></b-col>
+                    <b-col style="max-width: 260px;"><b-link :to="'/catalogue/components/'+ing.component_id" target="_blank">{{ ing.component_name }}</b-link></b-col>
+                    <b-col style="max-width: 360px;"><CertBadge :data="ing"></CertBadge></b-col>
                   </b-row>
                   <hr v-show="index < ingredients_detail.value.length-1">
                 </div>
@@ -192,22 +192,28 @@
               <template #foot(ingredients_detail)=""></template>
               <template #cell(brands)="brands">
                 <div v-if="!edit_formulas">
-                  <div v-for="(brand, index) in brands.value" :key="brand.organization_id+'-org'">
-                    <div class="py-3" style="height:80px;">
-                      <b-badge :id="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" v-bind:variant="(brand.priority === 1 ? 'primary' : 'light')" pill class="mr-2">{{ brand.priority }}</b-badge>
-                      <b-tooltip :target="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" triggers="hover">Priority Level: {{ brand.priority }}</b-tooltip>
-                      <span :id="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-name'">{{ brand.organization_initial }}</span>
-                      <b-tooltip :target="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-name'" triggers="hover">{{ brand.organization_name }}</b-tooltip>
-                    </div>
-                    <hr v-show="index < brands.value.length-1">
+                  <div v-for="(brand) in brands.value" :key="brand.organization_id+'-org'">
+                    <b-row align-v="baseline">
+                      <b-col style="margin: 5px; padding: 0px; margin-left: 15px; max-width: 22px;">
+                        <b-badge :id="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" v-bind:variant="(brand.priority === 1 ? 'primary' : 'light')" pill>{{ brand.priority }}</b-badge>
+                        <b-tooltip :target="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" triggers="hover">Priority Level: {{ brand.priority }}</b-tooltip>
+                      </b-col>
+                      <b-col>
+                        <span :id="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-name'"><b-link :to="'/organizations/'+brand.organization_id" target="_blank">{{ brand.organization_initial }}</b-link></span>
+                        <b-tooltip :target="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-name'" triggers="hover">{{ brand.organization_name }}</b-tooltip>
+                      </b-col>
+                    </b-row>
                   </div>
                 </div>
                 <div v-else>
                   <div v-for="(brand, index) in brands.value" :key="brand.organization_id+'-org'">
-                    <b-row class="py-3" style="height:80px;">
-                      <b-col cols="1">
-                        <b-badge :id="(numVersions+1)+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" v-bind:variant="(brand.priority === 1 ? 'primary' : 'light')" pill class="mr-2">{{ brand.priority }}</b-badge>
-                        <b-tooltip :target="(numVersions+1)+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" triggers="hover">Priority Level: {{ brand.priority }}</b-tooltip>
+                    <b-row align-v="baseline">
+                      <b-col style="margin: 5px; padding: 0px; margin-left: 15px; max-width: 22px;">
+                        <b-badge :id="(numVersions+1)+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" v-bind:variant="(index+1 === 1 ? 'primary' : 'light')" pill class="mr-2">{{ index+1 }}</b-badge>
+                        <b-tooltip :target="(numVersions+1)+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" triggers="hover">Priority Level: {{ index+1 }}</b-tooltip>
+                      </b-col>
+                      <b-col style="padding: 0px; margin: 10px; max-width: 48px;;">
+                        <b-button @click="remove_brand(brands.item.brands, index)" variant="outline-danger"><b-icon icon="trash"></b-icon></b-button>
                       </b-col>
                       <b-col>
                         <ChooseOrg @org="(o) => select_brand(o, brands.item.brands, index)" :organizations="organization_options" :selected="brand.organization_id === 0 ? null : brand"></ChooseOrg>
@@ -215,7 +221,9 @@
                     </b-row>
                     <hr v-show="index < brands.value.length">
                   </div>
-                  <b-button variant="outline-info" @click="add_brand(brands.item.brands)">Add Brand</b-button>
+                  <div class="d-flex justify-content-end">
+                    <b-button variant="outline-info" @click="add_brand(brands.item.brands)">Add Brand</b-button>
+                  </div>
                 </div>
               </template>
               <template #foot(brands)=""></template>
@@ -427,24 +435,33 @@
             <b-table-lite :items="new_formula_buffer.formula_detail" :fields="fields" striped bordered foot-clone sticky-header head-variant="light" style="max-height: 600px;">
               <template #cell(ingredients_detail)="ingredients">
                 <div v-for="(ing, index) in ingredients.value" :key="ing.component_id+'-ingredient'">
-                  <b-row style="height:80px;">
-                    <b-col cols="1">
-                      <b-badge :id="(numVersions+1)+'-'+ingredients.item.formula_ingredient_id+'-'+ing.component_id+'-ingredient-priority'" v-bind:variant="(ing.priority === 1 ? 'primary' : 'light')" pill class="mr-1 mt-4">{{ ing.priority }}</b-badge>
+                  <b-row align-v="baseline">
+                    <b-col style="margin: 5px; padding: 0px; margin-left: 10px; max-width: 22px;">
+                      <b-badge :id="(numVersions+1)+'-'+ingredients.item.formula_ingredient_id+'-'+ing.component_id+'-ingredient-priority'" v-bind:variant="(ing.priority === 1 ? 'primary' : 'light')" pill>{{ ing.priority }}</b-badge>
                       <b-tooltip :target="(numVersions+1)+'-'+ingredients.item.formula_ingredient_id+'-'+ing.component_id+'-ingredient-priority'" triggers="hover">Priority Level: {{ ing.priority }}</b-tooltip>
+                    </b-col>
+                    <b-col style="padding: 0px; margin: 10px; max-width: 48px;">
+                      <b-button @click="remove_ing(ingredients.item.ingredients_detail, index)" variant="outline-danger"><b-icon icon="trash"></b-icon></b-button>
                     </b-col>
                     <b-col><ChooseIngredient class="py-3" @ing="(i) => select_ing(i, ingredients.item.ingredients_detail, index)" :ingredients="ingredient_options" :selected="ing.component_id === 0 ? null : ing"></ChooseIngredient></b-col>
                   </b-row>
                   <hr v-show="index < ingredients.value.length">
                 </div>
-                <b-button variant="outline-info" @click="add_ing(ingredients.item.ingredients_detail)">Add Ingredient</b-button>
+                <div class="d-flex justify-content-end">
+                  <b-button variant="outline-info" @click="add_ing(ingredients.item.ingredients_detail)" class="mr-3">Add Ingredient</b-button>
+                  <b-button variant="outline-danger" @click="delete_row(ingredients.index)">Delete Row</b-button>
+                </div>
               </template>
               <template #foot(ingredients_detail)=""></template>
               <template #cell(brands)="brands">
                 <div v-for="(brand, index) in brands.value" :key="brand.organization_id+'-org'">
-                  <b-row class="py-3" style="height:80px;">
-                    <b-col cols="1">
-                      <b-badge :id="(numVersions+1)+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" v-bind:variant="(brand.priority === 1 ? 'primary' : 'light')" pill class="mr-2">{{ brand.priority }}</b-badge>
+                  <b-row align-v="baseline">
+                    <b-col style="margin: 5px; padding: 0px; margin-left: 10px; max-width: 22px;">
+                      <b-badge :id="(numVersions+1)+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" v-bind:variant="(brand.priority === 1 ? 'primary' : 'light')" pill>{{ brand.priority }}</b-badge>
                       <b-tooltip :target="(numVersions+1)+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" triggers="hover">Priority Level: {{ brand.priority }}</b-tooltip>
+                    </b-col>
+                    <b-col style="padding: 0px; margin: 10px; max-width: 48px;;">
+                      <b-button @click="remove_brand(brands.item.brands, index)" variant="outline-danger"><b-icon icon="trash"></b-icon></b-button>
                     </b-col>
                     <b-col>
                       <ChooseOrg @org="(o) => select_brand(o, brands.item.brands, index)" :organizations="organization_options" :selected="brand.organization_id === 0 ? null : brand"></ChooseOrg>
@@ -452,7 +469,9 @@
                   </b-row>
                   <hr v-show="index < brands.value.length">
                 </div>
-                <b-button variant="outline-info" @click="add_brand(brands.item.brands)">Add Brand</b-button>
+                <div class="d-flex justify-content-end">
+                  <b-button variant="outline-info" @click="add_brand(brands.item.brands)">Add Brand</b-button>
+                </div>
               </template>
               <template #foot(brands)=""></template>
               <template #cell(percent)="percent">
@@ -610,6 +629,12 @@ export default {
       }
       return Math.round(total * 100) / 100
     },
+    remove_brand: function (brands, index) {
+      brands.splice(index, 1)
+      for (let i = index; i < brands.length; i++) {
+        brands[i].priority = i + 1
+      }
+    },
     add_brand: function (brands) {
       const brand = {
         organization_id: 0,
@@ -622,6 +647,12 @@ export default {
       if (org != null) {
         brands[index] = org
         brands[index].priority = priority
+      }
+    },
+    remove_ing: function (ingredientsDetail, index) {
+      ingredientsDetail.splice(index, 1)
+      for (let i = index; i < ingredientsDetail.length; i++) {
+        ingredientsDetail[i].priority = i + 1
       }
     },
     add_ing: function (ingredientsDetail) {
@@ -637,6 +668,9 @@ export default {
         ingredients[index] = ing
         ingredients[index].priority = priority
       }
+    },
+    delete_row: function (index) {
+      this.new_formula_buffer.formula_detail.splice(index, 1)
     },
     add_row: function () {
       const row = {
@@ -682,14 +716,15 @@ export default {
           capsule_weight: 0,
           formula_detail: []
         }
-        this.disable_version_select = true
       } else {
-        this.new_formula_buffer = structuredClone(this.formulas.find(f => f.formulation_version === this.new_version_select))
+        this.new_formula_buffer = cloneDeep(this.formulas.find(f => f.formulation_version === this.new_version_select))
         this.new_formula_buffer.formulation_version = this.numVersions + 1
         this.new_formula_buffer.formula_id = this.new_formula_id
         this.new_formula_buffer.date_entered = new Date()
-        this.disable_version_select = true
       }
+      this.disable_version_select = true
+      this.edit_formulas = true
+      this.$emit('editFormulas', this.edit_formulas)
     },
     build_formula_versions: function () {
       for (const f in this.formulas) {
