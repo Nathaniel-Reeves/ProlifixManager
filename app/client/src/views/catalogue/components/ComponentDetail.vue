@@ -263,12 +263,9 @@ export default {
           message: 'Find IT to help fix the issue.',
           variant: 'danger',
           visible: true,
-          noCloseButton: false,
-          noAutoHide: true,
-          autoHideDelay: false,
-          appendToast: true,
-          solid: true,
-          toaster: 'b-toaster-bottom-right'
+          no_close_button: false,
+          no_auto_hide: true,
+          auto_hide_delay: false
         }
         const createToast = this.$root.createToast
         createToast(errorToast)

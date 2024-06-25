@@ -1,6 +1,17 @@
 <template>
   <div class="mb-3">
-    <v-select :id="id" :options="organizations" label="organization_initial" v-model="selected_org" :loading="!orgs_loaded" :clearable="selected_org != null" :placeholder="!orgs_loaded ? 'Loading...':'Choose...'" style="width: 150px;">
+    <v-select
+      :id="id"
+      :options="organizations"
+      label="organization_initial"
+      v-model="selected_org"
+      :loading="!orgs_loaded"
+      :clearable="selected_org != null"
+      :placeholder="!orgs_loaded ? 'Loading...':'Choose...'"
+      style="width: 150px;"
+      aria-describedby="select_org-live-feedback"
+      :class="(selected_org !== null || !orgReq ? '' : 'is-invalid')"
+    >
       <template #option="{ organization_id, organization_name, organization_initial }">
         <div style="display:flex; flex-direction: row; align-items: center; min-height: 60px;">
           <b-button v-on:click.stop class="mr-2" variant="light" :to="'/organizations/'+organization_id" target="_blank"><b-icon icon="box"></b-icon></b-button>
@@ -8,6 +19,7 @@
         </div>
       </template>
     </v-select>
+    <div id="select_org-live-feedback" class="invalid-feedback">This is a required field.</div>
     <b-tooltip v-if="selected_org != null && selected_org.organization_id != 0" :target="id" triggers="hover">{{ selected_org.organization_name }}</b-tooltip>
   </div>
 </template>
@@ -30,7 +42,8 @@ export default {
   },
   props: [
     'organizations',
-    'selected'
+    'selected',
+    'orgReq'
   ],
   data: function () {
     return {
