@@ -16,5 +16,6 @@ def get_session():
 
     Session = sa.orm.sessionmaker()
     Session.configure(bind=engine)
+    Session.configure(autocommit=False)
     Session = Session()
     return Session

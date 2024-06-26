@@ -9,12 +9,14 @@ from flask import (
     Flask,
     jsonify,
     Blueprint,
-    send_from_directory
+    send_from_directory,
+    request
 )
 from markupsafe import escape
 from flask_cors import CORS
 from flask_socketio import SocketIO
 from dotenv import load_dotenv
+from controller.request import CustomRequest
 
 # Get the parent directory
 parent_dir = os.path.dirname(os.path.realpath(__file__))
@@ -124,6 +126,9 @@ def create_app():
 
     from view.auth import bp as auth_bp
     api_blueprint.register_blueprint(auth_bp)
+
+    from view.submit_request import bp as submit_request_bp
+    api_blueprint.register_blueprint(submit_request_bp)
 
     # Sanity Check Routes
     @api_blueprint.route('/ping', methods=['GET'])

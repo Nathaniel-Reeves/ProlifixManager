@@ -125,8 +125,6 @@ def remove_file(file_hash, session):
         session.commit()
         return
 
-
-
 def save_file(file_data, session):
     """Save file to server filesystem and to Files database
 

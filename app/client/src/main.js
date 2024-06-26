@@ -1,6 +1,7 @@
 import '@babel/polyfill'
 import 'mutationobserver-shim'
 import Vue, { createApp, configureCompat } from 'vue'
+import VueCookies from 'vue-cookies'
 import App from './App.vue'
 import jquery from 'jquery'
 import router from './router/index.js'
@@ -49,6 +50,7 @@ configureCompat({
 })
 
 Vue.use(BootstrapVue)
+Vue.use(VueCookies)
 Vue.use(IconsPlugin)
 const app = createApp(App)
 app.use(router)

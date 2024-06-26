@@ -69,8 +69,6 @@ def collect_form_data(request):
                 continue
 
     file_data = request.files
-    print(file_data)
-    print(request.files.getlist('file'))
     if "doc" in form_data.keys():
         doc = json.loads(form_data["doc"])
 
