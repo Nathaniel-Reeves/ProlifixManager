@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3 id="Formulas">Formulas<b-button v-if="!edit_formulas" v-b-tooltip.hover title="Edit Product Formulas" @click="save_temp_formula(); toggle_edit_formulas()" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
+    <h3 id="Formulas">Formulas<b-button v-if="!edit_formulas" v-b-tooltip.hover title="Edit Product Formulas" @click="set_formula_buffer()" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
 
     <b-tabs content-class="mt-3" v-model="active_tab_index">
       <b-tab v-for="(f, index) in formulas" :key="'index-' + index" :disabled="active_tab_index !== index && edit_formulas">
@@ -11,7 +11,7 @@
           <b-card-title>
             Version {{ f.formulation_version }}
             <b-badge variant="primary" pill class="ml-2" style="font-size:0.8em;" v-show="f.formula_id === defaultFormulaId">Primary Formula</b-badge>
-            <b-button v-show="f.formula_id !== defaultFormulaId && edit_formulas" variant="outline-primary" pill class="ml-2" style="font-size:0.8em;" @click="set_default_formula_id(f.formula_id)">Set as Primary</b-button>
+            <b-button v-show="f.formula_id !== defaultFormulaId && !edit_formulas" variant="outline-primary" pill class="ml-2" style="font-size:0.8em;" @click="set_default_formula_id(f.formula_id)">Set as Primary</b-button>
           </b-card-title>
           <b-card-sub-title class="mb-3">{{ new Date(f.date_entered).toLocaleDateString() }} {{ new Date(f.date_entered).toLocaleTimeString() }}</b-card-sub-title>
           <b-card-text>
@@ -25,6 +25,7 @@
               id="new-formula-notes"
               class="mb-3"
               :disabled="!edit_formulas"
+              @input="update_formula(f)"
             ></b-form-textarea>
             <b-card-group deck class="mb-3">
               <b-card>
@@ -34,7 +35,7 @@
                     <b-col><label :for="'max_grams_per_unit_'+f.formulation_version"><strong>Tolerance Max:</strong></label></b-col>
                     <b-col>
                       <div class="input-group mb-2">
-                        <input :id="'max_grams_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.max_grams_per_unit" required>
+                        <input :id="'max_grams_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.max_grams_per_unit" required @input="update_formula(f)">
                         <div class="input-group-append">
                           <span class="input-group-text">g</span>
                         </div>
@@ -45,7 +46,7 @@
                     <b-col><label :for="'total_grams_per_unit_'+f.formulation_version"><strong>Target g per Product:</strong></label></b-col>
                     <b-col>
                       <div class="input-group mb-2">
-                        <input :id="'total_grams_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.total_grams_per_unit" required>
+                        <input :id="'total_grams_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.total_grams_per_unit" required @input="update_formula(f)">
                         <div class="input-group-append">
                           <span class="input-group-text">g</span>
                         </div>
@@ -56,7 +57,7 @@
                     <b-col><label :for="'min_grams_per_unit_'+f.formulation_version"><strong>Tolerance Min:</strong></label></b-col>
                     <b-col>
                       <div class="input-group mb-2">
-                        <input :id="'min_grams_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.min_grams_per_unit" required>
+                        <input :id="'min_grams_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.min_grams_per_unit" required @input="update_formula(f)">
                         <div class="input-group-append">
                           <span class="input-group-text">g</span>
                         </div>
@@ -72,7 +73,7 @@
                     <b-col><label :for="'max_milliliters_per_unit_'+f.formulation_version"><strong>Tolerance Max:</strong></label></b-col>
                     <b-col>
                       <div class="input-group mb-2">
-                        <input :id="'max_milliliters_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.max_milliliters_per_unit" required>
+                        <input :id="'max_milliliters_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.max_milliliters_per_unit" required @input="update_formula(f)">
                         <div class="input-group-append">
                           <span class="input-group-text">ml</span>
                         </div>
@@ -83,7 +84,7 @@
                     <b-col><label :for="'total_milliliters_per_unit_'+f.formulation_version"><strong>Target ml per Product:</strong></label></b-col>
                     <b-col>
                       <div class="input-group mb-2">
-                        <input :id="'total_milliliters_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.total_milliliters_per_unit" required>
+                        <input :id="'total_milliliters_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.total_milliliters_per_unit" required @input="update_formula(f)">
                         <div class="input-group-append">
                           <span class="input-group-text">ml</span>
                         </div>
@@ -94,7 +95,7 @@
                     <b-col><label :for="'min_milliliters_per_unit_'+f.formulation_version"><strong>Tolerance Min:</strong></label></b-col>
                     <b-col>
                       <div class="input-group mb-2">
-                        <input :id="'min_milliliters_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.min_milliliters_per_unit" required>
+                        <input :id="'min_milliliters_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.min_milliliters_per_unit" required @input="update_formula(f)">
                         <div class="input-group-append">
                           <span class="input-group-text">ml</span>
                         </div>
@@ -110,7 +111,7 @@
                     <b-col><label :for="'max_mg_per_capsule_'+f.formulation_version"><strong>Tolerance Max:</strong></label></b-col>
                     <b-col>
                       <div class="input-group mb-2">
-                        <input :id="'max_mg_per_capsule_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.max_mg_per_capsule" required>
+                        <input :id="'max_mg_per_capsule_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.max_mg_per_capsule" required @input="update_formula(f)">
                         <div class="input-group-append">
                           <span class="input-group-text">mg</span>
                         </div>
@@ -121,7 +122,7 @@
                     <b-col><label :for="'total_mg_per_capsule_'+f.formulation_version"><strong>Target mg per Cap:</strong></label></b-col>
                     <b-col>
                       <div class="input-group mb-2">
-                        <input :id="'total_mg_per_capsule_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.total_mg_per_capsule" required>
+                        <input :id="'total_mg_per_capsule_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.total_mg_per_capsule" required @input="update_formula(f)">
                         <div class="input-group-append">
                           <span class="input-group-text">mg</span>
                         </div>
@@ -132,7 +133,7 @@
                     <b-col><label :for="'min_mg_per_capsule_'+f.formulation_version"><strong>Tolerance Min:</strong></label></b-col>
                     <b-col>
                       <div class="input-group mb-2">
-                        <input :id="'min_mg_per_capsule_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.min_mg_per_capsule" required>
+                        <input :id="'min_mg_per_capsule_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.min_mg_per_capsule" required @input="update_formula(f)">
                         <div class="input-group-append">
                           <span class="input-group-text">mg</span>
                         </div>
@@ -144,7 +145,7 @@
                     <b-col><label :for="'total_capsules_per_unit_'+f.formulation_version"><strong>Capsule Count:</strong></label></b-col>
                     <b-col>
                       <div class="input-group mb-2">
-                        <input :id="'total_capsules_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.total_capsules_per_unit" required>
+                        <input :id="'total_capsules_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.total_capsules_per_unit" required @input="update_formula(f)">
                         <div class="input-group-append">
                           <span class="input-group-text">ct</span>
                         </div>
@@ -153,7 +154,7 @@
                   </b-row>
                   <b-row>
                     <b-col><label :for="'capsule_size_'+f.formulation_version"><strong>Capsule Size:</strong></label></b-col>
-                    <b-col><select :id="'capsule_size_'+f.formulation_version" disabled v-model="f.capsule_size" class="form-control form-control-md mb-3 hidedropdownarrow">
+                    <b-col><select :id="'capsule_size_'+f.formulation_version" disabled v-model="f.capsule_size" class="form-control form-control-md mb-3 hidedropdownarrow" @input="update_formula(f)">
                       <option value="1">1</option>
                       <option value="2">2</option>
                       <option value="0">0</option>
@@ -164,7 +165,7 @@
                     <b-col><label :for="'capsule_weight_'+f.formulation_version"><strong>Capsule Weight:</strong></label></b-col>
                     <b-col>
                       <div class="input-group mb-2">
-                        <input :id="'capsule_weight_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.capsule_weight" required>
+                        <input :id="'capsule_weight_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.capsule_weight" required @input="update_formula(f)">
                         <div class="input-group-append">
                           <span class="input-group-text">mg</span>
                         </div>
@@ -222,7 +223,7 @@
                     <hr v-show="index < brands.value.length">
                   </div>
                   <div class="d-flex justify-content-end">
-                    <b-button variant="outline-info" @click="add_brand(brands.item.brands)">Add Brand</b-button>
+                    <b-button variant="outline-info" @click="add_brand(brands.item.formula_ingredient_id, brands.item.brands)">Add Brand</b-button>
                   </div>
                 </div>
               </template>
@@ -244,8 +245,8 @@
                   <span v-else class="badge badge-warning badge-pill" style="font-size: 1.5em;">No</span>
                 </div>
                 <div v-else>
-                  <b-button @click="specific_ingredient_required.item.specific_ingredient_required = false" v-show="specific_ingredient_required.value" class="badge badge-success badge-pill" style="font-size: 1.5em;">Yes</b-button>
-                  <b-button @click="specific_ingredient_required.item.specific_ingredient_required = true" v-show="!specific_ingredient_required.value" class="badge badge-warning badge-pill" style="font-size: 1.5em;">No</b-button>
+                  <b-button @click="specific_ingredient_required.item.specific_ingredient_required = false;update_row(specific_ingredient_required.item)" v-show="specific_ingredient_required.value" class="badge badge-success badge-pill" style="font-size: 1.5em;">Yes</b-button>
+                  <b-button @click="specific_ingredient_required.item.specific_ingredient_required = true;update_row(specific_ingredient_required.item)" v-show="!specific_ingredient_required.value" class="badge badge-warning badge-pill" style="font-size: 1.5em;">No</b-button>
                 </div>
               </template>
               <template #foot(specific_ingredient_required)=""></template>
@@ -258,13 +259,14 @@
                   rows="3"
                   max-rows="6"
                   :id="notes.item.formula_ingredient_id+'-notes'"
+                  @input="update_row(notes.item)"
                 ></b-form-textarea>
               </template>
               <template #foot(notes)=""></template>
             </b-table-lite>
           </b-card-text>
-          <b-button v-show="edit_formulas" class="mr-2" variant="outline-success" @click="update_formula(f, index)">Save</b-button>
-          <b-button variant="outline-danger" v-show="edit_formulas" @click="cancel_update_formula(index)">Cancel</b-button>
+          <b-button v-show="edit_formulas" class="mr-2" variant="outline-success" @click="save_formula()">Save</b-button>
+          <b-button variant="outline-danger" v-show="edit_formulas" @click="cancel()">Cancel</b-button>
         </b-card>
       </b-tab>
 
@@ -283,6 +285,7 @@
               max-rows="6"
               id="new-formula-notes"
               class="mb-3"
+              @input="update_formula(new_formula_buffer)"
             ></b-form-textarea>
             <b-card-group deck class="mb-3">
               <b-card>
@@ -559,7 +562,7 @@
                   <hr v-show="index < ingredients.value.length">
                 </div>
                 <div class="d-flex justify-content-end">
-                  <b-button variant="outline-info" @click="add_ing(ingredients.item.ingredients_detail)" class="mr-3">Add Ingredient</b-button>
+                  <b-button variant="outline-info" @click="add_ing(ingredients.item.formula_ingredient_id, ingredients.item.ingredients_detail)" class="mr-3">Add Ingredient</b-button>
                   <b-button variant="outline-danger" @click="delete_row(ingredients.index)">Delete Row</b-button>
                 </div>
               </template>
@@ -581,7 +584,7 @@
                   <hr v-show="index < brands.value.length">
                 </div>
                 <div class="d-flex justify-content-end">
-                  <b-button variant="outline-info" @click="add_brand(brands.item.brands)">Add Brand</b-button>
+                  <b-button variant="outline-info" @click="add_brand(brands.item.formula_ingredient_id, brands.item.brands)">Add Brand</b-button>
                 </div>
               </template>
               <template #foot(brands)=""></template>
@@ -597,6 +600,7 @@
                     max="100"
                     aria-describedby="percent-live-feedback"
                     :class="['form-control', (percent.item.percent > 0 ? '' : 'is-invalid')]"
+                    @input="update_row(percent.item)"
                   >
                   </strong>
                   <div :id="percent.item.formula_ingredient_id+'-percent-live-feedback'" class="invalid-feedback">This required field must be greater than zero.</div>
@@ -606,13 +610,13 @@
                 <span :class="calc_total(new_formula_buffer.formula_detail) !== 100 ? 'text-danger':''">= {{ calc_total(new_formula_buffer.formula_detail) }}%</span>
               </template>
               <template #cell(specific_brand_required)="specific_brand_required">
-                <b-button @click="specific_brand_required.item.specific_brand_required = false" v-show="specific_brand_required.value" class="badge badge-success badge-pill" style="font-size: 1.5em;">Yes</b-button>
-                <b-button @click="specific_brand_required.item.specific_brand_required = true" v-show="!specific_brand_required.value" class="badge badge-warning badge-pill" style="font-size: 1.5em;">No</b-button>
+                <b-button @click="specific_brand_required.item.specific_brand_required = false;update_row(specific_brand_required.item)" v-show="specific_brand_required.value" class="badge badge-success badge-pill" style="font-size: 1.5em;">Yes</b-button>
+                <b-button @click="specific_brand_required.item.specific_brand_required = true;update_row(specific_brand_required.item)" v-show="!specific_brand_required.value" class="badge badge-warning badge-pill" style="font-size: 1.5em;">No</b-button>
               </template>
               <template #foot(specific_brand_required)=""></template>
               <template #cell(specific_ingredient_required)="specific_ingredient_required">
-                <b-button @click="specific_ingredient_required.item.specific_ingredient_required = false" v-show="specific_ingredient_required.value" class="badge badge-success badge-pill" style="font-size: 1.5em;">Yes</b-button>
-                <b-button @click="specific_ingredient_required.item.specific_ingredient_required = true" v-show="!specific_ingredient_required.value" class="badge badge-warning badge-pill" style="font-size: 1.5em;">No</b-button>
+                <b-button @click="specific_ingredient_required.item.specific_ingredient_required = false;update_row(specific_ingredient_required.item)" v-show="specific_ingredient_required.value" class="badge badge-success badge-pill" style="font-size: 1.5em;">Yes</b-button>
+                <b-button @click="specific_ingredient_required.item.specific_ingredient_required = true;update_row(specific_ingredient_required.item)" v-show="!specific_ingredient_required.value" class="badge badge-warning badge-pill" style="font-size: 1.5em;">No</b-button>
               </template>
               <template #foot(specific_ingredient_required)=""></template>
               <template #cell(notes)="notes">
@@ -622,23 +626,17 @@
                   rows="3"
                   max-rows="6"
                   :id="notes.item.formula_ingredient_id+'-notes'"
+                  @input="update_row(notes.item.formula_ingredient_id)"
                 ></b-form-textarea>
               </template>
               <template #foot(notes)=""></template>
             </b-table-lite>
           </div>
-          <b-button :disabled="!disable_version_select" class="mr-2" variant="outline-success" @click="save_new_formula()">Save</b-button>
-          <b-button :disabled="!disable_version_select" class="mr-2" variant="outline-info" @click="add_row()">Add Row</b-button>
-          <b-button :disabled="!disable_version_select" variant="outline-danger" @click="cancel_new_formula()">Cancel</b-button>
+          <b-button :disabled="!disable_version_select" class="mr-2" variant="outline-success" @click="save_formula()">Save</b-button>
+          <b-button :disabled="!disable_version_select" class="mr-2" variant="outline-info" @click="add_row(new_formula_buffer.formula_id)">Add Row</b-button>
+          <b-button :disabled="!disable_version_select" variant="outline-danger" @click="cancel()">Cancel</b-button>
         </b-card>
       </b-tab>
-
-      <template #empty>
-        <div class="text-center text-muted">
-          There are not formulas yet.<br>
-          Create a new formula using the <b>New Formula</b> button above.
-        </div>
-      </template>
     </b-tabs>
   </div>
 </template>
@@ -665,7 +663,8 @@
 import CertBadge from '../../../components/CertBadge.vue'
 import ChooseIngredient from '../../../components/ChooseIngredient.vue'
 import ChooseOrg from '../../../components/ChooseOrg.vue'
-import { cloneDeep, tap } from 'lodash'
+import { cloneDeep } from 'lodash'
+import { CustomRequest, genTempKey, isTempKey } from '../../../common/CustomRequest.js'
 
 export default {
   name: 'ProductFormula',
@@ -692,7 +691,6 @@ export default {
       required: true
     }
   },
-  emits: ['update:formulas', 'update:defaultFormulaId', 'update:numVersions'],
   data: function () {
     return {
       edit_formulas: false,
@@ -710,29 +708,62 @@ export default {
       versions: [],
       organization_options: [],
       ingredient_options: [],
-      new_formula_id: ('t-' + Math.floor(Math.random() * 100000)),
+      new_formula_id: genTempKey(),
       new_formula_ingredient_id_index: 0,
-      active_tab_index: 0
+      active_tab_index: 0,
+      req: new CustomRequest(this.$cookies.get('session'))
     }
   },
   methods: {
-    save_temp_formula: function () {
-      this.new_formula_buffer = cloneDeep(this.formulas[this.active_tab_index])
-    },
     set_default_formula_id: function (id) {
-      this.$emit('update:defaultFormulaId', id)
+      this.$emit('toggleLoaded', false)
+      this.req = new CustomRequest(this.$cookies.get('session'))
+
+      const sProduct = {
+        product_id: this.productId,
+        default_formula_version: id
+      }
+      this.req.upsertRecord('Product_Master', sProduct)
+
+      this.req.sendRequest(window.origin).then(resp => {
+        const createToast = this.$root.createToast
+        resp.messages.flash.forEach(message => {
+          createToast(message)
+        })
+
+        if (resp.status === 201) {
+          this.cancel()
+          this.$nextTick(() => {
+            this.versions = []
+            this.build_formula_versions()
+          })
+        }
+        this.$parent.getProductData()
+      })
     },
-    update_formula: function (formula, index) {
-      this.new_formula_buffer = cloneDeep(formula)
+    update_formula: function (formula) {
+      // Check valid formula
       if (!this.validate_new_formula_buffer()) {
         return
       }
-      this.$emit('update:formulas', tap(cloneDeep(this.formulas), v => v.splice(index, 1, this.new_formula_buffer)))
-      this.cancel_new_formula()
-    },
-    cancel_update_formula: function (index) {
-      this.$emit('update:formulas', tap(cloneDeep(this.formulas), v => v.splice(index, 1, this.new_formula_buffer)))
-      this.cancel_new_formula()
+      const update = {
+        formula_id: formula.formula_id,
+        notes: formula.notes,
+        product_id: this.productId,
+        min_grams_per_unit: formula.min_grams_per_unit,
+        total_grams_per_unit: formula.total_grams_per_unit,
+        max_grams_per_unit: formula.max_grams_per_unit,
+        min_milliliters_per_unit: formula.min_milliliters_per_unit,
+        total_milliliters_per_unit: formula.total_milliliters_per_unit,
+        max_milliliters_per_unit: formula.max_milliliters_per_unit,
+        min_mg_per_capsule: formula.min_mg_per_capsule,
+        total_mg_per_capsule: formula.total_mg_per_capsule,
+        max_mg_per_capsule: formula.max_mg_per_capsule,
+        total_capsules_per_unit: formula.total_capsules_per_unit,
+        capsule_size: formula.capsule_size,
+        capsule_weight: formula.capsule_weight
+      }
+      this.req.updateUpsertRecord('Formula_Master', 'formula_id', formula.formula_id, update)
     },
     validate_fill: function (max, target, min) {
       return min !== '' && min !== null && max !== '' && max !== null && target !== '' && target !== null && min >= 0 && max >= 0 && target >= 0 && max >= target && target >= min
@@ -847,30 +878,48 @@ export default {
 
       return valid
     },
-    save_new_formula: function () {
+    save_formula: function () {
       // Check valid formula
+      this.$emit('toggleLoaded', false)
       if (!this.validate_new_formula_buffer()) {
         return
       }
 
-      // Save Formula
-      this.$emit('update:numVersions', this.numVersions + 1)
-      this.$emit('update:formulas', tap(cloneDeep(this.formulas), v => v.push(cloneDeep(this.new_formula_buffer))))
-      this.cancel_new_formula()
-      this.toggle_edit_formulas()
-      this.$nextTick(() => {
-        this.versions = []
-        this.build_formula_versions()
+      if (this.new_version_select !== '' || this.new_version_select === 'NEW') {
+        const updateProduct = {
+          product_id: this.productId,
+          num_formula_versions: this.numVersions + 1
+        }
+        this.req.upsertRecord('Product_Master', updateProduct)
+      }
+
+      this.req.sendRequest(window.origin).then(resp => {
+        const createToast = this.$root.createToast
+        resp.messages.flash.forEach(message => {
+          createToast(message)
+        })
+
+        if (resp.status === 201) {
+          this.cancel()
+          this.$nextTick(() => {
+            this.versions = []
+            this.build_formula_versions()
+          })
+        }
+        this.$parent.getProductData()
       })
     },
     toggle_edit_formulas: function () {
       this.edit_formulas = !this.edit_formulas
       this.$emit('editFormulas', this.edit_formulas)
     },
-    cancel_new_formula: function () {
+    cancel: function () {
+      this.$emit('toggleLoaded', false)
+      this.$emit('refreshParent')
       this.disable_version_select = false
       this.new_version_select = ''
       this.new_formula_buffer = {}
+      this.req = new CustomRequest(this.$cookies.get('session'))
       this.$nextTick(() => {
         this.toggle_edit_formulas()
       })
@@ -883,77 +932,161 @@ export default {
       return Math.round(total * 100) / 100
     },
     remove_brand: function (brands, index) {
-      brands.splice(index, 1)
+      const brand = brands.splice(index, 1)
       for (let i = index; i < brands.length; i++) {
         brands[i].priority = i + 1
       }
+      if (isTempKey(brand._id)) {
+        this.req.removeUpsertRecord('Ingredient_Brands_Join', '_id', brand._id)
+      } else {
+        this.req.deleteRecord('Ingredient_Brands_Join', { _id: brand._id })
+      }
     },
-    add_brand: function (brands) {
+    add_brand: function (formulaIngredientId, brands) {
       const brand = {
-        organization_id: 0,
-        priority: brands.length + 1
+        _id: genTempKey(),
+        priority: brands.length + 1,
+        formula_ingredient_id: formulaIngredientId,
+        organization_id: null,
+        organization_name: null,
+        organization_initial: null
       }
       brands.push(brand)
     },
     select_brand: function (org, brands, index) {
       const priority = brands[index].priority
       if (org != null) {
+        const brand = {
+          _id: brands[index]._id,
+          brand_id: brands[index].organization_id,
+          priority: brands[index].priority,
+          formula_ingredient_id: brands[index].formula_ingredient_id
+        }
         brands[index] = org
         brands[index].priority = priority
+        brands[index]._id = brand._id
+        brands[index].brand_id = org.organization_id
+        brands[index].priority = priority
+        brands[index].formula_ingredient_id = brand.formula_ingredient_id
+        this.req.updateUpsertRecord('Ingredient_Brands_Join', '_id', brand._id, brand)
       }
     },
     remove_ing: function (ingredientsDetail, index) {
-      ingredientsDetail.splice(index, 1)
+      const ingDet = ingredientsDetail.splice(index, 1)
       for (let i = index; i < ingredientsDetail.length; i++) {
         ingredientsDetail[i].priority = i + 1
       }
-    },
-    add_ing: function (ingredientsDetail) {
-      const brand = {
-        component_id: 0,
-        priority: ingredientsDetail.length + 1
+      if (isTempKey(ingDet._id)) {
+        this.req.removeUpsertRecord('Ingredients_Join', '_id', ingDet._id)
+      } else {
+        this.req.deleteRecord('Ingredients_Join', { _id: ingDet._id })
       }
-      ingredientsDetail.push(brand)
+    },
+    add_ing: function (formulaIngredientId, ingredientsDetail) {
+      const ing = {
+        _id: genTempKey(),
+        component_id: null,
+        priority: ingredientsDetail.length + 1,
+        formula_ingredient_id: formulaIngredientId,
+        component_name: null
+      }
+      ingredientsDetail.push(ing)
     },
     select_ing: function (ing, ingredients, index) {
       const priority = ingredients[index].priority
       if (ing != null) {
+        const ingredient = {
+          _id: ingredients[index]._id,
+          ingredient_id: ingredients[index].component_id,
+          priority: ingredients[index].priority,
+          formula_ingredient_id: ingredients[index].formula_ingredient_id
+        }
         ingredients[index] = ing
         ingredients[index].priority = priority
+        ingredients[index]._id = ingredient._id
+        ingredients[index].component_id = ing.component_id
+        ingredients[index].priority = priority
+        ingredients[index].formula_ingredient_id = ingredient.formula_ingredient_id
+        this.req.updateUpsertRecord('Ingredients_Join', '_id', ingredient._id, ingredient)
       }
     },
     delete_row: function (index) {
-      this.new_formula_buffer.formula_detail.splice(index, 1)
+      const row = this.new_formula_buffer.formula_detail.splice(index, 1)
+      row.brands.forEach(brand => {
+        if (isTempKey(brand._id)) {
+          this.req.removeUpsertRecord('Ingredient_Brands_Join', '_id', brand._id)
+        } else {
+          this.req.deleteRecord('Ingredient_Brands_Join', { _id: brand._id })
+        }
+      })
+      row.ingredients_detail.forEach(ing => {
+        if (isTempKey(ing._id)) {
+          this.req.removeUpsertRecord('Ingredients_Join', '_id', ing._id)
+        } else {
+          this.req.deleteRecord('Ingredients_Join', { _id: ing._id })
+        }
+      })
+      if (isTempKey(row.formula_ingredient_id)) {
+        this.req.removeUpsertRecord('Formula_Detail', 'formula_ingredient_id', row.formula_ingredient_id)
+      } else {
+        this.req.deleteRecord('Formula_Detail', { formula_ingredient_id: row.formula_ingredient_id })
+      }
     },
-    add_row: function () {
-      const row = {
+    update_row: function (row) {
+      const id = row.formula_ingredient_id
+      const updateRowBuffer = {
+        formula_id: row.formula_id,
+        formula_ingredient_id: id,
+        notes: row.notes,
+        percent: row.percent,
+        specific_brand_required: row.specific_brand_required,
+        specific_ingredient_required: row.specific_ingredient_required
+      }
+      this.req.updateUpsertRecord('Formula_Detail', 'formula_ingredient_id', id, updateRowBuffer)
+    },
+    add_row: function (formulaId) {
+      const formulaIngredientId = genTempKey()
+      const rowBuffer = {
         brands: [{
-          organization_id: 0,
-          priority: 1
+          _id: genTempKey(),
+          brand_id: null,
+          priority: 1,
+          formula_ingredient_id: formulaIngredientId
         }],
-        formula_id: this.new_formula_id,
-        formula_ingredient_id: this.new_formula_id + '-' + this.new_formula_ingredient_id_index,
-        grams_per_unit: null,
+        formula_id: formulaId,
+        formula_ingredient_id: formulaIngredientId,
         ingredients_detail: [{
-          component_id: 0,
-          priority: 1
+          _id: genTempKey(),
+          ingredient_id: null,
+          priority: 1,
+          formula_ingredient_id: formulaIngredientId
         }],
-        mg_per_capsule: null,
-        ml_per_unit: null,
         notes: null,
         percent: 0,
         specific_brand_required: false,
         specific_ingredient_required: false
       }
       this.new_formula_ingredient_id_index++
-      this.new_formula_buffer.formula_detail.push(row)
+      this.new_formula_buffer.formula_detail.push(rowBuffer)
+      const row = {
+        formula_ingredient_id: formulaIngredientId,
+        formula_id: formulaId,
+        notes: null,
+        percent: 0,
+        specific_brand_required: false,
+        specific_ingredient_required: false
+      }
+      this.req.upsertRecord('Formula_Detail', row)
     },
     set_formula_buffer: function () {
+      this.$emit('toggleLoaded', false)
+      this.req = new CustomRequest(this.$cookies.get('session'))
+
       if (this.new_version_select === 'NEW') {
-        this.new_formula_buffer = {
+        const newFormula = {
           formulation_version: this.numVersions + 1,
-          formula_id: 't-' + this.new_formula_id,
-          date_entered: new Date(),
+          formula_id: this.new_formula_id,
+          product_id: this.productId,
           notes: '',
           min_grams_per_unit: null,
           total_grams_per_unit: null,
@@ -966,18 +1099,89 @@ export default {
           max_mg_per_capsule: null,
           total_capsules_per_unit: null,
           capsule_size: '',
-          capsule_weight: null,
-          formula_detail: []
+          capsule_weight: null
         }
-      } else {
+        this.req.upsertRecord('Formula_Master', newFormula)
+        this.new_formula_buffer = cloneDeep(newFormula)
+        this.new_formula_buffer.ingredients_detail = []
+        this.disable_version_select = true
+        this.edit_formulas = true
+        this.$emit('editFormulas', this.edit_formulas)
+        this.$emit('toggleLoaded', true)
+        return
+      }
+
+      if (this.new_version_select !== '') {
         this.new_formula_buffer = cloneDeep(this.formulas.find(f => f.formulation_version === this.new_version_select))
         this.new_formula_buffer.formulation_version = this.numVersions + 1
         this.new_formula_buffer.formula_id = this.new_formula_id
-        this.new_formula_buffer.date_entered = new Date()
+      } else {
+        this.new_formula_buffer = cloneDeep(this.formulas[this.active_tab_index])
       }
+      const newformula = {
+        formulation_version: this.new_formula_buffer.formulation_version,
+        formula_id: this.new_formula_buffer.formula_id,
+        product_id: this.productId,
+        notes: this.new_formula_buffer.notes,
+        min_grams_per_unit: this.new_formula_buffer.min_grams_per_unit,
+        total_grams_per_unit: this.new_formula_buffer.total_grams_per_unit,
+        max_grams_per_unit: this.new_formula_buffer.max_grams_per_unit,
+        min_milliliters_per_unit: this.new_formula_buffer.min_milliliters_per_unit,
+        total_milliliters_per_unit: this.new_formula_buffer.total_milliliters_per_unit,
+        max_milliliters_per_unit: this.new_formula_buffer.max_milliliters_per_unit,
+        min_mg_per_capsule: this.new_formula_buffer.min_mg_per_capsule,
+        total_mg_per_capsule: this.new_formula_buffer.total_mg_per_capsule,
+        max_mg_per_capsule: this.new_formula_buffer.max_mg_per_capsule,
+        total_capsules_per_unit: this.new_formula_buffer.total_capsules_per_unit,
+        capsule_size: this.new_formula_buffer.capsule_size,
+        capsule_weight: this.new_formula_buffer.capsule_weight
+      }
+      this.req.upsertRecord('Formula_Master', newformula)
+
+      this.new_formula_buffer.formula_detail.forEach((f, i) => {
+        const k = genTempKey()
+        if (this.new_version_select !== '') {
+          f.formula_ingredient_id = k
+        }
+        const row = {
+          formula_ingredient_id: f.formula_ingredient_id,
+          formula_id: this.new_formula_buffer.formula_id,
+          notes: f.notes,
+          percent: f.percent,
+          specific_brand_required: f.specific_brand_required,
+          specific_ingredient_required: f.specific_ingredient_required
+        }
+        this.req.upsertRecord('Formula_Detail', row)
+        f.ingredients_detail.forEach((ing, j) => {
+          if (this.new_version_select !== '') {
+            ing._id = genTempKey()
+          }
+          const newIng = {
+            _id: ing._id,
+            ingredient_id: ing.ingredient_id ? ing.ingredient_id : ing.component_id,
+            priority: ing.priority,
+            formula_ingredient_id: this.new_version_select !== '' ? k : f.formula_ingredient_id
+          }
+          this.req.updateUpsertRecord('Ingredients_Join', '_id', newIng._id, newIng)
+        })
+        f.brands.forEach((b, j) => {
+          if (this.new_version_select !== '') {
+            b._id = genTempKey()
+          }
+          const newBrand = {
+            _id: b._id,
+            brand_id: b.brand_id ? b.brand_id : b.organization_id,
+            priority: b.priority,
+            formula_ingredient_id: this.new_version_select !== '' ? k : f.formula_ingredient_id
+          }
+          this.req.updateUpsertRecord('Ingredient_Brands_Join', '_id', newBrand._id, newBrand)
+        })
+      })
+
       this.disable_version_select = true
       this.edit_formulas = true
       this.$emit('editFormulas', this.edit_formulas)
+      this.$emit('toggleLoaded', true)
     },
     build_formula_versions: function () {
       for (const f in this.formulas) {

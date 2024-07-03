@@ -287,9 +287,9 @@ def get_component_brands(
     # Process and Package the data
     for row in raw_data:
         component_brand = row[1].to_dict()
-        priority = {'priority': row[0].to_dict()['priority']}
+        component_brand_join = row[0].to_dict()
 
-        custom_response.insert_data({**priority, **component_brand})
+        custom_response.insert_data({**component_brand_join, **component_brand})
 
     return custom_response
 
@@ -323,14 +323,14 @@ def get_components(
     # Process and Package the data
     for row in raw_data:
         pk = row[0].get_id()
-        priority = {'priority': row[0].to_dict()['priority']}
+        component_join = row[0].to_dict()
         component_name = row[1].to_dict()
         component_info = row[2].to_dict()
 
         if not doc:
             component_info.pop('doc')
 
-        custom_response.insert_data({**priority, **component_name, **component_info})
+        custom_response.insert_data({**component_join, **component_name, **component_info})
 
     return custom_response
 
@@ -439,10 +439,10 @@ def get_ingredient_brands(
 
     # Process and Package the data
     for row in raw_data:
-        priority = {'priority': row[0].to_dict()['priority']}
+        ingredient_brand_join = row[0].to_dict()
         ingredient_brand = row[1].to_dict()
 
-        custom_response.insert_data({**ingredient_brand, **priority})
+        custom_response.insert_data({**ingredient_brand, **ingredient_brand_join})
 
     return custom_response
 
@@ -476,13 +476,13 @@ def get_ingredients(
     # Process and Package the data
     for row in raw_data:
         pk = row[0].get_id()
-        priority = {'priority': row[0].to_dict()['priority']}
+        ingredient_join = row[0].to_dict()
         ingredient_name = row[1].to_dict()
         ingredient_info = row[2].to_dict()
 
         if not doc:
             ingredient_info.pop('doc')
 
-        custom_response.insert_data({ **priority, **ingredient_name, **ingredient_info})
+        custom_response.insert_data({ **ingredient_join, **ingredient_name, **ingredient_info})
 
     return custom_response

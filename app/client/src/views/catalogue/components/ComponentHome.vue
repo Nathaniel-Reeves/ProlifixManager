@@ -84,7 +84,7 @@
               <div class="card-body d-flex flex-wrap">
 
                 <!-- Alias Names -->
-                <NamesComponent :data="component.Component_Names" naming-type="component" :allow-edit="false"></NamesComponent>
+                <NamesComponent :p-names="component.Component_Names" naming-type="component" :allow-edit="false"></NamesComponent>
                 <hr>
 
                 <!-- Specifications -->

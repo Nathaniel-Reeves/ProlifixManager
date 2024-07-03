@@ -14,11 +14,15 @@
           class="mb-2 mr-sm-2 mb-sm-0"
           v-model="name.component_name"
           ></b-form-input>
-        <div v-on:click="radioNames(name.name_id, 'primary')">
-          <b-form-checkbox :disabled="name.primary_name" button button-variant="light" name="Primary Name" class="mb-2 mr-sm-2 mb-sm-0" v-model="name.primary_name">Primary Name</b-form-checkbox>
+        <div class="btn-group-toggle d-inline-block mb-2 mr-sm-2 mb-sm-0">
+          <label :class="['btn', name.primary_name ? 'btn-primary' : 'btn-outline-primary', name.primary_name ? 'disabled' : '']">
+            <input v-on:click="radioNames(name.name_id, 'primary')" type="checkbox" name="Primary Name" :disabled="name.primary_name" v-model="name.primary_name">Primary Name
+          </label>
         </div>
-        <div v-show="'botanical_name' in name" v-on:click="radioNames(name.name_id, 'botanical')">
-          <b-form-checkbox button button-variant="light" name="Botanical Name" class="mb-2 mr-sm-2 mb-sm-0" v-model="name.botanical_name">Botanical Name</b-form-checkbox>
+        <div v-show="'botanical_name' in name" class="btn-group-toggle d-inline-block mb-2 mr-sm-2 mb-sm-0">
+          <label :class="['btn', name.botanical_name ? 'btn-success' : 'btn-outline-success', name.botanical_name ? 'disabled' : '']">
+            <input v-on:click="radioNames(name.name_id, 'botanical')" type="checkbox" name="Botanical Name" :disabled="name.botanical_name" v-model="name.botanical_name">Botanical Name
+          </label>
         </div>
         <div>
           <b-button variant="outline-danger" class="mb-2 mr-sm-2 mb-sm-0" v-show="!name.primary_name" v-on:click="deleteName(name.name_id)">Delete</b-button>
@@ -28,8 +32,8 @@
     <div class="d-flex">
       <div v-show="edit_names">
         <b-button variant="outline-info" class="m-2" v-on:click="addName()">New Name</b-button>
-        <b-button variant="outline-info" class="m-2" v-on:click="cancelEditNames()">Cancel</b-button>
-        <b-button type="submit" v-show="edit_names_buffer.length > 0" variant="primary" class="m-2" v-on:click="editNames()">Save</b-button>
+        <b-button variant="danger" class="m-2" v-on:click="cancelEditNames()">Cancel</b-button>
+        <b-button type="submit" :disabled="edit_names_buffer.length <= 0" variant="success" class="m-2" v-on:click="editNames()">Save</b-button>
       </div>
     </div>
   </div>
@@ -48,21 +52,25 @@
 </style>
 
 <script>
+import { cloneDeep } from 'lodash'
+import { CustomRequest, genTempKey, isTempKey } from '../../../common/CustomRequest.js'
+
 export default {
   name: 'NamesComponent',
   props: {
-    data: Array,
-    saveFunction: Function,
+    pNames: Array,
     namingType: String,
-    allowEdit: Boolean
+    allowEdit: Boolean,
+    id: Number
   },
   data: function () {
     return {
-      names: this.data,
+      names: [],
       naming_type: this.namingType,
       allow_edit: this.allowEdit,
       edit_names: false,
-      edit_names_buffer: []
+      edit_names_buffer: [],
+      req: new CustomRequest(this.$cookies.get('session'))
     }
   },
   methods: {
@@ -81,32 +89,39 @@ export default {
         }
       }
     },
-    editNames: function () {
-      const original = structuredClone(this.names) // Deep Copy
+    editNames: async function () {
       if (!this.edit_names) {
-        this.edit_names_buffer = structuredClone(this.names) // Deep Copy
+        this.edit_names_buffer = cloneDeep(this.names)
         this.edit_names = true
+        this.$emit('editNames', this.edit_names)
       } else {
-        this.names = []
-        this.names = structuredClone(this.edit_names_buffer) // Deep Copy
         if (this.naming_type === 'component') {
-          this.$parent.component_data.Component_Names = structuredClone(this.edit_names_buffer) // Deep Copy
+          this.edit_names_buffer.forEach(name => {
+            this.req.upsertRecord('Component_Names', name)
+          })
         } else {
           throw new Error('Invalid naming_type: "' + this.naming_type + '". Only component is allowed')
         }
-        this.saveFunction().then(outcome => {
-          if (outcome === true) {
-            this.edit_names_buffer = []
-            this.edit_names = false
-          } else {
-            this.names = original
-          }
+
+        const resp = await this.req.sendRequest(window.origin)
+        this.$emit('toggleLoaded', false)
+        this.$emit('refreshParent')
+
+        const createToast = this.$root.createToast
+        resp.messages.flash.forEach(message => {
+          createToast(message)
         })
+
+        if (resp.status === 201) {
+          this.cancelEditNames()
+        }
       }
     },
     cancelEditNames: function () {
       this.edit_names_buffer = []
       this.edit_names = false
+      this.$emit('editNames', this.edit_names)
+      this.req = new CustomRequest(this.$cookies.get('session'))
     },
     addName: function () {
       const newName = this.createName()
@@ -116,6 +131,9 @@ export default {
       for (let i = 0; i < this.edit_names_buffer.length; i++) {
         if (this.edit_names_buffer[i].name_id === id) {
           this.edit_names_buffer.splice(i, 1)
+          if (!isTempKey(id)) {
+            this.req.deleteRecord('Component_Names', { name_id: id })
+          }
         }
       }
     },
@@ -134,8 +152,8 @@ export default {
     createName: function () {
       if (this.naming_type === 'component') {
         const newName = {
-          name_id: (Math.random() + 1).toString(36).substring(7),
-          component_id: parseInt(this.$parent.id),
+          name_id: genTempKey(),
+          component_id: this.id,
           component_name: '',
           primary_name: false,
           botanical_name: false
@@ -145,6 +163,9 @@ export default {
         throw new Error('Invalid naming_type: "' + this.naming_type + '". Only component is allowed')
       }
     }
+  },
+  created: function () {
+    this.names = this.pNames
   }
 }
 </script>

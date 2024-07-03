@@ -32,12 +32,27 @@
         <b-card-body id="nav-scroller" ref="content" class="scrollbox">
 
           <!-- Alias Names -->
-          <NamesComponent :data="component_data.Component_Names" :save-function="putComponent" naming-type="component" :allow-edit="true">
-          </NamesComponent>
+          <NamesComponent
+            :p-names="component_data.Component_Names"
+            :id="component_data.component_id"
+            naming-type="component"
+            :allow-edit="true"
+            v-on:edit-names="(e) => edit_names = e"
+            v-on:toggle-loaded="toggleLoaded"
+            v-on:refresh-parent="refreshParent"
+          ></NamesComponent>
           <hr>
 
           <!-- Specifications -->
-          <SpecificationsComponent :data="component_data.doc" :spectype="'component'" :name="get_component_primary_name(component_data)" @update-spec-buffer="update_spec_buffer" @update-file-buffer="update_file_buffer" @update-remove-file-buffer="update_remove_file_buffer" @save-specs="save_specs"></SpecificationsComponent>
+          <SpecificationsComponent
+            :doc="component_data.doc"
+            :spectype="'component'"
+            :name="get_component_primary_name(component_data)"
+            :id="component_data.component_id"
+            v-on:edit-specs="(e) => edit_specs = e"
+            v-on:toggle-loaded="toggleLoaded"
+            v-on:refresh-parent="(v) => refreshParent(v)"
+          ></SpecificationsComponent>
 
         </b-card-body>
       </b-card>
@@ -102,33 +117,15 @@ export default {
       component_data: {},
       loaded: false,
       edit_names: false,
-      edit_names_buffer: [],
-      edit_specs: false,
-      edit_specs_buffer: {},
-      upload_files_buffer: {},
-      remove_files_buffer: [],
-      flash_messages: []
+      edit_specs: false
     }
   },
   methods: {
-    update_spec_buffer: function (data) {
-      this.edit_specs_buffer = data
+    toggleLoaded: function (val) {
+      this.loaded = val
     },
-    update_file_buffer: function (data) {
-      this.upload_files_buffer = data
-    },
-    update_remove_file_buffer: function (data) {
-      this.remove_files_buffer = data
-    },
-    save_specs: function () {
-      const original = structuredClone(this.component_data.doc.specifications) // Deep Copy
-      this.component_data.doc.specifications = structuredClone(this.edit_specs_buffer) // Deep Copy
-      this.component_data.doc.files = structuredClone(this.upload_files_buffer) // Deep Copy
-      this.putComponent().then(outcome => {
-        if (outcome !== true) {
-          this.component_data.doc.specifications = original
-        }
-      })
+    refreshParent: function (val) {
+      this.getComponentData()
     },
     scrollIntoView: function (event) {
       event.preventDefault()
@@ -190,87 +187,6 @@ export default {
           console.log(response)
         }
       })
-    },
-    putComponent: async function () {
-      const fetchRequest = window.origin + '/api/v1/catalogue/components'
-      // eslint-disable-next-line
-      console.log(
-        'PUT ' + fetchRequest
-      )
-      const formData = new FormData()
-      formData.append('component_id', this.id)
-      formData.append('component_type', this.component_data.component_type)
-      formData.append('certified_usda_organic', this.component_data.certified_usda_organic)
-      formData.append('certified_halal', this.component_data.certified_halal)
-      formData.append('certified_kosher', this.component_data.certified_kosher)
-      formData.append('certified_gluten_free', this.component_data.certified_gluten_free)
-      formData.append('certified_national_sanitation_foundation', this.component_data.certified_national_sanitation_foundation)
-      formData.append('certified_us_pharmacopeia', this.component_data.certified_us_pharmacopeia)
-      formData.append('certified_non_gmo', this.component_data.certified_non_gmo)
-      formData.append('certified_vegan', this.component_data.certified_vegan)
-      formData.append('brand_id', this.component_data.brand_id)
-      formData.append('units', this.component_data.units)
-      this.component_data.doc.remove_files = this.remove_files_buffer
-      for (const pair of Object.entries(this.component_data.doc.files)) {
-        const key = pair[0]
-        const value = pair[1]
-        const fileObj = structuredClone(value.file)
-        delete value.file
-        this.component_data.doc.files[key] = value
-        formData.append(key, fileObj)
-      }
-      formData.append('doc', JSON.stringify(this.component_data.doc))
-      formData.append('Component_Names', JSON.stringify(this.component_data.Component_Names))
-      try {
-        this.loaded = false
-        const response = await fetch(fetchRequest, {
-          method: 'PUT',
-          credentials: 'include',
-          body: formData
-        })
-        if (response.status === 201) {
-          const data = await response.json()
-          this.flash_messages = data.messages.flash
-          const createToast = this.$root.createToast
-          this.flash_messages.forEach(function (message) {
-            createToast(message)
-          })
-          this.getComponentData()
-          this.loaded = true
-          return true
-        } else if (response.status === 401) {
-          this.$router.push({
-            name: 'login'
-          })
-        } else {
-          response.json().then(data => {
-            this.flash_messages = data.messages.flash
-            const createToast = this.$root.createToast
-            this.flash_messages.forEach(function (message) {
-              createToast(message)
-            })
-          })
-          this.loaded = true
-          return false
-        }
-      } catch (error) {
-        const err = error
-        this.loaded = true
-        // eslint-disable-next-line
-        console.error('There has been a problem with your fetch operation: ', err)
-        const errorToast = {
-          title: 'Failure to save changes.',
-          message: 'Find IT to help fix the issue.',
-          variant: 'danger',
-          visible: true,
-          no_close_button: false,
-          no_auto_hide: true,
-          auto_hide_delay: false
-        }
-        const createToast = this.$root.createToast
-        createToast(errorToast)
-        return false
-      }
     }
   },
   created: function () {

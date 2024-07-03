@@ -5,7 +5,7 @@ import os
 import pathlib
 from werkzeug.utils import secure_filename
 import hashlib
-from sqlalchemy import select, insert, update, delete
+from sqlalchemy import select, insert, update, delete, CursorResult
 from base64 import b64decode
 from view.response import (
     VariantType,
@@ -16,6 +16,7 @@ from view.response import (
 import model as db
 from model.connector import get_session
 
+import json
 
 class CustomRequest:
 
@@ -25,6 +26,7 @@ class CustomRequest:
         self.error = False
         self.saved_files = {}
         self.session = None
+        self.temp_key_lookup = {}
         self.valid_tables = (
             'Organizations',
             'Processes',
@@ -57,6 +59,11 @@ class CustomRequest:
             'Inventory_Log_Edges'
         )
 
+        print("Payload", json.dumps(self.request.json, indent=4))
+
+    def get_response(self):
+        return self.custom_response
+
     def handle_request(self):
         self.error = not self._get_session()
         if self.error:
@@ -88,6 +95,14 @@ class CustomRequest:
                 self._remove_file_from_filesystem(file["file_pointer"])
         else:
             self.session.commit()
+            self.custom_response.insert_flash_message(
+                FlashMessage(
+                    variant=VariantType.SUCCESS,
+                    title="Success!",
+                    message="Saved successfully."
+                )
+            )
+            self.custom_response.set_status_code(201)
 
     def close_session(self):
         self.session.close()
@@ -104,9 +119,23 @@ class CustomRequest:
         return flag
 
     def _upsert_record(self, table_name, record):
+        temp_key = None
         # Validate the correct columns are used
         table = getattr(db, table_name)
         table_columns = table.__table__.columns.keys()
+        pk_col = table().get_id_name()
+        if isinstance(pk_col, tuple):
+            # TODO: Right now, this only removes single pk columns.
+            # TODO: Need to add support for composite pks.
+            flash_message = FlashMessage(
+                variant=VariantType.DANGER,
+                title="Not Implemented",
+                message=f'Composite keys not implememted yet (upsert).'
+            )
+            self.custom_response.insert_flash_message(flash_message)
+            self.custom_response.set_status_code(400)
+            return False
+
         for key in record.keys():
             if key not in table_columns:
                 flash_message = FlashMessage(
@@ -117,29 +146,43 @@ class CustomRequest:
                 self.custom_response.insert_flash_message(flash_message)
                 self.custom_response.set_status_code(400)
                 return False
+            if isinstance(record[key], str) and "temp-" in record[key]:
+                temp_key = record[key]
+                if temp_key in self.temp_key_lookup.keys() and not (self.temp_key_lookup[temp_key] is None):
+                    record[key] = self.temp_key_lookup[temp_key]
+                else:
+                    self.temp_key_lookup[temp_key] = None
 
-        # if key is a temp key, remove it and insert new record, else update record
-        pk_col = table().get_id_name()
-        if isinstance(pk_col, str) and pk_col in record:
-            if isinstance(record[pk_col], str) and "t-" in record[pk_col]:
-                record.pop(pk_col)
+        if pk_col in record.keys():
+            if isinstance(record[pk_col], int):
+                stm = update(table).values(record).where(getattr(table, pk_col) == record[pk_col])
+            elif isinstance(record[pk_col], str) and "temp-" in record[pk_col]:
+                temp_key = record.pop(pk_col)
                 stm = insert(table).values(record)
             else:
-                stm = update(table).values(record).where(getattr(table, pk_col) == record[pk_col])
+                flash_message = FlashMessage(
+                    variant=VariantType.DANGER,
+                    title="Invalid Request!",
+                    message=f'{pk_col} is a invalid value for {table}.  PK col = {record[pk_col]}.'
+                )
+                self.custom_response.insert_flash_message(flash_message)
+                self.custom_response.set_status_code(400)
+                return False
         else:
-            # TODO: Right now, this only removes single pk columns.
-            # TODO: Need to add support for composite pks.
             flash_message = FlashMessage(
                 variant=VariantType.DANGER,
-                title="Not Implemented",
-                message=f'Composite keys not implememted yet.'
+                title="Invalid Request!",
+                message=f'{pk_col} is missing from the upsert request for {table}.'
             )
             self.custom_response.insert_flash_message(flash_message)
             self.custom_response.set_status_code(400)
             return False
 
-        # Execute the query
-        return self._execute_query(stm)
+        id, outcome = self._execute_query(stm)
+        if id and temp_key:
+            self.temp_key_lookup[temp_key] = id
+
+        return outcome
 
     def process_deletes(self):
         deletes = self.request.json['payload']['delete']
@@ -155,6 +198,15 @@ class CustomRequest:
     def _delete_record(self, table, record):
         # Validate the correct columns are used
         table_columns = getattr(db, table).__table__.columns.keys()
+        if not isinstance(record, dict):
+            flash_message = FlashMessage(
+                variant=VariantType.DANGER,
+                title="Invalid Request!",
+                message=f'Invalid record for {table}.'
+            )
+            self.custom_response.insert_flash_message(flash_message)
+            self.custom_response.set_status_code(400)
+            return False
         for key in record.keys():
             if key not in table_columns:
                 flash_message = FlashMessage(
@@ -166,44 +218,41 @@ class CustomRequest:
                 self.custom_response.set_status_code(400)
                 return False
 
-        # Validate the pk column exists in record
         table = getattr(db, table)
         pk_col = table().get_id_name()
-        if isinstance(pk_col, str):
-            if pk_col not in record.keys():
-                flash_message = FlashMessage(
-                    variant=VariantType.DANGER,
-                    title="Invalid Request!",
-                    message=f'{pk_col} is missing from the delete request for {table}.'
-                )
-                self.custom_response.insert_flash_message(flash_message)
-                self.custom_response.set_status_code(400)
-                return False
-            else:
-                stm = delete(table).where(getattr(table, pk_col) == record[pk_col])
-        else:
+        if isinstance(pk_col, tuple):
             # TODO: Right now, this only removes single pk columns.
             # TODO: Need to add support for composite pks.
             flash_message = FlashMessage(
                 variant=VariantType.DANGER,
                 title="Not Implemented",
-                message=f'Composite keys not implememted yet.'
+                message=f'Composite keys not implememted yet (upsert).'
             )
             self.custom_response.insert_flash_message(flash_message)
             self.custom_response.set_status_code(400)
             return False
 
-        return self._execute_query(stm)
+        # Validate the pk column exists in record
+        if pk_col in record.keys() and isinstance(record[pk_col], int):
+            stm = delete(table).where(getattr(table, pk_col) == record[pk_col])
+        else:
+            flash_message = FlashMessage(
+                variant=VariantType.DANGER,
+                title="Invalid Request!",
+                message=f'{pk_col} is missing from the delete request for {table}.'
+            )
+            self.custom_response.insert_flash_message(flash_message)
+            self.custom_response.set_status_code(400)
+            return False
 
-    def get_response(self):
-        return self.custom_response
+        id, outcome = self._execute_query(stm)
+        return outcome
 
     def validate_request_data(self):
         """
         Validate request data
         """
         flag = True
-
         if not 'payload' in self.request.json:
             flash_message = FlashMessage(
                 variant=VariantType.DANGER,
@@ -300,12 +349,12 @@ class CustomRequest:
         if len(self.request.json['upsert_file_data']) > 0:
             for file_key, file_data in self.request.json['upsert_file_data'].items():
 
-                valid_file_data_keys = ["filename", "type", "page", "size", "id_code", "data_uri"]
+                valid_file_data_keys = ["filename", "filetype", "dir", "page", "size", "id_code", "data_uri"]
                 file_data_keys = file_data.keys()
                 file_data_values = list(file_data.values())
 
                 # Catch invalid file data
-                if len(valid_file_data_keys & file_data_keys) != 6 or not all(file_data_values):
+                if len(valid_file_data_keys & file_data_keys) != 7 or not all(file_data_values):
                     flash_message = FlashMessage(
                         variant=VariantType.DANGER,
                         title="Saving Files Failure!",
@@ -473,11 +522,11 @@ class CustomRequest:
 
         filename = f"║fn[{fn}]║id_code[{id_code}]║pg[{page}]║hash[{file_hash}]║"
 
-        if file_data["type"] == "application/pdf":
+        if file_data["filetype"] == "application/pdf":
             filename += ".pdf"
-        elif file_data["type"] == "image/jpeg":
+        elif file_data["filetype"] == "image/jpeg":
             filename += ".jpeg"
-        elif file_data["type"] == "image/png":
+        elif file_data["filetype"] == "image/png":
             filename += ".png"
         else:
             raise Exception("Invalid File Type")
@@ -495,10 +544,10 @@ class CustomRequest:
 
         # Create Directory if it doesn't already exist
         directory = os.path.join(
-            app.config['UPLOAD_FOLDER'], file_data["type"]
+            app.config['UPLOAD_FOLDER'], file_data["dir"]
         )
 
-        pointer = os.path.join(file_data["type"], filename)
+        pointer = os.path.join(file_data["dir"], filename)
 
         pathlib.Path(
             directory
@@ -518,7 +567,7 @@ class CustomRequest:
             {
                 "file_hash": file_hash,
                 "file_name": fn,
-                "file_type": file_data["type"],
+                "file_type": file_data["filetype"],
                 "file_pointer": pointer,
                 "id_code": file_data["id_code"],
                 "pg": file_data["page"]
@@ -556,17 +605,17 @@ class CustomRequest:
             self.custom_response.set_status_code(500)
             return False
 
-    def _execute_query(self, stm, data=None):
+    def _execute_query(self, stm):
+        record_id = None
         # Execute the query
         try:
-            if data is None:
-                self.session.execute(stm)
-            else:
-                self.session.execute(stm, data)
+            stream = self.session.execute(stm)
+            if stream.is_insert:
+                record_id = stream.inserted_primary_key[0]
         except Exception:
             error = error_message()
             self.custom_response.insert_flash_message(error)
             self.custom_response.set_status_code(400)
-            return False
+            return None, False
 
-        return True
+        return record_id, True

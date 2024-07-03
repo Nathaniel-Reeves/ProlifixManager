@@ -6,11 +6,12 @@
       label="organization_initial"
       v-model="selected_org"
       :loading="!orgs_loaded"
-      :clearable="selected_org != null"
       :placeholder="!orgs_loaded ? 'Loading...':'Choose...'"
       style="width: 150px;"
       aria-describedby="select_org-live-feedback"
       :class="(selected_org !== null || !orgReq ? '' : 'is-invalid')"
+      :disabled="selected_org !== null && selected_org.organization_id > 0"
+      :clearable="false"
     >
       <template #option="{ organization_id, organization_name, organization_initial }">
         <div style="display:flex; flex-direction: row; align-items: center; min-height: 60px;">

@@ -12,7 +12,7 @@ from controller.request import CustomRequest
 bp = Blueprint('submit', __name__, url_prefix='/submit')
 
 @bp.route('/', methods=['PUT'])
-@check_authenticated(authentication_required=False)
+@check_authenticated(authentication_required=True)
 def handle_submit():
     req = CustomRequest(request)
     req.handle_request()

@@ -1,18 +1,18 @@
 <template>
-  <div v-if="data.specifications !== undefined">
+  <div v-if="doc.specifications !== undefined">
     <h3 id="Specifications">Specifications<b-button v-if="!edit_specs" v-b-tooltip.hover title="Edit Specifications" v-on:click="editSpecs()" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
     <div v-if="!edit_specs">
-      <p><strong>Spec Issued: </strong>{{ data.specifications.date_issued !== undefined && data.specifications.date_issued !== '' ? new Date(data.specifications.date_issued).toDateString() : "No Spec" }}</p>
-      <p><strong>Spec Revised: </strong>{{ data.specifications.date_revised !== undefined && data.specifications.date_revised !== '' ? new Date(data.specifications.date_revised).toDateString() : "No Spec" }}</p>
-      <p><strong>Revision Number: </strong>{{ data.specifications.revision_number }}</p>
+      <p><strong>Spec Issued: </strong>{{ doc.specifications.date_issued !== undefined && doc.specifications.date_issued !== '' ? new Date(doc.specifications.date_issued).toDateString() : "No Spec" }}</p>
+      <p><strong>Spec Revised: </strong>{{ doc.specifications.date_revised !== undefined && doc.specifications.date_revised !== '' ? new Date(doc.specifications.date_revised).toDateString() : "No Spec" }}</p>
+      <p><strong>Revision Number: </strong>{{ doc.specifications.revision_number }}</p>
     </div>
     <div v-if="!edit_specs">
-      <p v-if="data.specifications.description_statement.length > 0"><strong>Description</strong><br>{{ data.specifications.description_statement }}</p>
-      <p v-if="data.specifications.origin.length > 0"><strong>Origin</strong><br>{{ data.specifications.origin }}</p>
-      <p v-if="data.specifications.identity_statement.length > 0"><strong>Identity Statement</strong><br>{{ data.specifications.identity_statement }}</p>
-      <p v-if="data.specifications.strength_statement.length > 0"><strong>Strength Statement</strong><br>{{ data.specifications.strength_statement }}</p>
-      <p v-if="data.specifications.purity_statement.length > 0"><strong>Purity Statement</strong><br>{{ data.specifications.purity_statement }}</p>
-      <p v-if="data.specifications.parts_used.length > 0"><strong>Parts Used</strong><br>{{ data.specifications.parts_used }}</p>
+      <p v-if="doc.specifications.description_statement.length > 0"><strong>Description</strong><br>{{ doc.specifications.description_statement }}</p>
+      <p v-if="doc.specifications.origin.length > 0"><strong>Origin</strong><br>{{ doc.specifications.origin }}</p>
+      <p v-if="doc.specifications.identity_statement.length > 0"><strong>Identity Statement</strong><br>{{ doc.specifications.identity_statement }}</p>
+      <p v-if="doc.specifications.strength_statement.length > 0"><strong>Strength Statement</strong><br>{{ doc.specifications.strength_statement }}</p>
+      <p v-if="doc.specifications.purity_statement.length > 0"><strong>Purity Statement</strong><br>{{ doc.specifications.purity_statement }}</p>
+      <p v-if="doc.specifications.parts_used.length > 0"><strong>Parts Used</strong><br>{{ doc.specifications.parts_used }}</p>
     </div>
     <div v-if="edit_specs">
       <b-form-group>
@@ -30,15 +30,15 @@
         <b-form-textarea id="parts_used" v-model="edit_specs_buffer.parts_used" placeholder="Parts used..." rows="1"  max-rows="2"></b-form-textarea>
       </b-form-group>
       <div class="d-flex">
-        <b-button v-if="edit_specs" variant="outline-info" class="m-2" v-on:click="cancelEditSpecs()">Cancel</b-button>
-        <b-button type="submit" v-if="edit_specs" variant="primary" class="m-2" v-on:click="editSpecs()">Save</b-button>
+        <b-button v-if="edit_specs" variant="danger" class="m-2" v-on:click="cancelEditSpecs()">Cancel</b-button>
+        <b-button type="submit" v-if="edit_specs" variant="success" class="m-2" v-on:click="editSpecs()">Save</b-button>
       </div>
     </div>
 
     <hr>
 
     <!-- Generic Specifications -->
-    <div v-for="(spec, spec_key, index) in data.specifications.specs" :key="index" style="break-inside: avoid;">
+    <div v-for="(spec, spec_key, index) in doc.specifications.specs" :key="index" style="break-inside: avoid;">
 
       <h3 :id="spec_key">{{ spec.test_name }}<b-button v-if="!edit_specs" v-b-tooltip.hover :title="'Edit ' + spec.test_name + ' Specifications'" v-on:click="editSpecs()" class="btn p-1ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
       <div v-if="!edit_specs">
@@ -75,7 +75,7 @@
         <div class="d-flex">
           <label :for="'spec_required_' + spec_key"><strong>Spec Required: </strong></label>
           <b-form-checkbox class="ml-2" v-model="edit_specs_buffer.specs[spec_key].required_spec" :name="'spec_required_' + spec_key" switch>
-              <b-badge class="ml-2" style="font-size:1em;" pill v-bind:variant="(edit_specs_buffer.specs[spec_key].required_spec ? 'success' : 'warning')">{{ edit_specs_buffer.specs[spec_key].required_spec ? 'YES' : 'NO' }}</b-badge>
+            <b-badge class="ml-2" style="font-size:1em;" pill v-bind:variant="(edit_specs_buffer.specs[spec_key].required_spec ? 'success' : 'warning')">{{ edit_specs_buffer.specs[spec_key].required_spec ? 'YES' : 'NO' }}</b-badge>
           </b-form-checkbox>
         </div>
         <label :for="'statement_' + spec_key"><strong>Statement</strong><br></label>
@@ -169,10 +169,14 @@
                     }}</b-card-title>
                   <strong>Discription: </strong><br><b-form-textarea class="my-1" rows="3" max-rows="3" v-model="test.statement"
                     placeholder="Discription..."></b-form-textarea>
-                  <strong>Magnification: </strong><br><b-form-select v-model="test.magnification" required
-                    :options="[{ value: '', text: 'Select Magnification' },{ value: '20X', text: '20X' },{ value: '40X', text: '40X' }]"></b-form-select>
-                  <strong>Method: </strong><br><b-form-select v-model="test.method" required
-                    :options="[{ value: '', text: 'Select Method' }, { value: 'SOP QA 04.02', text: 'SOP QA 04.02' }]"></b-form-select>
+                  <strong>Magnification: </strong><br>
+                  <v-select v-model="test.magnification" required
+                    :options="[{ value: '', text: 'Select Magnification' },{ value: '20X', text: '20X' },{ value: '40X', text: '40X' }]">
+                  </v-select>
+                  <strong>Method: </strong><br>
+                  <v-select v-model="test.method" required
+                    :options="[{ value: '', text: 'Select Method' }, { value: 'SOP QA 04.02', text: 'SOP QA 04.02' }]">
+                  </v-select>
                 </b-card-body>
                 <b-card-body v-if="spec_key === 'example_cofas'">
                   <strong>Lot #: </strong><br><b-form-input v-show="!test.file_pointer" type="text" class="my-1" v-model="test.id_code"
@@ -201,8 +205,8 @@
                     placeholder="Dry Taste..."></b-form-textarea>
                   <strong>Visual: </strong><br><b-form-textarea class="my-1" rows="2" max-rows="2" v-model="test.visual"
                     placeholder="Visual..."></b-form-textarea>
-                  <strong>Method: </strong><br><b-form-select v-model="test.method" required
-                    :options="[{ value: '', text: 'Select Method' }, { value: 'SOP QA 04.02', text: 'SOP QA 04.01' }]"></b-form-select>
+                  <strong>Method: </strong><br><v-select v-model="test.method" required
+                    :options="[{ value: '', text: 'Select Method' }, { value: 'SOP QA 04.02', text: 'SOP QA 04.01' }]"></v-select>
                 </b-card-body>
                 <b-card-footer>
                   <b-button class="my-2" variant="outline-danger" @click="removeTest(index, spec_key)">Remove</b-button>
@@ -241,8 +245,8 @@
                   <b-form-input style="width:15%;" id="spec" placeholder="Spec..." v-b-tooltip.hover title="Specification" type="number"
                     min="0" no-wheel number v-model="test.count"></b-form-input>
                 </b-input-group>
-                <b-form-select v-model="test.unit_of_measure" :options="['%','cfu/g','cfu/10g','cfu/25g','ppm','rf']" class="mr-sm-2"
-                  placeholder="Select Units"></b-form-select>
+                <v-select v-model="test.unit_of_measure" :options="['%','cfu/g','cfu/10g','cfu/25g','ppm','rf']" class="mr-sm-2"
+                  placeholder="Select Units"></v-select>
               </b-form>
               <b-form-tags v-model="test.methods" no-outer-focus class="mb-2" style="width:86%;">
                 <template v-slot="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
@@ -272,8 +276,8 @@
       <div class="d-flex mt-3" v-if="edit_specs">
         <b-button v-show="spec_key !== 'microscopic'" variant="outline-info" class="m-2" v-on:click="addSpec(spec_key)">{{spec_key !=
           'example_cofas'? 'New Spec':'New CofA'}}</b-button>
-        <b-button v-if="edit_specs" variant="outline-info" class="m-2" v-on:click="cancelEditSpecs()">Cancel</b-button>
-        <b-button type="submit" v-if="edit_specs" variant="primary" class="m-2" v-on:click="editSpecs(spec_key)">Save</b-button>
+        <b-button v-if="edit_specs" variant="danger" class="m-2" v-on:click="cancelEditSpecs()">Cancel</b-button>
+        <b-button type="submit" v-if="edit_specs" variant="success" class="m-2" v-on:click="editSpecs(spec_key)">Save</b-button>
       </div>
       <hr>
     </div>
@@ -308,14 +312,18 @@
 
 <script>
 import Vue3EasyDataTable from 'vue3-easy-data-table'
+import { CustomRequest } from '../../common/CustomRequest.js'
+import { cloneDeep } from 'lodash'
+import vSelect from 'vue-select'
 
 export default {
   name: 'SpecificationsComponent',
   components: {
-    Vue3EasyDataTable
+    Vue3EasyDataTable,
+    vSelect
   },
   props: {
-    data: {
+    doc: {
       type: Object,
       required: true
     },
@@ -325,6 +333,10 @@ export default {
     },
     name: {
       type: String,
+      required: true
+    },
+    id: {
+      type: Number,
       required: true
     }
   },
@@ -339,10 +351,8 @@ export default {
       ],
       edit_specs: false,
       edit_specs_buffer: {},
-      upload_files_buffer: {},
-      remove_files_buffer: [],
       flash_messages: [],
-      file_index: 1
+      req: new CustomRequest(this.$cookies.get('session'))
     }
   },
   methods: {
@@ -359,14 +369,7 @@ export default {
       this.edit_specs_buffer.specs[specKey].tests.push(test)
     },
     removeTest: function (index, specKey) {
-      for (const pair in this.upload_files_buffer) {
-        if (this.edit_specs_buffer.specs[specKey].tests[index].file_pointer === pair[0]) {
-          this.upload_files_buffer.splice(pair[0], 1)
-        }
-      }
-      if (this.edit_specs_buffer.specs[specKey].tests[index].file_hash) {
-        this.remove_files_buffer.push(this.edit_specs_buffer.specs[specKey].tests[index].file_hash)
-      }
+      this.req.deleteFile(this.edit_specs_buffer.specs[specKey].tests[index].file_hash)
       this.edit_specs_buffer.specs[specKey].tests.splice(index, 1)
     },
     newTest: function () {
@@ -393,6 +396,7 @@ export default {
         id_code: null,
         file_pointer: null,
         file_preview_pointer: null,
+        file_type: null,
         date_issued: today,
         date_revised: today,
         url_preview: null
@@ -417,31 +421,18 @@ export default {
       ]
       return cardTypes.includes(specKey)
     },
-    onFileChange: function (e, test) {
+    onFileChange: async function (e, test) {
       // Preview File
       const file = e.target.files[0]
       test.url_preview = URL.createObjectURL(file)
       URL.revokeObjectURL(file)
 
-      // Save File in Buffer
-      const newFile = {
-        filename: this.name,
-        type: test.type,
-        page: 1,
-        id_code: test.id_code,
-        file: file
-      }
-
-      const customKey = 'file_' + this.file_index
-      const obj = {}
-      obj[customKey] = newFile
-      Object.assign(this.upload_files_buffer, obj)
+      const customKey = await this.req.addFile(file, 1, test.id_code, test.type)
       test.file_pointer = customKey
-      this.file_index += 1
     },
-    editSpecs: function (subSpec) {
+    editSpecs: async function (subSpec) {
       if (!this.edit_specs) {
-        this.edit_specs_buffer = structuredClone(this.data.specifications) // Deep Copy
+        this.edit_specs_buffer = cloneDeep(this.doc.specifications)
         this.edit_specs = true
         this.$emit('editSpecs', this.edit_specs)
       } else {
@@ -457,23 +448,83 @@ export default {
           this.edit_specs_buffer.specs[subSpec].revision_number++
           this.edit_specs_buffer.specs[subSpec].date_revised = new Date().toISOString() // Today
         }
-        this.$emit('updateSpecBuffer', structuredClone(this.edit_specs_buffer))
-        this.$emit('updateFileBuffer', structuredClone(this.upload_files_buffer))
-        this.$emit('updateRemoveFileBuffer', structuredClone(this.remove_files_buffer))
-        this.$emit('saveSpecs')
-        this.edit_specs_buffer = []
-        this.upload_files_buffer = {}
-        this.remove_files_buffer = []
-        this.edit_specs = false
-        this.$emit('editSpecs', this.edit_specs)
+        if (this.spectype === 'component') {
+          this.saveComponentUpdates().then(outcome => {
+            if (outcome) {
+              this.edit_specs_buffer = []
+              this.edit_specs = false
+              this.$emit('editSpecs', this.edit_specs)
+            }
+          })
+        } else {
+          this.saveProductUpdates().then(outcome => {
+            if (outcome) {
+              this.edit_specs_buffer = []
+              this.edit_specs = false
+              this.$emit('editSpecs', this.edit_specs)
+            }
+          })
+        }
       }
+    },
+    saveComponentUpdates: function () {
+      this.$emit('toggleLoaded', false)
+      const component = {
+        doc: {
+          specifications: this.edit_specs_buffer
+        },
+        component_id: this.id
+      }
+      this.req.upsertRecord('Components', component)
+
+      return this.req.sendRequest(window.origin).then(resp => {
+        const createToast = this.$root.createToast
+        resp.messages.flash.forEach(message => {
+          createToast(message)
+        })
+
+        if (resp.status === 201) {
+          this.cancel()
+          this.$nextTick(() => {
+            this.versions = []
+            this.build_formula_versions()
+          })
+          this.req = new CustomRequest(this.$cookies.get('session'))
+          return true
+        }
+        this.$parent.getProductData()
+        return false
+      })
+    },
+    saveProductUpdates: async function () {
+      const product = {
+        doc: {
+          specifications: this.edit_specs_buffer
+        },
+        product_id: this.id
+      }
+      this.req.upsertRecord('Product_Master', product)
+
+      const resp = await this.req.sendRequest(window.origin)
+      this.$emit('toggleLoaded', false)
+      this.$emit('refreshParent')
+
+      const createToast = this.$root.createToast
+      resp.messages.flash.forEach(message => {
+        createToast(message)
+      })
+      // Everything else works
+      if (resp.status !== 201) {
+        return false
+      }
+      this.req = new CustomRequest(this.$cookies.get('session'))
+      return true
     },
     cancelEditSpecs: function () {
       this.edit_specs_buffer = []
-      this.edit_files_buffer = {}
-      this.remove_files_buffer = []
       this.edit_specs = false
       this.$emit('editSpecs', this.edit_specs)
+      this.req = new CustomRequest(this.$cookies.get('session'))
     },
     format_string: function (type) {
       if (type === undefined) {

@@ -38,7 +38,7 @@ bp_cat.register_blueprint(bp_comp)
 
 @bp_prod.route('/', methods=['GET', 'POST', 'PUT'])
 @check_authenticated(authentication_required=True)
-def handle_productss():
+def handle_products():
 
     if request.method == 'GET':
         return handle_get_products()

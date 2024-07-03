@@ -99,11 +99,12 @@ def check_authenticated(authentication_required=False, database_priveleges=None)
 
                 response = func(*args, **kwargs)
                 out = json.loads(response.data)
-                if len(out['data']) <= 0:
-                    response.status = 404
-                else:
-                    if len(out['data']) == 1 and not out['data'][0]:
+                if request.method == 'GET':
+                    if len(out['data']) <= 0:
                         response.status = 404
+                    else:
+                        if len(out['data']) == 1 and not out['data'][0]:
+                            response.status = 404
                 response.set_cookie('session', session_token)
                 return response
 
