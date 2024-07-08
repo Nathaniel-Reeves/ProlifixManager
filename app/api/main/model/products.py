@@ -290,9 +290,9 @@ class Ingredient_Brands_Join(Base):
 
     # Table Columns
     _id: Mapped[int] = mapped_column(primary_key=True)
-    formula_ingredient_id: Mapped[int] = mapped_column(ForeignKey('Products.Formula_Detail.formula_ingredient_id'))
-    brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
-    priority: Mapped[int] = mapped_column()
+    formula_ingredient_id: Mapped[int] = mapped_column(ForeignKey('Products.Formula_Detail.formula_ingredient_id'), nullable=False)
+    brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'), nullable=False)
+    priority: Mapped[int] = mapped_column(nullable=False)
 
     # Relationships
 
@@ -328,9 +328,9 @@ class Ingredients_Join(Base):
 
     # Table Columns
     _id: Mapped[int] = mapped_column(primary_key=True)
-    formula_ingredient_id: Mapped[int] = mapped_column(ForeignKey('Products.Formula_Detail.formula_ingredient_id'))
-    ingredient_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'))
-    priority: Mapped[int] = mapped_column()
+    formula_ingredient_id: Mapped[int] = mapped_column(ForeignKey('Products.Formula_Detail.formula_ingredient_id'), nullable=False)
+    ingredient_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'), nullable=False)
+    priority: Mapped[int] = mapped_column(nullable=False)
 
     # Relationships
 
@@ -406,9 +406,9 @@ class Components_Join(Base):
 
     # Table Columns
     _id: Mapped[int] = mapped_column(primary_key=True)
-    process_component_id: Mapped[int] = mapped_column(ForeignKey('Products.Process_Components.process_component_id'))
-    component_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'))
-    priority: Mapped[int] = mapped_column()
+    process_component_id: Mapped[int] = mapped_column(ForeignKey('Products.Process_Components.process_component_id'), nullable=False)
+    component_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'), nullable=False)
+    priority: Mapped[int] = mapped_column(nullable=False)
 
     # Relationships
 
@@ -444,9 +444,9 @@ class Component_Brands_Join(Base):
 
     # Table Columns
     _id: Mapped[int] = mapped_column(primary_key=True)
-    process_component_id: Mapped[int] = mapped_column(ForeignKey('Products.Process_Components.process_component_id'))
-    brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
-    priority: Mapped[int] = mapped_column()
+    process_component_id: Mapped[int] = mapped_column(ForeignKey('Products.Process_Components.process_component_id'), nullable=False)
+    brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'), nullable=False)
+    priority: Mapped[int] = mapped_column(nullable=False)
 
     # Relationships
 

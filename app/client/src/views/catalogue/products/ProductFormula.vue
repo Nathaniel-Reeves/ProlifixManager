@@ -303,6 +303,7 @@
                           min="0"
                           aria-describedby="max_grams_per_unit-live-feedback"
                           :class="['form-control', (new_formula_buffer.max_grams_per_unit >= new_formula_buffer.total_grams_per_unit && new_formula_buffer.max_grams_per_unit !== null ? '' : 'is-invalid')]"
+                          @input="update_formula(new_formula_buffer)"
                         >
                         <div class="input-group-append">
                           <span class="input-group-text">g</span>
@@ -324,6 +325,7 @@
                           min="0"
                           aria-describedby="total_grams_per_unit-live-feedback"
                           :class="['form-control', (new_formula_buffer.total_grams_per_unit >= 0 && new_formula_buffer.total_grams_per_unit !== '' && new_formula_buffer.total_grams_per_unit !== null ? '' : 'is-invalid')]"
+                          @input="update_formula(new_formula_buffer)"
                         >
                         <div class="input-group-append">
                           <span class="input-group-text">g</span>
@@ -344,6 +346,7 @@
                           min="0"
                           aria-describedby="min_grams_per_unit-live-feedback"
                           :class="['form-control', (new_formula_buffer.min_grams_per_unit <= new_formula_buffer.total_grams_per_unit && new_formula_buffer.min_grams_per_unit !== null ? '' : 'is-invalid')]"
+                          @input="update_formula(new_formula_buffer)"
                         >
                         <div class="input-group-append">
                           <span class="input-group-text">g</span>
@@ -369,6 +372,7 @@
                           min="0"
                           aria-describedby="max_milliliters_per_unit-live-feedback"
                           :class="['form-control', (new_formula_buffer.max_milliliters_per_unit >= new_formula_buffer.total_milliliters_per_unit && new_formula_buffer.max_milliliters_per_unit !== null ? '' : 'is-invalid')]"
+                          @input="update_formula(new_formula_buffer)"
                         >
                         <div class="input-group-append">
                           <span class="input-group-text">ml</span>
@@ -389,6 +393,7 @@
                           min="0"
                           aria-describedby="total_milliliters_per_unit-live-feedback"
                           :class="['form-control', (new_formula_buffer.total_milliliters_per_unit >= 0 && new_formula_buffer.total_milliliters_per_unit !== '' && new_formula_buffer.total_milliliters_per_unit !== null ? '' : 'is-invalid')]"
+                          @input="update_formula(new_formula_buffer)"
                         >
                         <div class="input-group-append">
                           <span class="input-group-text">ml</span>
@@ -409,6 +414,7 @@
                           min="0"
                           aria-describedby="min_milliliters_per_unit-live-feedback"
                           :class="['form-control', (new_formula_buffer.min_milliliters_per_unit <= new_formula_buffer.total_milliliters_per_unit && new_formula_buffer.min_milliliters_per_unit !== null ? '' : 'is-invalid')]"
+                          @input="update_formula(new_formula_buffer)"
                         >
                         <div class="input-group-append">
                           <span class="input-group-text">ml</span>
@@ -434,7 +440,8 @@
                           min="0"
                           aria-describedby="max_mg_per_capsule-live-feedback"
                           :class="['form-control', (new_formula_buffer.max_mg_per_capsule >= new_formula_buffer.total_mg_per_capsule && new_formula_buffer.max_mg_per_capsule !== '' && new_formula_buffer.max_mg_per_capsule !== null ? '' : 'is-invalid')]"
-                          >
+                          @input="update_formula(new_formula_buffer)"
+                        >
                         <div class="input-group-append">
                           <span class="input-group-text">mg</span>
                         </div>
@@ -454,6 +461,7 @@
                           min="0"
                           aria-describedby="total_mg_per_capsule-live-feedback"
                           :class="['form-control', (new_formula_buffer.total_mg_per_capsule >= 0 && new_formula_buffer.total_mg_per_capsule !== '' && new_formula_buffer.total_mg_per_capsule !== null ? '' : 'is-invalid')]"
+                          @input="update_formula(new_formula_buffer)"
                         >
                         <div class="input-group-append">
                           <span class="input-group-text">mg</span>
@@ -475,6 +483,7 @@
                           min="0"
                           aria-describedby="min_mg_per_capsule-live-feedback"
                           :class="['form-control', (new_formula_buffer.min_mg_per_capsule <= new_formula_buffer.total_mg_per_capsule && new_formula_buffer.min_mg_per_capsule !== null ? '' : 'is-invalid')]"
+                          @input="update_formula(new_formula_buffer)"
                         >
                         <div class="input-group-append">
                           <span class="input-group-text">mg</span>
@@ -496,6 +505,7 @@
                           min="0"
                           aria-describedby="total_capsules_per_unit-live-feedback"
                           :class="['form-control', (new_formula_buffer.total_capsules_per_unit >= 0 && new_formula_buffer.total_capsules_per_unit !== '' && new_formula_buffer.total_capsules_per_unit !== null ? '' : 'is-invalid')]"
+                          @input="update_formula(new_formula_buffer)"
                         >
                         <div class="input-group-append">
                           <span class="input-group-text">ct</span>
@@ -512,6 +522,7 @@
                         v-model="new_formula_buffer.capsule_size"
                         aria-describedby="capsule_size-live-feedback"
                         :class="['form-control', 'form-control-md', (new_formula_buffer.capsule_size !== '' ? '' : 'is-invalid')]"
+                        @input="update_formula(new_formula_buffer)"
                       >
                         <option selected value="">Select Size</option>
                         <option value="n/a">N/A</option>
@@ -535,6 +546,7 @@
                           min="0"
                           aria-describedby="capsule_weight-live-feedback"
                           :class="['form-control', (new_formula_buffer.capsule_weight >= 0 && new_formula_buffer.capsule_weight !== '' && new_formula_buffer.capsule_weight !== null ? '' : 'is-invalid')]"
+                          @input="update_formula(new_formula_buffer)"
                         >
                         <div class="input-group-append">
                           <span class="input-group-text">mg</span>
@@ -742,10 +754,6 @@ export default {
       })
     },
     update_formula: function (formula) {
-      // Check valid formula
-      if (!this.validate_new_formula_buffer()) {
-        return
-      }
       const update = {
         formula_id: formula.formula_id,
         notes: formula.notes,
@@ -841,7 +849,7 @@ export default {
           break
         }
         for (const i in this.new_formula_buffer.formula_detail[f].ingredients_detail) {
-          if (this.new_formula_buffer.formula_detail[f].ingredients_detail[i].component_id === 0) {
+          if (!this.new_formula_buffer.formula_detail[f].ingredients_detail[i].component_id > 0) {
             errorToast.message = 'Invalid ingredients selected.'
             createToast(errorToast)
             valid = false
@@ -852,22 +860,14 @@ export default {
 
       // Check valid Brands
       for (const f in this.new_formula_buffer.formula_detail) {
-        if (!this.new_formula_buffer.formula_detail[f].specific_brand_required) {
-          for (const i in this.new_formula_buffer.formula_detail[f].brands) {
-            if (this.new_formula_buffer.formula_detail[f].brands[i].organization_id === 0) {
-              this.new_formula_buffer.formula_detail[f].brands.splice(i, 1)
-            }
-          }
-          continue
-        }
-        if (this.new_formula_buffer.formula_detail[f].brands.length === 0) {
+        if (!this.new_formula_buffer.formula_detail[f].brands.length > 0 && this.new_formula_buffer.formula_detail[f].specific_brand_required) {
           errorToast.message = 'All rows requiring brand specific ingredients must have at least one brand selected.'
           createToast(errorToast)
           valid = false
           break
         }
         for (const i in this.new_formula_buffer.formula_detail[f].brands) {
-          if (this.new_formula_buffer.formula_detail[f].brands[i].organization_id === 0) {
+          if (!this.new_formula_buffer.formula_detail[f].brands[i].organization_id > 0) {
             errorToast.message = 'Invalid brands selected.'
             createToast(errorToast)
             valid = false
@@ -882,6 +882,7 @@ export default {
       // Check valid formula
       this.$emit('toggleLoaded', false)
       if (!this.validate_new_formula_buffer()) {
+        this.$emit('toggleLoaded', true)
         return
       }
 
@@ -890,6 +891,9 @@ export default {
           product_id: this.productId,
           num_formula_versions: this.numVersions + 1
         }
+        // if (this.numVersions + 1 === 1) {
+        //   updateProduct.default_formula_version = this.new_formula_id
+        // }
         this.req.upsertRecord('Product_Master', updateProduct)
       }
 
@@ -901,12 +905,12 @@ export default {
 
         if (resp.status === 201) {
           this.cancel()
-          this.$nextTick(() => {
-            this.versions = []
-            this.build_formula_versions()
-          })
+          this.$parent.getProductData()
+          this.versions = []
+          this.build_formula_versions()
+        } else {
+          this.$parent.toggleLoaded(true)
         }
-        this.$parent.getProductData()
       })
     },
     toggle_edit_formulas: function () {
@@ -932,14 +936,25 @@ export default {
       return Math.round(total * 100) / 100
     },
     remove_brand: function (brands, index) {
-      const brand = brands.splice(index, 1)
-      for (let i = index; i < brands.length; i++) {
-        brands[i].priority = i + 1
-      }
+      const brand = brands.splice(index, 1)[0]
       if (isTempKey(brand._id)) {
         this.req.removeUpsertRecord('Ingredient_Brands_Join', '_id', brand._id)
       } else {
-        this.req.deleteRecord('Ingredient_Brands_Join', { _id: brand._id })
+        this.req.updateDeleteRecord('Ingredient_Brands_Join', '_id', brand._id, { _id: brand._id })
+      }
+      for (let i = index; i < brands.length; i++) {
+        brands[i].priority = i + 1
+        const b = {
+          _id: brands[i]._id,
+          brand_id: brands[i].organization_id,
+          priority: brands[i].priority,
+          formula_ingredient_id: brands[i].formula_ingredient_id
+        }
+        if (isTempKey(brand._id)) {
+          this.req.updateUpsertRecord('Ingredient_Brands_Join', '_id', brands[i]._id, b)
+        } else {
+          this.req.upsertRecord('Ingredient_Brands_Join', b)
+        }
       }
     },
     add_brand: function (formulaIngredientId, brands) {
@@ -955,7 +970,7 @@ export default {
     },
     select_brand: function (org, brands, index) {
       const priority = brands[index].priority
-      if (org != null) {
+      if (org !== null) {
         const brand = {
           _id: brands[index]._id,
           brand_id: brands[index].organization_id,
@@ -972,14 +987,25 @@ export default {
       }
     },
     remove_ing: function (ingredientsDetail, index) {
-      const ingDet = ingredientsDetail.splice(index, 1)
-      for (let i = index; i < ingredientsDetail.length; i++) {
-        ingredientsDetail[i].priority = i + 1
-      }
+      const ingDet = ingredientsDetail.splice(index, 1)[0]
       if (isTempKey(ingDet._id)) {
         this.req.removeUpsertRecord('Ingredients_Join', '_id', ingDet._id)
       } else {
-        this.req.deleteRecord('Ingredients_Join', { _id: ingDet._id })
+        this.req.updateDeleteRecord('Ingredients_Join', '_id', ingDet._id, { _id: ingDet._id })
+      }
+      for (let i = index; i < ingredientsDetail.length; i++) {
+        ingredientsDetail[i].priority = i + 1
+        const ing = {
+          _id: ingredientsDetail[i]._id,
+          ingredient_id: ingredientsDetail[i].component_id,
+          priority: ingredientsDetail[i].priority,
+          formula_ingredient_id: ingredientsDetail[i].formula_ingredient_id
+        }
+        if (isTempKey(ingDet._id)) {
+          this.req.updateUpsertRecord('Ingredients_Join', '_id', ingredientsDetail[i]._id, ing)
+        } else {
+          this.req.upsertRecord('Ingredients_Join', ing)
+        }
       }
     },
     add_ing: function (formulaIngredientId, ingredientsDetail) {
@@ -994,7 +1020,7 @@ export default {
     },
     select_ing: function (ing, ingredients, index) {
       const priority = ingredients[index].priority
-      if (ing != null) {
+      if (ing !== null) {
         const ingredient = {
           _id: ingredients[index]._id,
           ingredient_id: ingredients[index].component_id,
@@ -1047,20 +1073,18 @@ export default {
     add_row: function (formulaId) {
       const formulaIngredientId = genTempKey()
       const rowBuffer = {
-        brands: [{
-          _id: genTempKey(),
-          brand_id: null,
-          priority: 1,
-          formula_ingredient_id: formulaIngredientId
-        }],
+        brands: [],
         formula_id: formulaId,
         formula_ingredient_id: formulaIngredientId,
-        ingredients_detail: [{
-          _id: genTempKey(),
-          ingredient_id: null,
-          priority: 1,
-          formula_ingredient_id: formulaIngredientId
-        }],
+        ingredients_detail: [
+          {
+            _id: genTempKey(),
+            ingredient_id: null,
+            component_id: null,
+            priority: 1,
+            formula_ingredient_id: formulaIngredientId
+          }
+        ],
         notes: null,
         percent: 0,
         specific_brand_required: false,
@@ -1103,7 +1127,7 @@ export default {
         }
         this.req.upsertRecord('Formula_Master', newFormula)
         this.new_formula_buffer = cloneDeep(newFormula)
-        this.new_formula_buffer.ingredients_detail = []
+        this.new_formula_buffer.formula_detail = []
         this.disable_version_select = true
         this.edit_formulas = true
         this.$emit('editFormulas', this.edit_formulas)
@@ -1118,65 +1142,60 @@ export default {
       } else {
         this.new_formula_buffer = cloneDeep(this.formulas[this.active_tab_index])
       }
-      const newformula = {
-        formulation_version: this.new_formula_buffer.formulation_version,
-        formula_id: this.new_formula_buffer.formula_id,
-        product_id: this.productId,
-        notes: this.new_formula_buffer.notes,
-        min_grams_per_unit: this.new_formula_buffer.min_grams_per_unit,
-        total_grams_per_unit: this.new_formula_buffer.total_grams_per_unit,
-        max_grams_per_unit: this.new_formula_buffer.max_grams_per_unit,
-        min_milliliters_per_unit: this.new_formula_buffer.min_milliliters_per_unit,
-        total_milliliters_per_unit: this.new_formula_buffer.total_milliliters_per_unit,
-        max_milliliters_per_unit: this.new_formula_buffer.max_milliliters_per_unit,
-        min_mg_per_capsule: this.new_formula_buffer.min_mg_per_capsule,
-        total_mg_per_capsule: this.new_formula_buffer.total_mg_per_capsule,
-        max_mg_per_capsule: this.new_formula_buffer.max_mg_per_capsule,
-        total_capsules_per_unit: this.new_formula_buffer.total_capsules_per_unit,
-        capsule_size: this.new_formula_buffer.capsule_size,
-        capsule_weight: this.new_formula_buffer.capsule_weight
-      }
-      this.req.upsertRecord('Formula_Master', newformula)
 
-      this.new_formula_buffer.formula_detail.forEach((f, i) => {
-        const k = genTempKey()
-        if (this.new_version_select !== '') {
-          f.formula_ingredient_id = k
-        }
-        const row = {
-          formula_ingredient_id: f.formula_ingredient_id,
+      if (this.new_version_select !== '') {
+        const newformula = {
+          formulation_version: this.new_formula_buffer.formulation_version,
           formula_id: this.new_formula_buffer.formula_id,
-          notes: f.notes,
-          percent: f.percent,
-          specific_brand_required: f.specific_brand_required,
-          specific_ingredient_required: f.specific_ingredient_required
+          product_id: this.productId,
+          notes: this.new_formula_buffer.notes,
+          min_grams_per_unit: this.new_formula_buffer.min_grams_per_unit,
+          total_grams_per_unit: this.new_formula_buffer.total_grams_per_unit,
+          max_grams_per_unit: this.new_formula_buffer.max_grams_per_unit,
+          min_milliliters_per_unit: this.new_formula_buffer.min_milliliters_per_unit,
+          total_milliliters_per_unit: this.new_formula_buffer.total_milliliters_per_unit,
+          max_milliliters_per_unit: this.new_formula_buffer.max_milliliters_per_unit,
+          min_mg_per_capsule: this.new_formula_buffer.min_mg_per_capsule,
+          total_mg_per_capsule: this.new_formula_buffer.total_mg_per_capsule,
+          max_mg_per_capsule: this.new_formula_buffer.max_mg_per_capsule,
+          total_capsules_per_unit: this.new_formula_buffer.total_capsules_per_unit,
+          capsule_size: this.new_formula_buffer.capsule_size,
+          capsule_weight: this.new_formula_buffer.capsule_weight
         }
-        this.req.upsertRecord('Formula_Detail', row)
-        f.ingredients_detail.forEach((ing, j) => {
-          if (this.new_version_select !== '') {
-            ing._id = genTempKey()
+        this.req.upsertRecord('Formula_Master', newformula)
+
+        this.new_formula_buffer.formula_detail.forEach((f, i) => {
+          const k = genTempKey()
+          f.formula_ingredient_id = k
+          const row = {
+            formula_ingredient_id: f.formula_ingredient_id,
+            formula_id: this.new_formula_buffer.formula_id,
+            notes: f.notes,
+            percent: f.percent,
+            specific_brand_required: f.specific_brand_required,
+            specific_ingredient_required: f.specific_ingredient_required
           }
-          const newIng = {
-            _id: ing._id,
-            ingredient_id: ing.ingredient_id ? ing.ingredient_id : ing.component_id,
-            priority: ing.priority,
-            formula_ingredient_id: this.new_version_select !== '' ? k : f.formula_ingredient_id
-          }
-          this.req.updateUpsertRecord('Ingredients_Join', '_id', newIng._id, newIng)
+          this.req.upsertRecord('Formula_Detail', row)
+          f.ingredients_detail.forEach((ing, j) => {
+            const newIng = {
+              _id: genTempKey(),
+              ingredient_id: ing.ingredient_id ? ing.ingredient_id : ing.component_id,
+              priority: ing.priority,
+              formula_ingredient_id: k
+            }
+            this.req.updateUpsertRecord('Ingredients_Join', '_id', newIng._id, newIng)
+          })
+          f.brands.forEach((b, j) => {
+            const newBrand = {
+              _id: genTempKey(),
+              brand_id: b.brand_id ? b.brand_id : b.organization_id,
+              priority: b.priority,
+              formula_ingredient_id: k
+            }
+            this.req.updateUpsertRecord('Ingredient_Brands_Join', '_id', newBrand._id, newBrand)
+          })
         })
-        f.brands.forEach((b, j) => {
-          if (this.new_version_select !== '') {
-            b._id = genTempKey()
-          }
-          const newBrand = {
-            _id: b._id,
-            brand_id: b.brand_id ? b.brand_id : b.organization_id,
-            priority: b.priority,
-            formula_ingredient_id: this.new_version_select !== '' ? k : f.formula_ingredient_id
-          }
-          this.req.updateUpsertRecord('Ingredient_Brands_Join', '_id', newBrand._id, newBrand)
-        })
-      })
+      }
 
       this.disable_version_select = true
       this.edit_formulas = true

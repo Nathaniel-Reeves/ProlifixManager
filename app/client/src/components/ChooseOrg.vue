@@ -2,26 +2,35 @@
   <div class="mb-3">
     <v-select
       :id="id"
-      :options="organizations"
+      :options="paginated"
       label="organization_initial"
       v-model="selected_org"
       :loading="!orgs_loaded"
       :placeholder="!orgs_loaded ? 'Loading...':'Choose...'"
       style="width: 150px;"
       aria-describedby="select_org-live-feedback"
-      :class="(selected_org !== null || !orgReq ? '' : 'is-invalid')"
+      :class="((selected_org !== null && selected_org.organization_id > 0) || !orgReq ? '' : 'is-invalid')"
       :disabled="selected_org !== null && selected_org.organization_id > 0"
       :clearable="false"
-    >
+      :filterable="false"
+      @open="onOpen"
+      @close="onClose"
+      @search="(query) => (search = query)"
+      >
       <template #option="{ organization_id, organization_name, organization_initial }">
         <div style="display:flex; flex-direction: row; align-items: center; min-height: 60px;">
           <b-button v-on:click.stop class="mr-2" variant="light" :to="'/organizations/'+organization_id" target="_blank"><b-icon icon="box"></b-icon></b-button>
           <div>{{ organization_name }} | {{ organization_initial }}</div>
         </div>
       </template>
+      <template #list-footer>
+        <li v-show="hasNextPage" ref="load" class="loader">
+          Loading more options...
+        </li>
+      </template>
     </v-select>
     <div id="select_org-live-feedback" class="invalid-feedback">This is a required field.</div>
-    <b-tooltip v-if="selected_org != null && selected_org.organization_id != 0" :target="id" triggers="hover">{{ selected_org.organization_name }}</b-tooltip>
+    <b-tooltip v-if="selected_org !== null && selected_org.organization_id > 0" :target="id" triggers="hover">{{ selected_org.organization_name }}</b-tooltip>
   </div>
 </template>
 
@@ -30,6 +39,11 @@
   width: 600px;
   max-height: 300px;
   overflow-y: auto;
+}
+
+.loader {
+  text-align: center;
+  color: #bbbbbb;
 }
 </style>
 
@@ -49,25 +63,52 @@ export default {
   data: function () {
     return {
       selected_org: null,
-      id: Math.floor(Math.random() * 100000) + '-org-name'
+      id: Math.floor(Math.random() * 100000) + '-org-name',
+      observer: null,
+      limit: 10,
+      search: ''
     }
   },
   methods: {
+    async onOpen () {
+      if (this.hasNextPage) {
+        await this.$nextTick()
+        this.observer.observe(this.$refs.load)
+      }
+    },
+    onClose () {
+      this.observer.disconnect()
+    },
+    async infiniteScroll ([{ isIntersecting, target }]) {
+      if (isIntersecting) {
+        const ul = target.offsetParent
+        const scrollTop = target.offsetParent.scrollTop
+        this.limit += 10
+        await this.$nextTick()
+        ul.scrollTop = scrollTop
+      }
+    }
   },
   watch: {
     selected_org: function (val) {
       this.$emit('org', val)
     }
   },
+  mounted () {
+    this.observer = new IntersectionObserver(this.infiniteScroll)
+  },
   computed: {
     orgs_loaded: function () {
       return this.organizations.length > 0
     },
-    ing_array: function () {
-      if (Array.isArray(this.organizations) && this.organizations.length > 0) {
-        return this.organizations
-      }
-      return []
+    filtered () {
+      return this.organizations.filter((org) => (org.organization_name.includes(this.search) || org.organization_initial.includes(this.search)))
+    },
+    paginated () {
+      return this.filtered.slice(0, this.limit)
+    },
+    hasNextPage () {
+      return this.paginated.length < this.filtered.length
     }
   },
   created: function () {

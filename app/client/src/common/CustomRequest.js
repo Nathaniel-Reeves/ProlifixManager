@@ -183,19 +183,19 @@ export class CustomRequest {
   findIndexInTable (table, key, value, action) {
     // validate table, raise error if not table
     if (!this.validTables.includes(table)) {
-      console.error('Invalid table')
+      console.error('Invalid table:', table)
       return null
     }
 
     // validate key, raise error if not key
     if (!key) {
-      console.error('Invalid key')
+      console.error('Invalid key:', key)
       return null
     }
 
     // validate value, raise error if not value
     if (!value) {
-      console.error('Invalid value')
+      console.error('Invalid value:', value)
       return null
     }
 
