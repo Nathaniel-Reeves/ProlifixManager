@@ -64,8 +64,8 @@
     <Handle id="a" type="target" :position="top" />
     <Handle id="b" type="source" :position="bottom" />
     <NodeToolbar :is-visible="node_data.toolbarVisible" :position="bottom" :align="'end'">
-      <b-button variant="outline-info" class="mr-2">Edit</b-button>
-      <b-button variant="outline-danger">Delete</b-button>
+      <b-button v-show="node_data.data.edit_manufacturing" variant="outline-info" class="mr-2">Edit</b-button>
+      <b-button v-show="node_data.data.edit_manufacturing" variant="outline-danger">Delete</b-button>
     </NodeToolbar>
   </b-card>
 </template>
@@ -93,7 +93,6 @@ export default {
       top: Position.Top,
       bottom: Position.Bottom,
       process: this.node_data.data,
-      edit_manufacturing: false,
       fields: [
         { label: 'Component', key: 'components', tdClass: 'custom-row' },
         { label: 'Brands', key: 'brands', tdClass: 'custom-row' },

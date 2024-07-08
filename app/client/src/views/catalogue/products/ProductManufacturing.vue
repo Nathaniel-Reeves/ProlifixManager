@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3 id="Manufacturing">Manufacturing<b-button v-if="!edit_manufacturing" v-b-tooltip.hover title="Edit Manufacturing Process" v-on:click="edit_manufacturing = !edit_manufacturing" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
+    <h3 id="Manufacturing">Manufacturing<b-button v-if="!edit_manufacturing" v-b-tooltip.hover title="Edit Manufacturing Process" v-on:click="setProcessesBuffer()" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
     <div class="my_component d-flex flex-wrap justify-content-center">
       <div class="d-flex justify-content-center" style="width: 100%; height: 700px">
         <VueFlow @pane-ready="onPaneReady" class="vue-flow-basic-example" :nodes="nodes" :edges="edges" :nodesConnectable="false" :nodesDraggable="false" :max-zoom="2" :min-zoom="0.3" :zoom-on-double-click="true" :no-wheel-class-name="false" :prevent-scrolling="false">
@@ -13,7 +13,9 @@
             </b-button-group>
           </Panel>
           <Panel position="bottom-left">
-            <b-button variant="light" style="border-width: 1px; border-color:#999999">New Process</b-button>
+            <b-button variant="outline-success" class="mr-2" v-show="edit_manufacturing">Save Changes</b-button>
+            <b-button variant="outline-info" class="mr-2" v-show="edit_manufacturing">New Process</b-button>
+            <b-button variant="outline-danger" class="mr-2" @click="cancel()" v-show="edit_manufacturing">Cancel</b-button>
           </Panel>
           <MiniMap />
           <template #node-manufacturing-process="node_data">
@@ -45,21 +47,29 @@ export default {
     manufacturing: {
       type: Object,
       required: true
-    },
-    edit: {
-      type: Boolean,
-      required: true,
-      default: false
     }
   },
   data: function () {
     return {
       nodes: [],
       edges: [],
-      edit_manufacturing: this.edit
+      edit_manufacturing: false
     }
   },
   methods: {
+    setProcessesBuffer: function () {
+      this.toggleEditProcesses()
+    },
+    cancel: function () {
+      this.toggleEditProcesses()
+    },
+    toggleEditProcesses: function () {
+      this.edit_manufacturing = !this.edit_manufacturing
+      this.$emit('edit-manufacturing', this.edit_manufacturing)
+      this.nodes.forEach(node => {
+        node.edit_manufacturing = this.edit_manufacturing
+      })
+    },
     onPaneReady: function (vueFlowInstance) {
       this.instance = vueFlowInstance
       this.instance.fitView()
@@ -72,79 +82,84 @@ export default {
     },
     zoomfit: function () {
       this.instance.fitView()
+    },
+    setGraph: function () {
+      // Create a new directed graph
+      var g = new dagre.graphlib.Graph()
+
+      // Set an object for the graph label
+      g.setGraph({})
+
+      // Default to assigning a new object as a label for each new edge.
+      g.setDefaultEdgeLabel(function () { return {} })
+
+      function calcHeight (node) {
+        let height = 260
+        height += node.components.length > 0 ? 50 : 0
+        height += node.components.length * 140
+        for (let i = 0; node.components.length > i; i++) {
+          const subrow = Math.max(
+            node.components[i]?.components.length || 1,
+            node.components[i]?.brands.length || 0
+          )
+          height += (subrow - 1) * 140
+        }
+        return height
+      }
+
+      // build Nodes
+      const nodes = []
+      for (let i = 0; i < this.manufacturing.nodes.length; i++) {
+        const data = this.manufacturing.nodes[i]
+        data.edit_manufacturing = this.edit_manufacturing
+        const node = {
+          id: data.process_spec_id.toString(),
+          label: data.process_name,
+          position: { x: 0, y: 0 },
+          data: data,
+          type: 'manufacturing-process',
+          width: data.components.length > 0 ? 1200 : 600,
+          height: calcHeight(data),
+          toolbarVisible: false
+        }
+        nodes.push(node)
+        g.setNode(node.id, { height: node.height + 200, width: node.width })
+      }
+
+      // build Edges
+      const edges = []
+      for (let i = 0; i < this.manufacturing.edges.length; i++) {
+        const edge = {
+          id: this.manufacturing.edges[i].id,
+          source: this.manufacturing.edges[i].source.toString(),
+          target: this.manufacturing.edges[i].target.toString(),
+          animated: this.manufacturing.edges[i].animated,
+          type: 'smoothstep'
+        }
+        if (edge.source === edge.target) {
+          continue
+        }
+        edges.push(edge)
+        g.setEdge(edge.source, edge.target)
+      }
+
+      // Calculate the layout (i.e. node positions)
+      dagre.layout(g)
+      g.nodes().forEach(function (v) {
+        const position = { x: g.node(v).x, y: g.node(v).y }
+        for (let i = 0; i < nodes.length; i++) {
+          if (nodes[i].id === v) {
+            nodes[i].position = position
+            break
+          }
+        }
+      })
+      this.nodes = nodes
+      this.edges = edges
     }
   },
   created: function () {
-    // Create a new directed graph
-    var g = new dagre.graphlib.Graph()
-
-    // Set an object for the graph label
-    g.setGraph({})
-
-    // Default to assigning a new object as a label for each new edge.
-    g.setDefaultEdgeLabel(function () { return {} })
-
-    function calcHeight (node) {
-      let height = 260
-      height += node.components.length > 0 ? 50 : 0
-      height += node.components.length * 140
-      for (let i = 0; node.components.length > i; i++) {
-        const subrow = Math.max(
-          node.components[i]?.components.length || 1,
-          node.components[i]?.brands.length || 0
-        )
-        height += (subrow - 1) * 140
-      }
-      return height
-    }
-
-    // build Nodes
-    const nodes = []
-    for (let i = 0; i < this.manufacturing.nodes.length; i++) {
-      const node = {
-        id: this.manufacturing.nodes[i].process_spec_id.toString(),
-        label: this.manufacturing.nodes[i].process_name,
-        position: { x: 0, y: 0 },
-        data: this.manufacturing.nodes[i],
-        type: 'manufacturing-process',
-        width: this.manufacturing.nodes[i].components.length > 0 ? 1200 : 600,
-        height: calcHeight(this.manufacturing.nodes[i]),
-        toolbarVisible: false
-      }
-      nodes.push(node)
-      g.setNode(node.id, { height: node.height + 200, width: node.width })
-    }
-
-    // build Edges
-    const edges = []
-    for (let i = 0; i < this.manufacturing.edges.length; i++) {
-      const edge = {
-        id: this.manufacturing.edges[i].id,
-        source: this.manufacturing.edges[i].source.toString(),
-        target: this.manufacturing.edges[i].target.toString(),
-        animated: this.manufacturing.edges[i].animated,
-        type: 'smoothstep'
-      }
-      if (edge.source === edge.target) {
-        continue
-      }
-      edges.push(edge)
-      g.setEdge(edge.source, edge.target)
-    }
-
-    // Calculate the layout (i.e. node positions)
-    dagre.layout(g)
-    g.nodes().forEach(function (v) {
-      const position = { x: g.node(v).x, y: g.node(v).y }
-      for (let i = 0; i < nodes.length; i++) {
-        if (nodes[i].id === v) {
-          nodes[i].position = position
-          break
-        }
-      }
-    })
-    this.nodes = nodes
-    this.edges = edges
+    this.setGraph()
   }
 }
 </script>

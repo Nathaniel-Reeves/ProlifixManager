@@ -18,11 +18,11 @@
           </div>
           <hr class="d-print-none">
           <b-nav pills card-header slot="header" v-b-scrollspy:nav-scroller class="text-nowrap d-print-none">
-            <b-nav-item href="#Formulas" @click="scrollIntoView" :disabled="edit_specs">Formulas</b-nav-item>
+            <b-nav-item href="#Formulas" @click="scrollIntoView" :disabled="edit_manufacturing || edit_specs">Formulas</b-nav-item>
             <b-nav-item href="#Manufacturing" @click="scrollIntoView" :disabled="edit_formulas || edit_specs">Manufacturing</b-nav-item>
-            <b-nav-item href="#Specifications" @click="scrollIntoView" v-if="product_data.doc.specifications !== undefined" :disabled="edit_formulas">Specifications</b-nav-item>
+            <b-nav-item href="#Specifications" @click="scrollIntoView" v-if="product_data.doc.specifications !== undefined" :disabled="edit_manufacturing || edit_formulas">Specifications</b-nav-item>
             <div v-for="(spec, spec_key) in product_data.doc.specifications.specs" :key="spec_key">
-              <b-nav-item :href="'#'+spec_key" @click="scrollIntoView" :disabled="edit_formulas">{{ spec.test_name }}</b-nav-item>
+              <b-nav-item :href="'#'+spec_key" @click="scrollIntoView" :disabled="edit_manufacturing || edit_formulas">{{ spec.test_name }}</b-nav-item>
             </div>
           </b-nav>
         </b-card-body>
@@ -31,7 +31,7 @@
       <b-card class="my-2" v-if="loaded">
         <b-card-body id="nav-scroller" ref="content" class="scrollbox">
           <ProductFormula
-            v-show="!edit_specs"
+            v-show="!edit_manufacturing && !edit_specs"
             :v-key="formula_key"
             :product-id="product_data.product_id"
             :formulas="product_data.formulas"
@@ -42,10 +42,18 @@
             v-on:refresh-parent="(v) => refreshParent(v)"
           ></ProductFormula>
           <hr v-show="!edit_formulas && !edit_specs">
-          <ProductManufacturing v-show="!edit_formulas && !edit_specs" :manufacturing="product_data.manufacturing" :edit="edit_manufacturing"></ProductManufacturing>
-          <hr v-show="!edit_formulas">
+          <ProductManufacturing
+            v-show="!edit_formulas && !edit_specs"
+            :product-id="product_data.product_id"
+            :manufacturing="product_data.manufacturing"
+            :edit="edit_manufacturing"
+            v-on:edit-manufacturing="(e) => {edit_manufacturing = e}"
+            v-on:toggle-loaded="toggleLoaded"
+            v-on:refresh-parent="(v) => refreshParent(v)"
+          ></ProductManufacturing>
+          <hr v-show="!edit_formulas && !edit_manufacturing">
           <SpecificationsComponent
-            v-show="!edit_formulas"
+            v-show="!edit_formulas && !edit_manufacturing"
             :doc="product_data.doc"
             :spectype="'product'"
             :name="product_data.product_name"
