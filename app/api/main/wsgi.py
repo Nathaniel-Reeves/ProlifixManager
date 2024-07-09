@@ -130,6 +130,9 @@ def create_app():
     from view.submit_request import bp as submit_request_bp
     api_blueprint.register_blueprint(submit_request_bp)
 
+    from view.order_66 import bp as order_66_pb
+    api_blueprint.register_blueprint(order_66_pb)
+
     # Sanity Check Routes
     @api_blueprint.route('/ping', methods=['GET'])
     def ping_pong():

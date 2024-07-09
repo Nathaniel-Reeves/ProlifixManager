@@ -96,8 +96,13 @@ export default {
         this.$emit('editNames', this.edit_names)
       } else {
         if (this.naming_type === 'component') {
+          let primary = null
           this.edit_names_buffer.forEach(name => {
             this.req.upsertRecord('Component_Names', name)
+            if (name.primary_name) {
+              primary = name.name_id
+            }
+            this.req.upsertRecord('Components', { component_id: this.id, primary_name_id: primary })
           })
         } else {
           throw new Error('Invalid naming_type: "' + this.naming_type + '". Only component is allowed')

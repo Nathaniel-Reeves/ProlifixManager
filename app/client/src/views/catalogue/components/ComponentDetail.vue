@@ -33,7 +33,7 @@
 
           <!-- Alias Names -->
           <NamesComponent
-            :p-names="component_data.Component_Names"
+            :p-names="component_data.component_names"
             :id="component_data.component_id"
             naming-type="component"
             :allow-edit="true"
@@ -142,17 +142,17 @@ export default {
       return type.toLowerCase().split('_').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ')
     },
     get_component_primary_name: function (component) {
-      if (component.Component_Names !== undefined && component.Component_Names.length > 0) {
-        for (let i = 0; i < component.Component_Names.length; i++) {
-          if (component.Component_Names[i].primary_name) {
-            return component.Component_Names[i].component_name
+      if (component.component_names !== undefined && component.component_names.length > 0) {
+        for (let i = 0; i < component.component_names.length; i++) {
+          if (component.component_names[i].primary_name) {
+            return component.component_names[i].component_name
           }
         }
       }
       return 'No Name'
     },
     getComponentData: function () {
-      const fetchRequest = window.origin + '/api/v1/catalogue/components?component-id=' + this.id + '&populate=product_materials&populate=purchase_order_detail&populate=item_id&populate=inventory&populate=brand&doc=true'
+      const fetchRequest = window.origin + '/api/v1/catalogue/components?component-id=' + this.id + '&populate=component_names&doc=true'
       // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest
@@ -166,7 +166,7 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           response.json().then(data => {
-            this.component_data = Object.values(data.data[0])[0]
+            this.component_data = data.data[0]
             if (this.component_data.doc === null) {
               this.component_data.doc = {}
             }

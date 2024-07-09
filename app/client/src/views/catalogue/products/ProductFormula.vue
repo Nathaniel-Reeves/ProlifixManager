@@ -304,6 +304,7 @@
                           aria-describedby="max_grams_per_unit-live-feedback"
                           :class="['form-control', (new_formula_buffer.max_grams_per_unit >= new_formula_buffer.total_grams_per_unit && new_formula_buffer.max_grams_per_unit !== null ? '' : 'is-invalid')]"
                           @input="update_formula(new_formula_buffer)"
+                          v-on:keyup.enter="focus('total_grams_per_unit')"
                         >
                         <div class="input-group-append">
                           <span class="input-group-text">g</span>
@@ -326,6 +327,7 @@
                           aria-describedby="total_grams_per_unit-live-feedback"
                           :class="['form-control', (new_formula_buffer.total_grams_per_unit >= 0 && new_formula_buffer.total_grams_per_unit !== '' && new_formula_buffer.total_grams_per_unit !== null ? '' : 'is-invalid')]"
                           @input="update_formula(new_formula_buffer)"
+                          v-on:keyup.enter="focus('min_grams_per_unit')"
                         >
                         <div class="input-group-append">
                           <span class="input-group-text">g</span>
@@ -347,6 +349,7 @@
                           aria-describedby="min_grams_per_unit-live-feedback"
                           :class="['form-control', (new_formula_buffer.min_grams_per_unit <= new_formula_buffer.total_grams_per_unit && new_formula_buffer.min_grams_per_unit !== null ? '' : 'is-invalid')]"
                           @input="update_formula(new_formula_buffer)"
+                          v-on:keyup.enter="focus('max_milliliters_per_unit')"
                         >
                         <div class="input-group-append">
                           <span class="input-group-text">g</span>
@@ -373,6 +376,7 @@
                           aria-describedby="max_milliliters_per_unit-live-feedback"
                           :class="['form-control', (new_formula_buffer.max_milliliters_per_unit >= new_formula_buffer.total_milliliters_per_unit && new_formula_buffer.max_milliliters_per_unit !== null ? '' : 'is-invalid')]"
                           @input="update_formula(new_formula_buffer)"
+                          v-on:keyup.enter="focus('total_milliliters_per_unit')"
                         >
                         <div class="input-group-append">
                           <span class="input-group-text">ml</span>
@@ -394,6 +398,7 @@
                           aria-describedby="total_milliliters_per_unit-live-feedback"
                           :class="['form-control', (new_formula_buffer.total_milliliters_per_unit >= 0 && new_formula_buffer.total_milliliters_per_unit !== '' && new_formula_buffer.total_milliliters_per_unit !== null ? '' : 'is-invalid')]"
                           @input="update_formula(new_formula_buffer)"
+                          v-on:keyup.enter="focus('min_milliliters_per_unit')"
                         >
                         <div class="input-group-append">
                           <span class="input-group-text">ml</span>
@@ -415,6 +420,7 @@
                           aria-describedby="min_milliliters_per_unit-live-feedback"
                           :class="['form-control', (new_formula_buffer.min_milliliters_per_unit <= new_formula_buffer.total_milliliters_per_unit && new_formula_buffer.min_milliliters_per_unit !== null ? '' : 'is-invalid')]"
                           @input="update_formula(new_formula_buffer)"
+                          v-on:keyup.enter="focus('max_mg_per_capsule')"
                         >
                         <div class="input-group-append">
                           <span class="input-group-text">ml</span>
@@ -441,6 +447,7 @@
                           aria-describedby="max_mg_per_capsule-live-feedback"
                           :class="['form-control', (new_formula_buffer.max_mg_per_capsule >= new_formula_buffer.total_mg_per_capsule && new_formula_buffer.max_mg_per_capsule !== '' && new_formula_buffer.max_mg_per_capsule !== null ? '' : 'is-invalid')]"
                           @input="update_formula(new_formula_buffer)"
+                          v-on:keyup.enter="focus('total_mg_per_capsule')"
                         >
                         <div class="input-group-append">
                           <span class="input-group-text">mg</span>
@@ -462,6 +469,7 @@
                           aria-describedby="total_mg_per_capsule-live-feedback"
                           :class="['form-control', (new_formula_buffer.total_mg_per_capsule >= 0 && new_formula_buffer.total_mg_per_capsule !== '' && new_formula_buffer.total_mg_per_capsule !== null ? '' : 'is-invalid')]"
                           @input="update_formula(new_formula_buffer)"
+                          v-on:keyup.enter="focus('min_mg_per_capsule')"
                         >
                         <div class="input-group-append">
                           <span class="input-group-text">mg</span>
@@ -484,6 +492,7 @@
                           aria-describedby="min_mg_per_capsule-live-feedback"
                           :class="['form-control', (new_formula_buffer.min_mg_per_capsule <= new_formula_buffer.total_mg_per_capsule && new_formula_buffer.min_mg_per_capsule !== null ? '' : 'is-invalid')]"
                           @input="update_formula(new_formula_buffer)"
+                          v-on:keyup.enter="focus('total_capsules_per_unit')"
                         >
                         <div class="input-group-append">
                           <span class="input-group-text">mg</span>
@@ -506,6 +515,7 @@
                           aria-describedby="total_capsules_per_unit-live-feedback"
                           :class="['form-control', (new_formula_buffer.total_capsules_per_unit >= 0 && new_formula_buffer.total_capsules_per_unit !== '' && new_formula_buffer.total_capsules_per_unit !== null ? '' : 'is-invalid')]"
                           @input="update_formula(new_formula_buffer)"
+                          v-on:keyup.enter="focus('capsule_size')"
                         >
                         <div class="input-group-append">
                           <span class="input-group-text">ct</span>
@@ -523,6 +533,7 @@
                         aria-describedby="capsule_size-live-feedback"
                         :class="['form-control', 'form-control-md', (new_formula_buffer.capsule_size !== '' ? '' : 'is-invalid')]"
                         @input="update_formula(new_formula_buffer)"
+                        v-on:keyup.enter="focus('capsule_weight')"
                       >
                         <option selected value="">Select Size</option>
                         <option value="n/a">N/A</option>
@@ -547,6 +558,7 @@
                           aria-describedby="capsule_weight-live-feedback"
                           :class="['form-control', (new_formula_buffer.capsule_weight >= 0 && new_formula_buffer.capsule_weight !== '' && new_formula_buffer.capsule_weight !== null ? '' : 'is-invalid')]"
                           @input="update_formula(new_formula_buffer)"
+                          v-on:keyup.enter="focus('max_grams_per_unit')"
                         >
                         <div class="input-group-append">
                           <span class="input-group-text">mg</span>
@@ -727,6 +739,9 @@ export default {
     }
   },
   methods: {
+    focus: function (elmId) {
+      document.getElementById(elmId).focus()
+    },
     set_default_formula_id: function (id) {
       this.$emit('toggleLoaded', false)
       this.req = new CustomRequest(this.$cookies.get('session'))
@@ -1208,37 +1223,8 @@ export default {
       }
       this.versions.push({ value: 'NEW', text: 'New Formula' })
     },
-    get_component_primary_name: function (component) {
-      if (component.component_name !== undefined) {
-        return component.component_name
-      }
-      if (component.Component_Names !== undefined && component.Component_Names.length > 0) {
-        for (let i = 0; i < component.Component_Names.length; i++) {
-          if (component.Component_Names[i].primary_name) {
-            component.component_name = component.Component_Names[i].component_name
-            return component.Component_Names[i].component_name
-          }
-        }
-      }
-      return 'No Name'
-    },
-    get_organization_primary_name: function (organization) {
-      if (organization.organization_name !== undefined) {
-        return organization.organization_name
-      }
-      if (organization.Organization_Names !== undefined && organization.Organization_Names.length > 0) {
-        for (let i = 0; i < organization.Organization_Names.length; i++) {
-          if (organization.Organization_Names[i].primary_name) {
-            organization.organization_name = organization.Organization_Names[i].organization_name
-            organization.organization_initial = organization.Organization_Names[i].organization_initial
-            return organization.Organization_Names[i].organization_name
-          }
-        }
-      }
-      return 'No Name'
-    },
     get_organizations: function () {
-      const fetchRequest = window.origin + '/api/v1/organizations?org-type=supplier'
+      const fetchRequest = window.origin + '/api/v1/organizations'
       // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest
@@ -1252,8 +1238,8 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           response.json().then(data => {
-            const orgs = Object.values(data.data[0])
-            this.organization_options = orgs.sort((a, b) => (this.get_organization_primary_name(a) > this.get_organization_primary_name(b) ? 1 : -1))
+            const orgs = Object.values(data.data)
+            this.organization_options = orgs.sort((a, b) => (a?.organization_primary_name > b?.organization_primary_name ? 1 : -1))
             // eslint-disable-next-line
             console.log(this.organization_options)
             if (this.organization_options.doc === null) {
@@ -1289,11 +1275,8 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           response.json().then(data => {
-            const ings = Object.values(data.data[0])
-            for (const i in ings) {
-              this.get_component_primary_name(ings[i])
-            }
-            this.ingredient_options = ings.sort((a, b) => (a.component_name > b.component_name ? 1 : -1))
+            const ings = Object.values(data.data)
+            this.ingredient_options = ings.sort((a, b) => (a.component_primary_name > b.component_name ? 1 : -1))
             // eslint-disable-next-line
             console.log(this.ingredient_options)
           })

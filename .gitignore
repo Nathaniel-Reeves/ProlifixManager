@@ -5,3 +5,4 @@ app/db/files/*
 app/redis/data/*
 app/.env
 specs
+app/api/main/controller/prod_server_db_creds.md

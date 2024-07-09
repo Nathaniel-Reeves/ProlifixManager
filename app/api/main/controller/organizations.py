@@ -1,73 +1,29 @@
 '''
 Handle Organizations Data
 '''
-import json
-from sqlalchemy import select, text
+from sqlalchemy import select
 
-from view.response import (
-    VariantType,
-    FlashMessage,
-    CustomResponse,
-    error_message
-)
+from view.response import CustomResponse
 import model as db
-from model.connector import get_session
-from .package import package_data
+from .execute import execute_query
 
-def get_organizations(custom_response, org_ids, org_type, populate, doc):
-    """
-    Fetch Organizaiton from the database.
-    Populate and filter Organizations if requested.
+from .orders import get_sales_orders, get_purchase_orders
+from .inventory import get_components
+from .products import get_products
 
-    Args:
-        custom_response (CustomResponse): CustomResponse object
-        org_ids (list): List of organization ids
-        org_type (list): Organization types (enum)
-            ('supplier', 'client', 'courier', 'lab')
-            Note: an empty list will return all organizations
-        populate (list): List of tables to populate (enum)
-            ('facilities','sales-orders', 'purchase-orders', 'people', 'components', 'products')
-        doc (bool): Whether or not to include the document column in the response
 
-    Returns:
-        custom_response (CustomResponse): CustomResponse object containing the data and relivant error messages.
-    """
+def get_organizations(
+        custom_response,
+        org_ids,
+        org_type,
+        populate,
+        doc
+    ):
 
     # Build the query
-    tables = [db.Organizations, db.Organization_Names]
+    stm = select(db.Organizations, db.Organization_Names)
 
-    if 'facilities' in populate:
-        tables.append(db.Facilities)
-    if 'sales_orders' in populate:
-        tables.append(db.Sales_Orders)
-    if 'purchase_orders' in populate:
-        tables.append(db.Purchase_Orders)
-    if 'people' in populate:
-        tables.append(db.People)
-    if 'components' in populate:
-        tables.append(db.Components)
-        tables.append(db.Component_Names)
-    if 'products' in populate:
-        tables.append(db.Product_Master)
-
-    stm = select(*tables) \
-        .join(db.Organization_Names, isouter=True)
-
-    if 'facilities' in populate:
-        stm = stm.join(db.Facilities, db.Organizations.organization_id == db.Facilities.organization_id, isouter=True)
-    if 'sales_orders' in populate:
-        stm = stm.join(db.Sales_Orders, db.Organizations.organization_id == db.Sales_Orders.organization_id, isouter=True)
-    if 'purchase_orders' in populate:
-        stm = stm.join(db.Purchase_Orders, db.Organizations.organization_id == db.Purchase_Orders.organization_id, isouter=True)
-    if 'people' in populate:
-        stm = stm.join(db.People, db.Organizations.organization_id == db.People.organization_id, isouter=True)
-    if 'components' in populate:
-        stm = stm.join(db.Components, db.Organizations.organization_id == db.Components.brand_id, isouter=True)
-        stm = stm.join(db.Component_Names, db.Components.component_id == db.Component_Names.component_id, isouter=True)
-    if 'products' in populate:
-        stm = stm.join(db.Product_Master, db.Organizations.organization_id == db.Product_Master.organization_id, isouter=True)
-
-    stm = stm.where(db.Organization_Names.primary_name == True)
+    stm = stm.join(db.Organization_Names, db.Organizations.primary_name_id == db.Organization_Names.name_id)
 
     if org_type:
         if 'client' in org_type:
@@ -82,115 +38,299 @@ def get_organizations(custom_response, org_ids, org_type, populate, doc):
     if org_ids:
         stm = stm.where(db.Organizations.organization_id.in_(org_ids))
 
-    # Connect to the database
-    try:
-        session = get_session()
-    except Exception:
-        error = error_message()
-        custom_response.insert_flash_message(error)
-        custom_response.set_status_code(500)
-        return custom_response
-
     # Execute the query
-    try:
-        stream = session.execute(stm)
-        raw_data = stream.all()
-    except Exception:
-        error = error_message()
-        custom_response.insert_flash_message(error)
-        custom_response.set_status_code(500)
-        session.close()
+    custom_response, raw_data, success = execute_query(custom_response, stm)
+    if not success:
         return custom_response
-
-    session.close()
 
     # Process and Package the data
-    data, custom_response = package_data(raw_data, doc, custom_response)
-    custom_response.insert_data(data)
+    for row in raw_data:
+        pk = row[0].get_id()
+        organization = row[0].to_dict()
+
+        if row[1]:
+            organization_primary_name = row[1].to_dict()
+            organization['organization_primary_name'] = organization_primary_name['organization_name']
+            organization['organization_primary_initial'] = organization_primary_name['organization_initial']
+        else:
+            organization['organization_primary_name'] = None
+            organization['organization_primary_initial'] = None
+
+        organization_names = {'organization_names': []}
+        facilities = {'facilities':[]}
+        sales_orders = {'sales_orders': []}
+        purchase_orders = {'purchase_orders': []}
+        people = {'people': []}
+        components = {'components': []}
+        products = {'products': []}
+
+        # Populate
+        if ('organization_names' in populate):
+            r = CustomResponse()
+            resp = get_organization_names(r, [], [pk], False)
+            organization_names = {'organization_names': resp.get_data()}
+            custom_response.insert_flash_messages(r.get_flash_messages())
+
+        if ('facilities' in populate):
+            r = CustomResponse()
+            resp = get_facilities( r, [], [pk], doc)
+            facilities_data = resp.get_data()
+            custom_response.insert_flash_messages(r.get_flash_messages())
+            facilities = {'facilities': facilities_data}
+
+        if ('sales_orders' in populate):
+            r = CustomResponse()
+            resp = get_sales_orders(r, [], [pk], doc)
+            sales_orders_data = resp.get_data()
+            custom_response.insert_flash_messages(r.get_flash_messages())
+            sales_orders = {'sales_orders': sales_orders_data}
+
+        if ('purchase_orders' in populate):
+            r = CustomResponse()
+            resp = get_purchase_orders(r, [], [pk], doc)
+            purchase_orders_data = resp.get_data()
+            custom_response.insert_flash_messages(r.get_flash_messages())
+            purchase_orders = {'purchase_orders': purchase_orders_data}
+
+        if ('people' in populate):
+            r = CustomResponse()
+            resp = get_people(r, [], [pk], [], doc)
+            people_data = resp.get_data()
+            custom_response.insert_flash_messages(r.get_flash_messages())
+            people = {'people': people_data}
+
+        if ('components' in populate):
+            r = CustomResponse()
+            resp = get_components(r, [], [], [], [pk], [], False)
+            components_data = resp.get_data()
+            custom_response.insert_flash_messages(r.get_flash_messages())
+            components = {'components': components_data}
+
+        if ('products' in populate):
+            r = CustomResponse()
+            resp = get_products(r, [], [], [pk], [], doc)
+            products_data = resp.get_data()
+            custom_response.insert_flash_messages(r.get_flash_messages())
+            products = {'products': products_data}
+
+        custom_response.insert_data({**organization, **organization_names, **facilities, **sales_orders, **purchase_orders, **people, **components, **products})
+
     return custom_response
 
-def organization_exists(names, custom_response):
-    """
-    Check if an organization already exists by organization name.
-    """
-    # Execute Querys
-    primary_exists = False
-    levenshtein_results = []
-    for name in names:
-        if name["primary_name"]:
-            primary_exists = True
-        results, levensthein_messages = check_org_exists_levenshtein(
-            name["organization_name"])
-        if not results == -1:
-            levenshtein_results += results
-        custom_response.insert_flash_messages(levensthein_messages)
+def get_organization_names(
+        custom_response,
+        name_ids,
+        organization_ids,
+        primary_name=False
+    ):
 
-    # Handle Primary False
-    if not primary_exists:
-        e_message = FlashMessage(
-            message="Primary Name not selected!",
-            variant=VariantType.WARNING)
-        custom_response.insert_flash_message(e_message)
+    # Build the query
+    stm = select(db.Organization_Names)
 
-    # Insert the levenshtein_results into the response
-    custom_response.insert_data(levenshtein_results)
+    if name_ids:
+        stm = stm.where(db.Organization_Names.name_id.in_(name_ids))
+
+    if organization_ids:
+        stm = stm.where(db.Organization_Names.organization_id.in_(organization_ids))
+
+    if primary_name:
+        stm = stm.where(db.Organization_Names.primary_name == True)
+
+    # Execute the query
+    custom_response, raw_data, success = execute_query(custom_response, stm)
+    if not success:
+        return custom_response
+
+    # Process and Package the data
+    for row in raw_data:
+        organization_name = row[0].to_dict()
+
+        custom_response.insert_data({ **organization_name })
 
     return custom_response
 
+def get_facilities(
+        custom_response,
+        facility_ids,
+        organization_ids,
+        doc
+    ):
 
-def check_org_exists_levenshtein(search_name):
-    '''
-    Checks likelyhood if Organization Name already exists
-    in the Database.
-    '''
-    try:
-        session = get_session()
+    # Build the query
+    stm = select(db.Facilities)
 
-        # Build Query
-        base_query = """
-        SELECT
-            JSON_OBJECT(
-                'organization_id', `organization_id`,
-                'organization_name', `organization_name`,
-                'levenshtein_probability', CAST(sys.LEVENSHTEIN_RATIO(`organization_name`, :search_name) AS UNSIGNED INTEGER)
-            ) AS levenshtein_results
-        FROM `Organizations`.`Organization_Names`
-        WHERE
-            sys.LEVENSHTEIN_RATIO(`organization_name`, :search_name) > 50;
-        """
+    if facility_ids:
+        stm = stm.where(db.Facilities.facility_id.in_(facility_ids))
 
-        # Execute Query
-        result = session.execute(
-            text(base_query),
-            {"search_name":search_name}
-        )
+    if organization_ids:
+        stm = stm.where(db.Facilities.organization_id.in_(organization_ids))
 
-        # Return Results
-        levensthein_results = []
-        levensthein_messages = []
-        for row in result:
-            # Save Data
-            json_row = json.loads(row[0])
-            levensthein_results.append(json_row)
+    # Execute the query
+    custom_response, raw_data, success = execute_query(custom_response, stm)
+    if not success:
+        return custom_response
 
-            # Create Message Components
-            message_alert_heading = "Possible Duplicate Organization."
-            message = f"Possible duplicate organization between '{search_name}' and '{json_row['organization_name']}'."
-            message_detail = f"'{search_name}' is a {json_row['levenshtein_probability']} percent match for '{json_row['organization_name']}'.  Are they the same organization?"
-            message_link = f"/api/organizations/?org-id={json_row['organization_id']}"
+    # Process and Package the data
+    for row in raw_data:
+        facility = row[0].to_dict()
 
-            # Create Message Object using Components
-            message_obj = FlashMessage(
-                alert_heading=message_alert_heading,
-                message=message,
-                message_detail=message_detail,
-                link=message_link,
-                variant=VariantType.WARNING
-            )
-            levensthein_messages.append(message_obj)
+        custom_response.insert_data({ **facility })
 
-        return levensthein_results, levensthein_messages
+    return custom_response
 
-    except Exception:
-        error = error_message()
-        return -1, [error]
+def get_people(
+        custom_response,
+        person_ids,
+        organization_ids,
+        populate,
+        doc
+    ):
+
+    # Build the query
+    stm = select(db.People)
+
+    if person_ids:
+        stm = stm.where(db.People.person_id.in_(person_ids))
+
+    if organization_ids:
+        stm = stm.where(db.People.organization_id.in_(organization_ids))
+
+    # Execute the query
+    custom_response, raw_data, success = execute_query(custom_response, stm)
+    if not success:
+        return custom_response
+
+    # Process and Package the data
+    for row in raw_data:
+        pk = row[0].get_id()
+        person = row[0].to_dict()
+
+        users = {'user': []}
+
+        if 'user' in populate:
+            r = CustomResponse()
+            resp = get_users(r, [], [pk], doc)
+            user = {'user': resp.get_data()}
+            custom_response.insert_flash_messages(r.get_flash_messages())
+            custom_response.insert_data({ **user })
+
+        custom_response.insert_data({ **person, **users })
+
+    return custom_response
+
+def get_users(
+        custom_response,
+        user_ids,
+        person_ids,
+        doc
+    ):
+
+    # Build the query
+    stm = select(db.Users)
+
+    if user_ids:
+        stm = stm.where(db.Users.user_id.in_(user_ids))
+
+    if person_ids:
+        stm = stm.where(db.Users.person_id.in_(person_ids))
+
+    # Execute the query
+    custom_response, raw_data, success = execute_query(custom_response, stm)
+    if not success:
+        return custom_response
+
+    # Process and Package the data
+    for row in raw_data:
+        user = row[0].to_dict()
+
+        custom_response.insert_data({ **user })
+
+    return custom_response
+
+# from sqlalchemy import select, text
+
+# def organization_exists(names, custom_response):
+#     """
+#     Check if an organization already exists by organization name.
+#     """
+#     # Execute Querys
+#     primary_exists = False
+#     levenshtein_results = []
+#     for name in names:
+#         if name["primary_name"]:
+#             primary_exists = True
+#         results, levensthein_messages = check_org_exists_levenshtein(
+#             name["organization_name"])
+#         if not results == -1:
+#             levenshtein_results += results
+#         custom_response.insert_flash_messages(levensthein_messages)
+
+#     # Handle Primary False
+#     if not primary_exists:
+#         e_message = FlashMessage(
+#             message="Primary Name not selected!",
+#             variant=VariantType.WARNING)
+#         custom_response.insert_flash_message(e_message)
+
+#     # Insert the levenshtein_results into the response
+#     custom_response.insert_data(levenshtein_results)
+
+#     return custom_response
+
+
+# def check_org_exists_levenshtein(search_name):
+#     '''
+#     Checks likelyhood if Organization Name already exists
+#     in the Database.
+#     '''
+#     try:
+#         session = get_session()
+
+#         # Build Query
+#         base_query = """
+#         SELECT
+#             JSON_OBJECT(
+#                 'organization_id', `organization_id`,
+#                 'organization_name', `organization_name`,
+#                 'levenshtein_probability', CAST(sys.LEVENSHTEIN_RATIO(`organization_name`, :search_name) AS UNSIGNED INTEGER)
+#             ) AS levenshtein_results
+#         FROM `Organizations`.`Organization_Names`
+#         WHERE
+#             sys.LEVENSHTEIN_RATIO(`organization_name`, :search_name) > 50;
+#         """
+
+#         # Execute Query
+#         result = session.execute(
+#             text(base_query),
+#             {"search_name":search_name}
+#         )
+
+#         # Return Results
+#         levensthein_results = []
+#         levensthein_messages = []
+#         for row in result:
+#             # Save Data
+#             json_row = json.loads(row[0])
+#             levensthein_results.append(json_row)
+
+#             # Create Message Components
+#             message_alert_heading = "Possible Duplicate Organization."
+#             message = f"Possible duplicate organization between '{search_name}' and '{json_row['organization_name']}'."
+#             message_detail = f"'{search_name}' is a {json_row['levenshtein_probability']} percent match for '{json_row['organization_name']}'.  Are they the same organization?"
+#             message_link = f"/api/organizations/?org-id={json_row['organization_id']}"
+
+#             # Create Message Object using Components
+#             message_obj = FlashMessage(
+#                 alert_heading=message_alert_heading,
+#                 message=message,
+#                 message_detail=message_detail,
+#                 link=message_link,
+#                 variant=VariantType.WARNING
+#             )
+#             levensthein_messages.append(message_obj)
+
+#         return levensthein_results, levensthein_messages
+
+#     except Exception:
+#         error = error_message()
+#         return -1, [error]

@@ -17,15 +17,15 @@
     <div v-if="edit_specs">
       <b-form-group>
         <label for="description_statement"><strong>Description</strong><br></label>
-        <b-form-textarea id="description_statement" v-model="edit_specs_buffer.description_statement" placeholder="description..." rows="3" max-rows="6"></b-form-textarea>
+        <b-form-textarea id="description_statement" v-model="edit_specs_buffer.description_statement" placeholder="description..." rows="3" max-rows="6" v-on:keyup.enter="focus('origin')"></b-form-textarea>
         <label for="origin"><strong>Origin</strong><br></label>
-        <b-form-textarea id="origin" v-model="edit_specs_buffer.origin" placeholder="Origin..." rows="3" max-rows="6"></b-form-textarea>
+        <b-form-textarea id="origin" v-model="edit_specs_buffer.origin" placeholder="Origin..." rows="3" max-rows="6" v-on:keyup.enter="focus('identity_statement')"></b-form-textarea>
         <label for="identity_statement"><strong>Identity Statement</strong><br></label>
-        <b-form-textarea id="identity_statement" v-model="edit_specs_buffer.identity_statement" placeholder="Identity statement..." rows="3" max-rows="6"></b-form-textarea>
+        <b-form-textarea id="identity_statement" v-model="edit_specs_buffer.identity_statement" placeholder="Identity statement..." rows="3" max-rows="6" v-on:keyup.enter="focus('strength_statement')"></b-form-textarea>
         <label for="strength_statement"><strong>Strength Statement</strong><br></label>
-        <b-form-textarea id="strength_statement" v-model="edit_specs_buffer.strength_statement" placeholder="Strength statement..." rows="3" max-rows="6"></b-form-textarea>
+        <b-form-textarea id="strength_statement" v-model="edit_specs_buffer.strength_statement" placeholder="Strength statement..." rows="3" max-rows="6" v-on:keyup.enter="focus('purity_statement')"></b-form-textarea>
         <label for="purity_statement"><strong>Purity Statement</strong><br></label>
-        <b-form-textarea id="purity_statement" v-model="edit_specs_buffer.purity_statement" placeholder="Purity statement..." rows="3"  max-rows="6"></b-form-textarea>
+        <b-form-textarea id="purity_statement" v-model="edit_specs_buffer.purity_statement" placeholder="Purity statement..." rows="3"  max-rows="6" v-on:keyup.enter="focus('description_statement')"></b-form-textarea>
         <label for="parts_used"><strong>Parts Used</strong><br></label>
         <b-form-textarea id="parts_used" v-model="edit_specs_buffer.parts_used" placeholder="Parts used..." rows="1"  max-rows="2"></b-form-textarea>
       </b-form-group>
@@ -356,6 +356,9 @@ export default {
     }
   },
   methods: {
+    focus: function (elmId) {
+      document.getElementById(elmId).focus()
+    },
     addSpec: function (specKey) {
       const test = this.newTest()
       test.type = this.spectype + '_specifications/' + specKey

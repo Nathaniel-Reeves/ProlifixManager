@@ -178,9 +178,11 @@ class CustomRequest:
             self.custom_response.set_status_code(400)
             return False
 
-        id, outcome = self._execute_query(stm)
-        if id and temp_key:
-            self.temp_key_lookup[temp_key] = id
+        new_id, outcome = self._execute_query(stm)
+        if new_id and temp_key:
+            self.temp_key_lookup[temp_key] = new_id
+            data = { 'table_name': table_name, 'new_id' : new_id, 'pk' : pk_col }
+            self.custom_response.insert_data(data)
 
         return outcome
 

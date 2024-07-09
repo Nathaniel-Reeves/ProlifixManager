@@ -55,6 +55,7 @@ class Components(Base):
         create_constraint=True,
         validate_strings=True,
         ))
+    primary_name_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Component_Names.name_id'))
 
     doc = Column(JSON, default={})
 
@@ -86,7 +87,8 @@ class Components(Base):
             "certified_vegan": self.certified_vegan,
             "date_entered": self.date_entered,
             "units": self.units,
-            "doc": self.doc
+            "doc": self.doc,
+            "primary_name_id": self.primary_name_id
         }
 
     def get_id(self):

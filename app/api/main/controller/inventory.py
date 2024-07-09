@@ -1,22 +1,18 @@
 '''
 Handle Inventory Data
 '''
-import json
-from sqlalchemy import select, insert, update, delete
+from sqlalchemy import select
 
-from view.response import (
-    VariantType,
-    FlashMessage,
-    error_message
-)
+from view.response import CustomResponse
 import model as db
-from model.connector import get_session
-from .package import package_data
-from .files import save_files
+from .execute import execute_query
+
+import controller.organizations as org
+from .orders import get_purchase_order_detail
 
 def get_components(
         custom_response,
-        product_ids,
+        component_ids,
         component_types,
         certifications,
         brand_ids,
@@ -25,35 +21,12 @@ def get_components(
     ):
 
     # Build the query
-    tables = [db.Components, db.Component_Names]
+    stm = select(db.Components, db.Item_id, db.Component_Names)
+    stm = stm.join(db.Item_id, db.Components.component_id == db.Item_id.component_id, isouter=True)
+    stm = stm.join(db.Component_Names, db.Components.primary_name_id == db.Component_Names.name_id, isouter=True)
 
-    if 'purchase_order_detail' in populate:
-        tables.append(db.Purchase_Order_Detail)
-    if 'item_id' in populate or 'inventory' in populate:
-        tables.append(db.Item_id)
-    if 'inventory' in populate:
-        tables.append(db.Inventory)
-    if 'brand' in populate:
-        tables.append(db.Organizations)
-        tables.append(db.Organization_Names)
-
-    stm = select(*tables) \
-        .join(db.Component_Names, isouter=True)
-
-    if 'purchase_order_detail' in populate:
-        stm = stm.join(db.Purchase_Order_Detail, db.Components.component_id == db.Purchase_Order_Detail.component_id, isouter=True)
-    if 'item_id' in populate or 'inventory' in populate:
-        stm = stm.join(db.Item_id, db.Components.component_id == db.Item_id.component_id, isouter=True)
-    if 'inventory' in populate:
-        stm = stm.join(db.Inventory, db.Item_id.item_id == db.Inventory.item_id, isouter=True)
-    if 'brand' in populate:
-        stm = stm.join(db.Organizations, db.Components.brand_id == db.Organizations.organization_id, isouter=True)
-        stm = stm.join(db.Organization_Names, db.Organizations.organization_id == db.Organization_Names.organization_id, isouter=True)
-
-    # stm = stm.where(db.Component_Names.primary_name == True)
-
-    if product_ids:
-        stm = stm.where(db.Components.component_id.in_(product_ids))
+    if component_ids:
+        stm = stm.where(db.Components.component_id.in_(component_ids))
 
     if brand_ids:
         stm = stm.where(db.Components.brand_id.in_(brand_ids))
@@ -87,170 +60,106 @@ def get_components(
         if 'fda' in certifications:
             stm = stm.where(db.Components.certified_fda == True)
 
-    # Connect to the database
-    try:
-        session = get_session()
-    except Exception:
-        error = error_message()
-        custom_response.insert_flash_message(error)
-        custom_response.set_status_code(500)
+    # Execute the query
+    custom_response, raw_data, success = execute_query(custom_response, stm)
+    if not success:
         return custom_response
+
+    # Process and Package the data
+    for row in raw_data:
+        pk = row[0].get_id()
+        component = row[0].to_dict()
+
+        if row[1]:
+            item_id = row[1].get_id()
+            component['item_id'] = item_id
+        else:
+            component['item_id'] = None
+
+        if row[2]:
+            component_primary_name = row[2].to_dict()
+            component['component_primary_name'] = component_primary_name['component_name']
+        else:
+            component['component_primary_name'] = None
+
+        component_names = {'component_names':[]}
+        purchase_order_detail = {'purchase_order_detail':[]}
+        inventory = {'inventory':[]}
+        brand = {'brand':[]}
+
+        if 'component_names' in populate:
+            r = CustomResponse()
+            resp = get_component_names( r, [], [pk], False, False)
+            component_names = {'component_names':resp.get_data()}
+            custom_response.insert_flash_messages(r.get_flash_messages())
+
+        if 'purchase_order_detail' in populate:
+            r = CustomResponse()
+            resp = get_purchase_order_detail( r, [], [], False)
+            purchase_order_detail = {'purchase_order_detail':resp.get_data()}
+            custom_response.insert_flash_messages(r.get_flash_messages())
+
+        if 'inventory' in populate:
+            r = CustomResponse()
+            resp = get_inventory( r, [], [item_id], [], [], False)
+            inventory = {'inventory':resp.get_data()}
+            custom_response.insert_flash_messages(r.get_flash_messages())
+
+        if 'brand' in populate:
+            r = CustomResponse()
+            resp = org.get_organizations( r, [component.brand_id], [], [], False)
+            brand = {'brand':resp.get_data()}
+            custom_response.insert_flash_messages(r.get_flash_messages())
+
+        if not doc:
+            component.pop('doc')
+
+        custom_response.insert_data({**component, **component_names, **purchase_order_detail, **inventory, **brand})
+
+    return custom_response
+
+def get_component_names(
+        custom_response,
+        name_ids,
+        component_ids,
+        primary_name=False,
+        botanical_name=False
+    ):
+
+    # Build the query
+    stm = select(db.Component_Names)
+
+    if name_ids:
+        stm = stm.where(db.Component_Names.name_id.in_(name_ids))
+
+    if component_ids:
+        stm = stm.where(db.Component_Names.component_id.in_(component_ids))
+
+    if primary_name:
+        stm = stm.where(db.Component_Names.primary_name == True)
+
+    if botanical_name:
+        stm = stm.where(db.Component_Names.botanical_name == True)
 
     # Execute the query
-    try:
-        stream = session.execute(stm)
-        raw_data = stream.all()
-    except Exception:
-        error = error_message()
-        custom_response.insert_flash_message(error)
-        custom_response.set_status_code(400)
-        session.close()
+    custom_response, raw_data, success = execute_query(custom_response, stm)
+    if not success:
         return custom_response
 
-    session.close()
     # Process and Package the data
-    data, custom_response = package_data(raw_data, doc, custom_response)
-    custom_response.insert_data(data)
+    for row in raw_data:
+        component_name = row[0].to_dict()
+
+        custom_response.insert_data({ **component_name })
+
     return custom_response
 
-def post_component(
+def get_inventory(
         custom_response,
-        component
+        inv_ids,
+        item_ids,
+        lot_numbers,
+        owners,
+        doc
     ):
-
-    # Connect to the database
-    try:
-        session = get_session()
-    except Exception:
-        error = error_message()
-        custom_response.insert_flash_message(error)
-        custom_response.set_status_code(500)
-        return custom_response
-
-    try:
-
-        # Save Files if Any
-        new_component = save_files(component, session)
-
-        # Insert Component in Components Table
-        stream = session.execute(
-            insert(db.Components).returning(db.Components),
-            new_component
-        )
-        raw_data = stream.all()
-        new_component_id = raw_data[0][0].get_id()
-        new_component["component_id"] = new_component_id
-
-        # Insert new component_id in Items Table
-        stream = session.execute(
-            insert(db.Item_id).returning(db.Item_id),
-            {"component_id": new_component_id}
-        )
-        raw_data = stream.all()
-        new_item_id = raw_data[0][0].get_id()
-
-        # Insert Component_Names in Component_Names Table
-        for name in new_component["Component_Names"]:
-            name["component_id"] = new_component_id
-            stream = session.execute(
-                insert(db.Component_Names).returning(db.Component_Names),
-                name
-            )
-            raw_data = stream.all()
-            name["name_id"] = raw_data[0][0].get_id()
-
-        session.commit()
-    except Exception:
-        error = error_message()
-        custom_response.insert_flash_message(error)
-        custom_response.set_status_code(400)
-        session.rollback()
-        session.close()
-        return custom_response
-
-    session.close()
-
-    # Process and Package the data
-    custom_response.insert_data(new_component)
-    custom_response.set_status_code(201)
-    flash_message = FlashMessage(
-        variant=VariantType.SUCCESS,
-        title="Success",
-        message="Component Added Successfully"
-    )
-    custom_response.insert_flash_message(flash_message)
-    return custom_response
-
-def put_component(
-        custom_response,
-        component
-    ):
-    # Connect to the database
-    try:
-        session = get_session()
-    except Exception:
-        error = error_message()
-        custom_response.insert_flash_message(error)
-        custom_response.set_status_code(500)
-        return custom_response
-
-    try:
-
-        # Save Files if Any
-        update_component = save_files(component, session)
-
-        # Update Component Names
-        component_names = json.loads(update_component.pop("Component_Names"))
-        stream = session.execute(
-            select(db.Component_Names)
-            .where(db.Component_Names.component_id == update_component["component_id"])
-        )
-        raw_data = stream.all()
-        current_names = []
-        for row in raw_data:
-            current_names.append(row[0].to_dict())
-
-        if component_names != current_names:
-            # Delete existing Component Names
-            session.execute(
-                delete(db.Component_Names)
-                .where(db.Component_Names.component_id == update_component["component_id"])
-            )
-
-            # Add New Component Names
-            for name in component_names:
-                name["name_id"] = None
-            session.execute(
-                insert(db.Component_Names)
-                .values(component_names)
-            )
-
-        # Update Component Data
-        session.execute(
-            update(db.Components)
-            .where(db.Components.component_id == update_component["component_id"])
-            .values(update_component)
-        )
-
-
-        session.commit()
-    except Exception:
-        error = error_message()
-        custom_response.insert_flash_message(error)
-        custom_response.set_status_code(400)
-        session.rollback()
-        session.close()
-        return custom_response
-
-    session.close()
-
-    # Process and Package the data
-    custom_response.insert_data(update_component)
-    custom_response.set_status_code(201)
-    flash_message = FlashMessage(
-        variant=VariantType.SUCCESS,
-        title="Changes Saved!",
-        message="Component Updated Successfully"
-    )
-    custom_response.insert_flash_message(flash_message)
-    return custom_response
+    raise NotImplementedError

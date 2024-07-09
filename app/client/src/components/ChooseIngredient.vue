@@ -121,7 +121,7 @@ export default {
       return this.ingredients.length > 0
     },
     filtered () {
-      return this.ingredients.filter((ing) => ing.component_name ? ing.component_name.includes(this.search) : false)
+      return this.ingredients.filter((ing) => ing.component_primary_name ? ing.component_primary_name?.includes(this.search) : false)
     },
     paginated () {
       return this.filtered.slice(0, this.limit)

@@ -42,7 +42,7 @@
       <div class="card-body">
         <div class="input-group d-flex">
           <h2 class="card-title flex-grow-1">Organizations</h2>
-          <b-button disabled title="New Organization" style="border-width: 2px; border-color:#999999" v-bind:class="['btn', 'my-2', 'mx-1', 'btn-light']" type="button"
+          <b-button :to="{ name: 'NewOrganization'}" title="New Organization" style="border-width: 2px; border-color:#999999" v-bind:class="['btn', 'my-2', 'mx-1', 'btn-light']" type="button"
                 id="button-addon2">
             <b-icon icon="plus"></b-icon>
           </b-button>
@@ -62,54 +62,54 @@
           <div class="card" v-for="org in filterOrganizations" :key="org.organization_id">
             <div class="card-header" v-bind:id="'heading' + org.organization_id">
               <h2 class="d-flex flex-row mb-0">
-                <button class="btn btn-block text-left" type="button" data-toggle="collapse"
-                  v-bind:data-target="'#collapse' + org.organization_id" aria-expanded="false"
-                  v-bind:aria-controls="'collapse' + org.organization_id" v-on:click="populateOrg(org.organization_id)">
-                  <b-container fluid class="d-flex justify-content-start flex-wrap">
-                      <b-icon icon="chevron-down"></b-icon>
-                      <div class="p-2">{{ org.Organization_Names[0].organization_name }}</div>
-                    </b-container>
-                </button>
-                <b-container fluid class="d-flex justify-content-end flex-wrap" style="max-width:10rem;">
-                  <button disabled type="button" class="btn btn-light ms-auto" style="border-width: 2px; border-color:#999999">View Details</button>
-                </b-container>
+                <b-button class="text-left" v-b-toggle="'collapse' + org.organization_id" v-on:click="populateOrg(org.organization_id)" variant="light" style="width:100%;">
+                  <b-container fluid class="m-0">
+                    <b-row align-v="baseline">
+                      <b-col sm="0.5"><b-icon icon="chevron-down"></b-icon></b-col>
+                      <b-col sm="4"><h4 class="p-2">{{ org.organization_primary_name }}  -  ({{ org.organization_primary_initial }})</h4></b-col>
+                    </b-row>
+                  </b-container>
+                </b-button>
               </h2>
             </div>
 
-            <div v-bind:id="'collapse' + org.organization_id" class="collapse"
-              v-bind:aria-labelledby="'heading' + org.organization_id" data-parent="#accordionExample">
-              <div v-show="!org.populated" class="d-flex justify-content-center">
-                <div v-show="!org.populated" class="spinner-border text-primary mt-3" role="status"></div>
+            <b-collapse v-bind:id="'collapse' + org.organization_id">
+              <div v-if="!org.populated" class="d-flex justify-content-center my-4">
+                <div class="spinner-border text-primary mt-3" role="status"></div>
               </div>
-              <div class="card-body d-flex flex-wrap">
+              <div v-else class="card-body d-flex flex-wrap">
 
-                <div class="p-2" v-if="org.hasOwnProperty('Facilities')" v-show="Object.keys(org.Facilities).length !== 0">
+                <div class="p-2" v-show="org?.facilities?.length > 0">
                   <h5>Facilities</h5>
-                  <!-- <FacilitiesGrid v-bind:Facilities="org.Facilities"></FacilitiesGrid> -->
+                  <!-- <FacilitiesGrid v-bind:Facilities="org.facilities"></FacilitiesGrid> -->
                 </div>
-                <div class="p-2" v-if="org.hasOwnProperty('Sales_Orders')" v-show="Object.keys(org.Sales_Orders).length !== 0">
+                <div class="p-2" v-show="org?.sales_orders?.length > 0">
                   <h5>Sales Orders</h5>
                   <!-- <SalesOrdersGrid v-bind:Sales_Orders="org.Sales_Orders"></SalesOrdersGrid> -->
                 </div>
-                <div class="p-2" v-if="org.hasOwnProperty('Purchase_Orders')" v-show="Object.keys(org.Purchase_Orders).length !== 0">
+                <div class="p-2" v-show="org?.purchase_orders?.length > 0">
                   <h5>Purchase Orders</h5>
                   <!-- <PurchaseOrdersGrid v-bind:Purchase_Orders="org.Purchase_Orders"></PurchaseOrdersGrid> -->
                 </div>
-                <div class="p-2" v-if="org.hasOwnProperty('People')" v-show="Object.keys(org.People).length !== 0">
+                <div class="p-2" v-show="org?.people?.length > 0">
                   <h5>People</h5>
-                  <!-- <PeopleGrid v-bind:People="org.People"></PeopleGrid> -->
+                  <!-- <PeopleGrid v-bind:People="org.people"></PeopleGrid> -->
                 </div>
-                <div class="p-2" v-if="org.hasOwnProperty('Components')" v-show="Object.keys(org.Components).length !== 0">
+                <div class="p-2" v-show="org?.components?.length > 0">
                   <h5>Components</h5>
                   <!-- <ComponentsGrid v-bind:Components="org.Components" v-bind:Component_Names="org.Component_Names"></ComponentsGrid> -->
                 </div>
-                <div class="p-2" v-if="org.hasOwnProperty('Products')" v-show="Object.keys(org.Products).length !== 0">
+                <div class="p-2" v-show="org?.products?.length > 0">
                   <h5>Products</h5>
                   <!-- <ProductsGrid v-bind:Products="org.Products"></ProductsGrid> -->
                 </div>
 
+                <b-container class="p-2">
+                  <router-link :to="{path:`/organizations/${org.organization_id}`}"><button type="button" class="btn btn-light ms-auto" style="border-width: 2px; border-color:#999999">View Details</button></router-link>
+                </b-container>
+
               </div>
-            </div>
+            </b-collapse>
           </div>
         </div>
       </div>
@@ -156,7 +156,7 @@ export default {
         return
       }
       // TODO: Fix Component Names and add them to Populate
-      const fetchRequest = window.origin + '/api/v1/organizations/?org-id=' + orgId + '&populate=facilities&populate=sales-orders&populate=purchase-orders&populate=people&populate=products'
+      const fetchRequest = window.origin + '/api/v1/organizations/?org-id=' + orgId + '&populate=facilities&populate=people&populate=products&populate=organization_names'
       // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest
@@ -170,13 +170,17 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           response.json().then(data => {
-            this.org_data[orgId] = Object.values(data.data[0])[0]
-            this.org_data[orgId].populated = true
+            const t = data.data[0]
+            t.populated = true
+            console.log(t)
+            const index = this.org_data.findIndex((o) => o.organization_id === t.organization_id)
+            this.org_data[index] = t
           })
         } else if (response.status === 404) {
-          this.org_data[orgId].populated = true
+          const index = this.org_data.findIndex((o) => o.organization_id === orgId)
+          this.org_data[index].populated = true
           const errorToast = {
-            title: `'${this.org_data[orgId].Organization_Names[0].organization_name}' 404 Not Found.`,
+            title: `'${this.org_data[orgId].organization_primary_name}' 404 Not Found.`,
             message: 'Looks like there is no additional data to see here.',
             variant: 'info',
             visible: true,
@@ -217,10 +221,7 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           response.json().then(data => {
-            this.org_data = data.data[0]
-            for (let i = 0; i < this.org_data.length; i++) {
-              this.org_data[i].populated = false
-            }
+            this.org_data = data.data
             // eslint-disable-next-line
             console.log(this.org_data)
             this.loaded = true
@@ -238,10 +239,10 @@ export default {
       })
     },
     compare: function (a, b) {
-      if (a.organization_name < b.organization_name) {
+      if (a.organization_primary_name < b.organization_primary_name) {
         return -1
       }
-      if (a.organization_name > b.organization_name) {
+      if (a.organization_primary_name > b.organization_primary_name) {
         return 1
       }
       return 0
@@ -259,8 +260,8 @@ export default {
         const list = Object.values(this.org_data)
         list.forEach(org => {
           if (
-            org.Organization_Names[0].organization_name.toLowerCase().includes(this.search_query.toLowerCase()) ||
-            org.Organization_Names[0].organization_initial.toLowerCase().includes(this.search_query.toLowerCase())
+            org.organization_primary_name.toLowerCase().includes(this.search_query.toLowerCase()) ||
+            org.organization_primary_initial.toLowerCase().includes(this.search_query.toLowerCase())
           ) {
             searched.push(org)
           }

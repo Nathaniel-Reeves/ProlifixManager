@@ -10,77 +10,139 @@
               <b-button variant="outline-info" class="m-2" v-on:click="addName()">New Name</b-button>
           </div>
           <div v-for="name in edit_names_buffer" :key="'edit' + name.name_id">
-            <div class="mb-2 d-flex">
+            <div class="mb-2 d-flex justify-content-start">
               <label class="sr-only" for="inline-form-input-name">name</label>
-              <b-form-input
-                required
-                class="mb-2 mr-sm-2 mb-sm-0"
-                v-model="name.component_name"
-                style="width:50%;"
-                ></b-form-input>
-              <div v-on:click="radioNames(name.name_id, 'primary')">
-                <b-form-checkbox :disabled="name.primary_name" button button-variant="light" name="Primary Name" class="mb-2 mr-sm-2 mb-sm-0" v-model="name.primary_name">Primary Name</b-form-checkbox>
+              <div class="d-flex justify-content-between" style="width:50%;">
+                <b-form-input
+                  required
+                  v-model="name.component_name"
+                  placeholder="Component Name"
+                  aria-describedby="name-feedback"
+                  :class="['form-control', 'mb-2', 'mx-2', (!!name.component_name ? '' : 'is-invalid')]"
+                  ></b-form-input>
+                <div style="width:40%;" id="name-feedback" class="invalid-feedback">This is a required field.</div>
               </div>
-              <div v-show="component_type === 'powder' || component_type === 'liquid'" v-on:click="radioNames(name.name_id, 'botanical')">
-                <b-form-checkbox button button-variant="light" name="Botanical Name" class="mb-2 mr-sm-2 mb-sm-0" v-model="name.botanical_name">Botanical Name</b-form-checkbox>
+              <div class="btn-group-toggle d-inline-block mb-2 mx-2 d-flex justify-content-center">
+                <label :class="['btn', name.primary_name ? 'btn-primary' : 'btn-outline-primary', name.primary_name ? 'disabled' : '']">
+                  <input v-on:click="radioNames(name.name_id, 'primary')" type="checkbox" name="Primary Name" :disabled="name.primary_name" v-model="name.primary_name">Primary Name
+                </label>
               </div>
-              <div>
-                <b-button variant="outline-danger" class="mb-2 mr-sm-2 mb-sm-0" v-show="!name.primary_name" v-on:click="deleteName(name.name_id)">Delete</b-button>
+              <div v-show="'botanical_name' in name" class="btn-group-toggle d-inline-block mb-2 mx-2 d-flex justify-content-center">
+                <label :class="['btn', name.botanical_name ? 'btn-success' : 'btn-outline-success']">
+                  <input v-on:click="radioNames(name.name_id, 'botanical')" type="checkbox" name="Botanical Name" v-model="name.botanical_name">Botanical Name
+                </label>
+              </div>
+              <div class="mb-2 mx-2">
+                <b-button variant="outline-danger" v-show="!name.primary_name" v-on:click="deleteName(name.name_id)">Delete</b-button>
               </div>
             </div>
           </div>
 
           <b-form-group>
             <label><strong>Component Type</strong><br></label>
-            <b-form-select required v-model="component_type" :options="component_options"></b-form-select>
+            <v-select
+              required
+              v-model="component_type"
+              :options="component_options"
+              label="text"
+              :reduce="type => type.value"
+              placeholder="Select Component Type"
+              aria-describedby="component-type-feedback"
+              :class="[(!!component_type ? '' : 'is-invalid')]"
+            ></v-select>
+            <div id="component-type-feedback" class="invalid-feedback">This is a required field.</div>
           </b-form-group>
 
           <b-form-group>
             <label><strong>Stock Keeping Measure Unit</strong><br></label>
-            <b-form-select required :disabled="component_type === 'powder' || component_type === 'liquid' || component_type === 'capsule'" v-model="unit_type" :options="unit_options"></b-form-select>
+            <v-select
+              required
+              :disabled="component_type === 'powder' || component_type === 'liquid' || component_type === 'capsule'"
+              v-model="unit_type"
+              :options="unit_options"
+              label="text"
+              :reduce="unit => unit.value"
+              placeholder="Select Stock Keeping Measure Unit"
+              aria-describedby="unit-type-feedback"
+              :class="[(!!unit_type ? '' : 'is-invalid')]"
+            ></v-select>
+            <div id="unit-type-feedback" class="invalid-feedback">This is a required field.</div>
           </b-form-group>
 
           <div v-show="component_type === 'powder' || component_type === 'liquid' || component_type === 'capsule'">
             <label><strong>Certifications</strong><br></label>
             <div>
-              <b-form-checkbox class="my-1 mr-4" button button-variant="outline-success" v-model="certified_usda_organic">
-                <b-img circle style="width:9em;" :src="require('../../../assets/certifications/usda_organic.png')"></b-img>
-              </b-form-checkbox>
-              <b-form-checkbox class="my-1 mr-4" button button-variant="outline-success" v-model="certified_made_with_organic">
-                <b-img circle style="width:9em;" :src="require('../../../assets/certifications/made_with_organic.png')"></b-img>
-              </b-form-checkbox>
-              <b-form-checkbox class="my-1 mr-4" button button-variant="outline-success" v-model="certified_wildcrafted">
-                <b-img circle style="width:9em;" :src="require('../../../assets/certifications/wildcrafted.png')"></b-img>
-              </b-form-checkbox>
-              <b-form-checkbox class="my-1 mr-4" button button-variant="outline-success" v-model="certified_fda">
-                <b-img circle style="width:9em;" :src="require('../../../assets/certifications/fda_approved.png')"></b-img>
-              </b-form-checkbox>
-              <b-form-checkbox class="my-1 mr-4" button button-variant="outline-success" v-model="certified_gmp">
-                <b-img circle style="width:9em;" :src="require('../../../assets/certifications/good_manufacturing_practice.png')"></b-img>
-              </b-form-checkbox>
-              <b-form-checkbox class="my-1 mr-4" button button-variant="outline-success" v-model="certified_halal">
-                <b-img circle style="width:9em;" :src="require('../../../assets/certifications/halal_certified.png')"></b-img>
-              </b-form-checkbox>
-              <b-form-checkbox class="my-1 mr-4" button button-variant="outline-success" v-model="certified_kosher">
-                <b-img circle style="width:9em;" :src="require('../../../assets/certifications/kosher_certified.png')"></b-img>
-              </b-form-checkbox>
-              <b-form-checkbox class="my-1 mr-4" button button-variant="outline-success" v-model="certified_gluten_free">
-                <b-img circle style="width:9em;" :src="require('../../../assets/certifications/gluten_free.png')"></b-img>
-              </b-form-checkbox>
-              <b-form-checkbox class="my-1 mr-4" button button-variant="outline-success" v-model="certified_national_sanitation_foundation">
-                <b-img circle style="width:9em;" :src="require('../../../assets/certifications/nsf_international_logo.png')"></b-img>
-              </b-form-checkbox>
-              <b-form-checkbox class="my-1 mr-4" button button-variant="outline-success" v-model="certified_us_pharmacopeia">
-                <b-img circle style="width:9em;" :src="require('../../../assets/certifications/us_pharmacopeia.png')"></b-img>
-              </b-form-checkbox>
-              <b-form-checkbox class="my-1 mr-4" button button-variant="outline-success" v-model="certified_vegan">
-                <b-img circle style="width:9em;" :src="require('../../../assets/certifications/vegan.png')"></b-img>
-              </b-form-checkbox>
+              <div class="btn-group-toggle d-inline-block my-2 mr-4">
+                <label :class="['btn', (certified_usda_organic ? 'btn-success' : 'btn-outline-success')]">
+                  <input type="checkbox" v-model="certified_usda_organic">
+                    <b-img circle style="width:9em;" :src="require('../../../assets/certifications/usda_organic.png')"></b-img>
+                </label>
+              </div>
+              <div class="btn-group-toggle d-inline-block my-2 mr-4">
+                <label :class="['btn', (certified_made_with_organic ? 'btn-success' : 'btn-outline-success')]">
+                  <input type="checkbox" v-model="certified_made_with_organic">
+                    <b-img circle style="width:9em;" :src="require('../../../assets/certifications/made_with_organic.png')"></b-img>
+                </label>
+              </div>
+              <div class="btn-group-toggle d-inline-block my-2 mr-4">
+                <label :class="['btn', (certified_wildcrafted ? 'btn-success' : 'btn-outline-success')]">
+                  <input type="checkbox" v-model="certified_wildcrafted">
+                    <b-img circle style="width:9em;" :src="require('../../../assets/certifications/wildcrafted.png')"></b-img>
+                </label>
+              </div>
+              <div class="btn-group-toggle d-inline-block my-2 mr-4">
+                <label :class="['btn', (certified_fda ? 'btn-success' : 'btn-outline-success')]">
+                  <input type="checkbox" v-model="certified_fda">
+                    <b-img circle style="width:9em;" :src="require('../../../assets/certifications/fda_approved.png')"></b-img>
+                </label>
+              </div>
+              <div class="btn-group-toggle d-inline-block my-2 mr-4">
+                <label :class="['btn', (certified_gmp ? 'btn-success' : 'btn-outline-success')]">
+                  <input type="checkbox" v-model="certified_gmp">
+                    <b-img circle style="width:9em;" :src="require('../../../assets/certifications/good_manufacturing_practice.png')"></b-img>
+                </label>
+              </div>
+              <div class="btn-group-toggle d-inline-block my-2 mr-4">
+                <label :class="['btn', (certified_halal ? 'btn-success' : 'btn-outline-success')]">
+                  <input type="checkbox" v-model="certified_halal">
+                    <b-img circle style="width:9em;" :src="require('../../../assets/certifications/halal_certified.png')"></b-img>
+                </label>
+              </div>
+              <div class="btn-group-toggle d-inline-block my-2 mr-4">
+                <label :class="['btn', (certified_kosher ? 'btn-success' : 'btn-outline-success')]">
+                  <input type="checkbox" v-model="certified_kosher">
+                    <b-img circle style="width:9em;" :src="require('../../../assets/certifications/kosher_certified.png')"></b-img>
+                </label>
+              </div>
+              <div class="btn-group-toggle d-inline-block my-2 mr-4">
+                <label :class="['btn', (certified_gluten_free ? 'btn-success' : 'btn-outline-success')]">
+                  <input type="checkbox" v-model="certified_gluten_free">
+                    <b-img circle style="width:9em;" :src="require('../../../assets/certifications/gluten_free.png')"></b-img>
+                </label>
+              </div>
+              <div class="btn-group-toggle d-inline-block my-2 mr-4">
+                <label :class="['btn', (certified_national_sanitation_foundation ? 'btn-success' : 'btn-outline-success')]">
+                  <input type="checkbox" v-model="certified_national_sanitation_foundation">
+                    <b-img circle style="width:9em;" :src="require('../../../assets/certifications/nsf_international_logo.png')"></b-img>
+                </label>
+              </div>
+              <div class="btn-group-toggle d-inline-block my-2 mr-4">
+                <label :class="['btn', (certified_us_pharmacopeia ? 'btn-success' : 'btn-outline-success')]">
+                  <input type="checkbox" v-model="certified_us_pharmacopeia">
+                    <b-img circle style="width:9em;" :src="require('../../../assets/certifications/us_pharmacopeia.png')"></b-img>
+                </label>
+              </div>
+              <div class="btn-group-toggle d-inline-block my-2 mr-4">
+                <label :class="['btn', (certified_vegan ? 'btn-success' : 'btn-outline-success')]">
+                  <input type="checkbox" v-model="certified_vegan">
+                    <b-img circle style="width:9em;" :src="require('../../../assets/certifications/vegan.png')"></b-img>
+                </label>
+              </div>
             </div>
           </div>
 
           <div class="d-flex justify-content-end">
-            <b-button variant="primary" @click="postComponent()">Submit</b-button>
+            <b-button variant="primary" @click="submit()">Submit</b-button>
           </div>
         </b-form>
       </div>
@@ -107,19 +169,18 @@
 <script>
 import ingredientDoc from './ingredientDocTemp.js'
 import compDoc from './compDocTemp.js'
+import { CustomRequest, genTempKey } from '../../../common/CustomRequest.js'
+import vSelect from 'vue-select'
 
 export default {
   name: 'NewComponent',
+  components: {
+    vSelect
+  },
   data: function () {
     return {
-      edit_names_buffer: [
-        {
-          name_id: (Math.random() + 1).toString(36).substring(7),
-          component_name: null,
-          primary_name: true,
-          botanical_name: false
-        }
-      ],
+      edit_names_buffer: [],
+      new_component_id: null,
       component_type: null,
       component_options: [
         { value: 'powder', text: 'Powder' },
@@ -162,86 +223,114 @@ export default {
       certified_us_pharmacopeia: false,
       certified_non_gmo: false,
       certified_vegan: false,
-      doc: {}
+      doc: {},
+      req: new CustomRequest(this.$cookies.get('session'))
     }
   },
   methods: {
-    postComponent: async function () {
-      const fetchRequest = window.origin + '/api/v1/catalogue/components'
-      // eslint-disable-next-line
-      console.log(
-        'POST ' + fetchRequest
-      )
-      const formData = new FormData()
-      formData.append('component_type', this.component_type)
-      formData.append('certified_usda_organic', this.certified_usda_organic)
-      formData.append('certified_halal', this.certified_halal)
-      formData.append('certified_kosher', this.certified_kosher)
-      formData.append('certified_gluten_free', this.certified_gluten_free)
-      formData.append('certified_national_sanitation_foundation', this.certified_national_sanitation_foundation)
-      formData.append('certified_us_pharmacopeia', this.certified_us_pharmacopeia)
-      formData.append('certified_non_gmo', this.certified_non_gmo)
-      formData.append('certified_vegan', this.certified_vegan)
-      formData.append('brand_id', null)
-      formData.append('units', this.unit_type)
-      formData.append('doc', JSON.stringify(this.doc))
-      formData.append('Component_Names', JSON.stringify(this.edit_names_buffer))
-      try {
-        const response = await fetch(fetchRequest, {
-          method: 'POST',
-          credentials: 'include',
-          body: formData
-        })
-        if (response.status === 201) {
-          const data = await response.json()
-          this.flash_messages = data.messages.flash
-          const createToast = this.$root.createToast
-          this.flash_messages.forEach(function (message) {
-            createToast(message)
-          })
-          this.$router.push({ path: `/catalogue/components/${data.data[0].component_id}` })
-          return true
-        } else if (response.status === 401) {
-          this.$router.push({
-            name: 'login'
-          })
-        } else {
-          response.json().then(data => {
-            this.flash_messages = data.messages.flash
-            const createToast = this.$root.createToast
-            this.flash_messages.forEach(function (message) {
-              createToast(message)
-            })
-          })
-          this.loaded = true
-          return false
-        }
-      } catch (error) {
-        const err = error
-        this.loaded = true
-        // eslint-disable-next-line
-        console.error('There has been a problem with your fetch operation: ', err)
-        const errorToast = {
-          title: 'Failure to save changes.',
-          message: 'Find IT to help fix the issue.',
-          variant: 'danger',
-          visible: true,
-          noCloseButton: false,
-          noAutoHide: true,
-          autoHideDelay: false,
-          appendToast: true,
-          solid: true,
-          toaster: 'b-toaster-bottom-right'
-        }
-        const createToast = this.$root.createToast
-        createToast(errorToast)
+    submit: function () {
+      if (!this.validateNewComponent()) {
         return false
       }
+
+      if (this.component_type === 'powder' || this.component_type === 'liquid' || this.component_type === 'capsule') {
+        this.doc = ingredientDoc
+      } else {
+        this.doc = compDoc
+      }
+
+      const newComponent = {
+        component_id: this.new_component_id,
+        component_type: this.component_type,
+        units: this.unit_type,
+        certified_fda: this.certified_fda,
+        certified_gmp: this.certified_gmp,
+        certified_made_with_organic: this.certified_made_with_organic,
+        certified_wildcrafted: this.certified_wildcrafted,
+        certified_usda_organic: this.certified_usda_organic,
+        certified_halal: this.certified_halal,
+        certified_kosher: this.certified_kosher,
+        certified_gluten_free: this.certified_gluten_free,
+        certified_national_sanitation_foundation: this.certified_national_sanitation_foundation,
+        certified_us_pharmacopeia: this.certified_us_pharmacopeia,
+        certified_non_gmo: this.certified_non_gmo,
+        certified_vegan: this.certified_vegan,
+        doc: this.doc
+      }
+
+      this.req.upsertRecord('Components', newComponent)
+      this.edit_names_buffer.forEach(name => {
+        this.req.upsertRecord('Component_Names', name)
+      })
+
+      this.req.sendRequest(window.origin).then(resp => {
+        const createToast = this.$root.createToast
+        resp.messages.flash.forEach(message => {
+          createToast(message)
+        })
+
+        if (resp.status === 201) {
+          resp.data.forEach(item => {
+            if (item.table_name === 'Components') {
+              this.$router.push({ path: `/catalogue/components/${item.new_id}` })
+            }
+          })
+        }
+      })
+    },
+    validateNewComponent: function () {
+      this.$bvToast.hide()
+
+      const errorToast = {
+        title: 'Invalid Formula',
+        message: '',
+        variant: 'warning',
+        visible: true,
+        no_close_button: false,
+        no_auto_hide: true,
+        auto_hide_delay: false
+      }
+      const createToast = this.$root.createToast
+
+      let flag = true
+
+      if (this.component_type === null) {
+        errorToast.message = 'Component Type is required.'
+        createToast(errorToast)
+        flag = false
+      }
+
+      if (this.unit_type === null) {
+        errorToast.message = 'Stock Keeping Measure Unit is required.'
+        createToast(errorToast)
+        flag = false
+      }
+
+      if (this.edit_names_buffer.length === 0) {
+        errorToast.message = 'At least one name is required.'
+        createToast(errorToast)
+        flag = false
+      }
+
+      this.edit_names_buffer.forEach(name => {
+        if (name.component_name === '') {
+          errorToast.message = 'Name cannot be empty.'
+          createToast(errorToast)
+          flag = false
+        }
+      })
+      return flag
     },
     radioNames: function (id, flag) {
       for (let i = 0; i < this.edit_names_buffer.length; i++) {
         if (this.edit_names_buffer[i].name_id === id) {
-          continue
+          if (flag === 'botanical') {
+            this.edit_names_buffer[i].botanical_name = true
+          } else if (flag === 'primary') {
+            this.edit_names_buffer[i].primary_name = true
+          } else {
+            continue
+          }
         } else {
           if (flag === 'botanical') {
             this.edit_names_buffer[i].botanical_name = false
@@ -266,7 +355,8 @@ export default {
     },
     createName: function () {
       const newName = {
-        name_id: (Math.random() + 1).toString(36).substring(7),
+        name_id: genTempKey(),
+        component_id: this.new_component_id,
         component_name: '',
         primary_name: false,
         botanical_name: false
@@ -327,6 +417,11 @@ export default {
         this.certified_made_with_organic = false
       }
     }
+  },
+  created: function () {
+    this.new_component_id = genTempKey()
+    this.addName()
+    this.radioNames(this.edit_names_buffer[0].name_id, 'primary')
   }
 }
 </script>

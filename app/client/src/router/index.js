@@ -75,44 +75,17 @@ const routes = [
   {
     path: '/organizations',
     name: 'organizations',
-    component: () => import(/* webpackChunkName: "organizations" */ '../views/organizations/OrganizationsHome.vue'),
-    props: {
-      labs_filter_prop: false,
-      suppliers_filter_prop: false,
-      clients_filter_prop: false
-    },
-    children: [
-      {
-        path: '/clients',
-        name: 'clients',
-        component: () => import(/* webpackChunkName: "clients" */ '../views/organizations/OrganizationsHome.vue'),
-        props: {
-          labs_filter_prop: false,
-          suppliers_filter_prop: false,
-          clients_filter_prop: true
-        }
-      },
-      {
-        path: '/suppliers',
-        name: 'suppliers',
-        component: () => import(/* webpackChunkName: "suppliers" */ '../views/organizations/OrganizationsHome.vue'),
-        props: {
-          labs_filter_prop: false,
-          suppliers_filter_prop: true,
-          clients_filter_prop: false
-        }
-      },
-      {
-        path: '/labs',
-        name: 'labs',
-        component: () => import(/* webpackChunkName: "labs" */ '../views/organizations/OrganizationsHome.vue'),
-        props: {
-          labs_filter_prop: true,
-          suppliers_filter_prop: false,
-          clients_filter_prop: false
-        }
-      }
-    ]
+    component: () => import(/* webpackChunkName: "organizations" */ '../views/organizations/OrganizationsHome.vue')
+  },
+  {
+    path: '/organizations/:id',
+    name: 'OrganizationsDetail',
+    component: () => import(/* webpackChunkName: "organizations" */ '../views/organizations/OrganizationDetail.vue')
+  },
+  {
+    path: '/organizations/create',
+    name: 'NewOrganization',
+    component: () => import(/* webpackChunkName: "NewOrganization" */ '../views/organizations/NewOrganization.vue')
   },
   {
     path: '/orders',

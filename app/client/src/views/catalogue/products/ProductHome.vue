@@ -42,8 +42,8 @@
                   <b-container fluid class="m-0">
                     <b-row align-v="baseline">
                       <b-col sm="0.5"><b-icon icon="chevron-down"></b-icon></b-col>
-                      <b-col sm="4"><div class="p-2">{{ product.product_name }}</div></b-col>
-                      <b-col sm="4"><div class="p-2">{{ product.organization_name }}</div></b-col>
+                      <b-col sm="4"><h4 class="p-2">{{ product.product_name }}</h4></b-col>
+                      <b-col sm="4"><h4 class="p-2">{{ product.organization_name }}</h4></b-col>
                       <b-col><div class="p-2"><CertBadge :data="product"></CertBadge></div></b-col>
                     </b-row>
                   </b-container>

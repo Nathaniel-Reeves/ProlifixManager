@@ -36,11 +36,12 @@ def handle_get_organizations():
     populate_request = request.args.getlist('populate')
     valid_populate = [
         'facilities',
-        'sales-orders',
-        'purchase-orders',
+        # 'sales_orders',
+        # 'purchase_orders',
         'people',
         'components',
-        'products'
+        'products',
+        'organization_names'
     ]
     populate = check_type(
         valid_populate,
@@ -62,23 +63,6 @@ def handle_get_organizations():
         populate,
         doc
     )
-
-    response = jsonify(custom_response.to_json())
-    response.status_code = custom_response.get_status_code()
-
-    return response
-
-@bp.route('/exists', methods=['GET'])
-@check_authenticated(authentication_required=True)
-def handle_org_exists():
-    """
-    Check if an organization already exists by organization name.
-    """
-    custom_response = CustomResponse()  # Create an instance of Response
-
-    names = request.json['names']
-
-    custom_response = org.organization_exists(names, custom_response)
 
     response = jsonify(custom_response.to_json())
     response.status_code = custom_response.get_status_code()

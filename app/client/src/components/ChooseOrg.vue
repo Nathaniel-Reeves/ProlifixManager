@@ -102,7 +102,7 @@ export default {
       return this.organizations.length > 0
     },
     filtered () {
-      return this.organizations.filter((org) => (org.organization_name.includes(this.search) || org.organization_initial.includes(this.search)))
+      return this.organizations.filter((org) => (org.organization_primary_name?.includes(this.search) || org.organization_primary_initial?.includes(this.search)))
     },
     paginated () {
       return this.filtered.slice(0, this.limit)

@@ -40,6 +40,8 @@ class Organizations(Base):
     lab: Mapped[bool] = mapped_column(default=False)
     courier: Mapped[bool] = mapped_column(default=False)
     other: Mapped[bool] = mapped_column(default=False)
+    notes: Mapped[str] = mapped_column(default=None)
+    primary_name_id: Mapped[int] = mapped_column(ForeignKey('Organization_Names.Organization_Names.name_id'))
 
     doc = Column(MutableDict.as_mutable(JSON))
 
@@ -66,7 +68,9 @@ class Organizations(Base):
             'lab': self.lab,
             'courier': self.courier,
             'other': self.other,
-            'doc': self.doc
+            'doc': self.doc,
+            'notes': self.notes,
+            'primary_name_id': self.primary_name_id
         }
 
     def get_id(self):

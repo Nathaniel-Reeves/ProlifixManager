@@ -66,12 +66,12 @@
           <b-card no-body class="mb-1" style="box-shadow: 0px 0px;" v-for="component in filteredComponents" :key="component.component_id">
             <b-card-header v-bind:id="'heading' + component.component_id">
               <h2 class="d-flex mb-0">
-                <b-button class="text-left" v-b-toggle="'collapse' + component.component_id" variant="light" style="width:100%;">
+                <b-button class="text-left" v-b-toggle="'collapse' + component.component_id" @click="populateComponent(component)" variant="light" style="width:100%;">
                   <b-container fluid class="m-0">
                     <b-row align-v="baseline">
                       <b-col sm="0.5"><b-icon icon="chevron-down"></b-icon></b-col>
-                      <b-col sm="1.5"><div class="p-2">{{ component.component_type.toLowerCase().split('_').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ') }}</div></b-col>
-                      <b-col sm="4"><div class="p-2">{{ getPrimaryName(component) }}         {{ getBrandName(component) }}</div></b-col>
+                      <b-col sm="1.5"><h4 class="p-2">{{ component.component_type?.toLowerCase().split('_').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ') }}</h4></b-col>
+                      <b-col sm="4"><h4 class="p-2">{{ component.component_primary_name }}         {{ getBrandName(component) }}</h4></b-col>
                       <b-col><div class="p-2"><CertBadge :data="component"></CertBadge></div></b-col>
                       <b-col sm="0.5"><div class="p-1"><b-badge class="p-1" v-show="!verifySpecs(component)" variant="warning">Incomplete Specs</b-badge></div></b-col>
                     </b-row>
@@ -81,10 +81,16 @@
             </b-card-header>
 
             <b-collapse v-bind:id="'collapse' + component.component_id">
-              <div class="card-body d-flex flex-wrap">
+              <div v-if="!component.populated">
+                <div class="d-flex justify-content-center my-4">
+                  <div class="spinner-border text-primary" role="status"></div>
+                </div>
+              </div>
+
+              <div v-else class="card-body d-flex flex-wrap">
 
                 <!-- Alias Names -->
-                <NamesComponent :p-names="component.Component_Names" naming-type="component" :allow-edit="false"></NamesComponent>
+                <NamesComponent :p-names="component.component_names" naming-type="component" :allow-edit="false"></NamesComponent>
                 <hr>
 
                 <!-- Specifications -->
@@ -209,10 +215,10 @@ export default {
       this.search_query = this.search_query_buff
     },
     getPrimaryName: function (component) {
-      if (component.Component_Names !== undefined && component.Component_Names.length > 0) {
-        for (let i = 0; i < component.Component_Names.length; i++) {
-          if (component.Component_Names[i].primary_name) {
-            return component.Component_Names[i].component_name
+      if (component.component_names !== undefined && component.component_names.length > 0) {
+        for (let i = 0; i < component.component_names.length; i++) {
+          if (component.component_names[i].primary_name) {
+            return component.component_names[i].component_name
           }
         }
       }
@@ -228,39 +234,8 @@ export default {
       }
       return ''
     },
-    populateComponent: function (componentId) {
-      const fetchRequest = window.origin + '/api/v1/catalogue/components?component-id=' + componentId + '&populate=product_materials&populate=purchase_order_detail&populate=label_formula_master&populate=ingredient_formula_master&populate=item_id&populate=inventory&populate=brand&doc=true'
-      // eslint-disable-next-line
-      console.log(
-        'GET ' + fetchRequest
-      )
-      fetch(fetchRequest, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include'
-      }).then(response => {
-        if (response.status === 200) {
-          response.json().then(data => {
-            this.components_data[componentId] = Object.values(data.data[0])[0]
-            // eslint-disable-next-line
-            console.log(this.components_data[componentId])
-          })
-        } else if (response.status === 401) {
-          this.$router.push({
-            name: 'login'
-          })
-        } else {
-          // eslint-disable-next-line
-          console.log('Looks like there was a problem. Status Code:' + response.status)
-          // eslint-disable-next-line
-          console.log(response)
-        }
-      })
-    },
     getComponentData: function () {
-      let fetchRequest = window.origin + '/api/v1/catalogue/components/?populate=brand&doc=true'
+      let fetchRequest = window.origin + '/api/v1/catalogue/components?doc=true'
       if (this.type_filter !== 'all') {
         fetchRequest += '&type=' + this.type_filter
       } else {
@@ -280,10 +255,50 @@ export default {
       }).then(response => {
         if (response.status === 200) {
           response.json().then(data => {
-            this.components_data = data.data[0]
+            this.components_data = data.data
             // eslint-disable-next-line
             console.log(this.components_data)
             this.loaded = true
+          })
+        } else if (response.status === 401) {
+          this.$router.push({
+            name: 'login'
+          })
+        } else if (response.status === 404) {
+          this.$router.push({
+            name: 'NotFound'
+          })
+        } else {
+          // eslint-disable-next-line
+          console.log('Looks like there was a problem. Status Code:' + response.status)
+          // eslint-disable-next-line
+          console.log(response)
+        }
+      })
+    },
+    populateComponent: function (component) {
+      if (component.populated) {
+        return
+      }
+      const fetchRequest = window.origin + '/api/v1/catalogue/components?doc=true&populate=component_names&component-id=' + component.component_id
+      // eslint-disable-next-line
+      console.log(
+        'GET ' + fetchRequest
+      )
+      fetch(fetchRequest, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(data => {
+            const t = data.data[0]
+            t.populated = true
+            console.log(t)
+            const index = this.components_data.findIndex((c) => c.component_id === t.component_id)
+            this.components_data[index] = t
           })
         } else if (response.status === 401) {
           this.$router.push({
@@ -311,8 +326,10 @@ export default {
       return 0
     },
     alphabetical: function (a, b) {
-      const aPrime = this.getPrimaryName(a)
-      const bPrime = this.getPrimaryName(b)
+      // const aPrime = this.getPrimaryName(a)
+      // const bPrime = this.getPrimaryName(b)
+      const aPrime = a.component_primary_name
+      const bPrime = b.component_primary_name
       if (aPrime < bPrime) {
         return -1
       }
@@ -325,14 +342,15 @@ export default {
       this.powder_cert_filter = checked ? this.powder_cert_options.map((obj) => obj.value).slice() : []
     },
     searchFilter: function (component) {
-      if (component.Component_Names !== undefined && component.Component_Names.length > 0) {
-        for (let i = 0; i < component.Component_Names.length; i++) {
-          if (component.Component_Names[i].component_name.toLowerCase().includes(this.search_query.toLowerCase())) {
-            return true
-          }
-        }
-      }
-      return false
+      // if (component.component_names !== undefined && component.component_names.length > 0) {
+      //   for (let i = 0; i < component.component_names.length; i++) {
+      //     if (component.component_names[i].component_name.toLowerCase().includes(this.search_query.toLowerCase())) {
+      //       return true
+      //     }
+      //   }
+      // }
+      // return false
+      return component?.component_primary_name?.toLowerCase().includes(this.search_query.toLowerCase())
     },
     componentTypeFilter: function (component) {
       if (component.component_type === this.type_filter) {
