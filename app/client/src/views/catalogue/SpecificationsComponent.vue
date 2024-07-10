@@ -489,7 +489,7 @@ export default {
         if (resp.status !== 201) {
           return false
         }
-        this.$parent.getProductData()
+        this.$parent.getComponentData()
         this.req = new CustomRequest(this.$cookies.get('session'))
         this.cancelEditSpecs()
         this.$emit('toggleLoaded', true)
@@ -517,7 +517,7 @@ export default {
       if (resp.status !== 201) {
         return false
       }
-      this.$parent.getComponentData()
+      this.$parent.getProductData()
       this.req = new CustomRequest(this.$cookies.get('session'))
       this.cancelEditSpecs()
       this.$emit('toggleLoaded', true)
