@@ -70,7 +70,7 @@
                   <b-container fluid class="m-0">
                     <b-row align-v="baseline">
                       <b-col sm="0.5"><b-icon icon="chevron-down"></b-icon></b-col>
-                      <b-col sm="1.5"><h4 class="p-2">{{ component.component_type?.toLowerCase().split('_').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ') }}</h4></b-col>
+                      <b-col sm="1.5"><h4 class="p-2">{{ component.component_type.toLowerCase().split('_').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ') }}</h4></b-col>
                       <b-col sm="4"><h4 class="p-2">{{ component.component_primary_name }}         {{ getBrandName(component) }}</h4></b-col>
                       <b-col><div class="p-2"><CertBadge :data="component"></CertBadge></div></b-col>
                       <b-col sm="0.5"><div class="p-1"><b-badge class="p-1" v-show="!verifySpecs(component)" variant="warning">Incomplete Specs</b-badge></div></b-col>
@@ -200,11 +200,11 @@ export default {
     verifySpecs: function (component) {
       if (component.component_type !== 'powder') { return true }
       return (
-        component.doc.specifications.revision_number > 0 &&
-        component.doc.specifications.specs.microbiological.revision_number > 0 &&
-        component.doc.specifications.specs.heavy_metals.revision_number > 0 &&
-        component.doc.specifications.specs.organoleptic.revision_number > 0 &&
-        component.doc.specifications.specs.microscopic.revision_number > 0
+        component.doc.specifications?.revision_number > 0 &&
+        component.doc.specifications?.specs.microbiological.revision_number > 0 &&
+        component.doc.specifications?.specs.heavy_metals.revision_number > 0 &&
+        component.doc.specifications?.specs.organoleptic.revision_number > 0 &&
+        component.doc.specifications?.specs.microscopic.revision_number > 0
       )
     },
     clearSearch: function () {
@@ -350,7 +350,7 @@ export default {
       //   }
       // }
       // return false
-      return component?.component_primary_name?.toLowerCase().includes(this.search_query.toLowerCase())
+      return component.component_primary_name.toLowerCase().includes(this.search_query.toLowerCase())
     },
     componentTypeFilter: function (component) {
       if (component.component_type === this.type_filter) {

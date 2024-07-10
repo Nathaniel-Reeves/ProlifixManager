@@ -170,11 +170,11 @@
                   <strong>Discription: </strong><br><b-form-textarea class="my-1" rows="3" max-rows="3" v-model="test.statement"
                     placeholder="Discription..."></b-form-textarea>
                   <strong>Magnification: </strong><br>
-                  <v-select v-model="test.magnification" required
+                  <v-select v-model="test.magnification" required label="text" :reduce="mag => mag.value"
                     :options="[{ value: '', text: 'Select Magnification' },{ value: '20X', text: '20X' },{ value: '40X', text: '40X' }]">
                   </v-select>
                   <strong>Method: </strong><br>
-                  <v-select v-model="test.method" required
+                  <v-select v-model="test.method" required label="text" :reduce="methods => methods.value"
                     :options="[{ value: '', text: 'Select Method' }, { value: 'SOP QA 04.02', text: 'SOP QA 04.02' }]">
                   </v-select>
                 </b-card-body>
@@ -205,7 +205,7 @@
                     placeholder="Dry Taste..."></b-form-textarea>
                   <strong>Visual: </strong><br><b-form-textarea class="my-1" rows="2" max-rows="2" v-model="test.visual"
                     placeholder="Visual..."></b-form-textarea>
-                  <strong>Method: </strong><br><v-select v-model="test.method" required
+                  <strong>Method: </strong><br><v-select v-model="test.method" required label="text" :reduce="mag => mag.value"
                     :options="[{ value: '', text: 'Select Method' }, { value: 'SOP QA 04.02', text: 'SOP QA 04.01' }]"></v-select>
                 </b-card-body>
                 <b-card-footer>
@@ -246,7 +246,7 @@
                     min="0" no-wheel number v-model="test.count"></b-form-input>
                 </b-input-group>
                 <v-select v-model="test.unit_of_measure" :options="['%','cfu/g','cfu/10g','cfu/25g','ppm','rf']" class="mr-sm-2"
-                  placeholder="Select Units"></v-select>
+                  placeholder="Select Units" label="text"></v-select>
               </b-form>
               <b-form-tags v-model="test.methods" no-outer-focus class="mb-2" style="width:86%;">
                 <template v-slot="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
@@ -486,17 +486,14 @@ export default {
           createToast(message)
         })
 
-        if (resp.status === 201) {
-          this.cancel()
-          this.$nextTick(() => {
-            this.versions = []
-            this.build_formula_versions()
-          })
-          this.req = new CustomRequest(this.$cookies.get('session'))
-          return true
+        if (resp.status !== 201) {
+          return false
         }
         this.$parent.getProductData()
-        return false
+        this.req = new CustomRequest(this.$cookies.get('session'))
+        this.cancelEditSpecs()
+        this.$emit('toggleLoaded', true)
+        return true
       })
     },
     saveProductUpdates: async function () {
@@ -520,7 +517,10 @@ export default {
       if (resp.status !== 201) {
         return false
       }
+      this.$parent.getComponentData()
       this.req = new CustomRequest(this.$cookies.get('session'))
+      this.cancelEditSpecs()
+      this.$emit('toggleLoaded', true)
       return true
     },
     cancelEditSpecs: function () {
