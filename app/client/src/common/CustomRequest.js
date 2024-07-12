@@ -73,7 +73,11 @@ export class CustomRequest {
     }
     this.upsertFileData = {}
     this.deleteFileData = []
+    this.customUpsertOrder = []
+    this.customDeleteOrder = []
     this.fileIndex = 0
+    this.savedFiles = {}
+    this.tempKeyLookup = {}
 
     this.validTables = [
       'Organizations',
@@ -106,6 +110,56 @@ export class CustomRequest {
       'Components_Join',
       'Inventory_Log_Edges'
     ]
+  }
+
+  getSavedFiles () {
+    return this.savedFiles
+  }
+
+  getTempKeyLookup () {
+    return this.tempKeyLookup
+  }
+
+  setUpsertOrder (order) {
+    if (!(order && Array.isArray(order))) {
+      throw new Error('Invalid order, order must be an Array.')
+    }
+
+    const tableCount = []
+
+    order.forEach(table => {
+      if (tableCount.includes(table)) {
+        throw new Error('Invalid table in order, Only one table per order.')
+      }
+      if (!this.validTables.includes(table)) {
+        throw new Error(`Invalid table in order: ${table} not in valid tables.`)
+      } else {
+        tableCount.push(table)
+      }
+    })
+
+    this.customUpserOrder = order
+  }
+
+  setDeleteOrder (order) {
+    if (!(order && Array.isArray(order))) {
+      throw new Error('Invalid order, order must be an Array.')
+    }
+
+    const tableCount = []
+
+    order.forEach(table => {
+      if (tableCount.includes(table)) {
+        throw new Error('Invalid table in order, Only one table per order.')
+      }
+      if (!this.validTables.includes(table)) {
+        throw new Error(`Invalid table in order: ${table} not in valid tables.`)
+      } else {
+        tableCount.push(table)
+      }
+    })
+
+    this.customDeleteOrder = order
   }
 
   upsertRecord (table, record) {
@@ -227,8 +281,16 @@ export class CustomRequest {
       user_session_key: this.userSessionKey,
       payload: this.payload,
       upsert_file_data: this.upsertFileData,
-      delete_file_data: this.deleteFileData
+      delete_file_data: this.deleteFileData,
+      upsert_order: this.customUpsertOrder,
+      delete_order: this.customDeleteOrder
     }
+    // if (this.customUpsertOrder.length > 0) {
+    //   request.upsert_order = this.customUpsertOrder
+    // }
+    // if (this.customDeleteOrder.length > 0) {
+    //   request.delete_order = this.customDeleteOrder
+    // }
     return request
   }
 
@@ -237,7 +299,7 @@ export class CustomRequest {
     console.log('PRINTING REQUEST: ', req)
   }
 
-  async addFile (file, page, idCode, dir) {
+  async addFile (file, page, idCode, dir, ref_count = 1) {
     // validate file, raise error if not file
     if (!file) {
       console.error('Invalid file')
@@ -272,7 +334,8 @@ export class CustomRequest {
       page: page,
       size: file.size,
       id_code: idCode,
-      data_uri: await toBase64(file)
+      data_uri: await toBase64(file),
+      ref_count: ref_count
     }
     const customKey = 'file_' + this.fileIndex
     this.upsertFileData[customKey] = newFile
@@ -305,7 +368,8 @@ export class CustomRequest {
     )
 
     const body = this.compileRequest()
-    console.log(body)
+    // eslint-disable-next-line
+    this.printRequest()
 
     const response = await fetch(fetchRequest, {
       method: 'PUT',
@@ -328,8 +392,11 @@ export class CustomRequest {
     try {
       const data = await response.json()
       data.status = response.status
+      this.savedFiles = data.data[0].saved_files
+      this.tempKeyLookup = data.data[0].temp_key_lookup
       // eslint-disable-next-line
       console.log(data)
+
       return data
     } catch (error) {
       // eslint-disable-next-line

@@ -4,7 +4,7 @@
       <b-col style="max-width: 260px;">
         <v-select
           :options="paginated"
-          label="component_name"
+          label="component_primary_name"
           v-model="selected_ingredient"
           :loading="!ingredients_loaded"
           :placeholder="!ingredients_loaded ? 'Loading...':'Choose...'"
@@ -17,10 +17,10 @@
           @close="onClose"
           @search="(query) => (search = query)"
         >
-          <template #option="{ component_id, component_name, certified_fda, certified_gluten_free, certified_gmp, certified_halal, certified_kosher, certified_made_with_organic, certified_national_sanitation_foundation, certified_non_gmo, certified_us_pharmacopeia, certified_usda_organic, certified_vegan, certified_wildcrafted }">
+          <template #option="{ component_id, component_primary_name, certified_fda, certified_gluten_free, certified_gmp, certified_halal, certified_kosher, certified_made_with_organic, certified_national_sanitation_foundation, certified_non_gmo, certified_us_pharmacopeia, certified_usda_organic, certified_vegan, certified_wildcrafted }">
             <div style="display:flex; flex-direction: row; align-items: center; min-height: 60px;">
               <b-button v-on:click.stop class="mr-2" variant="light" :to="'/catalogue/components/'+component_id" target="_blank"><b-icon icon="box"></b-icon></b-button>
-              <div style="min-width: 200px;">{{ component_name }}</div>
+              <div style="min-width: 200px;">{{ component_primary_name }}</div>
               <CertBadge :data="{
                 'certified_fda': certified_fda,
                 'certified_gluten_free': certified_gluten_free,
@@ -115,6 +115,7 @@ export default {
   },
   mounted () {
     this.observer = new IntersectionObserver(this.infiniteScroll)
+    console.log(this.ingredients)
   },
   computed: {
     ingredients_loaded: function () {

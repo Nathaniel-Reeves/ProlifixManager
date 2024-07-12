@@ -1,26 +1,25 @@
 <template>
-  <div class="mb-3">
+  <div class="mb-3" :class="(initial ? 'initial' : 'wide')">
     <v-select
       :id="id"
       :options="paginated"
-      label="organization_initial"
+      :label="initial ? 'organization_primary_initial' : 'organization_primary_name'"
       v-model="selected_org"
       :loading="!orgs_loaded"
       :placeholder="!orgs_loaded ? 'Loading...':'Choose...'"
-      style="width: 150px;"
       aria-describedby="select_org-live-feedback"
-      :class="((selected_org !== null && selected_org.organization_id > 0) || !orgReq ? '' : 'is-invalid')"
-      :disabled="selected_org !== null && selected_org.organization_id > 0"
+      :class="[((selected_org !== null && selected_org.organization_id > 0) || !orgReq ? '' : 'is-invalid'), (initial ? 'initial' : 'wide')]"
+      :disabled="selected_org !== null && selected_org.organization_id > 0 && initial"
       :clearable="false"
       :filterable="false"
       @open="onOpen"
       @close="onClose"
       @search="(query) => (search = query)"
       >
-      <template #option="{ organization_id, organization_name, organization_initial }">
+      <template #option="{ organization_id, organization_primary_name, organization_primary_initial }">
         <div style="display:flex; flex-direction: row; align-items: center; min-height: 60px;">
           <b-button v-on:click.stop class="mr-2" variant="light" :to="'/organizations/'+organization_id" target="_blank"><b-icon icon="box"></b-icon></b-button>
-          <div>{{ organization_name }} | {{ organization_initial }}</div>
+          <div>{{ organization_primary_name }} | {{ organization_primary_initial }}</div>
         </div>
       </template>
       <template #list-footer>
@@ -30,11 +29,11 @@
       </template>
     </v-select>
     <div id="select_org-live-feedback" class="invalid-feedback">This is a required field.</div>
-    <b-tooltip v-if="selected_org !== null && selected_org.organization_id > 0" :target="id" triggers="hover">{{ selected_org.organization_name }}</b-tooltip>
+    <b-tooltip v-if="selected_org !== null && selected_org.organization_id > 0 && initial" :target="id" triggers="hover">{{ selected_org.organization_primary_name }}</b-tooltip>
   </div>
 </template>
 
-<style>
+<style scoped>
 .vs__dropdown-menu {
   width: 600px;
   max-height: 300px;
@@ -44,6 +43,12 @@
 .loader {
   text-align: center;
   color: #bbbbbb;
+}
+.initial {
+  width: 150px;
+}
+.wide {
+  width: 81%;
 }
 </style>
 
@@ -55,11 +60,24 @@ export default {
   components: {
     vSelect
   },
-  props: [
-    'organizations',
-    'selected',
-    'orgReq'
-  ],
+  props: {
+    organizations: {
+      type: Array,
+      required: true
+    },
+    selected: {
+      type: Object,
+      default: null
+    },
+    orgReq: {
+      type: Boolean,
+      default: false
+    },
+    initial: {
+      type: Boolean,
+      default: true
+    }
+  },
   data: function () {
     return {
       selected_org: null,

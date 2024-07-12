@@ -27,6 +27,8 @@ class CustomRequest:
         self.saved_files = {}
         self.session = None
         self.temp_key_lookup = {}
+        self.custom_upsert = False
+        self.custom_delete = False
         self.valid_tables = (
             'Organizations',
             'Processes',
@@ -59,7 +61,7 @@ class CustomRequest:
             'Inventory_Log_Edges'
         )
 
-        print("Payload", json.dumps(self.request.json, indent=4))
+        print("Payload", json.dumps(self.request.json['payload'], indent=4))
 
     def get_response(self):
         return self.custom_response
@@ -72,6 +74,14 @@ class CustomRequest:
         if not self.error:
             self.error = not self.validate_request_data()
 
+        print('Request is Valid.')
+        print('Custom Upsert:', self.custom_upsert)
+        if self.custom_upsert:
+            print(self.request.json['upsert_order'])
+        print('Custom Delete:', self.custom_delete)
+        if self.custom_delete:
+            print(self.request.json['delete_order'])
+
         if not self.error:
             self.error = not self.delete_files()
 
@@ -80,6 +90,7 @@ class CustomRequest:
 
         if not self.error:
             self.error = not self.process_upserts()
+        print(self.temp_key_lookup)
 
         if not self.error:
             self.error = not self.process_deletes()
@@ -95,6 +106,10 @@ class CustomRequest:
                 self._remove_file_from_filesystem(file["file_pointer"])
         else:
             self.session.commit()
+            self.custom_response.insert_data({
+                "saved_files": self.saved_files,
+                "temp_key_lookup": self.temp_key_lookup,
+            })
             self.custom_response.insert_flash_message(
                 FlashMessage(
                     variant=VariantType.SUCCESS,
@@ -109,8 +124,12 @@ class CustomRequest:
 
     def process_upserts(self):
         upserts = self.request.json['payload']['upsert']
+        if self.custom_upsert:
+            tables = self.request.json['upsert_order']
+        else:
+            tables = self.valid_tables
         flag = True
-        for table in self.valid_tables:
+        for table in tables:
             if table in upserts.keys():
                 for record in upserts[table]:
                     flag = self._upsert_record(table, record)
@@ -148,10 +167,10 @@ class CustomRequest:
                 return False
             if isinstance(record[key], str) and "temp-" in record[key]:
                 temp_key = record[key]
-                if temp_key in self.temp_key_lookup.keys() and not (self.temp_key_lookup[temp_key] is None):
-                    record[key] = self.temp_key_lookup[temp_key]
+                if temp_key in self.temp_key_lookup.keys() and not (self.temp_key_lookup[temp_key] == {}):
+                    record[key] = self.temp_key_lookup[temp_key]['new_id']
                 else:
-                    self.temp_key_lookup[temp_key] = None
+                    self.temp_key_lookup[temp_key] = {}
 
         if pk_col in record.keys():
             if isinstance(record[pk_col], int):
@@ -180,16 +199,19 @@ class CustomRequest:
 
         new_id, outcome = self._execute_query(stm)
         if new_id and temp_key:
-            self.temp_key_lookup[temp_key] = new_id
-            data = { 'table_name': table_name, 'new_id' : new_id, 'pk' : pk_col }
-            self.custom_response.insert_data(data)
+            data = { 'table_name': table_name, 'new_id' : new_id, 'pk' : pk_col, 'temp_key': temp_key }
+            self.temp_key_lookup[temp_key] = data
 
         return outcome
 
     def process_deletes(self):
         deletes = self.request.json['payload']['delete']
+        if self.custom_delete:
+            tables = self.request.json['delete_order']
+        else:
+            tables = self.valid_tables
         flag = True
-        for table in self.valid_tables:
+        for table in tables:
             if table in deletes.keys():
                 for record in deletes[table]:
                     flag = self._delete_record(table, record)
@@ -337,6 +359,34 @@ class CustomRequest:
             self.custom_response.set_status_code(400)
             flag = False
 
+        # Custom Upsert Order
+        if (self.request.json['upsert_order']):
+            self.custom_upsert = True
+            for table in self.request.json['upsert_order']:
+                if table not in self.valid_tables:
+                    flash_message = FlashMessage(
+                        variant=VariantType.DANGER,
+                        title="Invalid Request!",
+                        message=f'{table} is not a valid table.'
+                    )
+                    self.custom_response.insert_flash_message(flash_message)
+                    self.custom_response.set_status_code(400)
+                    flag = False
+
+        # Custom Delete Order
+        if (self.request.json['delete_order']):
+            self.custom_delete = True
+            for table in self.request.json['delete_order']:
+                if table not in self.valid_tables:
+                    flash_message = FlashMessage(
+                        variant=VariantType.DANGER,
+                        title="Invalid Request!",
+                        message=f'{table} is not a valid table.'
+                    )
+                    self.custom_response.insert_flash_message(flash_message)
+                    self.custom_response.set_status_code(400)
+                    flag = False
+
         return flag
 
     def save_files(self):
@@ -351,16 +401,38 @@ class CustomRequest:
         if len(self.request.json['upsert_file_data']) > 0:
             for file_key, file_data in self.request.json['upsert_file_data'].items():
 
-                valid_file_data_keys = ["filename", "filetype", "dir", "page", "size", "id_code", "data_uri"]
+                valid_file_data_keys = ["filename", "filetype", "dir", "page", "size", "id_code", "data_uri", "ref_count"]
                 file_data_keys = file_data.keys()
                 file_data_values = list(file_data.values())
 
-                # Catch invalid file data
-                if len(valid_file_data_keys & file_data_keys) != 7 or not all(file_data_values):
+                # check ref_count is number
+                if not isinstance(file_data['ref_count'], int):
                     flash_message = FlashMessage(
                         variant=VariantType.DANGER,
                         title="Saving Files Failure!",
-                        message="Invalid File Data."
+                        message="ref_count is not a number."
+                    )
+                    self.custom_response.insert_flash_message(flash_message)
+                    self.custom_response.set_status_code(400)
+                    return False
+
+                # check ref_count is greater than zero
+                if file_data['ref_count'] < 1:
+                    flash_message = FlashMessage(
+                        variant=VariantType.DANGER,
+                        title="Saving Files Failure!",
+                        message="ref_count must be greater than zero."
+                    )
+                    self.custom_response.insert_flash_message(flash_message)
+                    self.custom_response.set_status_code(400)
+                    return False
+
+                # Catch invalid file data
+                if len(valid_file_data_keys & file_data_keys) != 8 or not all(file_data_values):
+                    flash_message = FlashMessage(
+                        variant=VariantType.DANGER,
+                        title="Saving Files Failure!",
+                        message="Invalid File Meta Data."
                     )
                     self.custom_response.insert_flash_message(flash_message)
                     self.custom_response.set_status_code(400)
@@ -373,6 +445,8 @@ class CustomRequest:
                 self.saved_files[file_key]["filename"] = filename
                 self.saved_files[file_key]["file_pointer"] = pointer
                 self.saved_files[file_key]["file_hash"] = file_hash
+                self.saved_files[file_key]["ref_count"] = file_data['ref_count']
+                self.saved_files[file_key]["temp_id"] = file_key
 
         return self._matchup_saved_files()
 
@@ -397,21 +471,11 @@ class CustomRequest:
             updates = 0
             data, updates, finished = self._matchup_recursive(data, file_meta_key, file_meta_value, updates, False)
 
-            if updates < 1 or not finished:
+            if updates != file_meta_value['ref_count'] or not finished:
                 flash_message = FlashMessage(
                     variant=VariantType.DANGER,
                     title="File Matchup Failure!",
-                    message="Could not update file."
-                )
-                self.custom_response.insert_flash_message(flash_message)
-                self.custom_response.set_status_code(400)
-                return False
-
-            if updates > 1:
-                flash_message = FlashMessage(
-                    variant=VariantType.DANGER,
-                    title="File Matchup Failure!",
-                    message="Too many file updates.  Should only have one, found: " + updates
+                    message=f"Could not update file. finished={finished}, updates={updates}, ref_count={file_meta_value['ref_count']}"
                 )
                 self.custom_response.insert_flash_message(flash_message)
                 self.custom_response.set_status_code(400)
@@ -435,10 +499,15 @@ class CustomRequest:
                     data["file_pointer"] = file_meta_value["file_pointer"]
                     data["file_hash"] = file_meta_value["file_hash"]
                     data["id_code"] = file_meta_value["id_code"]
+                    data["temp_key"] = file_meta_key
                     if "url_preview" in data.keys():
                         data.pop("url_preview")
                     updates += 1
-                    return data, updates, True
+
+                    finished = False
+                    if updates == file_meta_value['ref_count']:
+                        finished = True
+                    return data, updates, finished
                 else:
                     data[key], updates, finished = self._matchup_recursive(data[key], file_meta_key, file_meta_value, updates, finished)
         elif isinstance(data, list):
@@ -539,7 +608,7 @@ class CustomRequest:
             stm = (
                 update(db.Files)
                 .where(db.Files.file_hash == file_hash)
-                .values(ref_count=raw_data[0][0].to_dict()["ref_count"] + 1)
+                .values(ref_count=raw_data[0][0].to_dict()["ref_count"] + file_data["ref_count"])
             )
             self.session.execute(stm)
             return raw_data[0][0].get_id(), raw_data[0][0].file_name, raw_data[0][0].file_pointer
@@ -572,7 +641,8 @@ class CustomRequest:
                 "file_type": file_data["filetype"],
                 "file_pointer": pointer,
                 "id_code": file_data["id_code"],
-                "pg": file_data["page"]
+                "pg": file_data["page"],
+                "ref_count": file_data["ref_count"]
             }
         )
         raw_data = stream.all()
@@ -608,6 +678,7 @@ class CustomRequest:
             return False
 
     def _execute_query(self, stm):
+        print(stm)
         record_id = None
         # Execute the query
         try:

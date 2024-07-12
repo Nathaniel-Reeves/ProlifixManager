@@ -56,6 +56,7 @@ class Components(Base):
         validate_strings=True,
         ))
     primary_name_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Component_Names.name_id'))
+    is_label: Mapped[bool] = mapped_column(default=False)
 
     doc = Column(JSON, default={})
 
@@ -88,7 +89,8 @@ class Components(Base):
             "date_entered": self.date_entered,
             "units": self.units,
             "doc": self.doc,
-            "primary_name_id": self.primary_name_id
+            "primary_name_id": self.primary_name_id,
+            "is_label": self.is_label
         }
 
     def get_id(self):

@@ -182,20 +182,21 @@ export default {
       edit_names_buffer: [],
       new_component_id: null,
       component_type: null,
+      // Label related items are only created via Products Page
       component_options: [
         { value: 'powder', text: 'Powder' },
         { value: 'liquid', text: 'Liquid' },
         { value: 'container', text: 'Container' },
-        { value: 'pouch', text: 'Pouch' },
+        // { value: 'pouch', text: 'Pouch' },
         { value: 'shrink_band', text: 'Shrink Band' },
         { value: 'lid', text: 'Lid' },
-        { value: 'label', text: 'Label' },
+        // { value: 'label', text: 'Label' },
         { value: 'capsule', text: 'Capsule' },
         { value: 'misc', text: 'Miscellaneous' },
         { value: 'scoop', text: 'Scoop' },
         { value: 'desiccant', text: 'Desiccant' },
         { value: 'box', text: 'Box' },
-        { value: 'carton', text: 'Carton' },
+        // { value: 'carton', text: 'Carton' },
         { value: 'packaging_material', text: 'Packaging Material' }
       ],
       unit_type: null,
@@ -270,7 +271,7 @@ export default {
         })
 
         if (resp.status === 201) {
-          resp.data.forEach(item => {
+          Object.values(resp.data[0].temp_key_lookup).forEach(item => {
             if (item.table_name === 'Components') {
               this.$router.push({ path: `/catalogue/components/${item.new_id}` })
             }
@@ -282,7 +283,7 @@ export default {
       this.$bvToast.hide()
 
       const errorToast = {
-        title: 'Invalid Formula',
+        title: 'Invalid Component',
         message: '',
         variant: 'warning',
         visible: true,

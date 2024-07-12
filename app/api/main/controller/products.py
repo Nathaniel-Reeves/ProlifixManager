@@ -254,6 +254,8 @@ def get_component_brands(
     for row in raw_data:
         component_brand = row[1].to_dict()
         component_brand_join = row[0].to_dict()
+        component_brand['organization_primary_name'] = component_brand['organization_name']
+        component_brand['organization_primary_initial'] = component_brand['organization_initial']
 
         custom_response.insert_data({**component_brand_join, **component_brand})
 
@@ -407,6 +409,8 @@ def get_ingredient_brands(
     for row in raw_data:
         ingredient_brand_join = row[0].to_dict()
         ingredient_brand = row[1].to_dict()
+        ingredient_brand['organization_primary_name'] = ingredient_brand['organization_name']
+        ingredient_brand['organization_primary_initial'] = ingredient_brand['organization_initial']
 
         custom_response.insert_data({**ingredient_brand, **ingredient_brand_join})
 

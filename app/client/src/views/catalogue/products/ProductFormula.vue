@@ -200,8 +200,8 @@
                         <b-tooltip :target="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" triggers="hover">Priority Level: {{ brand.priority }}</b-tooltip>
                       </b-col>
                       <b-col>
-                        <span :id="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-name'"><b-link :to="'/organizations/'+brand.organization_id" target="_blank">{{ brand.organization_initial }}</b-link></span>
-                        <b-tooltip :target="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-name'" triggers="hover">{{ brand.organization_name }}</b-tooltip>
+                        <span :id="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-name'"><b-link :to="'/organizations/'+brand.organization_id" target="_blank">{{ brand.organization_primary_initial }}</b-link></span>
+                        <b-tooltip :target="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-name'" triggers="hover">{{ brand.organization_primary_name }}</b-tooltip>
                       </b-col>
                     </b-row>
                   </div>
@@ -764,8 +764,8 @@ export default {
             this.versions = []
             this.build_formula_versions()
           })
+          this.$parent.getProductData()
         }
-        this.$parent.getProductData()
       })
     },
     update_formula: function (formula) {
@@ -978,8 +978,8 @@ export default {
         priority: brands.length + 1,
         formula_ingredient_id: formulaIngredientId,
         organization_id: null,
-        organization_name: null,
-        organization_initial: null
+        organization_primary_name: null,
+        organization_primary_initial: null
       }
       brands.push(brand)
     },
@@ -1239,7 +1239,9 @@ export default {
         if (response.status === 200) {
           response.json().then(data => {
             const orgs = Object.values(data.data)
-            this.organization_options = orgs.sort((a, b) => (a?.organization_primary_name > b?.organization_primary_name ? 1 : -1))
+            this.organization_options = orgs.sort((a, b) => {
+              return a?.organization_primary_name > b?.organization_primary_name ? 1 : -1
+            })
             // eslint-disable-next-line
             console.log(this.organization_options)
             if (this.organization_options.doc === null) {

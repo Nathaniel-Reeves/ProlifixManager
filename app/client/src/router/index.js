@@ -55,7 +55,7 @@ const routes = [
   {
     path: '/catalogue/components/create',
     name: 'NewComponent',
-    component: () => import(/* webpackChunkName: "ComponentDetail" */ '../views/catalogue/components/NewComponent.vue')
+    component: () => import(/* webpackChunkName: "NewComponent" */ '../views/catalogue/components/NewComponent.vue')
   },
   {
     path: '/catalogue/components/:id',
@@ -71,6 +71,11 @@ const routes = [
     path: '/catalogue/products/:id',
     name: 'ProductDetail',
     component: () => import(/* webpackChunkName: "ProductDetail" */ '../views/catalogue/products/ProductDetail.vue')
+  },
+  {
+    path: '/catalogue/products/create',
+    name: 'NewProduct',
+    component: () => import(/* webpackChunkName: "NewProduct" */ '../views/catalogue/products/NewProduct.vue')
   },
   {
     path: '/organizations',

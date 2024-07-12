@@ -228,7 +228,7 @@ export default {
         })
 
         if (resp.status === 201) {
-          resp.data.forEach(item => {
+          Object.values(resp.data[0].temp_key_lookup).forEach(item => {
             if (item.table_name === 'Organizations') {
               this.$router.push({ path: `/organizations/${item.new_id}` })
             }

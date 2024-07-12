@@ -117,7 +117,6 @@ def check_authenticated(authentication_required=False, database_priveleges=None)
                         title='Redis Server Error',
                         message=str(error),
                         variant=VariantType.DANGER,
-                        dismissible=False,
                         debug_code=f"Error:{exc_type} > File: {fname} > Line: {exc_tb.tb_lineno}"
                     )
                 )

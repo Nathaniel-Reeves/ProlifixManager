@@ -425,6 +425,10 @@ export default {
       return cardTypes.includes(specKey)
     },
     onFileChange: async function (e, test) {
+      if (e.target.files.length === 0) {
+        return
+      }
+
       // Preview File
       const file = e.target.files[0]
       test.url_preview = URL.createObjectURL(file)
@@ -497,12 +501,13 @@ export default {
       })
     },
     saveProductUpdates: async function () {
+      const doc = cloneDeep(this.doc)
+      doc.specifications = this.edit_specs_buffer
       const product = {
-        doc: {
-          specifications: this.edit_specs_buffer
-        },
+        doc: doc,
         product_id: this.id
       }
+      this.req.upsertRecord('Product_Master', product)
       this.req.upsertRecord('Product_Master', product)
 
       const resp = await this.req.sendRequest(window.origin)
