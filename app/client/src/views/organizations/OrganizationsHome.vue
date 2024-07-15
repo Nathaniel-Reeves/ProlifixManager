@@ -66,7 +66,16 @@
                   <b-container fluid class="m-0">
                     <b-row align-v="baseline">
                       <b-col sm="0.5"><b-icon icon="chevron-down"></b-icon></b-col>
-                      <b-col sm="4"><h4 class="p-2">{{ org.organization_primary_name }}  -  ({{ org.organization_primary_initial }})</h4></b-col>
+                      <b-col sm="4"><h4 class="card-title">{{ org.organization_primary_name }} {{ '(' + org.organization_primary_initial + ')' }}</h4></b-col>
+                      <b-col>
+                        <h3>
+                          <b-badge v-show="org.supplier" variant="light" class="mr-2 border">Supplier</b-badge>
+                          <b-badge v-show="org.client" variant="light" class="mr-2 border">Client</b-badge>
+                          <b-badge v-show="org.lab" variant="light" class="mr-2 border">Lab</b-badge>
+                          <b-badge v-show="org.courier" variant="light" class="mr-2 border">Courier</b-badge>
+                          <b-badge v-show="org.other" variant="light" class="mr-2 border">Other</b-badge>
+                        </h3>
+                      </b-col>
                     </b-row>
                   </b-container>
                 </b-button>

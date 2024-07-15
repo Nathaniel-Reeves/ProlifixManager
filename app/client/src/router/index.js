@@ -54,6 +54,7 @@ const routes = [
   },
   {
     path: '/catalogue/components/create',
+    props: route => ({ orgId: route.query.orgId, orgName: route.query.orgName, orgInitial: route.query.orgInitial }),
     name: 'NewComponent',
     component: () => import(/* webpackChunkName: "NewComponent" */ '../views/catalogue/components/NewComponent.vue')
   },
@@ -74,6 +75,7 @@ const routes = [
   },
   {
     path: '/catalogue/products/create',
+    props: route => ({ orgId: route.query.orgId, orgName: route.query.orgName, orgInitial: route.query.orgInitial }),
     name: 'NewProduct',
     component: () => import(/* webpackChunkName: "NewProduct" */ '../views/catalogue/products/NewProduct.vue')
   },

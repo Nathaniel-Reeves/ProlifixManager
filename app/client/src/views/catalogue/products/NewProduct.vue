@@ -22,7 +22,7 @@
           <div>
             <label><strong>Client</strong></label>
             <div class="d-flex justify-content-between ml-2" style="width: 100%">
-              <ChooseOrg @org="(o) => client = o" :organizations="organization_options" :selected="client.organization_id ? null : client" :org-req="true" :initial="false"></ChooseOrg>
+              <ChooseOrg @org="(o) => client = o" :organizations="organization_options" :selected="client.organization_id ? client : null" :org-req="true" :initial="false"></ChooseOrg>
             </div>
           </div>
 
@@ -130,21 +130,35 @@ import ChooseOrg from '../../../components/ChooseOrg.vue'
 // import vSelect from 'vue-select'
 
 export default {
-  name: 'NewComponent',
+  name: 'NewProduct',
   components: {
     // vSelect,
     ChooseOrg
   },
+  props: {
+    orgId: {
+      type: Number,
+      default: 0
+    },
+    orgName: {
+      type: String,
+      default: null
+    },
+    orgInitial: {
+      type: String,
+      default: null
+    }
+  },
   data: function () {
     return {
       client: {
-        organization_id: null,
-        organization_primary_name: null,
-        organization_primary_initial: null
+        organization_id: this.orgId,
+        organization_primary_name: this.orgName,
+        organization_primary_initial: this.orgInitial
       },
       organization_options: [],
       new_product_id: null,
-      organization_id: null,
+      organization_id: this.orgId,
       product_name: null,
       certified_fda: false,
       certified_gmp: false,

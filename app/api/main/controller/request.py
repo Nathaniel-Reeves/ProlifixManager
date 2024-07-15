@@ -61,7 +61,7 @@ class CustomRequest:
             'Inventory_Log_Edges'
         )
 
-        print("Payload", json.dumps(self.request.json['payload'], indent=4))
+        # print("Payload", json.dumps(self.request.json['payload'], indent=4))
 
     def get_response(self):
         return self.custom_response
@@ -74,13 +74,10 @@ class CustomRequest:
         if not self.error:
             self.error = not self.validate_request_data()
 
-        print('Request is Valid.')
-        print('Custom Upsert:', self.custom_upsert)
-        if self.custom_upsert:
-            print(self.request.json['upsert_order'])
-        print('Custom Delete:', self.custom_delete)
-        if self.custom_delete:
-            print(self.request.json['delete_order'])
+        # if self.custom_upsert:
+        #     print(self.request.json['upsert_order'])
+        # if self.custom_delete:
+        #     print(self.request.json['delete_order'])
 
         if not self.error:
             self.error = not self.delete_files()
@@ -90,7 +87,6 @@ class CustomRequest:
 
         if not self.error:
             self.error = not self.process_upserts()
-        print(self.temp_key_lookup)
 
         if not self.error:
             self.error = not self.process_deletes()
@@ -678,7 +674,6 @@ class CustomRequest:
             return False
 
     def _execute_query(self, stm):
-        print(stm)
         record_id = None
         # Execute the query
         try:

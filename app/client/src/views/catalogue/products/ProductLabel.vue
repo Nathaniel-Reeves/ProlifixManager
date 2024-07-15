@@ -401,11 +401,8 @@ export default {
 
       const tempKeyLookup = this.req.getTempKeyLookup()
       const savedFiles = this.req.getSavedFiles()
-      console.log('Temp Key Lookup:', tempKeyLookup)
-      console.log('Saved Files:', savedFiles)
 
       this.req = new CustomRequest(this.$cookies.get('session'))
-      console.log('PRODUCT: ', this.product)
 
       for (let i = 0; i < this.product.doc.labels.all_labels.length; i++) {
         if (isTempKey(this.product.doc.labels.all_labels[i].component_id)) {
@@ -419,12 +416,8 @@ export default {
         }
       }
 
-      console.log('PRODUCT: ', this.product)
-
       // Save Product with updated labels section.
       this.req.upsertRecord('Product_Master', this.product)
-
-      console.log('Components: ', this.update_components)
 
       for (let i = 0; i < this.update_components.length; i++) {
         if (isTempKey(this.update_components[i].component_id)) {
@@ -433,8 +426,6 @@ export default {
           this.req.upsertRecord('Components', this.update_components[i])
         }
       }
-
-      console.log('Components: ', this.update_components)
 
       const resp2 = await this.req.sendRequest(window.origin)
 
