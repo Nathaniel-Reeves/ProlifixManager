@@ -21,8 +21,10 @@
             <b-nav-item href="#Aliases" @click="scrollIntoView">Aliases</b-nav-item>
             <b-nav-item href="#Specifications" @click="scrollIntoView"
               v-if="component_data.doc.specifications !== undefined">Specifications</b-nav-item>
-            <div v-for="(spec, spec_key) in component_data.doc.specifications.specs" :key="spec_key">
-              <b-nav-item :href="'#'+spec_key" @click="scrollIntoView">{{ spec.test_name }}</b-nav-item>
+            <div v-if="component_data.doc.specifications !== undefined" class="d-flex">
+              <div v-for="(spec, spec_key) in component_data.doc.specifications.specs" :key="spec_key">
+                <b-nav-item :href="'#'+spec_key" @click="scrollIntoView">{{ spec.test_name }}</b-nav-item>
+              </div>
             </div>
           </b-nav>
         </b-card-body>
@@ -45,6 +47,7 @@
 
           <!-- Specifications -->
           <SpecificationsComponent
+            v-if="component_data.doc.specifications !== undefined"
             :doc="component_data.doc"
             :spectype="'component'"
             :name="get_component_primary_name(component_data)"

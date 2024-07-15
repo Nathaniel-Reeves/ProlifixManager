@@ -2,23 +2,33 @@
   <div>
     <h3 id="Labels">Labels<b-button v-if="!edit_labels" v-b-tooltip.hover title="Edit Product Labels" @click="setLabelBuffer()" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
 
-    <b-card-group deck style="width: 100%;" class="d-flex justify-content-center">
+    <b-card-group deck style="width: 100%;">
       <div v-for="label, index in primaryLabels" :key="index" style="max-height: 30rem;" class="m-5">
-        <b-card no-body @click="label.primary_focus = !label.primary_focus">
+        <b-card no-body @click="label.primary_focus = !label.primary_focus" style="cursor: pointer;">
           <b-card-img :src="label.url_preview ? label.url_preview : getFile(label.file_pointer)" style="max-height: 30rem;"></b-card-img>
           <b-card-body :overlay="true">
-            <div class="d-flex justify-content-start">
+            <div class="d-flex justify-content-between align-items-start flex-column" style="min-height: 100%;">
+              <div class="d-flex justify-content-between" style="min-width: 100%;">
+                <div>
+                  <b-card v-show="label.primary_focus">
+                    <b-card-title>V{{ label.label_version }}<b-badge class="ml-3" variant="primary">Primary</b-badge></b-card-title>
+                    <b-card-sub-title>{{ label.date_uploaded }} - Current</b-card-sub-title>
+                    <div>
+                      {{ getProductType(label) }} ({{label.qty}}
+                        <span v-show="label.product_type === 'capsule'">ct</span>
+                        <span v-show="label.product_type === 'powder'">g</span>
+                        <span v-show="label.product_type === 'liquid'">ml</span>)<br>
+                      {{ getLabelType(label) }}
+                    </div>
+                  </b-card>
+                </div>
+                <div v-show="label.primary_focus && edit_labels">
+                  <b-button class="mr-2" @click="label.primary = false" variant="danger">Remove Primary</b-button>
+                </div>
+              </div>
               <div>
-                <b-card v-show="label.primary_focus">
-                  <b-card-title>V{{ label.label_version }}<b-badge class="ml-3" variant="primary">Primary</b-badge></b-card-title>
-                  <b-card-sub-title>{{ label.date_uploaded }} - Current</b-card-sub-title>
-                  <div>
-                    Product Type: {{ getProductType(label) }} ({{label.qty}}
-                      <span v-show="label.product_type === 'capsule'">ct</span>
-                      <span v-show="label.product_type === 'powder'">g</span>
-                      <span v-show="label.product_type === 'liquid'">ml</span>)<br>
-                    Label Type: {{ getLabelType(label) }}
-                  </div>
+                <b-card no-body class="p-1" v-show="(label.url_preview || label.file_pointer) && label.primary_focus && !isTempKey(label.component_id)">
+                  <b-button v-on:click.stop variant="light" :to="'/catalogue/components/'+label.component_id" target="_blank"><b-icon icon="box"></b-icon></b-button>
                 </b-card>
               </div>
             </div>
@@ -53,7 +63,7 @@
     <b-collapse id="show_files" v-model="show_files">
       <hr>
       <b-card-group deck style="width: 100%;">
-        <div v-for="(label, index) in edit_labels_buffer.all_labels" :key="index" style="max-height: 30rem;" class="m-5">
+        <div v-for="(label, index) in edit_labels_buffer.all_labels" v-show="!label.primary" :key="index" style="max-height: 30rem;" class="m-5">
           <b-overlay :show="label.discontinued" :opacity="0.80" rounded="sm" @click="label.focus = !label.focus">
             <b-card no-body @click="label.focus = !label.focus && label.buffered" style="cursor: pointer;">
               <b-card-img :src="label.url_preview || label.url_preview === null ? label.url_preview : getFile(label.file_pointer)" style="max-height: 30rem;"></b-card-img>
@@ -115,28 +125,33 @@
                   v-show="!label.url_preview && !label.file_pointer"
                   class="my-2" @change="onFileChange($event, label)"
                 ></b-form-file>
-
-                <div class="d-flex justify-content-between">
-                  <div>
-                    <b-card v-show="(label.url_preview || label.file_pointer) && label.focus">
-                      <b-card-title>V{{ label.label_version }}
-                        <b-badge v-if="label.primary" class="ml-3" variant="primary">Primary</b-badge>
-                        <b-badge v-show="label.discontinued" class="ml-3" variant="danger">Discontinued</b-badge>
-                      </b-card-title>
-                      <b-card-sub-title>{{ label.date_uploaded }} - {{ label.discontinued ? label.date_discontinued : 'Current' }}</b-card-sub-title>
-                      <div>
-                        Product Type: {{ getProductType(label) }} ({{label.qty}}
-                          <span v-show="label.product_type === 'capsule'">ct</span>
-                          <span v-show="label.product_type === 'powder'">g</span>
-                          <span v-show="label.product_type === 'liquid'">ml</span>)<br>
-                        Label Type: {{ getLabelType(label) }}
-                      </div>
-                    </b-card>
+                <div class="d-flex justify-content-between align-items-start flex-column" style="min-height: 100%;min-width: 100%;">
+                  <div class="d-flex justify-content-between" style="min-width: 100%;">
+                    <div>
+                      <b-card v-show="(label.url_preview || label.file_pointer) && label.focus">
+                        <b-card-title>V{{ label.label_version }}
+                          <b-badge v-if="label.primary" class="ml-3" variant="primary">Primary</b-badge>
+                          <b-badge v-show="label.discontinued" class="ml-3" variant="danger">Discontinued</b-badge>
+                        </b-card-title>
+                        <b-card-sub-title>{{ label.date_uploaded }} - {{ label.discontinued ? label.date_discontinued : 'Current' }}</b-card-sub-title>
+                        <div>
+                          {{ getProductType(label) }} ({{label.qty}}
+                            <span v-show="label.product_type === 'capsule'">ct</span>
+                            <span v-show="label.product_type === 'powder'">g</span>
+                            <span v-show="label.product_type === 'liquid'">ml</span>)<br>
+                          {{ getLabelType(label) }}
+                        </div>
+                      </b-card>
+                    </div>
+                    <div v-show="(label.url_preview || label.file_pointer) && label.focus && edit_labels">
+                      <b-button class="mr-2" v-if="!label.primary && !label.discontinued" @click="label.primary = true" variant="primary">Set Primary</b-button>
+                      <b-button v-show="!label.primary && !label.discontinued" variant="danger" @click="label.discontinued = true;  label.date_discontinued = new Date().toLocaleDateString('en-US')">Discontinue</b-button>
+                    </div>
                   </div>
-                  <div v-show="(label.url_preview || label.file_pointer) && label.focus && edit_labels">
-                    <b-button class="mr-2" v-if="!label.primary && !label.discontinued" @click="label.primary = true" variant="primary">Set Primary</b-button>
-                    <b-button class="mr-2" v-if="label.primary  && !label.discontinued" @click="label.primary = false" variant="danger">Remove Primary</b-button>
-                    <b-button v-show="!label.primary && !label.discontinued" variant="danger" @click="label.discontinued = true;  label.date_discontinued = new Date().toLocaleDateString('en-US')">Discontinue</b-button>
+                  <div>
+                    <b-card no-body class="p-1" v-show="(label.url_preview || label.file_pointer) && label.focus && !isTempKey(label.component_id)">
+                      <b-button v-on:click.stop variant="light" :to="'/catalogue/components/'+label.component_id" target="_blank"><b-icon icon="box"></b-icon></b-button>
+                    </b-card>
                   </div>
                 </div>
               </b-card-body>
@@ -170,6 +185,7 @@
 <script>
 import { CustomRequest, genTempKey, isTempKey } from '../../../common/CustomRequest.js'
 import { cloneDeep } from 'lodash'
+import labelDoc from './labelDocTemp.js'
 import vSelect from 'vue-select'
 
 export default {
@@ -230,6 +246,9 @@ export default {
     }
   },
   methods: {
+    isTempKey: function (key) {
+      return isTempKey(key)
+    },
     getLabelType: function (l) {
       return this.product_type_options.find((e) => e.value === l.product_type)?.label
     },
@@ -340,25 +359,7 @@ export default {
         brand_id: this.$parent.product_data.organization_id,
         is_label: true,
         units: 'units',
-        doc: {
-          label: {
-            url_preview: label.url_preview,
-            file_preview_pointer: label.file_preview_pointer,
-            file_pointer: label.file_pointer,
-            id_code: label.id_code,
-            label_version: label.label_version,
-            product_id: this.id,
-            type: label.type,
-            discontinued: label.discontinued,
-            date_discontinued: label.date_discontinued,
-            date_uploaded: label.date_uploaded,
-            primary: label.primary,
-            product_type: label.product_type,
-            label_type: label.label_type,
-            qty: label.qty
-          },
-          specifications: { specs: {} }
-        }
+        doc: this.loadDoc(label)
       }
       this.req.upsertRecord('Components', component)
       this.req.upsertRecord('Component_Names', componentName)
@@ -367,6 +368,20 @@ export default {
         primary_name_id: nameId
       }
       this.update_components.push(c)
+    },
+    loadDoc: function (label) {
+      const doc = labelDoc
+      doc.label.url_preview = label.url_preview
+      doc.label.file_pointer = label.file_pointer
+      doc.label.id_code = label.id_code
+      doc.label.label_version = label.label_version
+      doc.label.product_id = this.id
+      doc.label.type = label.type
+      doc.label.date_uploaded = label.date_uploaded
+      doc.label.product_type = label.product_type
+      doc.label.label_type = label.label_type
+      doc.label.qty = label.qty
+      return doc
     },
     submit: async function () {
       const createToast = this.$root.createToast
@@ -432,11 +447,10 @@ export default {
         return false
       }
 
-      this.$parent.getProductData()
       this.req = new CustomRequest(this.$cookies.get('session'))
       this.edit_labels = false
-      this.$emit('editLabels', this.edit_labels)
-      this.$emit('toggleLoaded', true)
+      this.$parent.edit_labels = false
+      this.$parent.getProductData()
       return true
     },
     getFile: function (filename) {
