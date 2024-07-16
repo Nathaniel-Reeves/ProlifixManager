@@ -141,6 +141,20 @@
             </div>
           </div>
 
+          <div>
+            <label><strong>Component Brand</strong></label>
+            <div class="d-flex justify-content-between ml-2" style="width: 100%" id="brand_select">
+              <div class="custom-control custom-checkbox">
+                <input :disabled="brand_not_allowed" class="custom-control-input" id="brand_association" type="checkbox" v-model="no_brand" name="brand_association">
+                <label class="custom-control-label" for="brand_association">
+                  Brand Association
+                </label>
+              </div>
+              <ChooseOrg :disabled-prop="!no_brand || brand_not_allowed" @org="(o) => brand = o" :organizations="organization_options" :selected="brand.organization_id ? brand : null" :initial="false"></ChooseOrg>
+            </div>
+            <b-tooltip v-if="brand_not_allowed" target="brand_select" triggers="hover">Brand associations are not allowed for ingredients.</b-tooltip>
+          </div>
+
           <div class="d-flex justify-content-end">
             <b-button variant="primary" @click="submit()">Submit</b-button>
           </div>
@@ -170,15 +184,38 @@
 import ingredientDoc from './ingredientDocTemp.js'
 import compDoc from './compDocTemp.js'
 import { CustomRequest, genTempKey } from '../../../common/CustomRequest.js'
+import ChooseOrg from '../../../components/ChooseOrg.vue'
 import vSelect from 'vue-select'
 
 export default {
   name: 'NewComponent',
   components: {
-    vSelect
+    vSelect,
+    ChooseOrg
+  },
+  props: {
+    orgId: {
+      type: Number,
+      default: 0
+    },
+    orgName: {
+      type: String,
+      default: null
+    },
+    orgInitial: {
+      type: String,
+      default: null
+    }
   },
   data: function () {
     return {
+      brand: {
+        organization_id: this.orgId,
+        organization_primary_name: this.orgName,
+        organization_primary_initial: this.orgInitial
+      },
+      no_brand: !!this.orgId,
+      organization_options: [],
       edit_names_buffer: [],
       new_component_id: null,
       component_type: null,
@@ -243,6 +280,7 @@ export default {
       const newComponent = {
         component_id: this.new_component_id,
         component_type: this.component_type,
+        brand_id: (this.no_brand || this.brand_not_allowed) ? null : this.brand.organization_id,
         units: this.unit_type,
         certified_fda: this.certified_fda,
         certified_gmp: this.certified_gmp,
@@ -370,14 +408,59 @@ export default {
       } else {
         this.doc = compDoc
       }
+    },
+    get_organizations: function () {
+      const fetchRequest = window.origin + '/api/v1/organizations?org-type=client'
+      // eslint-disable-next-line
+      console.log(
+        'GET ' + fetchRequest
+      )
+      fetch(fetchRequest, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      }).then(response => {
+        if (response.status === 200) {
+          response.json().then(data => {
+            const orgs = Object.values(data.data)
+            this.organization_options = orgs.sort((a, b) => (a?.organization_primary_name > b?.organization_primary_name ? 1 : -1))
+            // eslint-disable-next-line
+            console.log(this.organization_options)
+            if (this.organization_options.doc === null) {
+              this.organization_options.doc = {}
+            }
+          })
+        } else if (response.status === 404) {
+          this.$router.push({ path: '/404' })
+        } else if (response.status === 401) {
+          this.$router.push({
+            name: 'login'
+          })
+        } else {
+          // eslint-disable-next-line
+          console.log('Looks like there was a problem. Status Code:' + response.status)
+          // eslint-disable-next-line
+          console.log(response)
+        }
+      })
     }
   },
   watch: {
     component_type: function (val) {
       if (val === 'powder') {
         this.unit_type = 'kilograms'
+        this.brand.organization_id = 0
+        this.brand.organization_primary_name = null
+        this.brand.organization_primary_initial = null
+        this.no_brand = false
       } else if (val === 'liquid') {
         this.unit_type = 'liters'
+        this.brand.organization_id = 0
+        this.brand.organization_primary_name = null
+        this.brand.organization_primary_initial = null
+        this.no_brand = false
       } else {
         this.unit_type = ''
         this.certified_fda = false
@@ -419,10 +502,24 @@ export default {
       }
     }
   },
+  computed: {
+    brand_not_allowed: function () {
+      if (this.component_type === 'powder' ||
+          this.component_type === 'liquid' ||
+          this.component_type === 'capsule' ||
+          this.component_type === null) {
+        return true
+      } else {
+        return false
+      }
+    }
+
+  },
   created: function () {
     this.new_component_id = genTempKey()
     this.addName()
     this.radioNames(this.edit_names_buffer[0].name_id, 'primary')
+    this.get_organizations()
   }
 }
 </script>

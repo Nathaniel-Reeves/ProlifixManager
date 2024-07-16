@@ -74,6 +74,9 @@
                       <b-col sm="4"><h4 class="p-2">{{ component.component_primary_name }}         {{ getBrandName(component) }}</h4></b-col>
                       <b-col><div class="p-2"><CertBadge :data="component"></CertBadge></div></b-col>
                       <b-col sm="0.5"><div class="p-1"><b-badge class="p-1" v-show="!verifySpecs(component)" variant="warning">Incomplete Specs</b-badge></div></b-col>
+                      <b-col  sm="1.5">
+                        <router-link :to="{path:`/catalogue/components/${component.component_id}`}"><button type="button" class="btn btn-light ms-auto" style="border-width: 2px; border-color:#999999">View Details</button></router-link>
+                      </b-col>
                     </b-row>
                   </b-container>
                 </b-button>
@@ -110,10 +113,6 @@
                     <p v-if="component.doc.specifications.parts_used.length > 0"><strong>Parts Used</strong><br>{{ component.doc.specifications.parts_used }}</p>
                   </div>
                 </div>
-
-                <b-container fluid class="d-flex justify-content-end flex-wrap" style="max-width:10rem;">
-                  <router-link :to="{path:`/catalogue/components/${component.component_id}`}"><button type="button" class="btn btn-light ms-auto" style="border-width: 2px; border-color:#999999">View Details</button></router-link>
-                </b-container>
 
               </div>
             </b-collapse>

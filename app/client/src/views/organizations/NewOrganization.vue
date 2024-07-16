@@ -33,7 +33,7 @@
                 <div id="inline-form-input-initial-live-feedback" class="invalid-feedback">This is a required field that must be no longer than 6 characters.</div>
               </div>
               <div>
-                <b-button @click="radioNames(name.name_id, 'primary')" :disabled="name.primary_name" :pressed="name.primary_name" variant="light" class="mb-2 mr-sm-2 mb-sm-0">Primary Name</b-button>
+                <b-button @click="radioNames(name.name_id, 'primary')" :disabled="name.primary_name" :pressed="name.primary_name" :variant="name.primary_name ? 'primary' : 'outline-primary'" class="mb-2 mr-sm-2 mb-sm-0">Primary Name</b-button>
               </div>
               <div>
                 <b-button variant="outline-danger" class="mb-2 mr-sm-2 mb-sm-0" v-show="!name.primary_name" v-on:click="deleteName(name.name_id)">Delete</b-button>

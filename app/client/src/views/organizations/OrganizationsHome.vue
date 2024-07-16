@@ -61,7 +61,7 @@
         <div v-show="loaded" class="accordion overflow-auto border-top border-bottom" id="accordionExample" style="height:100vh;">
           <div class="card" v-for="org in filterOrganizations" :key="org.organization_id">
             <div class="card-header" v-bind:id="'heading' + org.organization_id">
-              <h2 class="d-flex flex-row mb-0">
+              <h2 class="d-flex flex-row justify-content-between mb-0">
                 <b-button class="text-left" v-b-toggle="'collapse' + org.organization_id" v-on:click="populateOrg(org.organization_id)" variant="light" style="width:100%;">
                   <b-container fluid class="m-0">
                     <b-row align-v="baseline">
@@ -75,6 +75,9 @@
                           <b-badge v-show="org.courier" variant="light" class="mr-2 border">Courier</b-badge>
                           <b-badge v-show="org.other" variant="light" class="mr-2 border">Other</b-badge>
                         </h3>
+                      </b-col>
+                      <b-col sm="1.5" class="p-2">
+                        <router-link :to="{path:`/organizations/${org.organization_id}`}"><button type="button" class="btn btn-light ms-auto" style="border-width: 2px; border-color:#999999">View Details</button></router-link>
                       </b-col>
                     </b-row>
                   </b-container>
@@ -113,10 +116,6 @@
                   <!-- <ProductsGrid v-bind:Products="org.Products"></ProductsGrid> -->
                 </div>
 
-                <b-container class="p-2">
-                  <router-link :to="{path:`/organizations/${org.organization_id}`}"><button type="button" class="btn btn-light ms-auto" style="border-width: 2px; border-color:#999999">View Details</button></router-link>
-                </b-container>
-
               </div>
             </b-collapse>
           </div>
@@ -128,7 +127,7 @@
 
 <style scoped>
 .my_component {
-    width: 95%;
+    width: 60%;
 }
 @media (max-width: 1024px) {
     .my_component {

@@ -9,7 +9,7 @@
       :placeholder="!orgs_loaded ? 'Loading...':'Choose...'"
       aria-describedby="select_org-live-feedback"
       :class="[((selected_org !== null && selected_org.organization_id > 0) || !orgReq ? '' : 'is-invalid'), (initial ? 'initial' : 'wide')]"
-      :disabled="selected_org !== null && selected_org.organization_id > 0 && initial"
+      :disabled="(selected_org !== null && selected_org.organization_id > 0 && initial) || disabledProp"
       :clearable="false"
       :filterable="false"
       @open="onOpen"
@@ -76,6 +76,10 @@ export default {
     initial: {
       type: Boolean,
       default: true
+    },
+    disabledProp: {
+      type: Boolean,
+      default: false
     }
   },
   data: function () {

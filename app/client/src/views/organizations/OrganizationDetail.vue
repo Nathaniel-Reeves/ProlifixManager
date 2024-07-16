@@ -187,14 +187,14 @@
 
           <!-- Components -->
           <div v-show="!edit_org && !edit_names && org_data.supplier">
-            <h3 id="Components">Components</h3>
+            <h3 id="Components">Components<b-button @click="$router.push({ path:'/catalogue/components/create', query: { orgId: org_data.organization_id, orgName: org_data.organization_primary_name, orgInitial: org_data.organization_primary_initial } })" v-b-tooltip.hover :title="'Add a new component.'" v-bind:class="['btn', 'p-1', 'ml-2', 'btn-light']" type="button"><b-icon icon="plus" class="d-print-none"></b-icon></b-button></h3>
             <b-table striped :items="org_data.components" show-empty id="components-table" :per-page="perPage" :current-page="currentComponentPage" bordered
               :fields="[
                 { key: 'component_primary_name', label: 'Component', thStyle: { width: '40%' } },
                 { key: 'certs', label: 'Certs' }
               ]">
               <template #cell(component_primary_name)="data">
-                <b-button v-on:click.stop class="mr-2" variant="light" :to="'/catalogue/components/'+data.item.product_id " target="_blank"><b-icon icon="box"></b-icon></b-button>
+                <b-button v-on:click.stop class="mr-2" variant="light" :to="'/catalogue/components/'+data.item.component_id " target="_blank"><b-icon icon="box"></b-icon></b-button>
                 <b class="text-info">{{ data.value }}</b>
               </template>
               <template #cell(certs)="data">
@@ -308,7 +308,7 @@ export default {
       }
     },
     getOrganization: function () {
-      const fetchRequest = window.origin + '/api/v1/organizations?org-id=' + this.id + '&populate=facilities&populate=people&populate=products&populate=organization_names'
+      const fetchRequest = window.origin + '/api/v1/organizations?org-id=' + this.id + '&populate=facilities&populate=people&populate=products&populate=organization_names&populate=components'
       // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest
