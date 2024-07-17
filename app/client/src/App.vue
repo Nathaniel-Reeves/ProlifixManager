@@ -101,7 +101,7 @@
       </div> -->
 
         <div class="text-center bg-dark p-3">
-          © 2024 Copyright | v3.1.2
+          © 2024 Copyright | v3.2.0
         </div>
       </footer>
     </div>
