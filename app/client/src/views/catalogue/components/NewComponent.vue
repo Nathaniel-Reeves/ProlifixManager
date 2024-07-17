@@ -266,7 +266,7 @@ export default {
     }
   },
   methods: {
-    submit: function () {
+    submit: async function () {
       if (!this.validateNewComponent()) {
         return false
       }
@@ -297,25 +297,40 @@ export default {
         doc: this.doc
       }
 
+      let primaryNameTempKey = ''
+
       this.req.upsertRecord('Components', newComponent)
       this.edit_names_buffer.forEach(name => {
         this.req.upsertRecord('Component_Names', name)
-      })
-
-      this.req.sendRequest(window.origin).then(resp => {
-        const createToast = this.$root.createToast
-        resp.messages.flash.forEach(message => {
-          createToast(message)
-        })
-
-        if (resp.status === 201) {
-          Object.values(resp.data[0].temp_key_lookup).forEach(item => {
-            if (item.table_name === 'Components') {
-              this.$router.push({ path: `/catalogue/components/${item.new_id}` })
-            }
-          })
+        if (name.primary_name) {
+          primaryNameTempKey = name.name_id
         }
       })
+
+      const createToast = this.$root.createToast
+
+      const resp1 = await this.req.sendRequest(window.origin)
+      resp1.messages.flash.forEach(message => {
+        createToast(message)
+      })
+
+      const tempKeyLookup = this.req.getTempKeyLookup()
+      this.req = new CustomRequest(this.$cookies.get('session'))
+
+      const updateComponent = {
+        component_id: tempKeyLookup[this.new_component_id].new_id,
+        primary_name_id: tempKeyLookup[primaryNameTempKey].new_id
+      }
+      this.req.upsertRecort('Components', updateComponent)
+      const resp2 = await this.req.sendRequest(window.origin)
+
+      if (resp2.status === 201) {
+        Object.values(resp1.data[0].temp_key_lookup).forEach(item => {
+          if (item.table_name === 'Components') {
+            this.$router.push({ path: `/catalogue/components/${item.new_id}` })
+          }
+        })
+      }
     },
     validateNewComponent: function () {
       this.$bvToast.hide()

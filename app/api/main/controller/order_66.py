@@ -62,7 +62,7 @@ def order_66(request):
     # custom_response = fix_primary_name_id_column_organizations(custom_response)
     # custom_response = fix_primary_name_id_column_components(custom_response)
     # custom_response = fix_product_master(custom_response)
-    custom_response = fix_old_components_template(custom_response)
+    # custom_response = fix_old_components_template(custom_response)
 
     if custom_response.status_code == 200:
         fm = FlashMessage(

@@ -37,6 +37,7 @@ class CustomRequest:
             'Organization_Names',
             'People',
             'Product_Master',
+            'Product_Variant',
             'Purchase_Orders',
             'Sales_Orders',
             'Equipment',
@@ -73,6 +74,7 @@ class CustomRequest:
 
         if not self.error:
             self.error = not self.validate_request_data()
+        print("validate request data:", self.error)
 
         # if self.custom_upsert:
         #     print(self.request.json['upsert_order'])
@@ -81,15 +83,19 @@ class CustomRequest:
 
         if not self.error:
             self.error = not self.delete_files()
+        print('delete files:', self.error)
 
         if not self.error:
             self.error = not self.save_files()
+        print('save files:', self.error)
 
         if not self.error:
             self.error = not self.process_upserts()
+        print('process upserts:', self.error)
 
         if not self.error:
             self.error = not self.process_deletes()
+        print('process deletes:', self.error)
 
         self.finish_transaction()
         self.close_session()
@@ -100,11 +106,22 @@ class CustomRequest:
             self.session.rollback()
             for file in self.saved_files.values():
                 self._remove_file_from_filesystem(file["file_pointer"])
+            self.custom_response.insert_data({
+                "saved_files": self.saved_files,
+                "temp_key_lookup": self.temp_key_lookup
+            })
+            self.custom_response.insert_flash_message(
+                FlashMessage(
+                    variant=VariantType.DANGER,
+                    title="Failure!",
+                    message="Failed to Save."
+                )
+            )
         else:
             self.session.commit()
             self.custom_response.insert_data({
                 "saved_files": self.saved_files,
-                "temp_key_lookup": self.temp_key_lookup,
+                "temp_key_lookup": self.temp_key_lookup
             })
             self.custom_response.insert_flash_message(
                 FlashMessage(
@@ -130,6 +147,7 @@ class CustomRequest:
                 for record in upserts[table]:
                     flag = self._upsert_record(table, record)
                     if not flag:
+
                         return flag
         return flag
 
@@ -170,6 +188,10 @@ class CustomRequest:
 
         if pk_col in record.keys():
             if isinstance(record[pk_col], int):
+                if 'date_entered' in record.keys():
+                    record.pop('date_entered')
+                if 'date_modified' in record.keys():
+                    record.pop('date_modified')
                 stm = update(table).values(record).where(getattr(table, pk_col) == record[pk_col])
             elif isinstance(record[pk_col], str) and "temp-" in record[pk_col]:
                 temp_key = record.pop(pk_col)
@@ -183,6 +205,14 @@ class CustomRequest:
                 self.custom_response.insert_flash_message(flash_message)
                 self.custom_response.set_status_code(400)
                 return False
+            print()
+            print()
+            print(json.dumps(record, indent=2))
+            print()
+            print()
+            print(stm)
+            print()
+            print()
         else:
             flash_message = FlashMessage(
                 variant=VariantType.DANGER,
@@ -197,7 +227,6 @@ class CustomRequest:
         if new_id and temp_key:
             data = { 'table_name': table_name, 'new_id' : new_id, 'pk' : pk_col, 'temp_key': temp_key }
             self.temp_key_lookup[temp_key] = data
-
         return outcome
 
     def process_deletes(self):
@@ -682,6 +711,8 @@ class CustomRequest:
                 record_id = stream.inserted_primary_key[0]
         except Exception:
             error = error_message()
+            # print("Error: ", error)
+            # print(stm)
             self.custom_response.insert_flash_message(error)
             self.custom_response.set_status_code(400)
             return None, False

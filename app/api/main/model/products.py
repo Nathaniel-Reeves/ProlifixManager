@@ -18,8 +18,8 @@ class Product_Master(Base):
     organization_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
     product_name: Mapped[str] = mapped_column()
     current_product: Mapped[bool] = mapped_column()
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    spec_revise_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
+    spec_revise_date: Mapped[datetime.datetime] = mapped_column(default=None)
     TimeUnits = ("Years", "Months", "Days")
     exp_unit: Mapped[int] = mapped_column(Enum(
         *TimeUnits,
@@ -53,6 +53,7 @@ class Product_Master(Base):
     num_formula_versions: Mapped[int] = mapped_column(default=1)
     default_manufacturing_version: Mapped[int] = mapped_column(default=1)
     num_manufacturing_versions: Mapped[int] = mapped_column(default=1)
+    num_product_variants: Mapped[int] = mapped_column()
 
     doc = Column(MutableDict.as_mutable(JSON))
 
@@ -98,7 +99,8 @@ class Product_Master(Base):
             'default_formula_version': self.default_formula_version,
             'num_formula_versions': self.num_formula_versions,
             'default_manufacturing_version': self.default_manufacturing_version,
-            'num_manufacturing_versions': self.num_manufacturing_versions
+            'num_manufacturing_versions': self.num_manufacturing_versions,
+            'num_product_variants': self.num_product_variants
         }
 
     def get_id(self):
@@ -117,8 +119,8 @@ class Manufacturing_Process(Base):
     # Table Columns
     process_spec_id: Mapped[int] = mapped_column(primary_key=True)
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    date_modified: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime)
+    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
+    date_modified: Mapped[datetime.datetime] = mapped_column(default=None)
     current_default_process: Mapped[bool] = mapped_column(default=True)
     process_order: Mapped[int] = mapped_column(default=1)
     special_instruction: Mapped[str] = mapped_column(default=None)
@@ -171,7 +173,7 @@ class Formula_Master(Base):
     # Table Columns
     formula_id: Mapped[int] = mapped_column(primary_key=True)
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
     formulation_version: Mapped[int] = mapped_column(default=1)
     notes: Mapped[str] = mapped_column(default=None)
     total_grams_per_unit: Mapped[float] = mapped_column()
@@ -529,3 +531,92 @@ class Manufacturing_Process_Edges(Base):
     def get_id_name(self):
         """Get Primary ID Column Name"""
         return "(source, target)"
+
+class Product_Variant(Base):
+    """Product Variant ORM Model"""
+    __tablename__ = 'Product_Variant'
+    __table_args__ = {'schema': 'Products'}
+
+    # Table Columns
+    variant_id: Mapped[int] = mapped_column(primary_key=True)
+    product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
+    variant_title: Mapped[str] = mapped_column()
+    VariantTypes = ("powder", "liquid", "capsule")
+    variant_type: Mapped[int] = mapped_column(Enum(
+        *VariantTypes,
+        name="VariantTypes",
+        create_constraint=True,
+        validate_strings=True
+        ))
+    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
+    date_modified: Mapped[datetime.datetime] = mapped_column(default=None)
+    primary_variant: Mapped[bool] = mapped_column(default=False)
+    discontinued: Mapped[bool] = mapped_column(default=False)
+    discontinued_reason: Mapped[str] = mapped_column(default=None)
+    notes: Mapped[str] = mapped_column(default=None)
+    total_grams_per_unit: Mapped[float] = mapped_column(default=None)
+    total_capsules_per_unit: Mapped[float] = mapped_column(default=None)
+    total_mg_per_capsule: Mapped[float] = mapped_column(default=None)
+    mg_empty_capsule: Mapped[float] = mapped_column(default=None)
+    CapsuleSizes = ("1","2","0","00")
+    capsule_size: Mapped[int] = mapped_column(Enum(
+        *CapsuleSizes,
+        name="CapsuleSizes",
+        create_constraint=True,
+        validate_strings=True,
+        default=None
+        ))
+    total_milliliters_per_unit: Mapped[float] = mapped_column(default=None)
+    min_grams_per_unit: Mapped[float] = mapped_column(default=None)
+    max_grams_per_unit: Mapped[float] = mapped_column(default=None)
+    min_mg_per_capsule: Mapped[float] = mapped_column(default=None)
+    max_mg_per_capsule: Mapped[float] = mapped_column(default=None)
+    min_milliliters_per_unit: Mapped[float] = mapped_column(default=None)
+    max_milliliters_per_unit: Mapped[float] = mapped_column(default=None)
+    variant_title_suffix: Mapped[str] = mapped_column(default=None)
+
+    # Relationships
+
+    def __repr__(self):
+        """Return a string representation of Object"""
+        return f'<Product_Variant id:{self.variant_id} product_id:{self.product_id}>'
+
+    def to_dict(self):
+        """Converts Data to Dictionary representation
+
+        Returns:
+            Dict: Columns as Keys
+        """
+        return {
+            'variant_id': self.variant_id,
+            'product_id': self.product_id,
+            'variant_title': self.variant_title,
+            'variant_type': self.variant_type,
+            'date_entered': self.date_entered,
+            'date_modified': self.date_modified,
+            'primary_variant': self.primary_variant,
+            'discontinued': self.discontinued,
+            'discontinued_reason': self.discontinued_reason,
+            'notes': self.notes,
+            'total_grams_per_unit': self.total_grams_per_unit,
+            'total_capsules_per_unit': self.total_capsules_per_unit,
+            'total_mg_per_capsule': self.total_mg_per_capsule,
+            'mg_empty_capsule': self.mg_empty_capsule,
+            'capsule_size': self.capsule_size,
+            'total_milliliters_per_unit': self.total_milliliters_per_unit,
+            'min_grams_per_unit': self.min_grams_per_unit,
+            'max_grams_per_unit': self.max_grams_per_unit,
+            'min_mg_per_capsule': self.min_mg_per_capsule,
+            'max_mg_per_capsule': self.max_mg_per_capsule,
+            'min_milliliters_per_unit': self.min_milliliters_per_unit,
+            'max_milliliters_per_unit': self.max_milliliters_per_unit,
+            'variant_title_suffix': self.variant_title_suffix
+        }
+
+    def get_id(self):
+        """Get Row Id"""
+        return self.variant_id
+
+    def get_id_name(self):
+        """Get Primary ID Column Name"""
+        return "variant_id"

@@ -27,154 +27,6 @@
               :disabled="!edit_formulas"
               @input="update_formula(f)"
             ></b-form-textarea>
-            <b-card-group deck class="mb-3">
-              <b-card>
-                <b-card-title>Powder Fill</b-card-title>
-                <b-card-text>
-                  <b-row>
-                    <b-col><label :for="'max_grams_per_unit_'+f.formulation_version"><strong>Tolerance Max:</strong></label></b-col>
-                    <b-col>
-                      <div class="input-group mb-2">
-                        <input :id="'max_grams_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.max_grams_per_unit" required @input="update_formula(f)">
-                        <div class="input-group-append">
-                          <span class="input-group-text">g</span>
-                        </div>
-                      </div>
-                    </b-col>
-                  </b-row>
-                  <b-row>
-                    <b-col><label :for="'total_grams_per_unit_'+f.formulation_version"><strong>Target g per Product:</strong></label></b-col>
-                    <b-col>
-                      <div class="input-group mb-2">
-                        <input :id="'total_grams_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.total_grams_per_unit" required @input="update_formula(f)">
-                        <div class="input-group-append">
-                          <span class="input-group-text">g</span>
-                        </div>
-                      </div>
-                    </b-col>
-                  </b-row>
-                  <b-row>
-                    <b-col><label :for="'min_grams_per_unit_'+f.formulation_version"><strong>Tolerance Min:</strong></label></b-col>
-                    <b-col>
-                      <div class="input-group mb-2">
-                        <input :id="'min_grams_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.min_grams_per_unit" required @input="update_formula(f)">
-                        <div class="input-group-append">
-                          <span class="input-group-text">g</span>
-                        </div>
-                      </div>
-                    </b-col>
-                  </b-row>
-                </b-card-text>
-              </b-card>
-              <b-card>
-                <b-card-title>Liquid Fill</b-card-title>
-                <b-card-text>
-                  <b-row>
-                    <b-col><label :for="'max_milliliters_per_unit_'+f.formulation_version"><strong>Tolerance Max:</strong></label></b-col>
-                    <b-col>
-                      <div class="input-group mb-2">
-                        <input :id="'max_milliliters_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.max_milliliters_per_unit" required @input="update_formula(f)">
-                        <div class="input-group-append">
-                          <span class="input-group-text">ml</span>
-                        </div>
-                      </div>
-                    </b-col>
-                  </b-row>
-                  <b-row>
-                    <b-col><label :for="'total_milliliters_per_unit_'+f.formulation_version"><strong>Target ml per Product:</strong></label></b-col>
-                    <b-col>
-                      <div class="input-group mb-2">
-                        <input :id="'total_milliliters_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.total_milliliters_per_unit" required @input="update_formula(f)">
-                        <div class="input-group-append">
-                          <span class="input-group-text">ml</span>
-                        </div>
-                      </div>
-                    </b-col>
-                  </b-row>
-                  <b-row>
-                    <b-col><label :for="'min_milliliters_per_unit_'+f.formulation_version"><strong>Tolerance Min:</strong></label></b-col>
-                    <b-col>
-                      <div class="input-group mb-2">
-                        <input :id="'min_milliliters_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.min_milliliters_per_unit" required @input="update_formula(f)">
-                        <div class="input-group-append">
-                          <span class="input-group-text">ml</span>
-                        </div>
-                      </div>
-                    </b-col>
-                  </b-row>
-                </b-card-text>
-              </b-card>
-              <b-card>
-                <b-card-title>Capsule Fill</b-card-title>
-                <b-card-text>
-                  <b-row>
-                    <b-col><label :for="'max_mg_per_capsule_'+f.formulation_version"><strong>Tolerance Max:</strong></label></b-col>
-                    <b-col>
-                      <div class="input-group mb-2">
-                        <input :id="'max_mg_per_capsule_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.max_mg_per_capsule" required @input="update_formula(f)">
-                        <div class="input-group-append">
-                          <span class="input-group-text">mg</span>
-                        </div>
-                      </div>
-                    </b-col>
-                  </b-row>
-                  <b-row>
-                    <b-col><label :for="'total_mg_per_capsule_'+f.formulation_version"><strong>Target mg per Cap:</strong></label></b-col>
-                    <b-col>
-                      <div class="input-group mb-2">
-                        <input :id="'total_mg_per_capsule_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.total_mg_per_capsule" required @input="update_formula(f)">
-                        <div class="input-group-append">
-                          <span class="input-group-text">mg</span>
-                        </div>
-                      </div>
-                    </b-col>
-                  </b-row>
-                  <b-row>
-                    <b-col><label :for="'min_mg_per_capsule_'+f.formulation_version"><strong>Tolerance Min:</strong></label></b-col>
-                    <b-col>
-                      <div class="input-group mb-2">
-                        <input :id="'min_mg_per_capsule_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.min_mg_per_capsule" required @input="update_formula(f)">
-                        <div class="input-group-append">
-                          <span class="input-group-text">mg</span>
-                        </div>
-                      </div>
-                    </b-col>
-                  </b-row>
-                  <hr>
-                  <b-row>
-                    <b-col><label :for="'total_capsules_per_unit_'+f.formulation_version"><strong>Capsule Count:</strong></label></b-col>
-                    <b-col>
-                      <div class="input-group mb-2">
-                        <input :id="'total_capsules_per_unit_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.total_capsules_per_unit" required @input="update_formula(f)">
-                        <div class="input-group-append">
-                          <span class="input-group-text">ct</span>
-                        </div>
-                      </div>
-                    </b-col>
-                  </b-row>
-                  <b-row>
-                    <b-col><label :for="'capsule_size_'+f.formulation_version"><strong>Capsule Size:</strong></label></b-col>
-                    <b-col><select :id="'capsule_size_'+f.formulation_version" disabled v-model="f.capsule_size" class="form-control form-control-md mb-3 hidedropdownarrow" @input="update_formula(f)">
-                      <option value="1">1</option>
-                      <option value="2">2</option>
-                      <option value="0">0</option>
-                      <option value="00">00</option>
-                    </select></b-col>
-                  </b-row>
-                  <b-row>
-                    <b-col><label :for="'capsule_weight_'+f.formulation_version"><strong>Capsule Weight:</strong></label></b-col>
-                    <b-col>
-                      <div class="input-group mb-2">
-                        <input :id="'capsule_weight_'+f.formulation_version" type="number" class="form-control" disabled v-model="f.capsule_weight" required @input="update_formula(f)">
-                        <div class="input-group-append">
-                          <span class="input-group-text">mg</span>
-                        </div>
-                      </div>
-                    </b-col>
-                  </b-row>
-                </b-card-text>
-              </b-card>
-            </b-card-group>
 
             <b-table-lite :items="f['formula_detail']" :fields="fields" striped bordered sticky-header foot-clone head-variant="light" style="min-height: 600px;">
               <template #cell(ingredients_detail)="ingredients_detail">
@@ -287,289 +139,7 @@
               class="mb-3"
               @input="update_formula(new_formula_buffer)"
             ></b-form-textarea>
-            <b-card-group deck class="mb-3">
-              <b-card>
-                <b-card-title>Powder Fill</b-card-title>
-                <b-card-text>
-                  <b-row>
-                    <b-col><label for="max_grams_per_unit"><strong>Tolerance Max:</strong></label></b-col>
-                    <b-col>
-                      <div class="input-group mb-2">
-                        <input
-                          id="max_grams_per_unit"
-                          type="number"
-                          v-model="new_formula_buffer.max_grams_per_unit"
-                          required
-                          min="0"
-                          aria-describedby="max_grams_per_unit-live-feedback"
-                          :class="['form-control', (new_formula_buffer.max_grams_per_unit >= new_formula_buffer.total_grams_per_unit && new_formula_buffer.max_grams_per_unit !== null ? '' : 'is-invalid')]"
-                          @input="update_formula(new_formula_buffer)"
-                          v-on:keyup.enter="focus('total_grams_per_unit')"
-                        >
-                        <div class="input-group-append">
-                          <span class="input-group-text">g</span>
-                        </div>
-                        <div id="max_grams_per_unit-live-feedback" class="invalid-feedback">This required field must be greater than or equal to the target.</div>
-                      </div>
-                    </b-col>
-                  </b-row>
-                  <b-row>
-                    <b-col><label for="total_grams_per_unit"><strong>Target g per Product:</strong></label></b-col>
-                    <b-col>
-                      <div class="input-group mb-2">
-                        <input
-                          id="total_grams_per_unit"
-                          type="number"
-                          class="form-control"
-                          v-model="new_formula_buffer.total_grams_per_unit"
-                          required
-                          min="0"
-                          aria-describedby="total_grams_per_unit-live-feedback"
-                          :class="['form-control', (new_formula_buffer.total_grams_per_unit >= 0 && new_formula_buffer.total_grams_per_unit !== '' && new_formula_buffer.total_grams_per_unit !== null ? '' : 'is-invalid')]"
-                          @input="update_formula(new_formula_buffer)"
-                          v-on:keyup.enter="focus('min_grams_per_unit')"
-                        >
-                        <div class="input-group-append">
-                          <span class="input-group-text">g</span>
-                        </div>
-                        <div id="total_grams_per_unit-live-feedback" class="invalid-feedback">This is a required field.</div>
-                      </div>
-                    </b-col>
-                  </b-row>
-                  <b-row>
-                    <b-col><label for="min_grams_per_unit"><strong>Tolerance Min:</strong></label></b-col>
-                    <b-col>
-                      <div class="input-group mb-2">
-                        <input
-                          id="min_grams_per_unit"
-                          type="number"
-                          v-model="new_formula_buffer.min_grams_per_unit"
-                          required
-                          min="0"
-                          aria-describedby="min_grams_per_unit-live-feedback"
-                          :class="['form-control', (new_formula_buffer.min_grams_per_unit <= new_formula_buffer.total_grams_per_unit && new_formula_buffer.min_grams_per_unit !== null ? '' : 'is-invalid')]"
-                          @input="update_formula(new_formula_buffer)"
-                          v-on:keyup.enter="focus('max_milliliters_per_unit')"
-                        >
-                        <div class="input-group-append">
-                          <span class="input-group-text">g</span>
-                        </div>
-                        <div id="min_grams_per_unit-live-feedback" class="invalid-feedback">This required field must be less than or equal to the target.</div>
-                      </div>
-                    </b-col>
-                  </b-row>
-                </b-card-text>
-              </b-card>
-              <b-card>
-                <b-card-title>Liquid Fill</b-card-title>
-                <b-card-text>
-                  <b-row>
-                    <b-col><label for="max_milliliters_per_unit"><strong>Tolerance Max:</strong></label></b-col>
-                    <b-col>
-                      <div class="input-group mb-2">
-                        <input
-                          id="max_milliliters_per_unit"
-                          type="number"
-                          v-model="new_formula_buffer.max_milliliters_per_unit"
-                          required
-                          min="0"
-                          aria-describedby="max_milliliters_per_unit-live-feedback"
-                          :class="['form-control', (new_formula_buffer.max_milliliters_per_unit >= new_formula_buffer.total_milliliters_per_unit && new_formula_buffer.max_milliliters_per_unit !== null ? '' : 'is-invalid')]"
-                          @input="update_formula(new_formula_buffer)"
-                          v-on:keyup.enter="focus('total_milliliters_per_unit')"
-                        >
-                        <div class="input-group-append">
-                          <span class="input-group-text">ml</span>
-                        </div>
-                        <div id="max_milliliters_per_unit-live-feedback" class="invalid-feedback">This required field must be greater than or equal to the target.</div>
-                      </div>
-                    </b-col>
-                  </b-row>
-                  <b-row>
-                    <b-col><label for="total_milliliters_per_unit"><strong>Target ml per Product:</strong></label></b-col>
-                    <b-col>
-                      <div class="input-group mb-2">
-                        <input
-                          id="total_milliliters_per_unit"
-                          type="number"
-                          v-model="new_formula_buffer.total_milliliters_per_unit"
-                          required
-                          min="0"
-                          aria-describedby="total_milliliters_per_unit-live-feedback"
-                          :class="['form-control', (new_formula_buffer.total_milliliters_per_unit >= 0 && new_formula_buffer.total_milliliters_per_unit !== '' && new_formula_buffer.total_milliliters_per_unit !== null ? '' : 'is-invalid')]"
-                          @input="update_formula(new_formula_buffer)"
-                          v-on:keyup.enter="focus('min_milliliters_per_unit')"
-                        >
-                        <div class="input-group-append">
-                          <span class="input-group-text">ml</span>
-                        </div>
-                        <div id="total_milliliters_per_unit-live-feedback" class="invalid-feedback">This is a required field.</div>
-                      </div>
-                    </b-col>
-                  </b-row>
-                  <b-row>
-                    <b-col><label for="min_milliliters_per_unit"><strong>Tolerance Min:</strong></label></b-col>
-                    <b-col>
-                      <div class="input-group mb-2">
-                        <input
-                          id="min_milliliters_per_unit"
-                          type="number"
-                          v-model="new_formula_buffer.min_milliliters_per_unit"
-                          required
-                          min="0"
-                          aria-describedby="min_milliliters_per_unit-live-feedback"
-                          :class="['form-control', (new_formula_buffer.min_milliliters_per_unit <= new_formula_buffer.total_milliliters_per_unit && new_formula_buffer.min_milliliters_per_unit !== null ? '' : 'is-invalid')]"
-                          @input="update_formula(new_formula_buffer)"
-                          v-on:keyup.enter="focus('max_mg_per_capsule')"
-                        >
-                        <div class="input-group-append">
-                          <span class="input-group-text">ml</span>
-                        </div>
-                        <div id="min_milliliters_per_unit-live-feedback" class="invalid-feedback">This required field must be less than or equal to the target.</div>
-                      </div>
-                    </b-col>
-                  </b-row>
-                </b-card-text>
-              </b-card>
-              <b-card>
-                <b-card-title>Capsule Fill</b-card-title>
-                <b-card-text>
-                  <b-row>
-                    <b-col><label for="max_mg_per_capsule"><strong>Tolerance Max:</strong></label></b-col>
-                    <b-col>
-                      <div class="input-group mb-2">
-                        <input
-                          id="max_mg_per_capsule"
-                          type="number"
-                          v-model="new_formula_buffer.max_mg_per_capsule"
-                          required
-                          min="0"
-                          aria-describedby="max_mg_per_capsule-live-feedback"
-                          :class="['form-control', (new_formula_buffer.max_mg_per_capsule >= new_formula_buffer.total_mg_per_capsule && new_formula_buffer.max_mg_per_capsule !== '' && new_formula_buffer.max_mg_per_capsule !== null ? '' : 'is-invalid')]"
-                          @input="update_formula(new_formula_buffer)"
-                          v-on:keyup.enter="focus('total_mg_per_capsule')"
-                        >
-                        <div class="input-group-append">
-                          <span class="input-group-text">mg</span>
-                        </div>
-                        <div id="max_mg_per_capsule-live-feedback" class="invalid-feedback">This required field must be greater than or equal to the target.</div>
-                      </div>
-                    </b-col>
-                  </b-row>
-                  <b-row>
-                    <b-col><label for="total_mg_per_capsule"><strong>Target mg per Cap:</strong></label></b-col>
-                    <b-col>
-                      <div class="input-group mb-2">
-                        <input
-                          id="total_mg_per_capsule"
-                          type="number"
-                          v-model="new_formula_buffer.total_mg_per_capsule"
-                          required
-                          min="0"
-                          aria-describedby="total_mg_per_capsule-live-feedback"
-                          :class="['form-control', (new_formula_buffer.total_mg_per_capsule >= 0 && new_formula_buffer.total_mg_per_capsule !== '' && new_formula_buffer.total_mg_per_capsule !== null ? '' : 'is-invalid')]"
-                          @input="update_formula(new_formula_buffer)"
-                          v-on:keyup.enter="focus('min_mg_per_capsule')"
-                        >
-                        <div class="input-group-append">
-                          <span class="input-group-text">mg</span>
-                        </div>
-                        <div id="total_mg_per_capsule-live-feedback" class="invalid-feedback">This is a required field.</div>
-                      </div>
-                    </b-col>
-                  </b-row>
-                  <b-row>
-                    <b-col><label for="min_mg_per_capsule"><strong>Tolerance Min:</strong></label></b-col>
-                    <b-col>
-                      <div class="input-group mb-2">
-                        <input
-                          id="min_mg_per_capsule"
-                          type="number"
-                          class="form-control"
-                          v-model="new_formula_buffer.min_mg_per_capsule"
-                          required
-                          min="0"
-                          aria-describedby="min_mg_per_capsule-live-feedback"
-                          :class="['form-control', (new_formula_buffer.min_mg_per_capsule <= new_formula_buffer.total_mg_per_capsule && new_formula_buffer.min_mg_per_capsule !== null ? '' : 'is-invalid')]"
-                          @input="update_formula(new_formula_buffer)"
-                          v-on:keyup.enter="focus('total_capsules_per_unit')"
-                        >
-                        <div class="input-group-append">
-                          <span class="input-group-text">mg</span>
-                        </div>
-                      </div>
-                      <div id="min_mg_per_capsule-live-feedback" class="invalid-feedback">This required field must be less than or equal to the target.</div>
-                    </b-col>
-                  </b-row>
-                  <hr>
-                  <b-row>
-                    <b-col><label for="total_capsules_per_unit"><strong>Capsule Count:</strong></label></b-col>
-                    <b-col>
-                      <div class="input-group mb-2">
-                        <input
-                          id="total_capsules_per_unit"
-                          type="number"
-                          v-model="new_formula_buffer.total_capsules_per_unit"
-                          required
-                          min="0"
-                          aria-describedby="total_capsules_per_unit-live-feedback"
-                          :class="['form-control', (new_formula_buffer.total_capsules_per_unit >= 0 && new_formula_buffer.total_capsules_per_unit !== '' && new_formula_buffer.total_capsules_per_unit !== null ? '' : 'is-invalid')]"
-                          @input="update_formula(new_formula_buffer)"
-                          v-on:keyup.enter="focus('capsule_size')"
-                        >
-                        <div class="input-group-append">
-                          <span class="input-group-text">ct</span>
-                        </div>
-                        <div id="total_capsules_per_unit-live-feedback" class="invalid-feedback">This required field must be greater than or equal to zero.</div>
-                      </div>
-                    </b-col>
-                  </b-row>
-                  <b-row class="mb-2">
-                    <b-col><label for="capsule_size"><strong>Capsule Size:</strong></label></b-col>
-                    <b-col>
-                      <select
-                        id="capsule_size"
-                        v-model="new_formula_buffer.capsule_size"
-                        aria-describedby="capsule_size-live-feedback"
-                        :class="['form-control', 'form-control-md', (new_formula_buffer.capsule_size !== '' ? '' : 'is-invalid')]"
-                        @input="update_formula(new_formula_buffer)"
-                        v-on:keyup.enter="focus('capsule_weight')"
-                      >
-                        <option selected value="">Select Size</option>
-                        <option value="n/a">N/A</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="0">0</option>
-                        <option value="00">00</option>
-                    </select>
-                    <div id="capsule_size-live-feedback" class="invalid-feedback">This is a required field.</div>
-                  </b-col>
-                  </b-row>
-                  <b-row>
-                    <b-col><label for="capsule_weight"><strong>Capsule Weight:</strong></label></b-col>
-                    <b-col>
-                      <div class="input-group mb-2">
-                        <input
-                          id="capsule_weight"
-                          type="number"
-                          v-model="new_formula_buffer.capsule_weight"
-                          required
-                          min="0"
-                          aria-describedby="capsule_weight-live-feedback"
-                          :class="['form-control', (new_formula_buffer.capsule_weight >= 0 && new_formula_buffer.capsule_weight !== '' && new_formula_buffer.capsule_weight !== null ? '' : 'is-invalid')]"
-                          @input="update_formula(new_formula_buffer)"
-                          v-on:keyup.enter="focus('max_grams_per_unit')"
-                        >
-                        <div class="input-group-append">
-                          <span class="input-group-text">mg</span>
-                        </div>
-                        <div id="capsule_weight-live-feedback" class="invalid-feedback">This required field must be greater than or equal to zero.</div>
-                      </div>
-                    </b-col>
-                  </b-row>
-                </b-card-text>
-              </b-card>
-            </b-card-group>
+
             <b-table-lite :items="new_formula_buffer.formula_detail" :fields="fields" striped bordered foot-clone sticky-header head-variant="light" style="max-height: 600px;">
               <template #cell(ingredients_detail)="ingredients">
                 <div v-for="(ing, index) in ingredients.value" :key="ing.component_id+'-ingredient'">
@@ -703,7 +273,6 @@ export default {
       required: true
     },
     defaultFormulaId: {
-      type: Number,
       required: true
     },
     numVersions: {
@@ -711,7 +280,7 @@ export default {
       required: true
     },
     productId: {
-      type: String,
+      type: Number,
       required: true
     }
   },
@@ -772,19 +341,7 @@ export default {
       const update = {
         formula_id: formula.formula_id,
         notes: formula.notes,
-        product_id: this.productId,
-        min_grams_per_unit: formula.min_grams_per_unit,
-        total_grams_per_unit: formula.total_grams_per_unit,
-        max_grams_per_unit: formula.max_grams_per_unit,
-        min_milliliters_per_unit: formula.min_milliliters_per_unit,
-        total_milliliters_per_unit: formula.total_milliliters_per_unit,
-        max_milliliters_per_unit: formula.max_milliliters_per_unit,
-        min_mg_per_capsule: formula.min_mg_per_capsule,
-        total_mg_per_capsule: formula.total_mg_per_capsule,
-        max_mg_per_capsule: formula.max_mg_per_capsule,
-        total_capsules_per_unit: formula.total_capsules_per_unit,
-        capsule_size: formula.capsule_size,
-        capsule_weight: formula.capsule_weight
+        product_id: this.productId
       }
       this.req.updateUpsertRecord('Formula_Master', 'formula_id', formula.formula_id, update)
     },
@@ -807,36 +364,6 @@ export default {
 
       // Check Validations
       let valid = true
-
-      // Powder Fill
-      const pMin = this.new_formula_buffer.min_grams_per_unit
-      const pMax = this.new_formula_buffer.max_grams_per_unit
-      const pTarget = this.new_formula_buffer.total_grams_per_unit
-      if (!this.validate_fill(pMax, pTarget, pMin)) {
-        errorToast.message = 'Powder Fill values are not valid.'
-        createToast(errorToast)
-        valid = false
-      }
-
-      // Capsule Fill
-      const cMin = this.new_formula_buffer.min_mg_per_capsule
-      const cMax = this.new_formula_buffer.max_mg_per_capsule
-      const cTarget = this.new_formula_buffer.total_mg_per_capsule
-      if (!this.validate_fill(cMax, cTarget, cMin) || this.new_formula_buffer.total_capsules_per_unit === null || this.new_formula_buffer.total_capsules_per_unit === '' || this.new_formula_buffer.capsule_size === '' || this.new_formula_buffer.capsule_weight === null || this.new_formula_buffer.capsule_weight === '') {
-        errorToast.message = 'Capsule Fill values are not valid.'
-        createToast(errorToast)
-        valid = false
-      }
-
-      // Liquid Fill
-      const lMin = this.new_formula_buffer.min_milliliters_per_unit
-      const lMax = this.new_formula_buffer.max_milliliters_per_unit
-      const lTarget = this.new_formula_buffer.total_milliliters_per_unit
-      if (!this.validate_fill(lMax, lTarget, lMin)) {
-        errorToast.message = 'Liquid Fill values are not valid.'
-        createToast(errorToast)
-        valid = false
-      }
 
       // Formula Percent
       let total = 0
@@ -1126,19 +653,7 @@ export default {
           formulation_version: this.numVersions + 1,
           formula_id: this.new_formula_id,
           product_id: this.productId,
-          notes: '',
-          min_grams_per_unit: null,
-          total_grams_per_unit: null,
-          max_grams_per_unit: null,
-          min_milliliters_per_unit: null,
-          total_milliliters_per_unit: null,
-          max_milliliters_per_unit: null,
-          min_mg_per_capsule: null,
-          total_mg_per_capsule: null,
-          max_mg_per_capsule: null,
-          total_capsules_per_unit: null,
-          capsule_size: '',
-          capsule_weight: null
+          notes: ''
         }
         this.req.upsertRecord('Formula_Master', newFormula)
         this.new_formula_buffer = cloneDeep(newFormula)
@@ -1163,19 +678,7 @@ export default {
           formulation_version: this.new_formula_buffer.formulation_version,
           formula_id: this.new_formula_buffer.formula_id,
           product_id: this.productId,
-          notes: this.new_formula_buffer.notes,
-          min_grams_per_unit: this.new_formula_buffer.min_grams_per_unit,
-          total_grams_per_unit: this.new_formula_buffer.total_grams_per_unit,
-          max_grams_per_unit: this.new_formula_buffer.max_grams_per_unit,
-          min_milliliters_per_unit: this.new_formula_buffer.min_milliliters_per_unit,
-          total_milliliters_per_unit: this.new_formula_buffer.total_milliliters_per_unit,
-          max_milliliters_per_unit: this.new_formula_buffer.max_milliliters_per_unit,
-          min_mg_per_capsule: this.new_formula_buffer.min_mg_per_capsule,
-          total_mg_per_capsule: this.new_formula_buffer.total_mg_per_capsule,
-          max_mg_per_capsule: this.new_formula_buffer.max_mg_per_capsule,
-          total_capsules_per_unit: this.new_formula_buffer.total_capsules_per_unit,
-          capsule_size: this.new_formula_buffer.capsule_size,
-          capsule_weight: this.new_formula_buffer.capsule_weight
+          notes: this.new_formula_buffer.notes
         }
         this.req.upsertRecord('Formula_Master', newformula)
 

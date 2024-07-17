@@ -23,12 +23,13 @@
           </div>
           <hr class="d-print-none">
           <b-nav pills card-header slot="header" v-b-scrollspy:nav-scroller class="text-nowrap d-print-none">
-            <b-nav-item href="#Labels" @click="scrollIntoView" :disabled="edit_manufacturing || edit_specs || edit_formulas">Labels</b-nav-item>
-            <b-nav-item href="#Formulas" @click="scrollIntoView" :disabled="edit_manufacturing || edit_specs || edit_labels">Formulas</b-nav-item>
-            <b-nav-item href="#Manufacturing" @click="scrollIntoView" :disabled="edit_formulas || edit_specs || edit_labels">Manufacturing</b-nav-item>
-            <b-nav-item href="#Specifications" @click="scrollIntoView" v-if="product_data.doc.specifications !== undefined" :disabled="edit_manufacturing || edit_formulas || edit_labels">Specifications</b-nav-item>
+            <b-nav-item href="#Labels" @click="scrollIntoView" :disabled="edit_manufacturing || edit_specs || edit_formulas || edit_variants">Labels</b-nav-item>
+            <b-nav-item href="#ProductVariants" @click="scrollIntoView" :disabled="edit_manufacturing || edit_specs || edit_labels || edit_formulas">Product Variants</b-nav-item>
+            <b-nav-item href="#Formulas" @click="scrollIntoView" :disabled="edit_manufacturing || edit_specs || edit_labels || edit_variants">Formulas</b-nav-item>
+            <b-nav-item href="#Manufacturing" @click="scrollIntoView" :disabled="edit_formulas || edit_specs || edit_labels || edit_variants">Manufacturing</b-nav-item>
+            <b-nav-item href="#Specifications" @click="scrollIntoView" v-if="product_data.doc.specifications !== undefined" :disabled="edit_manufacturing || edit_formulas || edit_labels || edit_variants">Specifications</b-nav-item>
             <div v-for="(spec, spec_key) in product_data.doc.specifications.specs" :key="spec_key">
-              <b-nav-item :href="'#'+spec_key" @click="scrollIntoView" :disabled="edit_manufacturing || edit_formulas || edit_labels">{{ spec.test_name }}</b-nav-item>
+              <b-nav-item :href="'#'+spec_key" @click="scrollIntoView" :disabled="edit_manufacturing || edit_formulas || edit_labels || edit_variants">{{ spec.test_name }}</b-nav-item>
             </div>
           </b-nav>
         </b-card-body>
@@ -37,7 +38,7 @@
       <b-card class="my-2" v-if="loaded">
         <b-card-body id="nav-scroller" ref="content" class="scrollbox">
           <ProductLabel
-            v-show="!edit_manufacturing && !edit_specs && !edit_formulas"
+            v-show="!edit_manufacturing && !edit_specs && !edit_formulas && !edit_variants"
             :id="product_data.product_id"
             :doc="product_data.doc"
             :name="product_data.product_name"
@@ -45,9 +46,19 @@
             v-on:toggle-loaded="toggleLoaded"
             v-on:refresh-parent="(v) => refreshParent(v)"
           ></ProductLabel>
-          <hr v-show="!edit_manufacturing && !edit_specs && !edit_formulas">
+          <hr v-show="!edit_manufacturing && !edit_specs && !edit_formulas && !edit_variants">
+          <ProductVariant
+            v-show="!edit_formulas && !edit_manufacturing && !edit_specs && !edit_labels && !edit_formulas"
+            :product-id="product_data.product_id"
+            :num-variants="product_data.num_product_variants"
+            :product-variants="product_data.product_variants"
+            v-on:edit-variants="(e) => {edit_variants = e}"
+            v-on:toggle-loaded="toggleLoaded"
+            v-on:refresh-parent="(v) => refreshParent(v)"
+          ></ProductVariant>
+          <hr v-show="!edit_formulas && !edit_manufacturing && !edit_labels && !edit_formulas">
           <ProductFormula
-            v-show="!edit_manufacturing && !edit_specs && !edit_labels"
+            v-show="!edit_manufacturing && !edit_specs && !edit_labels && !edit_variants"
             :v-key="formula_key"
             :product-id="product_data.product_id"
             :formulas="product_data.formulas"
@@ -57,9 +68,9 @@
             v-on:toggle-loaded="toggleLoaded"
             v-on:refresh-parent="(v) => refreshParent(v)"
           ></ProductFormula>
-          <hr v-show="!edit_manufacturing && !edit_specs && !edit_labels">
+          <hr v-show="!edit_manufacturing && !edit_specs && !edit_labels && !edit_variants">
           <ProductManufacturing
-            v-show="!edit_formulas && !edit_specs && !edit_labels"
+            v-show="!edit_formulas && !edit_specs && !edit_labels && !edit_variants"
             :product-id="product_data.product_id"
             :manufacturing="product_data.manufacturing"
             :edit="edit_manufacturing"
@@ -67,9 +78,9 @@
             v-on:toggle-loaded="toggleLoaded"
             v-on:refresh-parent="(v) => refreshParent(v)"
           ></ProductManufacturing>
-          <hr v-show="!edit_formulas && !edit_specs && !edit_labels">
+          <hr v-show="!edit_formulas && !edit_specs && !edit_labels && !edit_variants">
           <SpecificationsComponent
-            v-show="!edit_formulas && !edit_manufacturing && !edit_labels"
+            v-show="!edit_formulas && !edit_manufacturing && !edit_labels && !edit_variants"
             :doc="product_data.doc"
             :spectype="'product'"
             :name="product_data.product_name"
@@ -78,7 +89,7 @@
             v-on:toggle-loaded="toggleLoaded"
             v-on:refresh-parent="(v) => refreshParent(v)"
           ></SpecificationsComponent>
-          <hr v-show="!edit_formulas && !edit_manufacturing && !edit_labels">
+          <hr v-show="!edit_formulas && !edit_manufacturing && !edit_labels && !edit_variants">
         </b-card-body>
       </b-card>
     </b-container>
@@ -91,6 +102,7 @@ import ProductFormula from './ProductFormula.vue'
 import ProductLabel from './ProductLabel.vue'
 import ProductManufacturing from './ProductManufacturing.vue'
 import SpecificationsComponent from '../SpecificationsComponent.vue'
+import ProductVariant from './ProductVariant.vue'
 
 export default {
   name: 'ProductsDetail',
@@ -99,7 +111,8 @@ export default {
     ProductFormula,
     ProductManufacturing,
     SpecificationsComponent,
-    ProductLabel
+    ProductLabel,
+    ProductVariant
   },
   data: function () {
     return {
@@ -110,6 +123,7 @@ export default {
       edit_formulas: false,
       edit_specs: false,
       edit_labels: false,
+      edit_variants: false,
       formula_key: 0
     }
   },
@@ -129,7 +143,7 @@ export default {
       }
     },
     getProductData: function () {
-      const fetchRequest = window.origin + '/api/v1/catalogue/products?product-id=' + this.id + '&doc=true&populate=formulas&populate=manufacturing'
+      const fetchRequest = window.origin + '/api/v1/catalogue/products?product-id=' + this.id + '&doc=true&populate=formulas&populate=manufacturing&populate=product_variants'
       // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest

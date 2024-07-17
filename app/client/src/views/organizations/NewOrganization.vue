@@ -210,31 +210,46 @@ export default {
       }
       return flag
     },
-    submit: function () {
+    submit: async function () {
       if (!this.validateNewOrg()) {
         return false
       }
+
+      let primaryNameTempKey = ''
 
       this.req.upsertRecord('Organizations', this.org_buffer)
       this.edit_names_buffer.forEach(name => {
         name.organization_initial = name.organization_initial.toUpperCase()
         this.req.upsertRecord('Organization_Names', name)
-      })
-
-      this.req.sendRequest(window.origin).then(resp => {
-        const createToast = this.$root.createToast
-        resp.messages.flash.forEach(message => {
-          createToast(message)
-        })
-
-        if (resp.status === 201) {
-          Object.values(resp.data[0].temp_key_lookup).forEach(item => {
-            if (item.table_name === 'Organizations') {
-              this.$router.push({ path: `/organizations/${item.new_id}` })
-            }
-          })
+        if (name.primary_name) {
+          primaryNameTempKey = name.name_id
         }
       })
+
+      const createToast = this.$root.createToast
+
+      const resp1 = await this.req.sendRequest(window.origin)
+      resp1.messages.flash.forEach(message => {
+        createToast(message)
+      })
+
+      const tempKeyLookup = this.req.getTempKeyLookup()
+      this.req = new CustomRequest(this.$cookies.get('session'))
+
+      const updateOrg = {
+        organizaiton_id: tempKeyLookup[this.new_org_id].new_id,
+        primary_name_id: tempKeyLookup[primaryNameTempKey].new_id
+      }
+      this.req.upsertRecord('Organizations', updateOrg)
+      const resp2 = await this.req.sendRequest(window.origin)
+
+      if (resp2.status === 201) {
+        Object.values(resp1.data[0].temp_key_lookup).forEach(item => {
+          if (item.table_name === 'Organizations') {
+            this.$router.push({ path: `/organizations/${item.new_id}` })
+          }
+        })
+      }
     },
     radioNames: function (id) {
       for (let i = 0; i < this.edit_names_buffer.length; i++) {

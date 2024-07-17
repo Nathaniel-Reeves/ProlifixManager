@@ -30,8 +30,8 @@ class Equipment(Base):
         create_constraint=True,
         validate_strings=True,
         ))
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    date_modified: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime)
+    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
+    date_modified: Mapped[datetime.datetime] = mapped_column(default=None)
 
     equipment_history = Column(MutableDict.as_mutable(JSON))
 
@@ -78,8 +78,8 @@ class Processes(Base):
     # Table Columns
     process_name: Mapped[str] = mapped_column()
     process_sop: Mapped[str] = mapped_column()
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    date_modified: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime)
+    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
+    date_modified: Mapped[datetime.datetime] = mapped_column(default=None)
     rework_process: Mapped[bool] = mapped_column(default=False)
     min_personnel: Mapped[int] = mapped_column(default=0)
     max_personnel: Mapped[int] = mapped_column(default=0)

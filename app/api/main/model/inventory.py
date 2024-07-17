@@ -47,7 +47,7 @@ class Components(Base):
     certified_us_pharmacopeia: Mapped[bool] = mapped_column(default=False)
     certified_non_gmo: Mapped[bool] = mapped_column(default=False)
     certified_vegan: Mapped[bool] = mapped_column(default=False)
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
     UnitTypes = ("grams", "kilograms", "units", "boxes", "pallets", "liters", "rolls", "totes", "barrels", "pounds")
     units: Mapped[int] = mapped_column(Enum(
         *UnitTypes,
@@ -262,7 +262,7 @@ class Inventory_Log(Base):
     supplier_item_id: Mapped[str] = mapped_column(default=None)
     lot_number: Mapped[str] = mapped_column(default=None)
     batch_number: Mapped[str] = mapped_column(default=None)
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
     InventoryStates = ("Ordered", "Revised Order Decreased", "Revised Order Increased", "InTransit", "Back Order", "Checkin Quarantine", "Received", "Produced", "Cycle Count", "Released", "Returned", "Allocated", "Batched", "Used", "Quarantined", "Lost", "Expired", "Wasted","Damaged","Destroyed", "Shipped")
     state: Mapped[int] = mapped_column(Enum(
         *InventoryStates,

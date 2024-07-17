@@ -24,10 +24,10 @@ class Organizations(Base):
     facilities: Mapped[Optional["Facilities"]] = relationship()
 
     # Table Columns
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
     website_url: Mapped[str] = mapped_column(default=None)
     vetted: Mapped[bool] = mapped_column()
-    date_vetted: Mapped[datetime.datetime] = mapped_column()
+    date_vetted: Mapped[datetime.datetime] = mapped_column(default=None)
     RiskLevels = ("UNKNOWN", "No_Risk", "Low_Risk", "Medium_Risk", "High_Risk")
     risk_level: Mapped[int] = mapped_column(Enum(
         *RiskLevels,
@@ -141,17 +141,17 @@ class People(Base):
     # Table Columns
     first_name: Mapped[str] = mapped_column(default=None)
     last_name: Mapped[str] = mapped_column(default=None)
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
     job_description: Mapped[str] = mapped_column(default=None)
     department: Mapped[str] = mapped_column(default=None)
     phone_number_primary: Mapped[str] = mapped_column(default=None)
     phone_number_secondary: Mapped[str] = mapped_column(default=None)
     email_address_primary: Mapped[str] = mapped_column(default=None)
     email_address_secondary: Mapped[str] = mapped_column(default=None)
-    birthday: Mapped[datetime.datetime] = mapped_column()
+    birthday: Mapped[datetime.datetime] = mapped_column(default=None)
     is_employee: Mapped[bool] = mapped_column(default=False)
-    contract_date: Mapped[datetime.datetime] = mapped_column()
-    termination_date: Mapped[datetime.datetime] = mapped_column()
+    contract_date: Mapped[datetime.datetime] = mapped_column(default=None)
+    termination_date: Mapped[datetime.datetime] = mapped_column(default=None)
     clock_number: Mapped[str] = mapped_column(default=None)
 
     # Common Methods

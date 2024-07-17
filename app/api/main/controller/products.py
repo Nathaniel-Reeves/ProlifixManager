@@ -66,6 +66,7 @@ def get_products(
         organization_names = row[1].to_dict()
         formulas = {'formulas':[]}
         manufacturing = {'manufacturing': []}
+        product_variants = {'product_variants': []}
 
         # Populate
         if ('manufacturing' in populate) or ('components' in populate):
@@ -87,7 +88,13 @@ def get_products(
             formulas = {'formulas': resp.get_data()}
             custom_response.insert_flash_messages(r.get_flash_messages())
 
-        custom_response.insert_data({**product_master, **organization_names, **formulas, **manufacturing})
+        if 'product_variants' in populate:
+            r = CustomResponse()
+            resp = get_product_variants( r, [], [pk], False)
+            product_variants = {'product_variants': resp.get_data()}
+            custom_response.insert_flash_messages(r.get_flash_messages())
+
+        custom_response.insert_data({**product_master, **organization_names, **formulas, **manufacturing, **product_variants})
 
     return custom_response
 
@@ -454,5 +461,35 @@ def get_ingredients(
             ingredient_info.pop('doc')
 
         custom_response.insert_data({ **ingredient_join, **ingredient_name, **ingredient_info})
+
+    return custom_response
+
+def get_product_variants(
+        custom_response,
+        variant_ids,
+        product_ids,
+        doc
+    ):
+
+    # Build the query
+    stm = select(db.Product_Variant)
+
+    if variant_ids:
+        stm = stm.where(db.Product_Variant.variant_id.in_(variant_ids))
+
+    if product_ids:
+        stm = stm.where(db.Product_Variant.product_id.in_(product_ids))
+
+    # Execute the query
+    custom_response, raw_data, success = execute_query(custom_response, stm)
+    if not success:
+        return custom_response
+
+    # Process and Package the data
+    for row in raw_data:
+        pk = row[0].get_id()
+        product_variants = row[0].to_dict()
+
+        custom_response.insert_data({**product_variants})
 
     return custom_response

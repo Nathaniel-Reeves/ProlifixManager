@@ -51,7 +51,7 @@
       </div>
     </b-card-group>
 
-    <div v-show="edit_labels">
+    <div v-show="edit_labels" class="mt-3">
       <b-button class="mr-2" variant="outline-success" @click="submit()">Save</b-button>
       <b-button variant="outline-danger" @click="cancel()">Cancel</b-button>
     </div>
@@ -275,6 +275,7 @@ export default {
     },
     cancel: function () {
       this.edit_labels_buffer = cloneDeep(this.doc.labels)
+      this.show_files = false
       this.toggleEditLabels()
     },
     prepareLabelsData: function () {

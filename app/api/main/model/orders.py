@@ -29,12 +29,12 @@ class Sales_Orders(Base):
 
     # Table Columns
     client_po_num: Mapped[str] = mapped_column(default=None)
-    order_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    target_completion_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime)
-    completion_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime)
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    billed_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime)
-    closed_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime)
+    order_date: Mapped[datetime.datetime] = mapped_column(default=None)
+    target_completion_date: Mapped[datetime.datetime] = mapped_column(default=None)
+    completion_date: Mapped[datetime.datetime] = mapped_column(default=None)
+    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
+    billed_date: Mapped[datetime.datetime] = mapped_column(default=None)
+    closed_date: Mapped[datetime.datetime] = mapped_column(default=None)
     down_payment_actual: Mapped[float] = mapped_column(default=None)
     theoretical_po_amount: Mapped[float] = mapped_column(default=None)
     total_paid: Mapped[float] = mapped_column(default=None)
@@ -127,9 +127,9 @@ class Sale_Order_Detail(Base):
     unit_order_qty: Mapped[int] = mapped_column(default=None)
     kilos_order_qty: Mapped[float] = mapped_column(default=None)
     special_instructions: Mapped[str] = mapped_column(default=None)
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
     bit_price_per_unit: Mapped[float] = mapped_column(default=None)
-    final_ship_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime)
+    final_ship_date: Mapped[datetime.datetime] = mapped_column(default=None)
 
     doc = Column(MutableDict.as_mutable(JSON))
 
@@ -212,7 +212,7 @@ class Sales_Orders_Payments(Base):
         create_constraint=True,
         validate_strings=True,
         ))
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
 
     doc = Column(MutableDict.as_mutable(JSON))
 
@@ -270,8 +270,8 @@ class Lot_Numbers(Base):
     total_shippable_product: Mapped[int] = mapped_column(default=None)
     batch_printed: Mapped[bool] = mapped_column(default=False)
     bpr_printed: Mapped[bool] = mapped_column(default=False)
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    exp_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime)
+    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
+    exp_date: Mapped[datetime.datetime] = mapped_column(default=None)
     ExpirationTypes = ("Best_By", "Exp")
     exp_type: Mapped[int] = mapped_column(Enum(
         *ExpirationTypes,
@@ -344,9 +344,9 @@ class Purchase_Orders(Base):
 
     # Table Columns
     supplier_so_num: Mapped[str] = mapped_column(default=None)
-    order_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    eta_date: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime)
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    order_date: Mapped[datetime.datetime] = mapped_column(default=None)
+    eta_date: Mapped[datetime.datetime] = mapped_column(default=None)
+    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
 
     doc = Column(MutableDict.as_mutable(JSON))
 
@@ -426,7 +426,7 @@ class Purchase_Order_Detail(Base):
     unit_order_qty: Mapped[int] = mapped_column(default=None)
     kilos_order_qty: Mapped[float] = mapped_column(default=None)
     special_instructions: Mapped[str] = mapped_column(default=None)
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
     bid_price_per_unit: Mapped[float] = mapped_column(default=None)
     bid_price_per_kilo: Mapped[float] = mapped_column(default=None)
 

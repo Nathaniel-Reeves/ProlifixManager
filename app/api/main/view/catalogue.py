@@ -136,7 +136,8 @@ def handle_get_products():
         'inventory',
         'formulas',
         'components',
-        'manufacturing'
+        'manufacturing',
+        'product_variants'
     ]
     populate = check_type(
         valid_populate,
