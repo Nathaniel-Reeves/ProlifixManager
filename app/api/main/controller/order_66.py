@@ -16,7 +16,6 @@ def get_session():
     user = app.config['DB_USER']
     password = app.config['DB_PASSWORD']
 
-
     engine = sa.create_engine(
             f'mariadb+mariadbconnector://{user}:{password}@{host}:{port}',connect_args={'connect_timeout': 3}
         )
@@ -63,6 +62,7 @@ def order_66(request):
     # custom_response = fix_primary_name_id_column_components(custom_response)
     # custom_response = fix_product_master(custom_response)
     # custom_response = fix_old_components_template(custom_response)
+    custom_response = fix_org_doc(custom_response)
 
     if custom_response.status_code == 200:
         fm = FlashMessage(
@@ -950,3 +950,39 @@ def fix_old_components_template(custom_response):
         custom_response, raw_data, success = execute_query(custom_response, stm)
 
     return custom_response
+
+def fix_org_doc(custom_response):
+    org_doc = {
+        "documents": [],
+        "current_supplier_risk_assesment_id": None,
+        "current_lab_risk_assessment_id": None,
+        "current_client_risk_assessment_id": None,
+        "current_courier_risk_assessment_id": None,
+        "current_other_risk_assessment_id": None,
+        "supplier_risk_assessments": [],
+        "lab_risk_assessments": [],
+        "client_risk_assessments": [],
+        "courier_risk_assessments": [],
+        "other_risk_assessments": []
+    }
+
+    stm = update(db.Organizations).values(doc=org_doc)
+
+    custom_response, raw_data, success = execute_query(custom_response, stm)
+    if not success:
+        return custom_response
+
+    return custom_response
+
+
+
+
+
+
+
+
+
+
+
+
+

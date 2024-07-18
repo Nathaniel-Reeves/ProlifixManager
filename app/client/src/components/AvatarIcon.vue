@@ -16,15 +16,14 @@ export default {
     return {
     }
   },
-  props: {
-    user_data: Object,
-    logged_in_state: Boolean
-  },
   computed: {
+    logged_in: function () {
+      return this.$root.userData.user_id
+    },
     initials: function () {
-      if (this.logged_in_state) {
-        const f = Array.from(this.user_data.first_name)[0]
-        const l = Array.from(this.user_data.last_name)[0]
+      if (this.logged_in) {
+        const f = Array.from(this.$root.userData.first_name)[0]
+        const l = Array.from(this.$root.userData.last_name)[0]
         const i = f + l
         return i
       } else {

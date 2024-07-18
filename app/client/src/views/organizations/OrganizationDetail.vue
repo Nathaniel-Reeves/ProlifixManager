@@ -19,14 +19,19 @@
               <b-badge v-show="org_data.lab" variant="light" class="mr-2 border">Lab</b-badge>
               <b-badge v-show="org_data.courier" variant="light" class="mr-2 border">Courier</b-badge>
               <b-badge v-show="org_data.other" variant="light" class="mr-2 border">Other</b-badge>
+              <b-badge v-show="org_data.risk_level === 'UNKNOWN'" variant="danger" class="mr-2 border">Unknown Risk</b-badge>
+              <b-badge v-show="org_data.risk_level === 'Low_Risk' || org_data.risk_level === 'No_Risk'" variant="success" class="mr-2 border">Low Risk</b-badge>
+              <b-badge v-show="org_data.risk_level === 'Medium_Risk'" variant="warning" class="mr-2 border">Medium Risk</b-badge>
+              <b-badge v-show="org_data.risk_level === 'High_Risk'" variant="danger" class="mr-2 border">High Risk</b-badge>
             </h2>
           </div>
           <hr class="d-print-none">
           <b-nav pills card-header slot="header" v-b-scrollspy:nav-scroller class="text-nowrap d-print-none">
-            <b-nav-item href="#GeneralInfo" @click="scrollIntoView" :disabled="edit_names">General Info</b-nav-item>
-            <b-nav-item href="#Aliases" @click="scrollIntoView" :disabled="edit_org">Aliases</b-nav-item>
-            <b-nav-item href="#Products" @click="scrollIntoView" :disabled="edit_org || edit_names" v-show="org_data.client">Products</b-nav-item>
-            <b-nav-item href="#Components" @click="scrollIntoView" :disabled="edit_org || edit_names" v-show="org_data.supplier">Components</b-nav-item>
+            <b-nav-item href="#GeneralInfo" @click="scrollIntoView" :disabled="edit_names || edit_supplier_risk_assessment">General Info</b-nav-item>
+            <b-nav-item href="#Aliases" @click="scrollIntoView" :disabled="edit_org || edit_supplier_risk_assessment">Aliases</b-nav-item>
+            <b-nav-item href="#SupplierRiskAssessments" @click="scrollIntoView" :disabled="edit_org || edit_names">Supplier Risk Assessments</b-nav-item>
+            <b-nav-item href="#Products" @click="scrollIntoView" :disabled="edit_org || edit_names || edit_supplier_risk_assessment" v-show="org_data.client">Products</b-nav-item>
+            <b-nav-item href="#Components" @click="scrollIntoView" :disabled="edit_org || edit_names || edit_supplier_risk_assessment" v-show="org_data.supplier">Components</b-nav-item>
           </b-nav>
         </b-card-body>
       </b-card>
@@ -35,7 +40,7 @@
         <b-card-body id="nav-scroller" ref="content" class="scrollbox">
 
           <!-- General Info -->
-          <div v-show="!edit_names">
+          <div v-show="!edit_names && !edit_supplier_risk_assessment">
             <h3 id="GeneralInfo">General Info<b-button v-show="!edit_org" v-b-tooltip.hover :title="'Edit General Organization Informaion.'" v-on:click="setOrgBuffer()" v-bind:class="['btn', 'p-1', 'ml-2', 'btn-light']" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
 
             <div class="d-flex mb-3">
@@ -74,7 +79,7 @@
               </h3>
             </div>
 
-            <div class="d-flex mb-3">
+            <!-- <div class="d-flex mb-3">
               <strong class='mr-3'>Risk Level: </strong>
               <div v-if="edit_org">
                 <b-form-group>
@@ -102,7 +107,7 @@
                 <b-badge v-show="org_data.risk_level === 'Medium_Risk'" variant="warning" class="mr-2 border">Medium Risk</b-badge>
                 <b-badge v-show="org_data.risk_level === 'High_Risk'" variant="danger" class="mr-2 border">High Risk</b-badge>
               </h3>
-            </div>
+            </div> -->
 
             <div class="mb-3">
               <strong class='mr-3'>Notes: </strong>
@@ -133,16 +138,16 @@
 
             <div class="d-flex">
               <div v-show="edit_org">
-                <b-button variant="danger" class="m-2" v-on:click="cancel()">Cancel</b-button>
-                <b-button type="submit" variant="success" class="m-2" v-on:click="submit()">Save</b-button>
+                <b-button variant="outline-danger" class="m-2" v-on:click="cancel()">Cancel</b-button>
+                <b-button type="submit" variant="outline-success" class="m-2" v-on:click="submit()">Save</b-button>
               </div>
             </div>
           </div>
-          <hr v-show="!edit_org">
+          <hr v-show="!edit_org && !edit_supplier_risk_assessment">
 
           <!-- Alias Names -->
           <NamesComponent
-            v-show="!edit_org"
+            v-show="!edit_org && !edit_supplier_risk_assessment"
             :p-names="org_data.organization_names"
             :id="org_data.organization_id"
             naming-type="organization"
@@ -151,10 +156,23 @@
             v-on:toggle-loaded="toggleLoaded"
             v-on:refresh-parent="refreshParent"
           ></NamesComponent>
-          <hr v-show="!edit_org && !edit_names && org_data.client">
+          <hr v-show="!edit_org && !edit_names && !edit_supplier_risk_assessment">
+
+          <!-- Risk Assessments -->
+          <SupplierRiskAssessments
+            v-if="org_data.supplier"
+            v-show="!edit_org && !edit_names"
+            :id="org_data.organization_id"
+            :doc="org_data.doc"
+            :org-name="org_data.organization_primary_name"
+            v-on:edit-risk-assessment="(e) => edit_supplier_risk_assessment = e"
+            v-on:toggle-loaded="toggleLoaded"
+            v-on:refresh-parent="refreshParent"
+          ></SupplierRiskAssessments>
+          <hr v-show="!edit_org && !edit_names && org_data.client && !edit_supplier_risk_assessment">
 
           <!-- Products -->
-          <div v-show="!edit_org && !edit_names && org_data.client">
+          <div v-show="!edit_org && !edit_names && org_data.client && !edit_supplier_risk_assessment">
             <h3 id="Products">Products<b-button @click="$router.push({ path:'/catalogue/products/create', query: { orgId: org_data.organization_id, orgName: org_data.organization_primary_name, orgInitial: org_data.organization_primary_initial } })" v-b-tooltip.hover :title="'Add a new product.'" v-bind:class="['btn', 'p-1', 'ml-2', 'btn-light']" type="button"><b-icon icon="plus" class="d-print-none"></b-icon></b-button></h3>
             <b-table striped :items="org_data.products" show-empty id="products-table" :per-page="perPage" :current-page="currentProductPage" bordered
               :fields="[
@@ -183,10 +201,10 @@
               ></b-pagination>
             </div>
           </div>
-          <hr v-show="!edit_org && !edit_names && org_data.supplier">
+          <hr v-show="!edit_org && !edit_names && org_data.supplier && !edit_supplier_risk_assessment">
 
           <!-- Components -->
-          <div v-show="!edit_org && !edit_names && org_data.supplier">
+          <div v-show="!edit_org && !edit_names && org_data.supplier && !edit_supplier_risk_assessment">
             <h3 id="Components">Components<b-button @click="$router.push({ path:'/catalogue/components/create', query: { orgId: org_data.organization_id, orgName: org_data.organization_primary_name, orgInitial: org_data.organization_primary_initial } })" v-b-tooltip.hover :title="'Add a new component.'" v-bind:class="['btn', 'p-1', 'ml-2', 'btn-light']" type="button"><b-icon icon="plus" class="d-print-none"></b-icon></b-button></h3>
             <b-table striped :items="org_data.components" show-empty id="components-table" :per-page="perPage" :current-page="currentComponentPage" bordered
               :fields="[
@@ -229,12 +247,14 @@ import { CustomRequest } from '../../common/CustomRequest.js'
 import { cloneDeep } from 'lodash'
 import NamesComponent from './NamesComponent.vue'
 import CertBadge from '../../components/CertBadge.vue'
+import SupplierRiskAssessments from './SupplierRiskAssessments.vue'
 
 export default {
   name: 'OrganizationDetail',
   components: {
     NamesComponent,
-    CertBadge
+    CertBadge,
+    SupplierRiskAssessments
   },
   data: function () {
     return {
@@ -246,6 +266,7 @@ export default {
       org_data: {},
       edit_names: false,
       edit_org: false,
+      edit_supplier_risk_assessment: false,
       edit_org_buffer: {},
       req: new CustomRequest(this.$cookies.get('session'))
     }
@@ -348,7 +369,7 @@ export default {
 
 <style scoped>
 .my_component {
-    width: 60%;
+    width: 90%;
 }
 @media (max-width: 1024px) {
     .my_component {

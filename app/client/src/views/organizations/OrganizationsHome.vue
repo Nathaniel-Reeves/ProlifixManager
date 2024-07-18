@@ -76,6 +76,21 @@
                           <b-badge v-show="org.other" variant="light" class="mr-2 border">Other</b-badge>
                         </h3>
                       </b-col>
+                      <b-col v-show="org.supplier || org.lab">
+                        <h3>
+                          <b-badge v-show="org.risk_level === 'UNKNOWN'" variant="danger" class="mr-2 border">Unknown Risk</b-badge>
+                          <b-badge v-show="org.risk_level === 'Low_Risk' || org.risk_level === 'No_Risk'" variant="success" class="mr-2 border">Low Risk</b-badge>
+                          <b-badge v-show="org.risk_level === 'Medium_Risk'" variant="warning" class="mr-2 border">Medium Risk</b-badge>
+                          <b-badge v-show="org.risk_level === 'High_Risk'" variant="danger" class="mr-2 border">High Risk</b-badge>
+                        </h3>
+                      </b-col>
+                      <b-col v-show="org.supplier || org.lab">
+                        <h3>
+                          <b-badge v-if="org.date_vetted && (new Date(new Date() - new Date(org.date_vetted)).getFullYear() - 1970) < 3 " variant="success" class="mr-2 border">{{ new Date(org.date_vetted).toLocaleDateString() }}</b-badge>
+                          <b-badge v-else-if="org.date_vetted && (new Date(new Date() - new Date(org.date_vetted)).getFullYear() - 1970) >= 3" variant="danger" class="mr-2 border">{{ new Date(org.date_vetted).toLocaleDateString() }}</b-badge>
+                          <b-badge v-else variant="danger" class="mr-2 border">Not Vetted</b-badge>
+                        </h3>
+                      </b-col>
                       <b-col sm="1.5" class="p-2">
                         <router-link :to="{path:`/organizations/${org.organization_id}`}"><button type="button" class="btn btn-light ms-auto" style="border-width: 2px; border-color:#999999">View Details</button></router-link>
                       </b-col>
@@ -127,7 +142,7 @@
 
 <style scoped>
 .my_component {
-    width: 60%;
+    width: 90%;
 }
 @media (max-width: 1024px) {
     .my_component {

@@ -68,7 +68,7 @@
           </b-form-group>
           <div id="organization-type-live-feedback" class="invalid-feedback">At least one organization type must be selected.</div>
 
-          <div class="d-flex justify-content-between mt-3 mb-0">
+          <!-- <div class="d-flex justify-content-between mt-3 mb-0">
             <p><strong>Risk Level</strong></p>
           </div>
           <b-form-group>
@@ -88,7 +88,7 @@
               <input class="custom-control-input" type="radio" name="risk_level" id="risk_level_4" value="High_Risk" v-model="org_buffer.risk_level">
               <label class="custom-control-label" for="risk_level_4"><b-badge variant="danger">High Risk</b-badge></label>
             </div>
-          </b-form-group>
+          </b-form-group> -->
 
           <div class="d-flex justify-content-between mt-3 mb-0">
             <p><strong>Notes</strong></p>
@@ -142,6 +142,7 @@
 
 <script>
 import { CustomRequest, genTempKey } from '../../common/CustomRequest.js'
+import orgDoc from './orgDocTemp.js'
 
 export default {
   name: 'NewOrganization',
@@ -160,7 +161,8 @@ export default {
         lab: false,
         courier: false,
         other: false,
-        notes: null
+        notes: null,
+        doc: orgDoc
       },
       req: new CustomRequest(this.$cookies.get('session'))
     }
