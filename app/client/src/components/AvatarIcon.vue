@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="logged_in_state">
+    <div v-if="logged_in">
       <b-avatar variant="success" :text="initials" size="2.5rem"></b-avatar>
     </div>
     <div v-else>

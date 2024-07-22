@@ -73,7 +73,7 @@ def get_organizations(
 
         if ('facilities' in populate):
             r = CustomResponse()
-            resp = get_facilities( r, [], [pk], doc)
+            resp = get_facilities( r, [], [pk], [], doc)
             facilities_data = resp.get_data()
             custom_response.insert_flash_messages(r.get_flash_messages())
             facilities = {'facilities': facilities_data}
@@ -153,6 +153,7 @@ def get_facilities(
         custom_response,
         facility_ids,
         organization_ids,
+        populate,
         doc
     ):
 
@@ -173,8 +174,17 @@ def get_facilities(
     # Process and Package the data
     for row in raw_data:
         facility = row[0].to_dict()
+        org_id = row[0].organization_id
 
-        custom_response.insert_data({ **facility })
+        organizations = {'organizations': []}
+
+        if 'organizations' in populate:
+            r = CustomResponse()
+            resp = get_organizations(r, [org_id], [], [], doc)
+            organizations = {'organizations': resp.get_data()}
+            custom_response.insert_flash_messages(r.get_flash_messages())
+
+        custom_response.insert_data({ **facility, **organizations })
 
     return custom_response
 
@@ -203,18 +213,25 @@ def get_people(
     # Process and Package the data
     for row in raw_data:
         pk = row[0].get_id()
+        org_id = row[0].organization_id
         person = row[0].to_dict()
 
         users = {'user': []}
+        organizations = {'organizations': []}
 
-        if 'user' in populate:
+        if 'users' in populate:
             r = CustomResponse()
             resp = get_users(r, [], [pk], doc)
-            user = {'user': resp.get_data()}
+            users = {'users': resp.get_data()}
             custom_response.insert_flash_messages(r.get_flash_messages())
-            custom_response.insert_data({ **user })
 
-        custom_response.insert_data({ **person, **users })
+        if 'organizations' in populate:
+            r = CustomResponse()
+            resp = get_organizations(r, [org_id], [], [], doc)
+            organizations = {'organizations': resp.get_data()}
+            custom_response.insert_flash_messages(r.get_flash_messages())
+
+        custom_response.insert_data({ **person, **users, **organizations })
 
     return custom_response
 
