@@ -132,7 +132,10 @@ export default {
     }
   },
   created: function () {
-    this.selected_ingredient = this.selected != null ? this.selected : null
+    this.selected_ingredient = this.selected !== null ? this.selected : null
+    if (this.selected !== null) {
+      this.selected_ingredient.component_primary_name = this.selected.component_name
+    }
   }
 }
 </script>

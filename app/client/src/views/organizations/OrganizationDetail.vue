@@ -1,6 +1,6 @@
 <template>
   <div class="my_component d-flex flex-wrap justify-content-center">
-    <div class="card my-2" v-if="!loaded">
+    <div class="card my-2" v-if="!loaded" style="box-shadow: 0 20px 40px rgba(0,0,0,.2);">
       <div class="card-body">
         <div class="d-flex justify-content-center">
           <div class="spinner-border text-primary" role="status"></div>
@@ -9,7 +9,7 @@
     </div>
 
     <b-container fluid class="p-0">
-      <b-card class=" my-2" v-if="loaded">
+      <b-card class=" my-2" v-if="loaded" style="box-shadow: 0 20px 40px rgba(0,0,0,.2);">
         <b-card-body>
           <div class="card-title d-flex align-items-center flex-wrap">
             <b-img style="max-width: 15rem;" class="d-none d-print-inline p-2" src="../../assets/Company Images/logos jpg/Cropped Logo.jpg"></b-img>
@@ -146,7 +146,7 @@
           <!-- People -->
           <div v-show="activeSection('people')">
             <h3 id="People">People<b-button @click="$router.push({ path:'/organizations/people/create', query: { orgId: org_data.organization_id, orgName: org_data.organization_primary_name, orgInitial: org_data.organization_primary_initial } })" v-b-tooltip.hover :title="'Add a new product.'" v-bind:class="['btn', 'p-1', 'ml-2', 'btn-light']" type="button"><b-icon icon="plus" class="d-print-none"></b-icon></b-button></h3>
-            <b-table striped :items="org_data.people" show-empty id="people-table" :per-page="perPage" :current-page="currentProductPage" bordered
+            <b-table striped :items="sorted_people" show-empty id="people-table" :per-page="perPage" :current-page="currentProductPage" bordered
               :fields="[
                 { key: 'name', label: 'Name', thStyle: { width: '25%' } },
                 { key: 'job_description', label: 'Title', thStyle: { width: '10%' } },
@@ -158,7 +158,8 @@
                 <b class="text-info">{{ data.item.first_name + ' ' + data.item.last_name }}</b>
               </template>
               <template #cell(job_description)="data">
-                <h4><b-badge variant='light'>{{ data.item.job_description }}</b-badge></h4>
+                <h4 v-if="data.item.termination_date"><b-badge variant='danger'>Terminated</b-badge></h4>
+                <h4 v-else><b-badge variant='light'>{{ data.item.job_description }}</b-badge></h4>
               </template>
               <template #cell(email_address_primary)="data">
                 <b-link :href="'mailto:'+data.item.email_address_primary" target="_blank">{{ data.item.email_address_primary }}</b-link>
@@ -338,10 +339,23 @@ export default {
       edit_org: false,
       edit_supplier_risk_assessment: false,
       edit_org_buffer: {},
+      sorted_people: [],
       req: new CustomRequest(this.$cookies.get('session'))
     }
   },
   methods: {
+    sortPeople: function (a, b) {
+      if (a.termination_date && b.termination_date) {
+        return a.termination_date > b.termination_date ? 1 : -1
+      }
+      if (a.termination_date) {
+        return 1
+      }
+      if (b.termination_date) {
+        return -1
+      }
+      return a.first_name > b.first_name ? 1 : -1
+    },
     formatLocationURLQuery: function (facility) {
       // 696 undefined 696 undefined Hurricane Utah 84737 USA
       const street1 = facility.street_1_name ? facility.street_1_name : '' + facility.street_1_number ? facility.street_1_number?.toString() : '' + ' ' + facility.street_1_direction ? facility.street_1_direction : ''
@@ -452,6 +466,7 @@ export default {
             // eslint-disable-next-line
             console.log(this.org_data)
             this.loaded = true
+            this.sorted_people = this.org_data.people.sort(this.sortPeople)
           })
         } else if (response.status === 401) {
           this.$router.push({
@@ -473,6 +488,9 @@ export default {
 </script>
 
 <style scoped>
+.card {
+  box-shadow: 0 2px 2px rgba(0,0,0,.2);
+}
 .my_component {
     width: 90%;
 }

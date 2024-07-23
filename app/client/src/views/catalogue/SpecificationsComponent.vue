@@ -30,8 +30,8 @@
         <b-form-textarea id="parts_used" v-model="edit_specs_buffer.parts_used" placeholder="Parts used..." rows="1"  max-rows="2"></b-form-textarea>
       </b-form-group>
       <div class="d-flex">
-        <b-button v-if="edit_specs" variant="danger" class="m-2" v-on:click="cancelEditSpecs()">Cancel</b-button>
-        <b-button type="submit" v-if="edit_specs" variant="success" class="m-2" v-on:click="editSpecs()">Save</b-button>
+        <b-button v-if="edit_specs" variant="outline-danger" class="m-2" v-on:click="cancelEditSpecs()">Cancel</b-button>
+        <b-button type="submit" v-if="edit_specs" variant="outline-success" class="m-2" v-on:click="editSpecs()">Save</b-button>
       </div>
     </div>
 
@@ -40,7 +40,7 @@
     <!-- Generic Specifications -->
     <div v-for="(spec, spec_key, index) in doc.specifications.specs" :key="index" style="break-inside: avoid;">
 
-      <h3 :id="spec_key">{{ spec.test_name }}<b-button v-if="!edit_specs" v-b-tooltip.hover :title="'Edit ' + spec.test_name + ' Specifications'" v-on:click="editSpecs()" class="btn p-1ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
+      <h3 :id="spec_key">{{ spec.test_name }}<b-button v-if="!edit_specs" v-b-tooltip.hover :title="'Edit ' + spec.test_name + ' Specifications'" v-on:click="editSpecs()" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
       <div v-if="!edit_specs">
         <p v-if="spec_key != 'example_cofas'"><strong>Spec Issued: </strong>{{ spec.date_issued !== undefined && spec.date_issued !== '' ? new Date(spec.date_issued).toDateString() : "No Spec" }}</p>
         <p v-if="spec_key != 'example_cofas'"><strong>Spec Revised: </strong>{{ spec.date_revised !== undefined && spec.date_revised !== '' ? new Date(spec.date_revised).toDateString() : "No Spec" }}</p>
@@ -276,8 +276,8 @@
       <div class="d-flex mt-3" v-if="edit_specs">
         <b-button v-show="spec_key !== 'microscopic'" variant="outline-info" class="m-2" v-on:click="addSpec(spec_key)">{{spec_key !=
           'example_cofas'? 'New Spec':'New CofA'}}</b-button>
-        <b-button v-if="edit_specs" variant="danger" class="m-2" v-on:click="cancelEditSpecs()">Cancel</b-button>
-        <b-button type="submit" v-if="edit_specs" variant="success" class="m-2" v-on:click="editSpecs(spec_key)">Save</b-button>
+        <b-button v-if="edit_specs" variant="outline-danger" class="m-2" v-on:click="cancelEditSpecs()">Cancel</b-button>
+        <b-button type="submit" v-if="edit_specs" variant="outline-success" class="m-2" v-on:click="editSpecs(spec_key)">Save</b-button>
       </div>
       <hr>
     </div>
@@ -352,7 +352,8 @@ export default {
       edit_specs: false,
       edit_specs_buffer: {},
       flash_messages: [],
-      req: new CustomRequest(this.$cookies.get('session'))
+      req: new CustomRequest(this.$cookies.get('session')),
+      del_url_previews: []
     }
   },
   methods: {
@@ -372,8 +373,12 @@ export default {
       this.edit_specs_buffer.specs[specKey].tests.push(test)
     },
     removeTest: function (index, specKey) {
-      this.req.deleteFile(this.edit_specs_buffer.specs[specKey].tests[index].file_hash)
-      this.edit_specs_buffer.specs[specKey].tests.splice(index, 1)
+      this.$bvModal.msgBoxConfirm('Are you sure you want to perminently delete this spec?').then(value => {
+        if (value) {
+          this.req.deleteFile(this.edit_specs_buffer.specs[specKey].tests[index].file_hash)
+          this.edit_specs_buffer.specs[specKey].tests.splice(index, 1)
+        }
+      })
     },
     newTest: function () {
       const today = new Date().toISOString()
@@ -432,7 +437,7 @@ export default {
       // Preview File
       const file = e.target.files[0]
       test.url_preview = URL.createObjectURL(file)
-      URL.revokeObjectURL(file)
+      this.del_url_previews.push(file)
 
       const customKey = await this.req.addFile(file, 1, test.id_code, test.type)
       test.file_pointer = customKey
@@ -475,7 +480,7 @@ export default {
       }
     },
     saveComponentUpdates: function () {
-      this.$emit('toggleLoaded', false)
+      this.$parent.loaded = false
       const component = {
         doc: {
           specifications: this.edit_specs_buffer
@@ -491,23 +496,24 @@ export default {
         })
 
         if (resp.status !== 201) {
+          this.$parent.loaded = true
           return false
         }
-        this.$parent.getComponentData()
+        this.del_url_previews.forEach(url => URL.revokeObjectURL(url))
         this.req = new CustomRequest(this.$cookies.get('session'))
         this.cancelEditSpecs()
-        this.$emit('toggleLoaded', true)
+        this.$parent.getComponentData()
         return true
       })
     },
     saveProductUpdates: async function () {
       const doc = cloneDeep(this.doc)
+      this.$parent.loaded = false
       doc.specifications = this.edit_specs_buffer
       const product = {
         doc: doc,
         product_id: this.id
       }
-      this.req.upsertRecord('Product_Master', product)
       this.req.upsertRecord('Product_Master', product)
 
       const resp = await this.req.sendRequest(window.origin)
@@ -520,12 +526,13 @@ export default {
       })
       // Everything else works
       if (resp.status !== 201) {
+        this.$parent.loaded = true
         return false
       }
-      this.$parent.getProductData()
+      this.del_url_previews.forEach(url => URL.revokeObjectURL(url))
       this.req = new CustomRequest(this.$cookies.get('session'))
       this.cancelEditSpecs()
-      this.$emit('toggleLoaded', true)
+      this.$parent.getProductData()
       return true
     },
     cancelEditSpecs: function () {

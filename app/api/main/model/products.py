@@ -176,25 +176,6 @@ class Formula_Master(Base):
     date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
     formulation_version: Mapped[int] = mapped_column(default=1)
     notes: Mapped[str] = mapped_column(default=None)
-    total_grams_per_unit: Mapped[float] = mapped_column()
-    total_capsules_per_unit: Mapped[float] = mapped_column()
-    total_milliliters_per_unit: Mapped[float] = mapped_column()
-    min_grams_per_unit: Mapped[float] = mapped_column()
-    max_grams_per_unit: Mapped[float] = mapped_column()
-    min_mg_per_capsule: Mapped[float] = mapped_column()
-    max_mg_per_capsule: Mapped[float] = mapped_column()
-    min_milliliters_per_unit: Mapped[float] = mapped_column()
-    max_milliliters_per_unit: Mapped[float] = mapped_column()
-    total_mg_per_capsule: Mapped[float] = mapped_column()
-    mg_empty_capsule: Mapped[float] = mapped_column()
-    CapsuleSizes = ("1","2","0","00")
-    capsule_size: Mapped[int] = mapped_column(Enum(
-        *CapsuleSizes,
-        name="CapsuleSizes",
-        create_constraint=True,
-        validate_strings=True,
-        ))
-    capsule_weight: Mapped[float] = mapped_column()
 
     # Relationships
 
@@ -213,20 +194,7 @@ class Formula_Master(Base):
             'product_id': self.product_id,
             'date_entered': self.date_entered,
             'formulation_version': self.formulation_version,
-            'notes': self.notes,
-            'total_grams_per_unit': self.total_grams_per_unit,
-            'total_capsules_per_unit': self.total_capsules_per_unit,
-            'total_milliliters_per_unit': self.total_milliliters_per_unit,
-            'min_grams_per_unit': self.min_grams_per_unit,
-            'max_grams_per_unit': self.max_grams_per_unit,
-            'min_mg_per_capsule': self.min_mg_per_capsule,
-            'max_mg_per_capsule': self.max_mg_per_capsule,
-            'min_milliliters_per_unit': self.min_milliliters_per_unit,
-            'max_milliliters_per_unit': self.max_milliliters_per_unit,
-            'total_mg_per_capsule': self.total_mg_per_capsule,
-            'mg_empty_capsule': self.mg_empty_capsule,
-            'capsule_size': self.capsule_size,
-            'capsule_weight': self.capsule_weight
+            'notes': self.notes
         }
 
     def get_id(self):

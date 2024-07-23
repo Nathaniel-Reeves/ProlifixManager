@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3 id="Formulas">Formulas<b-button v-if="!edit_formulas" v-b-tooltip.hover title="Edit Product Formulas" @click="set_formula_buffer()" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
+    <h3 id="Formulas">Formulas<b-button v-if="!edit_formulas && active_tab_index < numVersions" v-b-tooltip.hover title="Edit Product Formulas" @click="set_formula_buffer()" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
 
     <b-tabs content-class="mt-3" v-model="active_tab_index">
       <b-tab v-for="(f, index) in formulas" :key="'index-' + index" :disabled="active_tab_index !== index && edit_formulas">
@@ -122,13 +122,13 @@
         </b-card>
       </b-tab>
 
-      <b-tab title="New Formula" :disabled="edit_formulas && active_tab_index !== numVersions">
+      <b-tab v-if="numVersions !== 0" title="New Formula" :disabled="active_tab_index < numVersions && edit_formulas">
         <b-card class="m-2">
           <b-card-title>New Formula Version {{ numVersions + 1 }}</b-card-title>
           <select id="new_version_selector" class="form-control form-control-lg mb-3" v-model="new_version_select"  @change="set_formula_buffer()" :disabled="disable_version_select">
             <option v-for="option in versions" :key="option.value" :value="option.value">{{ option.text }}</option>
           </select>
-          <div v-if="disable_version_select">
+          <div v-if="disable_version_select && active_tab_index !== numVersions + 1 && edit_formulas">
             <strong>Notes:</strong>
             <b-form-textarea
               v-model="new_formula_buffer.notes"
@@ -232,6 +232,9 @@
         </b-card>
       </b-tab>
     </b-tabs>
+    <b-card v-if="numVersions === 0 && !edit_formulas">
+      <b-card-title>No Formulas Exist Yet</b-card-title>
+    </b-card>
   </div>
 </template>
 
@@ -344,9 +347,6 @@ export default {
         product_id: this.productId
       }
       this.req.updateUpsertRecord('Formula_Master', 'formula_id', formula.formula_id, update)
-    },
-    validate_fill: function (max, target, min) {
-      return min !== '' && min !== null && max !== '' && max !== null && target !== '' && target !== null && min >= 0 && max >= 0 && target >= 0 && max >= target && target >= min
     },
     validate_new_formula_buffer: function () {
       this.$bvToast.hide()

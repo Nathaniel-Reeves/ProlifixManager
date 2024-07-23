@@ -1,6 +1,6 @@
 <template>
   <div class="my_component d-flex flex-wrap justify-content-center">
-    <div class="card my-2" v-if="!loaded">
+    <div class="card my-2" v-if="!loaded" style="box-shadow: 0 20px 40px rgba(0,0,0,.2);">
       <div class="card-body">
         <div class="d-flex justify-content-center">
           <div class="spinner-border text-primary" role="status"></div>
@@ -9,7 +9,7 @@
     </div>
 
     <b-container fluid class="p-0">
-      <b-card class=" my-2" v-if="loaded">
+      <b-card class=" my-2" v-if="loaded" style="box-shadow: 0 20px 40px rgba(0,0,0,.2);">
         <b-card-body>
           <div class="card-title d-flex align-items-center flex-wrap">
             <b-img style="max-width: 15rem;" class="d-none d-print-inline p-2" src="../../../assets/Company Images/logos jpg/Cropped Logo.jpg"></b-img>
@@ -64,6 +64,9 @@
 </template>
 
 <style scoped>
+.card {
+  box-shadow: 0 2px 2px rgba(0,0,0,.2);
+}
 .scrollbox {
   position:relative;
   height:85vh;
