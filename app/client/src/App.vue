@@ -6,9 +6,6 @@
         <b-collapse id="nav-collapse" is-nav>
           <b-navbar-nav>
             <b-nav-item to="/" active-class>Home</b-nav-item>
-            <!-- <b-nav-item-dropdown text="Orders" active-class>
-              <b-dropdown-item to="/orders">Orders List</b-dropdown-item>
-            </b-nav-item-dropdown> -->
             <!-- <b-nav-item-dropdown text="Inventory" active-class>
                 <b-dropdown-item to="/inventory">Inventory</b-dropdown-item>
                 <b-dropdown-item to="/inventory/checkins">checkins</b-dropdown-item>
@@ -34,6 +31,10 @@
               <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'packaging_material' } })">Packaging Materials</b-dropdown-item>
               <hr>
               <b-dropdown-item @click="$router.push({ path: '/catalogue/products' })">All Products</b-dropdown-item>
+            </b-nav-item-dropdown>
+            <b-nav-item-dropdown text="Orders" active-class>
+              <b-dropdown-item to="/orders/po">Purchase Orders</b-dropdown-item>
+              <!-- <b-dropdown-item to="/orders/so">Sale Orders</b-dropdown-item> -->
             </b-nav-item-dropdown>
             <!-- <b-nav-item to="/barcodereader" active-class>barcodereader</b-nav-item> -->
           </b-navbar-nav>

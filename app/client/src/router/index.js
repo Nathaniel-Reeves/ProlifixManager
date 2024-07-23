@@ -6,135 +6,110 @@ const routes = [
     name: 'home',
     component: () => import(/* webpackChunkName: "barchart" */ '../views/HomeView.vue')
   },
+  // {
+  //   path: '/inventory',
+  //   name: 'inventory',
+  //   component: () => import(/* webpackChunkName: "inventory" */ '../views/inventory/InventoryHome.vue'),
+  //   children: [
+  //     {
+  //       path: '/checkins',
+  //       name: 'checkins',
+  //       component: () => import(/* webpackChunkName: "checkins" */ '../views/inventory/InventoryHome.vue')
+  //     },
+  //     {
+  //       path: '/checkouts',
+  //       name: 'checkouts',
+  //       component: () => import(/* webpackChunkName: "checkouts" */ '../views/inventory/InventoryHome.vue')
+  //     }
+  //   ]
+  // },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  },
-  {
-    path: '/barchart',
-    name: 'barchart',
-    component: () => import(/* webpackChunkName: "barchart" */ '../views/BarChart.vue')
-  },
-  {
-    path: '/barcodereader',
-    name: 'barcodereader',
-    component: () => import(/* webpackChunkName: "barcodereader" */ '../views/BarcodeReader.vue')
-  },
-  {
-    path: '/bootstrap',
-    name: 'bootstrap',
-    component: () => import(/* webpackChunkName: "bootstrap" */ '../views/BootstrapFour.vue')
-  },
-  {
-    path: '/inventory',
-    name: 'inventory',
-    component: () => import(/* webpackChunkName: "inventory" */ '../views/inventory/InventoryHome.vue'),
+    path: '/catalogue',
+    name: 'catalogue',
     children: [
       {
-        path: '/checkins',
-        name: 'checkins',
-        component: () => import(/* webpackChunkName: "checkins" */ '../views/inventory/InventoryHome.vue')
+        path: 'components',
+        name: 'components',
+        props: route => ({ type: route.query.type }),
+        component: () => import(/* webpackChunkName: "CatalogueHome" */ '../views/catalogue/components/ComponentHome.vue')
       },
       {
-        path: '/checkouts',
-        name: 'checkouts',
-        component: () => import(/* webpackChunkName: "checkouts" */ '../views/inventory/InventoryHome.vue')
+        path: 'components/create',
+        props: route => ({ orgId: route.query.orgId, orgName: route.query.orgName, orgInitial: route.query.orgInitial }),
+        name: 'NewComponent',
+        component: () => import(/* webpackChunkName: "NewComponent" */ '../views/catalogue/components/NewComponent.vue')
+      },
+      {
+        path: 'components/:id',
+        name: 'ComponentDetail',
+        component: () => import(/* webpackChunkName: "ComponentDetail" */ '../views/catalogue/components/ComponentDetail.vue')
+      },
+      {
+        path: 'products',
+        name: 'products',
+        component: () => import(/* webpackChunkName: "ProductHome" */ '../views/catalogue/products/ProductHome.vue')
+      },
+      {
+        path: 'products/:id',
+        name: 'ProductDetail',
+        component: () => import(/* webpackChunkName: "ProductDetail" */ '../views/catalogue/products/ProductDetail.vue')
+      },
+      {
+        path: 'products/create',
+        props: route => ({ orgId: route.query.orgId, orgName: route.query.orgName, orgInitial: route.query.orgInitial }),
+        name: 'NewProduct',
+        component: () => import(/* webpackChunkName: "NewProduct" */ '../views/catalogue/products/NewProduct.vue')
       }
     ]
   },
   {
-    path: '/catalogue/components',
-    name: 'components',
-    props: route => ({ type: route.query.type }),
-    component: () => import(/* webpackChunkName: "CatalogueHome" */ '../views/catalogue/components/ComponentHome.vue')
-  },
-  {
-    path: '/catalogue/components/create',
-    props: route => ({ orgId: route.query.orgId, orgName: route.query.orgName, orgInitial: route.query.orgInitial }),
-    name: 'NewComponent',
-    component: () => import(/* webpackChunkName: "NewComponent" */ '../views/catalogue/components/NewComponent.vue')
-  },
-  {
-    path: '/catalogue/components/:id',
-    name: 'ComponentDetail',
-    component: () => import(/* webpackChunkName: "ComponentDetail" */ '../views/catalogue/components/ComponentDetail.vue')
-  },
-  {
-    path: '/catalogue/products',
-    name: 'products',
-    component: () => import(/* webpackChunkName: "ProductHome" */ '../views/catalogue/products/ProductHome.vue')
-  },
-  {
-    path: '/catalogue/products/:id',
-    name: 'ProductDetail',
-    component: () => import(/* webpackChunkName: "ProductDetail" */ '../views/catalogue/products/ProductDetail.vue')
-  },
-  {
-    path: '/catalogue/products/create',
-    props: route => ({ orgId: route.query.orgId, orgName: route.query.orgName, orgInitial: route.query.orgInitial }),
-    name: 'NewProduct',
-    component: () => import(/* webpackChunkName: "NewProduct" */ '../views/catalogue/products/NewProduct.vue')
-  },
-  {
     path: '/organizations',
     name: 'organizations',
-    component: () => import(/* webpackChunkName: "organizations" */ '../views/organizations/OrganizationsHome.vue')
-  },
-  {
-    path: '/organizations/:id',
-    name: 'OrganizationsDetail',
-    component: () => import(/* webpackChunkName: "organizations" */ '../views/organizations/OrganizationDetail.vue')
-  },
-  {
-    path: '/organizations/create',
-    name: 'NewOrganization',
-    component: () => import(/* webpackChunkName: "NewOrganization" */ '../views/organizations/NewOrganization.vue')
-  },
-  {
-    path: '/organizations/facilities/:id',
-    name: 'FacilitiesDetail',
-    component: () => import(/* webpackChunkName: "FacilitiesDetail" */ '../views/organizations/FacilitiesDetail.vue')
-  },
-  {
-    path: '/organizations/facilities/create',
-    props: route => ({ orgId: route.query.orgId, orgName: route.query.orgName, orgInitial: route.query.orgInitial }),
-    name: 'NewFacility',
-    component: () => import(/* webpackChunkName: "NewProduct" */ '../views/organizations/NewFacility.vue')
-  },
-  {
-    path: '/organizations/people/:id',
-    name: 'PeopleDetail',
-    component: () => import(/* webpackChunkName: "PeopleDetail" */ '../views/organizations/PeopleDetail.vue')
-  },
-  {
-    path: '/organizations/people/create',
-    props: route => ({ orgId: route.query.orgId, orgName: route.query.orgName, orgInitial: route.query.orgInitial }),
-    name: 'NewPerson',
-    component: () => import(/* webpackChunkName: "NewProduct" */ '../views/organizations/NewPerson.vue')
+    component: () => import(/* webpackChunkName: "organizations" */ '../views/organizations/OrganizationsHome.vue'),
+    children: [
+      {
+        path: ':id',
+        name: 'OrganizationsDetail',
+        component: () => import(/* webpackChunkName: "organizations" */ '../views/organizations/OrganizationDetail.vue')
+      },
+      {
+        path: 'create',
+        name: 'NewOrganization',
+        component: () => import(/* webpackChunkName: "NewOrganization" */ '../views/organizations/NewOrganization.vue')
+      },
+      {
+        path: 'facilities/:id',
+        name: 'FacilitiesDetail',
+        component: () => import(/* webpackChunkName: "FacilitiesDetail" */ '../views/organizations/FacilitiesDetail.vue')
+      },
+      {
+        path: 'facilities/create',
+        props: route => ({ orgId: route.query.orgId, orgName: route.query.orgName, orgInitial: route.query.orgInitial }),
+        name: 'NewFacility',
+        component: () => import(/* webpackChunkName: "NewProduct" */ '../views/organizations/NewFacility.vue')
+      },
+      {
+        path: 'people/:id',
+        name: 'PeopleDetail',
+        component: () => import(/* webpackChunkName: "PeopleDetail" */ '../views/organizations/PeopleDetail.vue')
+      },
+      {
+        path: 'people/create',
+        props: route => ({ orgId: route.query.orgId, orgName: route.query.orgName, orgInitial: route.query.orgInitial }),
+        name: 'NewPerson',
+        component: () => import(/* webpackChunkName: "NewProduct" */ '../views/organizations/NewPerson.vue')
+      }
+    ]
   },
   {
     path: '/orders',
     name: 'orders',
-    component: () => import(/* webpackChunkName: "orders" */ '../views/orders/OrdersHome.vue'),
+    // component: () => import(/* webpackChunkName: "orders" */ '../views/orders/OrdersHome.vue'),
     children: [
       {
-        path: '/lot_numbers',
-        name: 'lot_numbers',
-        component: () => import(/* webpackChunkName: "lot_numbers" */ '../views/orders/OrdersHome.vue')
-      },
-      {
-        path: '/sales_orders',
-        name: 'sales_orders',
-        component: () => import(/* webpackChunkName: "sales_orders" */ '../views/orders/OrdersHome.vue')
-      },
-      {
-        path: '/purchase_orders',
-        name: 'puchase_orders',
-        component: () => import(/* webpackChunkName: "purchase_orders" */ '../views/orders/OrdersHome.vue')
+        path: 'po',
+        name: 'PurchaseOrdersHome',
+        component: () => import(/* webpackChunkName: "purchase_orders" */ '../views/orders/purchase_orders/PurchaseOrdersHome.vue')
       }
     ]
   },
@@ -142,21 +117,6 @@ const routes = [
     path: '/login',
     name: 'login',
     component: () => import(/* webpackChunkName: "login" */ '../views/LogIn.vue')
-  },
-  {
-    path: '/interactflow',
-    name: 'interactflow',
-    component: () => import(/* webpackChunkName: "login" */ '../views/VueFlowInteraction.vue')
-  },
-  {
-    path: '/basicflow',
-    name: 'basicflow',
-    component: () => import(/* webpackChunkName: "login" */ '../views/VueFlowBasic.vue')
-  },
-  {
-    path: '/testapi',
-    name: 'testapi',
-    component: () => import(/* webpackChunkName: "login" */ '../views/TestAPI.vue')
   },
   {
     path: '/:pathMatch(.*)*',

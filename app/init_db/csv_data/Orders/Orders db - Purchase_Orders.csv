@@ -1,2 +1,0 @@
-prefix,year,month,sec_number,suffix,organization_id,supplier_so_num,order_date,eta_date,doc
-,21,10,37,,1,NULL,2022-01-02,2022-01-02,{}

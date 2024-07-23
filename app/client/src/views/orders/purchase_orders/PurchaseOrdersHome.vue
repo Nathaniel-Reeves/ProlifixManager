@@ -1,11 +1,12 @@
 <template>
-  <div class="orders">
+  <div>
+    SUCCESS
   </div>
 </template>
 
 <script>
 export default {
-  name: 'OrdersHome',
+  name: 'PurchaseOrdersHome',
   data: function () {
     return {
       orders: []
