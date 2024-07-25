@@ -22,12 +22,19 @@ mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host 172.10.10.2 -e "FLUSH PRIVILEG
 
 echo "Remote access for root user from any host has been granted."
 
-# Execute SQL commands to create the new user
+# Execute SQL commands to create the client user
 mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host 172.10.10.2 -e "CREATE USER '$DB_USER'@'%' IDENTIFIED BY '$DB_PASSWORD';"
 mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host 172.10.10.2 -e "GRANT ALL PRIVILEGES ON *.* TO '$DB_USER'@'%';"
 mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host 172.10.10.2 -e "FLUSH PRIVILEGES;"
 
 echo "User $DB_USER has been created and granted all privileges."
+
+# Execute SQL commands to create database backup user
+mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host 172.10.10.2 -e "CREATE USER '$DB_BACKUP_USER'@'%' IDENTIFIED BY '$DB_BACKUP_PASSWORD';"
+mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host 172.10.10.2 -e "GRANT SELECT, SHOW VIEW, TRIGGER, EVENT, RELOAD, LOCK TABLES ON *.* TO '$DB_BACKUP_USER'@'$DB_BACKUP_HOST';"
+mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host 172.10.10.2 -e "FLUSH PRIVILEGES;"
+
+echo "User backup has been created and granted SELECT, SHOW VIEW, TRIGGER, EVENT, RELOAD, LOCK TABLES privileges."
 
 # Setup OQGraph engine for Mariadb
 # apt update
