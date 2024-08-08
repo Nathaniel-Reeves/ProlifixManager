@@ -1,26 +1,25 @@
 <template>
-  <div :class="(initial ? 'initial' : 'wide')">
+  <div class="mb-3 wide">
     <v-select
       :id="id"
       :options="paginated"
-      :label="initial ? 'organization_primary_initial' : 'organization_primary_name'"
-      v-model="selected_org"
-      :loading="!orgs_loaded"
-      :placeholder="!orgs_loaded ? 'Loading...':'Choose...'"
-      aria-describedby="select_org-live-feedback"
-      :class="[((selected_org !== null && selected_org.organization_id > 0) || !orgReq ? '' : 'is-invalid'), (initial ? 'initial' : 'wide')]"
-      :disabled="(selected_org !== null && selected_org.organization_id > 0 && initial) || disabledProp"
+      label="process_name"
+      v-model="selected_process"
+      :loading="!processes_loaded"
+      :placeholder="!processes_loaded ? 'Loading...':'Choose...'"
+      aria-describedby="select_process-live-feedback"
+      :class="[((selected_process !== null && selected_process.process_id > 0) || !processReq ? '' : 'is-invalid'), 'wide']"
+      :disabled="(selected_process !== null && selected_process.process_id > 0) || disabledProp"
       :clearable="false"
       :filterable="false"
       @open="onOpen"
       @close="onClose"
       @search="(query) => (search = query)"
-      :append-to-body="true"
       >
-      <template #option="{ organization_id, organization_primary_name, organization_primary_initial }">
+      <template #option="{ process_id, process_name }">
         <div style="display:flex; flex-direction: row; align-items: center; min-height: 60px;">
-          <b-button v-on:click.stop class="mr-2" variant="light" :to="'/organizations/'+organization_id" target="_blank"><b-icon icon="box"></b-icon></b-button>
-          <div>{{ organization_primary_name }} | {{ organization_primary_initial }}</div>
+          <b-button v-on:click.stop class="mr-2" variant="light" :to="'/manufacturing/process/'+process_id" target="_blank"><b-icon icon="box"></b-icon></b-button>
+          <div>{{ process_name }}</div>
         </div>
       </template>
       <template #list-footer>
@@ -29,8 +28,8 @@
         </li>
       </template>
     </v-select>
-    <div id="select_org-live-feedback" class="invalid-feedback">This is a required field.</div>
-    <b-tooltip v-if="selected_org !== null && selected_org.organization_id > 0 && initial" :target="id" triggers="hover">{{ selected_org.organization_primary_name }}</b-tooltip>
+    <div id="select_process-live-feedback" class="invalid-feedback">This is a required field.</div>
+    <!-- <b-tooltip v-if="selected_process !== null && selected_process.process_id > 0 && initial" :target="id" triggers="hover">{{ selected_process.process_name }}</b-tooltip> -->
   </div>
 </template>
 
@@ -38,7 +37,7 @@
 .vs__dropdown-menu {
   width: 600px;
   max-height: 300px;
-  /* overflow-y: auto; */
+  overflow-y: auto;
 }
 
 .loader {
@@ -57,12 +56,12 @@
 import vSelect from 'vue-select'
 
 export default {
-  name: 'ChooseOrg',
+  name: 'ChooseProcess',
   components: {
     vSelect
   },
   props: {
-    organizations: {
+    processes: {
       type: Array,
       required: true
     },
@@ -70,13 +69,9 @@ export default {
       type: Object,
       default: null
     },
-    orgReq: {
+    processReq: {
       type: Boolean,
       default: false
-    },
-    initial: {
-      type: Boolean,
-      default: true
     },
     disabledProp: {
       type: Boolean,
@@ -85,8 +80,8 @@ export default {
   },
   data: function () {
     return {
-      selected_org: null,
-      id: Math.floor(Math.random() * 100000) + '-org-name',
+      selected_process: null,
+      id: Math.floor(Math.random() * 100000),
       observer: null,
       limit: 10,
       search: ''
@@ -113,25 +108,25 @@ export default {
     }
   },
   watch: {
-    selected_org: function (val) {
-      this.$emit('org', val)
+    selected_process: function (val) {
+      this.$emit('process', val)
     }
   },
   mounted () {
     this.observer = new IntersectionObserver(this.infiniteScroll)
   },
   computed: {
-    orgs_loaded: function () {
-      return this.organizations.length > 0
+    processes_loaded: function () {
+      return this.processes.length > 0
     },
     filtered () {
       if (this.search === '') {
-        return this.organizations
+        return this.processes
       }
-      if (this.organizations.length === 0) {
+      if (this.processes.length === 0) {
         return []
       }
-      return this.organizations.filter((org) => (org.organization_primary_name.toLowerCase()?.includes(this.search.toLowerCase()) || org.organization_primary_initial.toLowerCase()?.includes(this.search.toLowerCase())))
+      return this.processes.filter((process) => process.process_name.toLowerCase()?.includes(this.search.toLowerCase()))
     },
     paginated () {
       return this.filtered.slice(0, this.limit)
@@ -141,7 +136,7 @@ export default {
     }
   },
   created: function () {
-    this.selected_org = this.selected != null ? this.selected : null
+    this.selected_process = this.selected != null ? this.selected : null
   }
 }
 </script>

@@ -1,21 +1,21 @@
 <template>
   <div>
     <b-row align-v="center">
-      <b-col style="max-width: 260px;">
+      <b-col style="width: 80%;">
         <v-select
           :options="paginated"
           label="component_primary_name"
-          v-model="selected_ingredient"
-          :loading="!ingredients_loaded"
-          :placeholder="!ingredients_loaded ? 'Loading...':'Choose...'"
-          style="width: 250px;"
-          aria-describedby="select_ingredient-live-feedback"
-          :class="(selected_ingredient !== null && selected_ingredient.component_id > 0 ? '' : 'is-invalid')"
-          :disabled="selected_ingredient !== null && selected_ingredient?.component_id > 0"
+          v-model="selected_component"
+          :loading="!components_loaded"
+          :placeholder="!components_loaded ? 'Loading...':'Choose...'"
+          aria-describedby="select_component-live-feedback"
+          :class="(selected_component !== null && selected_component.component_id > 0 ? '' : 'is-invalid')"
+          :disabled="selected_component !== null && selected_component?.component_id > 0"
           :clearable="false"
           @open="onOpen"
           @close="onClose"
           @search="(query) => (search = query)"
+          :append-to-body="true"
         >
           <template #option="{ component_id, component_primary_name, certified_fda, certified_gluten_free, certified_gmp, certified_halal, certified_kosher, certified_made_with_organic, certified_national_sanitation_foundation, certified_non_gmo, certified_us_pharmacopeia, certified_usda_organic, certified_vegan, certified_wildcrafted }">
             <div style="display:flex; flex-direction: row; align-items: center; min-height: 60px;">
@@ -43,16 +43,30 @@
             </li>
           </template>
         </v-select>
-        <div id="select_ingredient-live-feedback" class="invalid-feedback">This is a required field.</div>
+        <div id="select_component-live-feedback" class="invalid-feedback">This is a required field.</div>
       </b-col>
-      <b-col style="max-width: 300px;">
-        <CertBadge :data="selected_ingredient"></CertBadge>
+      <b-col style="max-width: 20%;">
+        <CertBadge :data="selected_component"></CertBadge>
+        <!-- "popper.js": "1.16.1" -->
       </b-col>
     </b-row>
   </div>
 </template>
 
 <style>
+.v-select.drop-up.vs--open .vs__dropdown-toggle {
+  border-radius: 0 0 4px 4px;
+  border-top-color: transparent;
+  border-bottom-color: rgba(60, 60, 60, 0.26);
+}
+
+[data-popper-placement='top'] {
+  border-radius: 4px 4px 0 0;
+  border-top-style: solid;
+  border-bottom-style: none;
+  box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.15);
+}
+
 .vs__dropdown-menu {
   width: 600px;
   max-height: 300px;
@@ -68,24 +82,24 @@
 <script>
 import CertBadge from './CertBadge.vue'
 import vSelect from 'vue-select'
-// import { createPopper } from '@popperjs/core'
 
 export default {
-  name: 'ChooseIngredient',
+  name: 'ChooseComponent',
   components: {
     CertBadge,
     vSelect
   },
   props: [
-    'ingredients',
+    'components',
     'selected'
   ],
   data: function () {
     return {
-      selected_ingredient: null,
+      selected_component: null,
       observer: null,
       limit: 10,
-      search: ''
+      search: '',
+      placement: 'top'
     }
   },
   methods: {
@@ -109,26 +123,25 @@ export default {
     }
   },
   watch: {
-    selected_ingredient: function (val) {
-      this.$emit('ing', val)
+    selected_component: function (val) {
+      this.$emit('comp', val)
     }
   },
   mounted () {
     this.observer = new IntersectionObserver(this.infiniteScroll)
-    console.log(this.ingredients)
   },
   computed: {
-    ingredients_loaded: function () {
-      return this.ingredients.length > 0
+    components_loaded: function () {
+      return this.components.length > 0
     },
     filtered () {
       if (this.search === '') {
-        return this.ingredients
+        return this.components
       }
-      if (this.ingredients.length === 0) {
+      if (this.components.length === 0) {
         return []
       }
-      return this.ingredients.filter((ing) => ing.component_primary_name ? ing.component_primary_name.toLowerCase()?.includes(this.search.toLowerCase()) : false)
+      return this.components.filter((comp) => comp.component_primary_name ? comp.component_primary_name.toLowerCase()?.includes(this.search.toLowerCase()) : false)
     },
     paginated () {
       return this.filtered.slice(0, this.limit)
@@ -138,9 +151,9 @@ export default {
     }
   },
   created: function () {
-    this.selected_ingredient = this.selected !== null ? this.selected : null
+    this.selected_component = this.selected !== null ? this.selected : null
     if (this.selected !== null && this.selected.component_name) {
-      this.selected_ingredient.component_primary_name = this.selected.component_name
+      this.selected_component.component_primary_name = this.selected.component_name
     }
   }
 }

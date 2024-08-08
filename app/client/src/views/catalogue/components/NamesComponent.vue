@@ -32,8 +32,8 @@
     <div class="d-flex">
       <div v-show="edit_names">
         <b-button variant="outline-info" class="m-2" v-on:click="addName()">New Name</b-button>
-        <b-button variant="danger" class="m-2" v-on:click="cancelEditNames()">Cancel</b-button>
-        <b-button type="submit" :disabled="edit_names_buffer.length <= 0" variant="success" class="m-2" v-on:click="editNames()">Save</b-button>
+        <b-button variant="outline-danger" class="m-2" v-on:click="cancelEditNames()">Cancel</b-button>
+        <b-button type="submit" :disabled="edit_names_buffer.length <= 0" variant="outline-success" class="m-2" v-on:click="editNames()">Save</b-button>
       </div>
     </div>
   </div>

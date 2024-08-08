@@ -68,11 +68,6 @@ const routes = [
     component: () => import(/* webpackChunkName: "organizations" */ '../views/organizations/OrganizationsHome.vue'),
     children: [
       {
-        path: ':id',
-        name: 'OrganizationsDetail',
-        component: () => import(/* webpackChunkName: "organizations" */ '../views/organizations/OrganizationDetail.vue')
-      },
-      {
         path: 'create',
         name: 'NewOrganization',
         component: () => import(/* webpackChunkName: "NewOrganization" */ '../views/organizations/NewOrganization.vue')
@@ -100,6 +95,11 @@ const routes = [
         component: () => import(/* webpackChunkName: "NewProduct" */ '../views/organizations/NewPerson.vue')
       }
     ]
+  },
+  {
+    path: '/organizations/:id',
+    name: 'OrganizationsDetail',
+    component: () => import(/* webpackChunkName: "organizations" */ '../views/organizations/OrganizationDetail.vue')
   },
   {
     path: '/orders',

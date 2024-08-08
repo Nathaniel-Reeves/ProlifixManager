@@ -7,6 +7,8 @@ from view.response import CustomResponse
 import model as db
 from .execute import execute_query
 
+from .manufacturing import get_equipment
+
 def get_products(
         custom_response,
         product_ids,
@@ -65,13 +67,13 @@ def get_products(
         product_master = row[0].to_dict()
         organization_names = row[1].to_dict()
         formulas = {'formulas':[]}
-        manufacturing = {'manufacturing': []}
+        manufacturing = {'manufacturing': {'nodes': [], 'edges': []}}
         product_variants = {'product_variants': []}
 
         # Populate
         if ('manufacturing' in populate) or ('components' in populate):
             r = CustomResponse()
-            resp = get_manufacturing( r, [pk], ['components', 'equipment'], doc)
+            resp = get_manufacturing( r, [pk], ['process_components', 'equipment'], doc)
             manufacturing_nodes = resp.get_data()
             custom_response.insert_flash_messages(r.get_flash_messages())
 
@@ -120,15 +122,18 @@ def get_manufacturing(
     # Process and Package the data
     for row in raw_data:
         pk = row[0].get_id()
-        process_pk = row[1].get_id()
-        manufacturing_nodes = {**row[0].to_dict(), **row[1].to_dict()}
+        if row[1] is not None:
+            process_pk = row[1].get_id()
+            manufacturing_nodes = {**row[0].to_dict(), **row[1].to_dict()}
+        else:
+            manufacturing_nodes = {**row[0].to_dict()}
         equipment = {'equipment':[]}
-        components = {'components':[]}
+        process_components = {'process_components':[]}
 
-        if 'components' in populate:
+        if 'process_components' in populate:
             r = CustomResponse()
             resp = get_process_components( r, [pk], [], False)
-            components = {'components':resp.get_data()}
+            process_components = {'process_components':resp.get_data()}
             custom_response.insert_flash_messages(r.get_flash_messages())
 
         if 'equipment' in populate:
@@ -137,7 +142,7 @@ def get_manufacturing(
             equipment = {'equipment':resp.get_data()}
             custom_response.insert_flash_messages(r.get_flash_messages())
 
-        custom_response.insert_data({**manufacturing_nodes, **components, **equipment})
+        custom_response.insert_data({**manufacturing_nodes, **process_components, **equipment})
 
     return custom_response
 
@@ -163,33 +168,6 @@ def get_manufacturing_edges(
         manufacturing_edges = row[0].to_dict()
 
         custom_response.insert_data({**manufacturing_edges})
-
-    return custom_response
-
-def get_equipment(
-        custom_response,
-        process_id,
-        populate,
-        doc
-    ):
-
-    # Build the query
-    stm = select(db.Equipment)
-
-    if process_id:
-        stm = stm.where(db.Equipment.process_id.in_(process_id))
-
-    # Execute the query
-    custom_response, raw_data, success = execute_query(custom_response, stm)
-    if not success:
-        return custom_response
-
-    # Process and Package the data
-    for row in raw_data:
-        pk = row[0].get_id()
-        equipment = row[0].to_dict()
-
-        custom_response.insert_data({**equipment})
 
     return custom_response
 

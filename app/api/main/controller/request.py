@@ -205,14 +205,6 @@ class CustomRequest:
                 self.custom_response.insert_flash_message(flash_message)
                 self.custom_response.set_status_code(400)
                 return False
-            print()
-            print()
-            print(json.dumps(record, indent=2))
-            print()
-            print()
-            print(stm)
-            print()
-            print()
         else:
             flash_message = FlashMessage(
                 variant=VariantType.DANGER,
@@ -234,7 +226,8 @@ class CustomRequest:
         if self.custom_delete:
             tables = self.request.json['delete_order']
         else:
-            tables = self.valid_tables
+            tables = list(self.valid_tables)
+            tables.reverse()
         flag = True
         for table in tables:
             if table in deletes.keys():

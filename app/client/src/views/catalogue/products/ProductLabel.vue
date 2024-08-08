@@ -70,6 +70,15 @@
               <b-card-body :overlay="label.url_preview || label.file_pointer">
 
                 <div class="input-group mb-2" v-show="!label.url_preview && !label.file_pointer && edit_labels" style="width: 25rem;">
+                  <ChooseVariant
+                    @variant="(variant) => updateVariant(label, variant)"
+                    :variants="variant_options"
+                    :selected="getVariant(label)"
+                    :variant-req="true"
+                  ></ChooseVariant>
+                </div>
+
+                <!-- <div class="input-group mb-2" v-show="!label.url_preview && !label.file_pointer && edit_labels" style="width: 25rem;">
                   <v-select
                     id="product_type"
                     style="width: 25rem;"
@@ -82,7 +91,7 @@
                     v-on:keyup.enter="focus('label_type')"
                   ></v-select>
                   <div id="product_type-live-feedback" class="invalid-feedback">This is a required field.</div>
-                </div>
+                </div> -->
 
                 <div class="input-group mb-2" v-show="!label.url_preview && !label.file_pointer && edit_labels" style="width: 25rem;">
                   <v-select
@@ -94,12 +103,11 @@
                     :reduce="option => option.value"
                     area-describedby="label_type-live-feedback"
                     :class="[label.label_type ? '' : 'is-invalid']"
-                    v-on:keyup.enter="focus('qty')"
                   ></v-select>
                   <div id="label_type-live-feedback" class="invalid-feedback">This is a required field.</div>
                 </div>
 
-                <div class="input-group mb-2" v-show="!label.url_preview && !label.file_pointer && edit_labels" style="width: 25rem;">
+                <!-- <div class="input-group mb-2" v-show="!label.url_preview && !label.file_pointer && edit_labels" style="width: 25rem;">
                   <input
                     :disabled="!label.product_type"
                     id="qty"
@@ -118,7 +126,7 @@
                     <span v-show="label.product_type === null" class="input-group-text">?</span>
                   </div>
                   <div id="qty-live-feedback" class="invalid-feedback">This required field must be greater than or equal to zero.</div>
-                </div>
+                </div> -->
 
                 <b-form-file :id="'file_'+index" no-drop required accept="image/png, image/jpeg"
                   :disabled="!(!label.url_preview && !label.file_pointer && edit_labels && label.product_type && label.label_type && label.qty)" type="file"
@@ -144,7 +152,7 @@
                       </b-card>
                     </div>
                     <div v-show="(label.url_preview || label.file_pointer) && label.focus && edit_labels">
-                      <b-button class="mr-2" v-if="!label.primary && !label.discontinued" @click="label.primary = true" variant="primary">Set Primary</b-button>
+                      <b-button class="mr-2 mb-2" v-if="!label.primary && !label.discontinued" @click="label.primary = true" variant="primary">Set Primary</b-button>
                       <b-button v-show="!label.primary && !label.discontinued" variant="danger" @click="label.discontinued = true;  label.date_discontinued = new Date().toLocaleDateString('en-US')">Discontinue</b-button>
                     </div>
                   </div>
@@ -158,8 +166,15 @@
             </b-card>
             <template #overlay>
               <div class="text-center">
-                <h3><b-badge v-show="label.discontinued" class="ml-3" variant="danger">Label Discontinued</b-badge></h3>
-                <b-button v-show="!label.primary && label.discontinued" variant="outline-success" @click="label.discontinued = false; label.date_discontinued = null">Reinstate</b-button>
+                <h3><b-badge v-show="label.discontinued" variant="danger">Label Discontinued</b-badge></h3>
+                <b-form-textarea
+                  v-show="!label.primary && label.discontinued"
+                  v-model="label.discontinued_reason"
+                  :disabled="!edit_labels"
+                  class="form-control my-2"
+                  placeholder="Reason for Discontinuation"
+                ></b-form-textarea>
+                <b-button block v-show="!label.primary && label.discontinued && edit_labels" variant="outline-success" @click="label.discontinued = false; label.date_discontinued = null">Reinstate</b-button>
               </div>
             </template>
           </b-overlay>
@@ -187,6 +202,7 @@ import { CustomRequest, genTempKey, isTempKey } from '../../../common/CustomRequ
 import { cloneDeep } from 'lodash'
 import labelDoc from './labelDocTemp.js'
 import vSelect from 'vue-select'
+import ChooseVariant from '../../../components/ChooseVariant.vue'
 
 export default {
   name: 'ProductLabel',
@@ -202,10 +218,15 @@ export default {
     id: {
       type: Number,
       required: true
+    },
+    variant_options: {
+      required: true,
+      type: Array
     }
   },
   components: {
-    vSelect
+    vSelect,
+    ChooseVariant
   },
   data: function () {
     return {
@@ -246,6 +267,30 @@ export default {
     }
   },
   methods: {
+    getVariant: function (label) {
+      if (!label.variant_id) {
+        return null
+      }
+      return this.variant_options.find((v) => v.variant_id === label.variant_id)
+    },
+    updateVariant: function (label, variant) {
+      label.variant_id = variant.variant_id
+      label.product_type = variant.variant_type
+      if (label.product_type === 'powder') {
+        label.qty = variant.total_grams_per_unit
+      }
+      if (label.product_type === 'capsule') {
+        label.qty = variant.total_capsules_per_unit
+      }
+      if (label.product_type === 'liquid') {
+        label.qty = variant.total_milliliters_per_unit
+      }
+      const currentVariant = this.variant_options.find((v) => v.variant_id === variant.variant_id)
+      if (currentVariant.discontinued) {
+        label.discontinued = true
+        label.discontinued_reason = currentVariant.discontinued_reason
+      }
+    },
     isTempKey: function (key) {
       return isTempKey(key)
     },
@@ -269,6 +314,11 @@ export default {
         labels.all_labels[i].focus = false
         labels.all_labels[i].primary_focus = false
         labels.all_labels[i].buffered = true
+        const currentVariant = this.variant_options.find((v) => v.variant_id === labels.all_labels[i].variant_id)
+        if (currentVariant?.discontinued) {
+          labels.all_labels[i].discontinued = true
+          labels.all_labels[i].discontinued_reason = currentVariant.discontinued_reason
+        }
       }
       this.edit_labels_buffer = labels
       this.toggleEditLabels()
@@ -288,11 +338,13 @@ export default {
           component_id: label.component_id,
           type: label.type,
           discontinued: label.discontinued,
+          discontinued_reason: label.discontinued_reason,
           date_discontinued: label.date_discontinued,
           date_uploaded: label.date_uploaded,
           primary: label.primary,
           product_type: label.product_type,
           label_type: label.label_type,
+          variant_id: label.variant_id,
           qty: label.qty
         }
         labels.push(l)
@@ -466,6 +518,8 @@ export default {
         component_id: genTempKey(),
         type: null,
         discontinued: false,
+        discontinued_reason: '',
+        variant_id: null,
         date_discontinued: null,
         date_uploaded: new Date().toLocaleDateString('en-US'),
         focus: false,
@@ -537,6 +591,11 @@ export default {
       labels.all_labels[i].focus = false
       labels.all_labels[i].primary_focus = false
       labels.all_labels[i].buffered = true
+      const currentVariant = this.variant_options.find((v) => v.variant_id === labels.all_labels[i].variant_id)
+      if (currentVariant?.discontinued) {
+        labels.all_labels[i].discontinued = true
+        labels.all_labels[i].discontinued_reason = currentVariant.discontinued_reason
+      }
     }
     this.edit_labels_buffer = labels
   }

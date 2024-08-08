@@ -35,6 +35,8 @@ class Equipment(Base):
 
     equipment_history = Column(MutableDict.as_mutable(JSON))
 
+    equipment_name: Mapped[str] = mapped_column(default=None)
+
     # Common Methods
     def __repr__(self):
         """Return a string representation of Object"""
@@ -53,7 +55,8 @@ class Equipment(Base):
             "status": self.status,
             "date_entered": self.date_entered,
             "date_modified": self.date_modified,
-            "equipment_history": self.equipment_history
+            "equipment_history": self.equipment_history,
+            "equipment_name": self.equipment_name
         }
 
     def get_id(self):
@@ -85,6 +88,14 @@ class Processes(Base):
     max_personnel: Mapped[int] = mapped_column(default=0)
     bpr_page_template: Mapped[str] = mapped_column()
     bpr_data_template = Column(MutableDict.as_mutable(JSON))
+    requires_product_variant: Mapped[bool] = mapped_column(default=False)
+    requires_components: Mapped[bool] = mapped_column(default=False)
+    requires_box_specs: Mapped[bool] = mapped_column(default=True)
+    top_handle: Mapped[bool] = mapped_column(default=True)
+    bottom_handle: Mapped[bool] = mapped_column(default=False)
+    left_handle: Mapped[bool] = mapped_column(default=False)
+    right_handle: Mapped[bool] = mapped_column(default=False)
+    ave_percent_loss: Mapped[bool] = mapped_column(default=False)
 
     # Common Methods
     def __repr__(self):
@@ -107,7 +118,15 @@ class Processes(Base):
             "min_personnel": self.min_personnel,
             "max_personnel": self.max_personnel,
             "bpr_page_template": self.bpr_page_template,
-            "bpr_data_template": self.bpr_data_template
+            "bpr_data_template": self.bpr_data_template,
+            "requires_product_variant": self.requires_product_variant,
+            "requires_components": self.requires_components,
+            "requires_box_specs": self.requires_box_specs,
+            "top_handle": self.top_handle,
+            "bottom_handle": self.bottom_handle,
+            "left_handle": self.left_handle,
+            "right_handle": self.right_handle,
+            "ave_percent_loss": self.ave_percent_loss
         }
 
     def get_id(self):

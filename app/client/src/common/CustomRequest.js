@@ -256,23 +256,62 @@ export class CustomRequest {
       return null
     }
 
-    // Find and return index
-    let index = null
-    if (action === 'upsert') {
-      index = this.payload.upsert[table].findIndex(record => key in record && record[key] === value)
-    } else if (action === 'delete') {
-      index = this.payload.delete[table].findIndex(record => key in record && record[key] === value)
-    } else {
-      console.error('Invalid action')
-      return null
-    }
+    if (!Array.isArray(key)) {
+      // Find and return index
+      let index = null
+      if (action === 'upsert') {
+        index = this.payload.upsert[table].findIndex(record => key in record && record[key] === value)
+      } else if (action === 'delete') {
+        index = this.payload.delete[table].findIndex(record => key in record && record[key] === value)
+      } else {
+        console.error('Invalid action')
+        return null
+      }
 
-    if (index >= 0) {
-      return index
+      if (index >= 0) {
+        return index
+      } else {
+        console.warn('Record not found')
+        return null
+      }
     } else {
-      console.warn('Record not found')
-      return null
+      if (!Array.isArray(value)) {
+        console.error('Invalid value:', value)
+        return null
+      }
+
+      if (key.length !== value.length) {
+        console.error('Invalid key and value lengths:', key, value)
+        return null
+      }
+
+      // Find and return index
+      let index = null
+      if (action === 'upsert') {
+        index = this.payload.upsert[table].findIndex(record => this.compareKeys(record, key, value))
+      } else if (action === 'delete') {
+        index = this.payload.delete[table].findIndex(record => this.compareKeys(record, key, value))
+      } else {
+        console.error('Invalid action')
+        return null
+      }
+
+      if (index >= 0) {
+        return index
+      } else {
+        console.warn('Record not found')
+        return null
+      }
     }
+  }
+
+  compareKeys (record, keys, values) {
+    for (let i = 0; i < keys.length; i++) {
+      if (!(keys[i] in record) || record[keys[i]] !== values[i]) {
+        return false
+      }
+    }
+    return true
   }
 
   setSessionKey (key) {

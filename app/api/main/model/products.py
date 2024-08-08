@@ -124,13 +124,35 @@ class Manufacturing_Process(Base):
     current_default_process: Mapped[bool] = mapped_column(default=True)
     process_order: Mapped[int] = mapped_column(default=1)
     special_instruction: Mapped[str] = mapped_column(default=None)
-    manufacturing_process_id: Mapped[int] = mapped_column()
     process_bid_cost: Mapped[float] = mapped_column(default=None)
     manufacturing_process_version: Mapped[int] = mapped_column(default=None)
     position: Mapped[str] = mapped_column(default=None)
     type: Mapped[str] = mapped_column(default=None)
+    qty_per_box: Mapped[int] = mapped_column(default=None)
+    box_weight_in_lbs: Mapped[float] = mapped_column(default=None)
+    box_sticker_required: Mapped[bool] = mapped_column(default=False)
+    percent_loss: Mapped[float] = mapped_column(default=0)
+    target_process_rate: Mapped[float] = mapped_column(default=None)
+    targetProcessRateUnit = ('Products', 'Barrels', 'Kilos', 'Liters', 'Capsules')
+    target_process_rate_unit: Mapped[int] = mapped_column(Enum(
+        *targetProcessRateUnit,
+        name="targetProcessRateUnit",
+        create_constraint=True,
+        validate_strings=True,
+        ))
+    target_process_rate_per: Mapped[float] = mapped_column(default=None)
+    targetProcessRatePerUnit = ('Seconds', 'Minutes', 'Hours', 'Days')
+    target_process_rate_per_unit: Mapped[int] = mapped_column(Enum(
+        *targetProcessRatePerUnit,
+        name="targetProcessRatePerUnit",
+        create_constraint=True,
+        validate_strings=True,
+        ))
+    primary_process: Mapped[bool] = mapped_column(default=False)
 
     # Relationships
+    manufacturing_process_id: Mapped[int] = mapped_column(ForeignKey('Manufacturing.Processes.process_id'))
+    variant_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Variant.variant_id'))
 
     def __repr__(self):
         """Return a string representation of Object"""
@@ -154,7 +176,17 @@ class Manufacturing_Process(Base):
             'process_bid_cost': self.process_bid_cost,
             'manufacturing_process_version': self.manufacturing_process_version,
             'position': self.position,
-            'type': self.type
+            'type': self.type,
+            'variant_id': self.variant_id,
+            'qty_per_box': self.qty_per_box,
+            'box_weight_in_lbs': self.box_weight_in_lbs,
+            'box_sticker_required': self.box_sticker_required,
+            'percent_loss': self.percent_loss,
+            'target_process_rate': self.target_process_rate,
+            'target_process_rate_unit': self.target_process_rate_unit,
+            'target_process_rate_per': self.target_process_rate_per,
+            'target_process_rate_per_unit': self.target_process_rate_per_unit,
+            'primary_process': self.primary_process
         }
 
     def get_id(self):
@@ -450,15 +482,14 @@ class Manufacturing_Process_Edges(Base):
     __tablename__ = 'Manufacturing_Process_Edges'
 
     # Primary Key
-    source: Mapped[int] = mapped_column(primary_key=True)
-    target: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] =  mapped_column(primary_key=True)
 
-    __table_args__ = (ForeignKeyConstraint([source, target],
-                                           [Manufacturing_Process.process_spec_id, Manufacturing_Process.process_spec_id]),
-                      {'schema': 'Products'})
+    __table_args__ = {'schema': 'Products'}
 
     # Relationships
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
+    source: Mapped[int] = mapped_column(ForeignKey('Products.Manufacturing_Process.process_spec_id'))
+    target: Mapped[int] = mapped_column(ForeignKey('Products.Manufacturing_Process.process_spec_id'))
 
     # Table Columns
     label: Mapped[str] = mapped_column()
@@ -483,7 +514,7 @@ class Manufacturing_Process_Edges(Base):
             Dict: Columns as Keys
         """
         return {
-            "id": f"{self.source}-{self.target}",
+            "id": self.id,
             "source": self.source,
             "target": self.target,
             "product_id": self.product_id,
@@ -494,11 +525,11 @@ class Manufacturing_Process_Edges(Base):
 
     def get_id(self):
         """Get Row Id"""
-        return (self.source, self.target)
+        return self.id
 
     def get_id_name(self):
         """Get Primary ID Column Name"""
-        return "(source, target)"
+        return "id"
 
 class Product_Variant(Base):
     """Product Variant ORM Model"""
@@ -541,7 +572,7 @@ class Product_Variant(Base):
     max_mg_per_capsule: Mapped[float] = mapped_column(default=None)
     min_milliliters_per_unit: Mapped[float] = mapped_column(default=None)
     max_milliliters_per_unit: Mapped[float] = mapped_column(default=None)
-    variant_title_suffix: Mapped[str] = mapped_column(default=None)
+    variant_title_suffix: Mapped[str] = mapped_column()
 
     # Relationships
 

@@ -283,6 +283,7 @@
                         v-model="variant.total_capsules_per_unit"
                         required
                         min="0"
+                        :disabled="!edit_variants"
                         aria-describedby="total_capsules_per_unit-live-feedback"
                         :class="['form-control', (variant.total_capsules_per_unit >= 0 && variant.total_capsules_per_unit !== '' && variant.total_capsules_per_unit !== null ? '' : 'is-invalid')]"
                         @input="update_variant(variant)"
@@ -300,6 +301,7 @@
                     <select
                       id="capsule_size"
                       v-model="variant.capsule_size"
+                      :disabled="!edit_variants"
                       aria-describedby="capsule_size-live-feedback"
                       :class="['form-control', 'form-control-md', (variant.capsule_size !== '' ? '' : 'is-invalid')]"
                       @input="update_variant(variant)"
@@ -324,6 +326,7 @@
                         v-model="variant.mg_empty_capsule"
                         required
                         min="0"
+                        :disabled="!edit_variants"
                         aria-describedby="mg_empty_capsule-live-feedback"
                         :class="['form-control', (variant.mg_empty_capsule >= 0 && variant.mg_empty_capsule !== '' && variant.mg_empty_capsule !== null ? '' : 'is-invalid')]"
                         @input="update_variant(variant)"
@@ -459,18 +462,22 @@ export default {
     },
     get_variant_title: function (variant) {
       if (variant.variant_type === 'powder') {
-        return variant.total_grams_per_unit + 'g ' + variant.variant_title_suffix
-      } else if (variant.variant_type === 'liquid') {
-        return variant.total_milliliters_per_unit + 'ml ' + variant.variant_title_suffix
-      } else if (variant.variant_type === 'capsule') {
-        return variant.total_capsules_per_unit + 'ct ' + variant.variant_title_suffix
+        return String(variant.total_grams_per_unit) + 'g ' + String(variant.variant_title_suffix ? variant.variant_title_suffix : '')
       }
+      if (variant.variant_type === 'liquid') {
+        return String(variant.total_milliliters_per_unit) + 'ml ' + String(variant.variant_title_suffix ? variant.variant_title_suffix : '')
+      }
+      if (variant.variant_type === 'capsule') {
+        return String(variant.total_capsules_per_unit) + 'ct ' + String(variant.variant_title_suffix ? variant.variant_title_suffix : '')
+      }
+      return 'ERROR TITLE'
     },
     update_variant: function (variant) {
+      const title = this.get_variant_title(variant)
       const update = {
         variant_id: variant.variant_id,
         product_id: this.productId,
-        variant_title: this.get_variant_title(variant),
+        variant_title: variant.variant_title ? variant.variant_title : title,
         variant_title_suffix: variant.variant_title_suffix,
         variant_type: variant.variant_type,
         primary_variant: variant.primary_variant,
@@ -490,6 +497,8 @@ export default {
         capsule_size: variant.capsule_size,
         mg_empty_capsule: variant.mg_empty_capsule
       }
+      const orgVariant = this.variants_buffer.find(v => v.variant_id === variant.variant_id)
+      this.variants_buffer[this.variants_buffer.indexOf(orgVariant)] = { ...orgVariant, ...update }
       this.req.updateUpsertRecord('Product_Variant', 'variant_id', variant.variant_id, update)
     },
     add_variant: function () {

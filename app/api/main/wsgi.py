@@ -124,6 +124,9 @@ def create_app():
     from view.catalogue import bp_cat as catalogue_bp
     api_blueprint.register_blueprint(catalogue_bp)
 
+    from view.manufacturing import bp as bp_pro
+    api_blueprint.register_blueprint(bp_pro)
+
     from view.auth import bp as auth_bp
     api_blueprint.register_blueprint(auth_bp)
 

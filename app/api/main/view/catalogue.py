@@ -26,8 +26,6 @@ def handle_get_components():
     # Clean Request
     component_ids = list(only_integers(request.args.getlist('component-id')))
 
-    process_component_ids = list(only_integers(request.args.getlist('process-component-id')))
-
     types_request = request.args.getlist('type')
     valid_types = [
         'powder', 'liquid', 'container', 'pouch','shrink_band',

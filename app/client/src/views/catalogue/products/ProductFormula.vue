@@ -31,7 +31,7 @@
             <b-table-lite :items="f['formula_detail']" :fields="fields" striped bordered sticky-header foot-clone head-variant="light" style="min-height: 600px;">
               <template #cell(ingredients_detail)="ingredients_detail">
                 <div v-for="(ing, index) in ingredients_detail.value" :key="ing.component_id+'-ingredient'">
-                  <b-row align-v="center">
+                  <b-row align-v="center" class="flex-nowrap">
                     <b-col style="margin: 5px; padding: 0px; margin-left: 10px; max-width: 22px;">
                       <b-badge :id="f.formulation_version+'-'+ingredients_detail.item.formula_ingredient_id+'-'+ing.component_id+'-ingredient-priority'" v-bind:variant="(ing.priority === 1 ? 'primary' : 'light')" pill class="ml-2">{{ ing.priority }}</b-badge>
                       <b-tooltip :target="f.formulation_version+'-'+ingredients_detail.item.formula_ingredient_id+'-'+ing.component_id+'-ingredient-priority'" triggers="hover">Priority Level: {{ ing.priority }}</b-tooltip>
@@ -46,7 +46,7 @@
               <template #cell(brands)="brands">
                 <div v-if="!edit_formulas">
                   <div v-for="(brand) in brands.value" :key="brand.organization_id+'-org'">
-                    <b-row align-v="baseline">
+                    <b-row align-v="baseline" class="flex-nowrap">
                       <b-col style="margin: 5px; padding: 0px; margin-left: 15px; max-width: 22px;">
                         <b-badge :id="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" v-bind:variant="(brand.priority === 1 ? 'primary' : 'light')" pill>{{ brand.priority }}</b-badge>
                         <b-tooltip :target="f.formulation_version+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" triggers="hover">Priority Level: {{ brand.priority }}</b-tooltip>
@@ -60,7 +60,7 @@
                 </div>
                 <div v-else>
                   <div v-for="(brand, index) in brands.value" :key="brand.organization_id+'-org'">
-                    <b-row align-v="baseline">
+                    <b-row align-v="baseline" class="flex-nowrap">
                       <b-col style="margin: 5px; padding: 0px; margin-left: 15px; max-width: 22px;">
                         <b-badge :id="(numVersions+1)+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" v-bind:variant="(index+1 === 1 ? 'primary' : 'light')" pill class="mr-2">{{ index+1 }}</b-badge>
                         <b-tooltip :target="(numVersions+1)+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" triggers="hover">Priority Level: {{ index+1 }}</b-tooltip>
@@ -143,7 +143,7 @@
             <b-table-lite :items="new_formula_buffer.formula_detail" :fields="fields" striped bordered foot-clone sticky-header head-variant="light" style="max-height: 600px;">
               <template #cell(ingredients_detail)="ingredients">
                 <div v-for="(ing, index) in ingredients.value" :key="ing.component_id+'-ingredient'">
-                  <b-row align-v="baseline">
+                  <b-row align-v="baseline" class="flex-nowrap">
                     <b-col style="margin: 5px; padding: 0px; margin-left: 10px; max-width: 22px;">
                       <b-badge :id="(numVersions+1)+'-'+ingredients.item.formula_ingredient_id+'-'+ing.component_id+'-ingredient-priority'" v-bind:variant="(ing.priority === 1 ? 'primary' : 'light')" pill>{{ ing.priority }}</b-badge>
                       <b-tooltip :target="(numVersions+1)+'-'+ingredients.item.formula_ingredient_id+'-'+ing.component_id+'-ingredient-priority'" triggers="hover">Priority Level: {{ ing.priority }}</b-tooltip>
@@ -163,7 +163,7 @@
               <template #foot(ingredients_detail)=""></template>
               <template #cell(brands)="brands">
                 <div v-for="(brand, index) in brands.value" :key="brand.organization_id+'-org'">
-                  <b-row align-v="baseline">
+                  <b-row align-v="baseline" class="flex-nowrap">
                     <b-col style="margin: 5px; padding: 0px; margin-left: 10px; max-width: 22px;">
                       <b-badge :id="(numVersions+1)+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" v-bind:variant="(brand.priority === 1 ? 'primary' : 'light')" pill>{{ brand.priority }}</b-badge>
                       <b-tooltip :target="(numVersions+1)+'-'+brands.item.formula_ingredient_id+'-'+brand.organization_id+'-org-priority'" triggers="hover">Priority Level: {{ brand.priority }}</b-tooltip>

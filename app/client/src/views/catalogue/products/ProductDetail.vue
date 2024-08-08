@@ -23,8 +23,8 @@
           </div>
           <hr class="d-print-none">
           <b-nav pills card-header slot="header" v-b-scrollspy:nav-scroller class="text-nowrap d-print-none">
-            <b-nav-item href="#Labels" @click="scrollIntoView" :disabled="!activeSection('labels')">Labels</b-nav-item>
             <b-nav-item href="#ProductVariants" @click="scrollIntoView" :disabled="!activeSection('variants')">Product Variants</b-nav-item>
+            <b-nav-item href="#Labels" @click="scrollIntoView" :disabled="!activeSection('labels')">Labels</b-nav-item>
             <b-nav-item href="#Formulas" @click="scrollIntoView" :disabled="!activeSection('formulas')">Formulas</b-nav-item>
             <b-nav-item href="#FormulaDocuments" @click="scrollIntoView" :disabled="!activeSection('formula_docs')">Formula Documents</b-nav-item>
             <b-nav-item href="#Manufacturing" @click="scrollIntoView" :disabled="!activeSection('manufacturing')">Manufacturing</b-nav-item>
@@ -39,16 +39,6 @@
 
       <b-card class="my-2" v-if="loaded" style="box-shadow: 0 20px 40px rgba(0,0,0,.2);">
         <b-card-body id="nav-scroller" ref="content" class="scrollbox">
-          <ProductLabel
-            v-show="activeSection('labels')"
-            :id="product_data.product_id"
-            :doc="product_data.doc"
-            :name="product_data.product_name"
-            v-on:edit-labels="(e) => {edit_labels = e}"
-            v-on:toggle-loaded="toggleLoaded"
-            v-on:refresh-parent="(v) => refreshParent(v)"
-          ></ProductLabel>
-          <hr v-show="activeSection('labels')">
           <ProductVariant
             v-show="activeSection('variants')"
             :product-id="product_data.product_id"
@@ -59,6 +49,17 @@
             v-on:refresh-parent="(v) => refreshParent(v)"
           ></ProductVariant>
           <hr v-show="activeSection('variants')">
+          <ProductLabel
+            v-show="activeSection('labels')"
+            :id="product_data.product_id"
+            :doc="product_data.doc"
+            :name="product_data.product_name"
+            :variant_options="product_data.product_variants"
+            v-on:edit-labels="(e) => {edit_labels = e}"
+            v-on:toggle-loaded="toggleLoaded"
+            v-on:refresh-parent="(v) => refreshParent(v)"
+          ></ProductLabel>
+          <hr v-show="activeSection('labels')">
           <ProductFormula
             v-show="activeSection('formulas')"
             :v-key="formula_key"
@@ -128,6 +129,7 @@
             :product-id="product_data.product_id"
             :manufacturing="product_data.manufacturing"
             :edit="edit_manufacturing"
+            :variant_options="product_data.product_variants"
             v-on:edit-manufacturing="(e) => {edit_manufacturing = e}"
             v-on:toggle-loaded="toggleLoaded"
             v-on:refresh-parent="(v) => refreshParent(v)"
@@ -420,7 +422,7 @@ export default {
       }
     },
     getProductData: function () {
-      const fetchRequest = window.origin + '/api/v1/catalogue/products?product-id=' + this.id + '&doc=true&populate=formulas&populate=manufacturing&populate=product_variants'
+      const fetchRequest = window.origin + '/api/v1/catalogue/products?product-id=' + this.id + '&doc=true&populate=formulas&populate=product_variants&populate=manufacturing'
       // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest
