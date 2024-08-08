@@ -6,10 +6,10 @@
       label="process_name"
       v-model="selected_process"
       :loading="!processes_loaded"
-      :placeholder="!processes_loaded ? 'Loading...':'Choose...'"
+      :placeholder="!processes_loaded ? 'Loading...':'Choose Manufacturing Process...'"
       aria-describedby="select_process-live-feedback"
       :class="[((selected_process !== null && selected_process.process_id > 0) || !processReq ? '' : 'is-invalid'), 'wide']"
-      :disabled="(selected_process !== null && selected_process.process_id > 0) || disabledProp"
+      :disabled="(selected_process !== null && selected_process.process_id > 0) || disabled"
       :clearable="false"
       :filterable="false"
       @open="onOpen"
@@ -73,7 +73,7 @@ export default {
       type: Boolean,
       default: false
     },
-    disabledProp: {
+    disabled: {
       type: Boolean,
       default: false
     }

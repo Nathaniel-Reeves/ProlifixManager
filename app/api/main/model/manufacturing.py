@@ -78,6 +78,8 @@ class Processes(Base):
     # Relationships
     equipment: Mapped[List["Equipment"]] = relationship()
 
+    timeUnits = ('Seconds', 'Minutes', 'Hours', 'Days')
+
     # Table Columns
     process_name: Mapped[str] = mapped_column()
     process_sop: Mapped[str] = mapped_column()
@@ -95,7 +97,24 @@ class Processes(Base):
     bottom_handle: Mapped[bool] = mapped_column(default=False)
     left_handle: Mapped[bool] = mapped_column(default=False)
     right_handle: Mapped[bool] = mapped_column(default=False)
-    ave_percent_loss: Mapped[bool] = mapped_column(default=False)
+    ave_percent_loss: Mapped[float] = mapped_column()
+    setup_time: Mapped[float] = mapped_column(default=None)
+    setup_time_units: Mapped[int] = mapped_column(Enum(
+        *timeUnits,
+        name="timeUnits1",
+        create_constraint=True,
+        validate_strings=True,
+    ))
+    setup_num_employees: Mapped[int] = mapped_column(default=None)
+    cleaning_time: Mapped[float] = mapped_column(default=None)
+    cleaning_time_units: Mapped[int] = mapped_column(Enum(
+        *timeUnits,
+        name="timeUnits2",
+        create_constraint=True,
+        validate_strings=True,
+    ))
+    cleaning_num_employees: Mapped[int] = mapped_column(default=None)
+    process_sop_link: Mapped[str] = mapped_column()
 
     # Common Methods
     def __repr__(self):
@@ -126,7 +145,14 @@ class Processes(Base):
             "bottom_handle": self.bottom_handle,
             "left_handle": self.left_handle,
             "right_handle": self.right_handle,
-            "ave_percent_loss": self.ave_percent_loss
+            "ave_percent_loss": self.ave_percent_loss,
+            'setup_time': self.setup_time,
+            'setup_time_units': self.setup_time_units,
+            'setup_num_employees': self.setup_num_employees,
+            'cleaning_time': self.cleaning_time,
+            'cleaning_time_units': self.cleaning_time_units,
+            'cleaning_num_employees': self.cleaning_num_employees,
+            'process_sop_link': self.process_sop_link
         }
 
     def get_id(self):

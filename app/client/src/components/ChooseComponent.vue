@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-row align-v="center">
-      <b-col style="width: 80%;">
+      <b-col :class="[noCerts ? 'width-100' : 'width-80']">
         <v-select
           :options="paginated"
           label="component_primary_name"
@@ -9,9 +9,9 @@
           :loading="!components_loaded"
           :placeholder="!components_loaded ? 'Loading...':'Choose...'"
           aria-describedby="select_component-live-feedback"
-          :class="(selected_component !== null && selected_component.component_id > 0 ? '' : 'is-invalid')"
-          :disabled="selected_component !== null && selected_component?.component_id > 0"
-          :clearable="false"
+          :class="(!compReq || selected_component !== null && selected_component.component_id > 0 ? '' : 'is-invalid')"
+          :disabled="selected_component !== null && selected_component?.component_id > 0 && disableAfterEntry"
+          :clearable="!disableAfterEntry"
           @open="onOpen"
           @close="onClose"
           @search="(query) => (search = query)"
@@ -21,7 +21,7 @@
             <div style="display:flex; flex-direction: row; align-items: center; min-height: 60px;">
               <b-button v-on:click.stop class="mr-2" variant="light" :to="'/catalogue/components/'+component_id" target="_blank"><b-icon icon="box"></b-icon></b-button>
               <div style="min-width: 200px;">{{ component_primary_name }}</div>
-              <CertBadge :data="{
+              <CertBadge v-if="!noCerts" :data="{
                 'certified_fda': certified_fda,
                 'certified_gluten_free': certified_gluten_free,
                 'certified_gmp': certified_gmp,
@@ -45,15 +45,20 @@
         </v-select>
         <div id="select_component-live-feedback" class="invalid-feedback">This is a required field.</div>
       </b-col>
-      <b-col style="max-width: 20%;">
+      <b-col v-if="!noCerts" style="max-width: 20%;">
         <CertBadge :data="selected_component"></CertBadge>
-        <!-- "popper.js": "1.16.1" -->
       </b-col>
     </b-row>
   </div>
 </template>
 
 <style>
+.width-100 {
+  width: 100%;
+}
+.width-80 {
+  width: 80%;
+}
 .v-select.drop-up.vs--open .vs__dropdown-toggle {
   border-radius: 0 0 4px 4px;
   border-top-color: transparent;
@@ -89,10 +94,28 @@ export default {
     CertBadge,
     vSelect
   },
-  props: [
-    'components',
-    'selected'
-  ],
+  props: {
+    components: {
+      type: Array,
+      required: true
+    },
+    selected: {
+      type: Object,
+      default: null
+    },
+    noCerts: {
+      type: Boolean,
+      default: false
+    },
+    compReq: {
+      type: Boolean,
+      default: false
+    },
+    disableAfterEntry: {
+      type: Boolean,
+      default: true
+    }
+  },
   data: function () {
     return {
       selected_component: null,

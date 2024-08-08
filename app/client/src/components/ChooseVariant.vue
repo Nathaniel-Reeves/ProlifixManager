@@ -6,10 +6,10 @@
       label="variant_title"
       v-model="selected_variant"
       :loading="!variants_loaded"
-      :placeholder="!variants_loaded ? 'Loading...':'Choose...'"
+      :placeholder="!variants_loaded ? 'Loading...':'Choose Product Variant...'"
       aria-describedby="select_variant-live-feedback"
       :class="[((selected_variant !== null && selected_variant.variant_id > 0) || !variantReq ? '' : 'is-invalid'), 'wide']"
-      :disabled="(selected_variant !== null && selected_variant.variant_id > 0) || disabledProp"
+      :disabled="(selected_variant !== null && selected_variant.variant_id > 0) || disabled"
       :clearable="false"
       :filterable="false"
       @open="onOpen"
@@ -72,7 +72,7 @@ export default {
       type: Boolean,
       default: false
     },
-    disabledProp: {
+    disabled: {
       type: Boolean,
       default: false
     }

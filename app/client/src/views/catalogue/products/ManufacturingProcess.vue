@@ -1,20 +1,28 @@
 <template>
   <b-overlay :show="overlay" :opacity="1" rounded="sm">
     <b-card :id="'my_node-'+node_buffer.data.process_spec_id" style="width: fit-content; min-width: 300px; min-height:300px;">
-      <b-card-title v-if="node_buffer.data.manufacturing_process_id">{{ node_buffer.data.process_name }}{{ variant?.variant_title ? ' - ' + variant.variant_title : '' }}<b-badge v-show="variant?.discontinued" class="ml-3" variant="danger">Discontinued</b-badge></b-card-title>
+      <b-card-title v-if="node_buffer.data.manufacturing_process_id">{{ node_buffer.data.process_name }}{{ variant?.variant_title ? ' - ' + variant.variant_title : '' }}
+        <b-badge v-show="variant?.discontinued" class="ml-3" variant="danger">Discontinued</b-badge>
+        <b-badge v-show="node_buffer.data.primary_process && !edit" class="ml-3" variant="primary">Primary</b-badge>
+      </b-card-title>
       <b-card-title v-else>
         New Process
       </b-card-title>
-      <b-card-sub-title class="mb-3">{{ node_buffer.data.process_sop }}</b-card-sub-title>
+      <b-card-sub-title class="mb-3"><b-link :href="node_buffer.data.process_sop_link" target="_blank" class="text-info">{{ node_buffer.data.process_sop }}</b-link></b-card-sub-title>
       <b-card-text class="flex-d justify-content-center">
-        <b-container class="m-0 p-0" style="min-width:100%;" v-if="node_buffer.data.manufacturing_process_id">
+        <div v-if="edit">
+          <b-button block v-show="!node_buffer.data.primary_process" variant="outline-primary" @click="node_buffer.data.primary_process = true; updateNode()" class="mb-3">Primary</b-button>
+          <b-button block v-show="node_buffer.data.primary_process" variant="primary" @click="node_buffer.data.primary_process = false; updateNode()" class="mb-3">Primary</b-button>
+        </div>
+        <b-container class="m-0 p-0" style="min-width:100%;">
           <b-row class="mb-3">
-            <b-col v-if="!node_buffer.data.manufacturing_process_id">
+            <b-col v-if="!node_buffer.data.manufacturing_process_id && edit">
               <ChooseProcess
                 @process="(pro) => updateProcess(pro)"
                 :processes="process_options"
                 :selected="getProcess()"
                 :process-req="true"
+                :disabled="node_buffer.data.manufacturing_process_id"
               ></ChooseProcess>
             </b-col>
           </b-row>
@@ -25,26 +33,253 @@
                 :variants="variant_options"
                 :selected="variant"
                 :variant-req="true"
+                :disabled="node_buffer.data.variant_id"
               ></ChooseVariant>
             </b-col>
-            <b-col v-else>
-              <p><strong>Variant:  </strong>{{ variant?.variant_title }}</p>
-            </b-col>
+          </b-row>
+        </b-container>
+        <b-container class="m-0 p-0" style="min-width:100%;">
+          <b-row class="mb-1">
+            <b-col style="max-width:20%;"><label for="box_count"><strong>Max Percent Loss:</strong></label></b-col>
           </b-row>
           <b-row class="mb-3">
-            <b-col>
-              <strong>Special Instructions:</strong>
-              <p style="">{{ node_buffer.data.special_instruction }}</p>
-              <b-form-textarea
-                  :disabled="!edit"
-                  id="textarea"
-                  v-model="node_buffer.data.special_instruction"
-                  placeholder="Special Instruction..."
-                  rows="3"
-                  max-rows="6"
-                ></b-form-textarea>
+            <b-col style="max-width:100%;">
+              <b-form inline>
+                <b-input-group class="mr-2">
+                  <div v-if="!edit">
+                    <span v-show="!node_buffer.data.use_default_ave_percent_loss" class="badge badge-primary" style="font-size: 1.5em;">Custom % Loss</span>
+                    <span v-show="node_buffer.data.use_default_ave_percent_loss" class="badge badge-secondary" style="font-size: 1.5em;">Default % Loss</span>
+                  </div>
+                  <div v-else>
+                    <b-button @click="toggleDefaultPercentLoss()" v-show="!node_buffer.data.use_default_ave_percent_loss" class="badge badge-primary" style="font-size: 1.5em;">Custom % Loss</b-button>
+                    <b-button @click="toggleDefaultPercentLoss()" v-show="node_buffer.data.use_default_ave_percent_loss" class="badge badge-secondary" style="font-size: 1.5em;">Default % Loss</b-button>
+                  </div>
+                </b-input-group>
+                <b-input-group append="%" prepend="Custom:" class="mr-2">
+                  <b-form-input
+                    id="custom_ave_percent_loss"
+                    type="number"
+                    v-model="node_buffer.data.custom_ave_percent_loss"
+                    min="0"
+                    :disabled="!edit || node_buffer.data.use_default_ave_percent_loss"
+                    aria-describedby="custom_ave_percent_loss-live-feedback"
+                    :class="[node_buffer.data.custom_ave_percent_loss >= 0 || !edit ? '' : 'is-invalid', 'text-center']"
+                    @input="updateNode()"
+                  ></b-form-input>
+                </b-input-group>
+                <b-input-group append="%" prepend="Default:">
+                  <b-form-input
+                    id="ave_percent_loss"
+                    type="number"
+                    v-model="node_buffer.data.ave_percent_loss"
+                    min="0"
+                    :disabled="true"
+                    aria-describedby="ave_percent_loss-live-feedback"
+                    :class="[node_buffer.data.ave_percent_loss >= 0 || !edit ? '' : 'is-invalid', 'text-center']"
+                    @input="updateNode()"
+                  ></b-form-input>
+                </b-input-group>
+              </b-form>
             </b-col>
           </b-row>
+        </b-container>
+        <b-container class="m-0 p-0" style="min-width:100%;">
+          <b-row class="mb-3">
+            <b-col>
+              <strong class="mb-1">Notes:</strong>
+              <b-form-textarea
+                class="mt-1"
+                :disabled="!edit"
+                id="textarea"
+                v-model="node_buffer.data.bid_nodes"
+                placeholder="Notes..."
+                rows="3"
+                max-rows="6"
+                @input="updateNode()"
+              ></b-form-textarea>
+            </b-col>
+          </b-row>
+        </b-container>
+        <b-container class="m-0 p-0" style="min-width:100%;">
+          <b-row class="mb-1">
+            <b-col style="max-width:20%;"><label for="box_count"><strong>Process Setup:</strong></label></b-col>
+          </b-row>
+          <b-row class="mb-3">
+            <b-col style="max-width:100%;">
+              <b-form inline>
+                <b-input-group class="mr-2">
+                  <div v-if="!edit">
+                    <span v-show="!node_buffer.data.custom_setup_time_use_default" class="badge badge-primary" style="font-size: 1.5em;">Custom</span>
+                    <span v-show="node_buffer.data.custom_setup_time_use_default" class="badge badge-secondary" style="font-size: 1.5em;">Default</span>
+                  </div>
+                  <div v-else>
+                    <b-button @click="toggleDefaultSetup()" v-show="!node_buffer.data.custom_setup_time_use_default" class="badge badge-primary" style="font-size: 1.5em;">Custom</b-button>
+                    <b-button @click="toggleDefaultSetup()" v-show="node_buffer.data.custom_setup_time_use_default" class="badge badge-secondary" style="font-size: 1.5em;">Default</b-button>
+                  </div>
+                </b-input-group>
+                <b-input-group>
+                  <b-form-input
+                    id="custom_setup_time"
+                    type="number"
+                    v-model="node_buffer.data.custom_setup_time"
+                    min="0"
+                    :disabled="!edit || node_buffer.data.custom_setup_time_use_default"
+                    aria-describedby="custom_setup_time-live-feedback"
+                    :class="[node_buffer.data.custom_setup_time >= 0 || !edit ? '' : 'is-invalid', 'text-center']"
+                    @input="updateNode()"
+                  ></b-form-input>
+                  <template #append>
+                    <select class="custom-select" v-model="node_buffer.data.custom_setup_time_units" :disabled="!edit || node_buffer.data.custom_setup_time_use_default" @change="updateNode()">
+                      <option value="Seconds">Seconds</option>
+                      <option value="Minutes">Minutes</option>
+                      <option value="Hours">Hours</option>
+                      <option value="Days">Days</option>
+                    </select>
+                  </template>
+                </b-input-group>
+                <b-input-group-text class="mx-2">with</b-input-group-text>
+                <b-input-group>
+                  <b-form-input
+                    id="custom_setup_num_employees"
+                    type="number"
+                    v-model="node_buffer.data.custom_setup_num_employees"
+                    min="0"
+                    :disabled="!edit || node_buffer.data.custom_setup_time_use_default"
+                    aria-describedby="custom_setup_num_employees-live-feedback"
+                    :class="[node_buffer.data.custom_setup_num_employees >= 0 || !edit ? '' : 'is-invalid', 'text-center']"
+                    @input="updateNode()"
+                  ></b-form-input>
+                  <template #append>
+                    <b-input-group-text>employees</b-input-group-text>
+                  </template>
+                </b-input-group>
+              </b-form>
+            </b-col>
+          </b-row>
+          <b-row class="mb-1">
+            <b-col style="max-width:20%;"><label for="box_count"><strong>Target Processing Rate:</strong></label></b-col>
+          </b-row>
+          <b-row class="mb-3">
+            <b-col style="max-width:100%;">
+              <b-form inline>
+                <b-input-group>
+                  <b-form-input class="text-center" type="number" v-model="node_buffer.data.target_process_rate" :disabled="!edit" @input="updateNode()"></b-form-input>
+                  <template #append>
+                    <select class="custom-select" :disabled="!edit" v-model="node_buffer.data.target_process_rate_unit" @change="updateNode()">
+                      <option value="Products">Products</option>
+                      <option value="Ingredients">Ingredients</option>
+                      <option value="Barrels">Barrels</option>
+                      <option value="Kilos">Kilos</option>
+                      <option value="Liters">Liters</option>
+                      <option value="Capsules">Capsules</option>
+                    </select>
+                  </template>
+                </b-input-group>
+                <b-input-group-text class="mx-2">per</b-input-group-text>
+                <b-input-group>
+                  <b-form-input class="text-center" type="number" v-model="node_buffer.data.target_process_rate_per" :disabled="!edit" @input="updateNode()"></b-form-input>
+                  <template #append>
+                    <select class="custom-select" v-model="node_buffer.data.target_process_rate_per_unit" :disabled="!edit" @change="updateNode()">
+                      <option value="Seconds">Seconds</option>
+                      <option value="Minutes">Minutes</option>
+                      <option value="Hours">Hours</option>
+                      <option value="Days">Days</option>
+                    </select>
+                  </template>
+                </b-input-group>
+                <b-input-group-text class="mx-2">with</b-input-group-text>
+                <b-input-group>
+                  <b-form-input
+                    id="target_process_num_employees"
+                    type="number"
+                    v-model="node_buffer.data.target_process_num_employees"
+                    min="0"
+                    :disabled="!edit"
+                    aria-describedby="target_process_num_employees-live-feedback"
+                    :class="[node_buffer.data.target_process_num_employees >= 0 || !edit ? '' : 'is-invalid', 'text-center']"
+                    @input="updateNode()"
+                  ></b-form-input>
+                  <template #append>
+                    <b-input-group-text>employees</b-input-group-text>
+                  </template>
+                </b-input-group>
+              </b-form>
+            </b-col>
+          </b-row>
+          <b-row class="mb-1">
+            <b-col style="max-width:20%;"><label for="box_count"><strong>Process Cleanup:</strong></label></b-col>
+          </b-row>
+          <b-row class="mb-3">
+            <b-col style="max-width:100%;">
+              <b-form inline>
+                <b-input-group class="mr-2">
+                  <div v-if="!edit">
+                    <span v-show="!node_buffer.data.custom_cleaning_time_use_default" class="badge badge-primary" style="font-size: 1.5em;">Custom</span>
+                    <span v-show="node_buffer.data.custom_cleaning_time_use_default" class="badge badge-secondary" style="font-size: 1.5em;">Default</span>
+                  </div>
+                  <div v-else>
+                    <b-button @click="toggleDefaultCleanup()" v-show="!node_buffer.data.custom_cleaning_time_use_default" class="badge badge-primary" style="font-size: 1.5em;">Custom</b-button>
+                    <b-button @click="toggleDefaultCleanup()" v-show="node_buffer.data.custom_cleaning_time_use_default" class="badge badge-secondary" style="font-size: 1.5em;">Default</b-button>
+                  </div>
+                </b-input-group>
+                <b-input-group>
+                  <b-form-input
+                    id="custom_cleaning_time"
+                    type="number"
+                    v-model="node_buffer.data.custom_cleaning_time"
+                    min="0"
+                    :disabled="!edit || node_buffer.data.custom_cleaning_time_use_default"
+                    aria-describedby="custom_cleaning_time-live-feedback"
+                    :class="[node_buffer.data.custom_cleaning_time >= 0 || !edit ? '' : 'is-invalid', 'text-center']"
+                    @input="updateNode()"
+                  ></b-form-input>
+                  <template #append>
+                    <select class="custom-select" v-model="node_buffer.data.custom_cleaning_time_units" :disabled="!edit || node_buffer.data.custom_cleaning_time_use_default" @change="updateNode()">
+                      <option value="Seconds">Seconds</option>
+                      <option value="Minutes">Minutes</option>
+                      <option value="Hours">Hours</option>
+                      <option value="Days">Days</option>
+                    </select>
+                  </template>
+                </b-input-group>
+                <b-input-group-text class="mx-2">with</b-input-group-text>
+                <b-input-group>
+                  <b-form-input
+                    id="custom_cleaning_num_employees"
+                    type="number"
+                    v-model="node_buffer.data.custom_cleaning_num_employees"
+                    min="0"
+                    :disabled="!edit || node_buffer.data.custom_cleaning_time_use_default"
+                    aria-describedby="custom_cleaning_num_employees-live-feedback"
+                    :class="[node_buffer.data.custom_cleaning_num_employees >= 0 || !edit ? '' : 'is-invalid', 'text-center']"
+                    @input="updateNode()"
+                  ></b-form-input>
+                  <template #append>
+                    <b-input-group-text>employees</b-input-group-text>
+                  </template>
+                </b-input-group>
+              </b-form>
+            </b-col>
+          </b-row>
+        </b-container>
+        <b-container class="m-0 p-0" style="min-width:100%;">
+          <b-row class="mb-3">
+            <b-col>
+              <strong class="mb-1">Special Instructions:</strong>
+              <b-form-textarea
+                class="mt-1"
+                :disabled="!edit"
+                id="textarea"
+                v-model="node_buffer.data.special_instruction"
+                placeholder="Special Instruction..."
+                rows="3"
+                max-rows="6"
+                @input="updateNode()"
+              ></b-form-textarea>
+            </b-col>
+          </b-row>
+        </b-container>
+        <b-container class="m-0 p-0" style="min-width:100%;">
           <b-row v-if="!edit" class="mb-3" v-show="node_buffer.data.requires_components">
             <b-col>
               <b-table :items="node_buffer.data.process_components" :fields="component_fields" striped bordered sticky-header head-variant="light" style="max-height: 600px; min-width: 1100px;" show-empty :empty-text="'No Components Selected for this Process'">
@@ -172,6 +407,123 @@
               <b-button v-show="edit" block variant="outline-info" @click="addRow()">Add Row</b-button>
             </b-col>
           </b-row>
+        </b-container>
+        <b-container v-if="node_buffer.data.requires_box_specs" class="m-0 p-0" style="min-width:100%;">
+          <b-row class="mb-3">
+            <b-col style="max-width:20%;"><label for="box_count"><strong>Box Size:</strong></label></b-col>
+            <b-col style="max-width:30%;" v-if="edit">
+              <ChooseComponent
+                @comp="(box) => updateBox(box)"
+                :components="box_options"
+                :selected="box"
+                :disable-after-entry="false"
+                :comp-req="false"
+                no-certs
+              ></ChooseComponent>
+            </b-col>
+            <b-col style="max-width:30%;" v-else>
+              <b-link :to="'/catalogue/components/'+node_buffer.data.box_id" target="_blank"><p class="text-info">{{ box ? (box?.component_primary_name ? box.component_primary_name : (box?.component_name ? box.component_name : '')) : 'No Box Selected' }}</p></b-link>
+            </b-col>
+            <b-col style="max-width:20%;">
+              <strong>Box Sticker Required: </strong>
+            </b-col>
+            <b-col class="text-center" style="max-width:30%;">
+              <div v-if="!edit">
+                <span v-show="node_buffer.data.box_sticker_required" class="badge badge-primary badge-pill" style="font-size: 1em;">Yes</span>
+                <span v-show="!node_buffer.data.box_sticker_required" class="badge badge-secondary badge-pill" style="font-size: 1em;">No</span>
+              </div>
+              <div v-else>
+                <b-button @click="node_buffer.data.box_sticker_required = false; updateNode()" v-show="node_buffer.data.box_sticker_required" class="badge badge-primary badge-pill" style="font-size: 1em;">Yes</b-button>
+                <b-button @click="node_buffer.data.box_sticker_required = true; updateNode()" v-show="!node_buffer.data.box_sticker_required" class="badge badge-secondary badge-pill" style="font-size: 1em;">No</b-button>
+              </div>
+            </b-col>
+          </b-row>
+          <b-row class="mb-3">
+            <b-col style="max-width:20%;"><label for="box_count"><strong>Box Count:</strong></label></b-col>
+            <b-col style="max-width:30%;">
+              <div class="input-group mb-2">
+                <input
+                  id="box_count"
+                  type="number"
+                  v-model="node_buffer.data.qty_per_box"
+                  required
+                  min="0"
+                  :disabled="!edit"
+                  aria-describedby="box_count-live-feedback"
+                  :class="['form-control', 'text-center', (node_buffer.data.qty_per_box >= 0 || !edit ? '' : 'is-invalid')]"
+                  @input="updateNode()"
+                >
+                <div class="input-group-append">
+                  <span class="input-group-text">ct</span>
+                </div>
+                <div id="box_count-live-feedback" class="invalid-feedback">This field must be greater than <br>or equal to zero.</div>
+              </div>
+            </b-col>
+            <b-col style="max-width:20%;"><label for="box_weight"><strong>Average Box Weight:</strong></label></b-col>
+            <b-col style="max-width:30%;">
+              <div class="input-group mb-2">
+                <input
+                  id="box_weight"
+                  type="number"
+                  v-model="node_buffer.data.box_weight_in_lbs"
+                  required
+                  min="0"
+                  :disabled="!edit"
+                  aria-describedby="box_weight-live-feedback"
+                  :class="['form-control', 'text-center', (node_buffer.data.box_weight_in_lbs >= 0 || !edit ? '' : 'is-invalid')]"
+                  @input="updateNode()"
+                >
+                <div class="input-group-append">
+                  <span class="input-group-text">lbs</span>
+                </div>
+                <div id="box_weight-live-feedback" class="invalid-feedback">This field must be greater than <br>or equal to zero.</div>
+              </div>
+            </b-col>
+          </b-row>
+          <b-row class="mb-3">
+            <b-col style="max-width:20%;"><label for="boxes_per_layer"><strong>Boxes Per Layer:</strong></label></b-col>
+            <b-col style="max-width:30%;">
+              <div class="input-group mb-2">
+                <input
+                  id="boxes_per_layer"
+                  type="number"
+                  v-model="node_buffer.data.boxes_per_layer"
+                  required
+                  min="0"
+                  :disabled="!edit"
+                  aria-describedby="boxes_per_layer-live-feedback"
+                  :class="['form-control', 'text-center', (node_buffer.data.boxes_per_layer >= 0 || !edit ? '' : 'is-invalid')]"
+                  @input="updateNode()"
+                >
+                <div class="input-group-append">
+                  <span class="input-group-text">ct</span>
+                </div>
+                <div id="boxes_per_layer-live-feedback" class="invalid-feedback">This field must be greater than <br>or equal to zero.</div>
+              </div>
+            </b-col>
+            <b-col style="max-width:20%;"><label for="max_pallet_layers"><strong>Max Pallet Layers:</strong></label></b-col>
+            <b-col style="max-width:30%;">
+              <div class="input-group mb-2">
+                <input
+                  id="max_pallet_layers"
+                  type="number"
+                  v-model="node_buffer.data.max_pallet_layers"
+                  required
+                  min="0"
+                  :disabled="!edit"
+                  aria-describedby="max_pallet_layers-live-feedback"
+                  :class="['form-control', 'text-center', (node_buffer.data.max_pallet_layers >= 0 || !edit ? '' : 'is-invalid')]"
+                  @input="updateNode()"
+                >
+                <div class="input-group-append">
+                  <span class="input-group-text">ct</span>
+                </div>
+                <div id="max_pallet_layers-live-feedback" class="invalid-feedback">This field must be greater than <br>or equal to zero.</div>
+              </div>
+            </b-col>
+          </b-row>
+        </b-container>
+        <b-container class="m-0 p-0" style="min-width:100%;">
           <b-row class="mb-3">
             <b-col>
               <b-table :items="sortEquipment(node_buffer.data.equipment)" :fields="equipment_fields" striped bordered sticky-header head-variant="light" style="max-height: 600px; min-width: 1100px;" show-empty :empty-text="'No Equipment Needed for this Process'">
@@ -199,6 +551,7 @@
       <div class="text-center" style="width: 100%;">
         <strong style="font-size: 6em;">{{ node_buffer.data.process_name }}{{ variant?.variant_title ? ' - ' + variant.variant_title : '' }}</strong>
         <b-badge style="font-size: 6em;" v-show="variant?.discontinued" class="ml-3" variant="danger">Discontinued</b-badge>
+        <b-badge style="font-size: 6em;" v-show="node_buffer.data.primary_process" class="ml-3" variant="primary">Primary</b-badge>
       </div>
     </template>
   </b-overlay>
@@ -298,6 +651,35 @@ export default {
     ChooseVariant
   },
   methods: {
+    toggleDefaultPercentLoss: function () {
+      this.node_buffer.data.use_default_ave_percent_loss = !this.node_buffer.data.use_default_ave_percent_loss
+      if (this.node_buffer.data.use_default_ave_percent_loss) {
+        this.node_buffer.data.custom_percent_loss = this.node_buffer.data.percent_loss
+      }
+      this.updateNode()
+    },
+    toggleDefaultSetup: function () {
+      this.node_buffer.data.custom_setup_time_use_default = !this.node_buffer.data.custom_setup_time_use_default
+      if (this.node_buffer.data.custom_setup_time_use_default) {
+        this.node_buffer.data.custom_setup_time = this.node_buffer.data.setup_time
+        this.node_buffer.data.custom_setup_time_units = this.node_buffer.data.setup_time_units
+        this.node_buffer.data.custom_setup_num_employees = this.node_buffer.data.setup_num_employees
+      }
+      this.updateNode()
+    },
+    toggleDefaultCleanup: function () {
+      this.node_buffer.data.custom_cleaning_time_use_default = !this.node_buffer.data.custom_cleaning_time_use_default
+      if (this.node_buffer.data.custom_cleaning_time_use_default) {
+        this.node_buffer.data.custom_cleaning_time = this.node_buffer.data.cleaning_time
+        this.node_buffer.data.custom_cleaning_time_units = this.node_buffer.data.cleaning_time_units
+        this.node_buffer.data.custom_cleaning_num_employees = this.node_buffer.data.cleaning_num_employees
+      }
+      this.updateNode()
+    },
+    updateBox: function (box) {
+      this.node_buffer.data.box_id = box.component_id
+      this.updateNode()
+    },
     getVariant: function () {
       if (this.variant !== null) {
         return
@@ -432,6 +814,20 @@ export default {
     },
     deleteNode: function () {
       this.$emit('deleteNode', this.node_buffer.data)
+    }
+  },
+  computed: {
+    box_options: function () {
+      if (!this.component_options) {
+        return []
+      }
+      return this.component_options.filter((c) => c.component_type === 'box')
+    },
+    box: function () {
+      if (!this.node_buffer.data.box_id) {
+        return null
+      }
+      return this.component_options.find((c) => c.component_id === this.node_buffer.data.box_id)
     }
   },
   created: function () {

@@ -213,19 +213,34 @@ export default {
         process_order: node.process_order,
         special_instruction: node.special_instruction,
         manufacturing_process_id: node.manufacturing_process_id,
-        process_bid_cost: node.process_bid_cost,
+        custom_setup_time: node.custom_setup_time,
+        custom_setup_time_units: node.custom_setup_time_units,
+        custom_setup_num_employees: node.custom_setup_num_employees,
+        custom_setup_time_use_default: node.custom_setup_time_use_default,
+        custom_cleaning_time: node.custom_cleaning_time,
+        custom_cleaning_time_units: node.custom_cleaning_time_units,
+        custom_cleaning_num_employees: node.custom_cleaning_num_employees,
+        custom_cleaning_time_use_default: node.custom_cleaning_time_use_default,
         manufacturing_process_version: node.manufacturing_process_version,
         position: node.position,
         type: node.type,
         variant_id: node.variant_id,
         qty_per_box: node.qty_per_box,
         box_weight_in_lbs: node.box_weight_in_lbs,
+        box_sticker_required: node.box_sticker_required,
+        max_pallet_layers: node.max_pallet_layers,
+        boxes_per_layer: node.boxes_per_layer,
+        box_id: node.box_id,
         percent_loss: node.percent_loss,
         target_process_rate: node.target_process_rate,
         target_process_rate_unit: node.target_process_rate_unit,
         target_process_rate_per: node.target_process_rate_per,
         target_process_rate_per_unit: node.target_process_rate_per_unit,
-        primary_process: node.primary_process
+        target_process_num_employees: node.target_process_num_employees,
+        primary_process: node.primary_process,
+        bid_notes: node.bid_notes,
+        custom_ave_percent_loss: node.custom_ave_percent_loss,
+        use_default_ave_percent_loss: node.use_default_ave_percent_loss
       }
       this.req.updateUpsertRecord('Manufacturing_Process', 'process_spec_id', node.process_spec_id, updateManufacturingProcess)
 
@@ -372,17 +387,8 @@ export default {
     },
     cancel: function () {
       this.req = new CustomRequest(this.$cookies.get('session'))
-      this.nodes = []
-      this.edges = []
-      this.nodes_buffer = []
-      this.edges_buffer = []
-      this.nodes_buffer = cloneDeep(this.manufacturing.nodes)
-      this.edges_buffer = cloneDeep(this.manufacturing.edges)
-      this.toggleEditProcesses()
-      this.renderGraph()
-      this.$nextTick(() => {
-        this.layoutGraph()
-      })
+      this.$emit('toggleLoaded', false)
+      this.$emit('refreshParent')
     },
     submit: async function () {
       // Check valid formula

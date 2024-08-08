@@ -116,6 +116,8 @@ class Manufacturing_Process(Base):
     __tablename__ = 'Manufacturing_Process'
     __table_args__ = {'schema': 'Products'}
 
+    timeUnits = ('Seconds', 'Minutes', 'Hours', 'Days')
+
     # Table Columns
     process_spec_id: Mapped[int] = mapped_column(primary_key=True)
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
@@ -124,8 +126,25 @@ class Manufacturing_Process(Base):
     current_default_process: Mapped[bool] = mapped_column(default=True)
     process_order: Mapped[int] = mapped_column(default=1)
     special_instruction: Mapped[str] = mapped_column(default=None)
-    process_bid_cost: Mapped[float] = mapped_column(default=None)
     manufacturing_process_version: Mapped[int] = mapped_column(default=None)
+    custom_setup_time: Mapped[float] = mapped_column(default=None)
+    custom_setup_time_units: Mapped[int] = mapped_column(Enum(
+        *timeUnits,
+        name="timeUnits1",
+        create_constraint=True,
+        validate_strings=True,
+    ))
+    custom_setup_num_employees: Mapped[int] = mapped_column(default=None)
+    custom_setup_time_use_default: Mapped[bool] = mapped_column(default=True)
+    custom_cleaning_time: Mapped[float] = mapped_column(default=None)
+    custom_cleaning_time_units: Mapped[int] = mapped_column(Enum(
+        *timeUnits,
+        name="timeUnits2",
+        create_constraint=True,
+        validate_strings=True,
+    ))
+    custom_cleaning_num_employees: Mapped[int] = mapped_column(default=None)
+    custom_cleaning_time_use_default: Mapped[bool] = mapped_column(default=True)
     position: Mapped[str] = mapped_column(default=None)
     type: Mapped[str] = mapped_column(default=None)
     qty_per_box: Mapped[int] = mapped_column(default=None)
@@ -133,26 +152,32 @@ class Manufacturing_Process(Base):
     box_sticker_required: Mapped[bool] = mapped_column(default=False)
     percent_loss: Mapped[float] = mapped_column(default=0)
     target_process_rate: Mapped[float] = mapped_column(default=None)
-    targetProcessRateUnit = ('Products', 'Barrels', 'Kilos', 'Liters', 'Capsules')
+    targetProcessRateUnit = ('Products', 'Barrels', 'Kilos', 'Liters', 'Capsules', 'Ingredients')
     target_process_rate_unit: Mapped[int] = mapped_column(Enum(
         *targetProcessRateUnit,
         name="targetProcessRateUnit",
         create_constraint=True,
         validate_strings=True,
-        ))
+    ))
     target_process_rate_per: Mapped[float] = mapped_column(default=None)
-    targetProcessRatePerUnit = ('Seconds', 'Minutes', 'Hours', 'Days')
     target_process_rate_per_unit: Mapped[int] = mapped_column(Enum(
-        *targetProcessRatePerUnit,
-        name="targetProcessRatePerUnit",
+        *timeUnits,
+        name="timeUnits3",
         create_constraint=True,
         validate_strings=True,
-        ))
+    ))
+    target_process_num_employees: Mapped[int] = mapped_column(default=None)
     primary_process: Mapped[bool] = mapped_column(default=False)
+    max_pallet_layers: Mapped[int] = mapped_column()
+    boxes_per_layer: Mapped[int] = mapped_column()
+    bid_notes: Mapped[str] = mapped_column(default=None)
+    custom_ave_percent_loss: Mapped[float] = mapped_column(default=None)
+    use_default_ave_percent_loss: Mapped[bool] = mapped_column(default=True)
 
     # Relationships
     manufacturing_process_id: Mapped[int] = mapped_column(ForeignKey('Manufacturing.Processes.process_id'))
     variant_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Variant.variant_id'))
+    box_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'))
 
     def __repr__(self):
         """Return a string representation of Object"""
@@ -173,8 +198,15 @@ class Manufacturing_Process(Base):
             'process_order': self.process_order,
             'special_instruction': self.special_instruction,
             'manufacturing_process_id': self.manufacturing_process_id,
-            'process_bid_cost': self.process_bid_cost,
             'manufacturing_process_version': self.manufacturing_process_version,
+            'custom_setup_time': self.custom_setup_time,
+            'custom_setup_time_units': self.custom_setup_time_units,
+            'custom_setup_num_employees': self.custom_setup_num_employees,
+            'custom_setup_time_use_default': self.custom_setup_time_use_default,
+            'custom_cleaning_time': self.custom_cleaning_time,
+            'custom_cleaning_time_units': self.custom_cleaning_time_units,
+            'custom_cleaning_num_employees': self.custom_cleaning_num_employees,
+            'custom_cleaning_time_use_default': self.custom_cleaning_time_use_default,
             'position': self.position,
             'type': self.type,
             'variant_id': self.variant_id,
@@ -186,7 +218,14 @@ class Manufacturing_Process(Base):
             'target_process_rate_unit': self.target_process_rate_unit,
             'target_process_rate_per': self.target_process_rate_per,
             'target_process_rate_per_unit': self.target_process_rate_per_unit,
-            'primary_process': self.primary_process
+            'target_process_num_employees': self.target_process_num_employees,
+            'primary_process': self.primary_process,
+            'max_pallet_layers': self.max_pallet_layers,
+            'boxes_per_layer': self.boxes_per_layer,
+            'box_id': self.box_id,
+            'bid_notes': self.bid_notes,
+            'custom_ave_percent_loss': self.custom_ave_percent_loss,
+            'use_default_ave_percent_loss': self.use_default_ave_percent_loss
         }
 
     def get_id(self):
