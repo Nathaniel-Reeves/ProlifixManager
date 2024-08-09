@@ -152,7 +152,7 @@ class Manufacturing_Process(Base):
     box_sticker_required: Mapped[bool] = mapped_column(default=False)
     percent_loss: Mapped[float] = mapped_column(default=0)
     target_process_rate: Mapped[float] = mapped_column(default=None)
-    targetProcessRateUnit = ('Products', 'Barrels', 'Kilos', 'Liters', 'Capsules', 'Ingredients')
+    targetProcessRateUnit = ('Products', 'Barrels', 'Kilos', 'Liters', 'Capsules', 'Ingredients', 'Batches')
     target_process_rate_unit: Mapped[int] = mapped_column(Enum(
         *targetProcessRateUnit,
         name="targetProcessRateUnit",
@@ -585,7 +585,7 @@ class Product_Variant(Base):
         name="VariantTypes",
         create_constraint=True,
         validate_strings=True
-        ))
+    ))
     date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
     date_modified: Mapped[datetime.datetime] = mapped_column(default=None)
     primary_variant: Mapped[bool] = mapped_column(default=False)

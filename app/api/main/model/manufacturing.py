@@ -115,6 +115,14 @@ class Processes(Base):
     ))
     cleaning_num_employees: Mapped[int] = mapped_column(default=None)
     process_sop_link: Mapped[str] = mapped_column()
+    equipment_specific: Mapped[bool] = mapped_column(default=False)
+    VariantTypes = ("powder", "liquid", "capsule")
+    product_variant_type: Mapped[int] = mapped_column(Enum(
+        *VariantTypes,
+        name="VariantTypes",
+        create_constraint=True,
+        validate_strings=True
+    ))
 
     # Common Methods
     def __repr__(self):
@@ -152,7 +160,9 @@ class Processes(Base):
             'cleaning_time': self.cleaning_time,
             'cleaning_time_units': self.cleaning_time_units,
             'cleaning_num_employees': self.cleaning_num_employees,
-            'process_sop_link': self.process_sop_link
+            'process_sop_link': self.process_sop_link,
+            'equipment_specific': self.equipment_specific,
+            'product_variant_type': self.product_variant_type
         }
 
     def get_id(self):

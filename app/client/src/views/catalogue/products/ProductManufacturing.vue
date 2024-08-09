@@ -7,7 +7,6 @@
           @pane-ready="onPaneReady"
           @connect="onConnect"
           @edge-update-end="onEdgeUpdateEnd"
-          class="vue-flow-basic-example"
           :nodes="nodes"
           :edges="edges"
           :nodesConnectable="edit_manufacturing"
@@ -50,6 +49,7 @@
               :variant_options="variant_options"
               :edit="edit_manufacturing"
               :overlay="overlay || loading"
+              v-on:resize-node="node => resizeNode(node)"
               v-on:set-graph="layoutGraph()"
               v-on:update-node-data="(node) => updateNodeData(node)"
               v-on:delete-node="(node) => deleteProcess(node)"
@@ -349,7 +349,34 @@ export default {
         bpr_data_template: null,
         process_components: [],
         equipment: [],
-        edit_manufacturing: this.edit_manufacturing
+        edit_manufacturing: this.edit_manufacturing,
+        custom_setup_time: null,
+        custom_setup_time_units: null,
+        custom_setup_num_employees: null,
+        custom_setup_time_use_default: true,
+        custom_cleaning_time: null,
+        custom_cleaning_time_units: null,
+        custom_cleaning_num_employees: null,
+        custom_cleaning_time_use_default: true,
+        position: null,
+        type: null,
+        variant_id: null,
+        qty_per_box: null,
+        box_weight_in_lbs: null,
+        box_sticker_required: null,
+        max_pallet_layers: null,
+        boxes_per_layer: null,
+        box_id: null,
+        percent_loss: null,
+        target_process_rate: null,
+        target_process_rate_unit: null,
+        target_process_rate_per: null,
+        target_process_rate_per_unit: null,
+        target_process_num_employees: null,
+        primary_process: true,
+        bid_notes: null,
+        custom_ave_percent_loss: null,
+        use_default_ave_percent_loss: true
       }
       this.nodes_buffer.push(newProcess)
       this.layoutGraph()
@@ -362,22 +389,26 @@ export default {
     },
     deleteProcess: function (node) {
       const i = this.nodes_buffer.findIndex((n) => n.process_spec_id === node.process_spec_id)
-      this.nodes_buffer.splice(i, 1)
       for (let j = 0; j < node.process_components.length; j++) {
         this.deleteNodeRow(node, j)
       }
+      this.nodes_buffer.splice(i, 1)
+      const deleteEdges = []
       for (let k = 0; k < this.edges_buffer.length; k++) {
         if (this.edges_buffer[k].source === node.process_spec_id || this.edges_buffer[k].target === node.process_spec_id) {
-          this.deleteEdge(this.edges_buffer[k].id)
-          this.edges_buffer.splice(k, 1)
-          k--
+          deleteEdges.push(this.edges_buffer[k].id)
         }
+      }
+      for (let p = 0; p < deleteEdges.length; p++) {
+        this.deleteEdge(deleteEdges[p])
+        this.edges_buffer.splice(this.edges_buffer.findIndex((e) => e.id === deleteEdges[p]), 1)
       }
       if (isTempKey(node.process_spec_id)) {
         this.req.removeUpsertRecord('Manufacturing_Process', 'process_spec_id', node.process_spec_id)
       } else {
         this.req.deleteRecord('Manufacturing_Process', { process_spec_id: node.process_spec_id })
       }
+      this.layoutGraph()
     },
     setProcessesBuffer: function () {
       this.toggleEditProcesses()
@@ -393,10 +424,10 @@ export default {
     submit: async function () {
       // Check valid formula
       this.$emit('toggleLoaded', false)
-      // if (!this.validate_new_formula_buffer()) {
-      //   this.$emit('toggleLoaded', true)
-      //   return
-      // }
+      if (!this.validateManufacturing()) {
+        this.$emit('toggleLoaded', true)
+        return
+      }
 
       const resp = await this.req.sendRequest(window.origin)
 
@@ -416,6 +447,254 @@ export default {
           this.$parent.toggleLoaded(true)
         })
       }
+    },
+    validateManufacturing: function () {
+      this.$bvToast.hide()
+      const createToast = this.$root.createToast
+      const errorToast = {
+        title: 'Invalid Process',
+        message: '',
+        variant: 'warning',
+        visible: true,
+        no_close_button: false,
+        no_auto_hide: true,
+        auto_hide_delay: false
+      }
+
+      let flag = true
+      for (let i = 0; i < this.nodes_buffer.length; i++) {
+        if (this.nodes_buffer[i].process_name === null || this.nodes_buffer[i].process_name === '') {
+          errorToast.message = 'Process Name is required.'
+          createToast(errorToast)
+          return false
+        }
+        errorToast.title = `${this.nodes_buffer[i].process_name} is invalid.`
+        if (!this.validateNode(this.nodes_buffer[i], createToast, errorToast)) {
+          flag = false
+        }
+      }
+      return flag
+    },
+    validateNode: function (node, createToast, errorToast) {
+      let flag = true
+      if (node.requires_product_variant && (node.variant_id === null || node.variant_id === '')) {
+        errorToast.message = 'Variant is required.'
+        createToast(errorToast)
+        flag = false
+      }
+      if (!this.validateNodePercent(node, createToast, errorToast)) {
+        flag = false
+      }
+      if (!this.validateNodeLeanManufacturing(node, createToast, errorToast)) {
+        flag = false
+      }
+      if (node.requires_components) {
+        for (let i = 0; i < node.process_components.length; i++) {
+          if (!this.validateNodeComponent(node.process_components[i], createToast, errorToast)) {
+            errorToast.message = `${node.process_name} has invalid components.`
+            createToast(errorToast)
+            flag = false
+          }
+        }
+      }
+      if (node.requires_box_specs && !this.validateNodePalletization(node, createToast, errorToast)) {
+        flag = false
+      }
+      return flag
+    },
+    validateNodePercent: function (node, createToast, errorToast) {
+      let flag = true
+      if (node.custom_percent_ave_loss === null || node.custom_percent_ave_loss === '') {
+        errorToast.message = 'Percent Loss is required.'
+        createToast(errorToast)
+        flag = false
+      }
+      if (node.custom_percent_ave_loss <= 0 || node.custom_percent_ave_loss > 100) {
+        errorToast.message = 'Percent Loss must be between 0 and 100.'
+        createToast(errorToast)
+        flag = false
+      }
+      return flag
+    },
+    validateNodeLeanManufacturing: function (node, createToast, errorToast) {
+      let flag = true
+      // Setup Validation
+      if (node.custom_setup_time_use_default === false) {
+        if (node.custom_setup_time === null || node.custom_setup_time === '') {
+          errorToast.message = 'Custom Setup Time is required.'
+          createToast(errorToast)
+          flag = false
+        }
+        if (node.custom_setup_time < 0) {
+          errorToast.message = 'Custom Setup Time must be greater than or equal to 0.'
+          createToast(errorToast)
+          flag = false
+        }
+        if (node.custom_setup_time_units === null || node.custom_setup_time_units === '') {
+          errorToast.message = 'Custom Setup Time Units is required.'
+          createToast(errorToast)
+          flag = false
+        }
+        if (node.custom_setup_num_employees === null || node.custom_setup_num_employees === '') {
+          errorToast.message = 'Custom Setup Number of Employees is required.'
+          createToast(errorToast)
+          flag = false
+        }
+        if (node.custom_setup_num_employees < 0) {
+          errorToast.message = 'Custom Setup Number of Employees must be greater than or equal to 0.'
+          createToast(errorToast)
+          flag = false
+        }
+      }
+
+      // Processing Rate Validation
+      if (node.target_process_rate === null || node.target_process_rate === '') {
+        errorToast.message = 'Target Process Rate is required.'
+        createToast(errorToast)
+        flag = false
+      }
+      if (node.target_process_rate < 0) {
+        errorToast.message = 'Target Process Rate must be greater than or equal to 0.'
+        createToast(errorToast)
+        flag = false
+      }
+      if (node.target_process_rate_per === null || node.target_process_rate_per === '') {
+        errorToast.message = 'Target Process Rate Per is required.'
+        createToast(errorToast)
+        flag = false
+      }
+      if (node.target_process_rate_per < 0) {
+        errorToast.message = 'Target Process Rate Per must be greater than or equal to 0.'
+        createToast(errorToast)
+        flag = false
+      }
+      if (node.target_process_rate_per_unit === null || node.target_process_rate_per_unit === '') {
+        errorToast.message = 'Target Process Rate Per Unit is required.'
+        createToast(errorToast)
+        flag = false
+      }
+      if (node.target_process_num_employees === null || node.target_process_num_employees === '') {
+        errorToast.message = 'Target Process Number of Employees is required.'
+        createToast(errorToast)
+        flag = false
+      }
+      if (node.target_process_num_employees < 0) {
+        errorToast.message = 'Target Process Number of Employees must be greater than or equal to 0.'
+        createToast(errorToast)
+        flag = false
+      }
+
+      // Cleaning Validation
+      if (node.custom_cleaning_time_use_default === false) {
+        if (node.custom_cleaning_time === null || node.custom_cleaning_time === '') {
+          errorToast.message = 'Custom Cleaning Time is required.'
+          createToast(errorToast)
+          flag = false
+        }
+        if (node.custom_cleaning_time < 0) {
+          errorToast.message = 'Custom Cleaning Time must be greater than or equal to 0.'
+          createToast(errorToast)
+          flag = false
+        }
+        if (node.custom_cleaning_time_units === null || node.custom_cleaning_time_units === '') {
+          errorToast.message = 'Custom Cleaning Time Units is required.'
+          createToast(errorToast)
+          flag = false
+        }
+        if (node.custom_cleaning_num_employees === null || node.custom_cleaning_num_employees === '') {
+          errorToast.message = 'Custom Cleaning Number of Employees is required.'
+          createToast(errorToast)
+          flag = false
+        }
+        if (node.custom_cleaning_num_employees < 0) {
+          errorToast.message = 'Custom Cleaning Number of Employees must be greater than or equal to 0.'
+          createToast(errorToast)
+          flag = false
+        }
+      }
+      return flag
+    },
+    validateNodeComponent: function (processComponentRow, createToast, errorToast) {
+      let flag = true
+      // Check Component Count
+      if (processComponentRow.qty_per_unit === null || processComponentRow.qty_per_unit === '') {
+        errorToast.message = 'Quantity per Unit is required.'
+        createToast(errorToast)
+        flag = false
+      }
+      if (processComponentRow.qty_per_unit <= 0) {
+        errorToast.message = 'Quantity per Unit must be greater than 0.'
+        createToast(errorToast)
+        flag = false
+      }
+
+      // Check valid Components
+      for (let i = 0; i < processComponentRow.components.length; i++) {
+        if (!processComponentRow.components[i].component_id > 0) {
+          errorToast.message = 'Invalid components selected.'
+          createToast(errorToast)
+          flag = false
+        }
+      }
+
+      // Check valid Brands
+      for (let i = 0; i < processComponentRow.brands.length; i++) {
+        if (!processComponentRow.brands[i].brand_id > 0) {
+          errorToast.message = 'Invalid brands selected.'
+          createToast(errorToast)
+          flag = false
+        }
+      }
+      return flag
+    },
+    validateNodePalletization: function (node, createToast, errorToast) {
+      let flag = true
+      if (node.qty_per_box === null || node.qty_per_box === '') {
+        errorToast.message = 'Quantity per Box is required.'
+        createToast(errorToast)
+        flag = false
+      }
+      if (node.qty_per_box <= 0) {
+        errorToast.message = 'Quantity per Box must be greater than 0.'
+        createToast(errorToast)
+        flag = false
+      }
+      if (node.box_weight_in_lbs === null || node.box_weight_in_lbs === '') {
+        errorToast.message = 'Box Weight in lbs is required.'
+        createToast(errorToast)
+        flag = false
+      }
+      if (node.box_weight_in_lbs <= 0) {
+        errorToast.message = 'Box Weight in lbs must be greater than 0.'
+        createToast(errorToast)
+        flag = false
+      }
+      if (node.max_pallet_layers === null || node.max_pallet_layers === '') {
+        errorToast.message = 'Max Pallet Layers is required.'
+        createToast(errorToast)
+        flag = false
+      }
+      if (node.max_pallet_layers <= 0) {
+        errorToast.message = 'Max Pallet Layers must be greater than 0.'
+        createToast(errorToast)
+        flag = false
+      }
+      if (node.boxes_per_layer === null || node.boxes_per_layer === '') {
+        errorToast.message = 'Boxes per Layer is required.'
+        createToast(errorToast)
+        flag = false
+      }
+      if (node.boxes_per_layer <= 0) {
+        errorToast.message = 'Boxes per Layer must be greater than 0.'
+        createToast(errorToast)
+        flag = false
+      }
+      if (node.box_id === null || node.box_id === '') {
+        errorToast.message = 'Box is required.'
+        createToast(errorToast)
+        flag = false
+      }
+      return flag
     },
     toggleEditProcesses: function () {
       this.edit_manufacturing = !this.edit_manufacturing
@@ -666,6 +945,6 @@ export default {
 
 <style>
 .vue-flow__edge-path {
-  stroke-width: 8;
+  stroke-width: 16;
 }
 </style>

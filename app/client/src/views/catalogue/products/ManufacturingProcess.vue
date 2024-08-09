@@ -1,6 +1,6 @@
 <template>
   <b-overlay :show="overlay" :opacity="1" rounded="sm">
-    <b-card :id="'my_node-'+node_buffer.data.process_spec_id" style="width: fit-content; min-width: 300px; min-height:300px;">
+    <b-card :id="'my_node-'+node_buffer.data.process_spec_id" style="min-width: 600px; min-height:600px;">
       <b-card-title v-if="node_buffer.data.manufacturing_process_id">{{ node_buffer.data.process_name }}{{ variant?.variant_title ? ' - ' + variant.variant_title : '' }}
         <b-badge v-show="variant?.discontinued" class="ml-3" variant="danger">Discontinued</b-badge>
         <b-badge v-show="node_buffer.data.primary_process && !edit" class="ml-3" variant="primary">Primary</b-badge>
@@ -30,13 +30,283 @@
             <b-col v-if="!node_buffer.data.variant_id && edit">
               <ChooseVariant
                 @variant="(variant) => updateVariant(variant)"
-                :variants="variant_options"
+                :variants="filteredVariantOptions"
                 :selected="variant"
                 :variant-req="true"
                 :disabled="node_buffer.data.variant_id"
               ></ChooseVariant>
             </b-col>
           </b-row>
+        </b-container>
+        <b-container class="m-0 p-0" style="min-width:100%" v-if="variant">
+          <div class="d-flex justify-content-center">
+            <b-button v-show="!show_variant" @click="toggleShowVariant()" class="m-1" variant="light">Show Variant Notes</b-button>
+            <b-button v-show="show_variant" @click="toggleShowVariant()" class="m-1" variant="light">Hide Variant Notes</b-button>
+          </div>
+          <b-collapse class="mb-3" id="show_variant" v-model="show_variant">
+            <b-card style="box-shadow: none;">
+              <b-card-title class="d-flex justify-content-between">
+                <span v-if="variant.variant_type === 'powder'">Powder Fill - {{ (variant?.total_grams_per_unit ? variant.total_grams_per_unit : 0) + 'g' }} {{ variant?.variant_title_suffix ? variant.variant_title_suffix : '' }}</span>
+                <span v-if="variant.variant_type === 'liquid'">Liquid Fill - {{ (variant?.total_milliliters_per_unit ? variant.total_milliliters_per_unit : 0) + 'ml' }} {{ variant?.variant_title_suffix ? variant.variant_title_suffix : '' }}</span>
+                <span v-if="variant.variant_type === 'capsule'">Capsule Fill - {{ (variant?.total_capsules_per_unit ? variant.total_capsules_per_unit : 0) + 'ct' }} {{ variant?.variant_title_suffix ? variant.variant_title_suffix : '' }}</span>
+                <b-badge v-show="variant.discontinued" class="ml-3" variant="danger">Discontinued</b-badge>
+                <b-badge v-show="variant.primary_variant && !edit_variants" class="ml-3" variant="primary">Primary</b-badge>
+              </b-card-title>
+              <b-card-text>
+                <div>
+                  <b-row>
+                    <b-col><label for="notes"><strong>Variant Notes:</strong></label></b-col>
+                  </b-row>
+                  <b-row>
+                    <b-col>
+                      <b-form-textarea
+                        id="notes"
+                        v-model="variant.notes"
+                        disabled
+                        class="form-control"
+                      ></b-form-textarea>
+                    </b-col>
+                  </b-row>
+                  <hr>
+                </div>
+                <div v-if="variant.variant_type === 'powder'">
+                  <b-row>
+                    <b-col><label :for="'manufacturing_max_grams_per_unit'+variant.variant_id"><strong>Tolerance Max:</strong></label></b-col>
+                    <b-col>
+                      <div class="input-group mb-2">
+                        <input
+                          :id="'manufacturing_max_grams_per_unit'+variant.variant_id"
+                          type="number"
+                          v-model="variant.max_grams_per_unit"
+                          required
+                          min="0"
+                          disabled
+                          class="form-control"
+                        >
+                        <div class="input-group-append">
+                          <span class="input-group-text">g</span>
+                        </div>
+                      </div>
+                    </b-col>
+                  </b-row>
+                  <b-row>
+                    <b-col><label :for="'manufacturing_total_grams_per_unit'+variant.variant_id"><strong>Target g per Product:</strong></label></b-col>
+                    <b-col>
+                      <div class="input-group mb-2">
+                        <input
+                          :id="'manufacturing_total_grams_per_unit'+variant.variant_id"
+                          type="number"
+                          v-model="variant.total_grams_per_unit"
+                          class="form-control"
+                          min="0"
+                          disabled
+                          aria-describedby="total_grams_per_unit-live-feedback"
+                        >
+                        <div class="input-group-append">
+                          <span class="input-group-text">g</span>
+                        </div>
+                      </div>
+                    </b-col>
+                  </b-row>
+                  <b-row>
+                    <b-col><label :for="'manufacturing_min_grams_per_unit'+variant.variant_id"><strong>Tolerance Min:</strong></label></b-col>
+                    <b-col>
+                      <div class="input-group mb-2">
+                        <input
+                          :id="'manufacturing_min_grams_per_unit'+variant.variant_id"
+                          type="number"
+                          v-model="variant.min_grams_per_unit"
+                          required
+                          min="0"
+                          disabled
+                          class="form-control"
+                        >
+                        <div class="input-group-append">
+                          <span class="input-group-text">g</span>
+                        </div>
+                      </div>
+                    </b-col>
+                  </b-row>
+                </div>
+                <div v-if="variant.variant_type === 'liquid'">
+                  <b-row>
+                    <b-col><label :for="'manufacturing_max_milliliters_per_unit'+variant.variant_id"><strong>Tolerance Max:</strong></label></b-col>
+                    <b-col>
+                      <div class="input-group mb-2">
+                        <input
+                          :id="'manufacturing_max_milliliters_per_unit'+variant.variant_id"
+                          type="number"
+                          v-model="variant.max_milliliters_per_unit"
+                          required
+                          min="0"
+                          disabled
+                          class="form-control"
+                        >
+                        <div class="input-group-append">
+                          <span class="input-group-text">ml</span>
+                        </div>
+                      </div>
+                    </b-col>
+                  </b-row>
+                  <b-row>
+                    <b-col><label :for="'manufacturing_total_milliliters_per_unit'+variant.variant_id"><strong>Target ml per Product:</strong></label></b-col>
+                    <b-col>
+                      <div class="input-group mb-2">
+                        <input
+                          :id="'manufacturing_total_milliliters_per_unit'+variant.variant_id"
+                          type="number"
+                          v-model="variant.total_milliliters_per_unit"
+                          required
+                          min="0"
+                          disabled
+                          class="form-control"
+                        >
+                        <div class="input-group-append">
+                          <span class="input-group-text">ml</span>
+                        </div>
+                      </div>
+                    </b-col>
+                  </b-row>
+                  <b-row>
+                    <b-col><label :for="'manufacturing_min_milliliters_per_unit'+variant.variant_id"><strong>Tolerance Min:</strong></label></b-col>
+                    <b-col>
+                      <div class="input-group mb-2">
+                        <input
+                          :id="'manufacturing_min_milliliters_per_unit'+variant.variant_id"
+                          type="number"
+                          v-model="variant.min_milliliters_per_unit"
+                          required
+                          min="0"
+                          disabled
+                          class="form-control"
+                        >
+                        <div class="input-group-append">
+                          <span class="input-group-text">ml</span>
+                        </div>
+                      </div>
+                    </b-col>
+                  </b-row>
+                </div>
+                <div v-if="variant.variant_type === 'capsule'">
+                  <b-row>
+                    <b-col><label :for="'manufacturing_max_mg_per_capsule'+variant.variant_id"><strong>Tolerance Max:</strong></label></b-col>
+                    <b-col>
+                      <div class="input-group mb-2">
+                        <input
+                          :id="'manufacturing_max_mg_per_capsule'+variant.variant_id"
+                          type="number"
+                          v-model="variant.max_mg_per_capsule"
+                          required
+                          min="0"
+                          disabled
+                          class="form-control"
+                        >
+                        <div class="input-group-append">
+                          <span class="input-group-text">mg</span>
+                        </div>
+                      </div>
+                    </b-col>
+                  </b-row>
+                  <b-row>
+                    <b-col><label :for="'manufacturing_total_mg_per_capsule'+variant.variant_id"><strong>Target mg per Product:</strong></label></b-col>
+                    <b-col>
+                      <div class="input-group mb-2">
+                        <input
+                          :id="'manufacturing_total_mg_per_capsule'+variant.variant_id"
+                          type="number"
+                          v-model="variant.total_mg_per_capsule"
+                          required
+                          min="0"
+                          disabled
+                          class="form-control"
+                        >
+                        <div class="input-group-append">
+                          <span class="input-group-text">mg</span>
+                        </div>
+                      </div>
+                    </b-col>
+                  </b-row>
+                  <b-row>
+                    <b-col><label :for="'manufacturing_min_mg_per_capsule'+variant.variant_id"><strong>Tolerance Min:</strong></label></b-col>
+                    <b-col>
+                      <div class="input-group mb-2">
+                        <input
+                          :id="'manufacturing_min_mg_per_capsule'+variant.variant_id"
+                          type="number"
+                          v-model="variant.min_mg_per_capsule"
+                          required
+                          min="0"
+                          disabled
+                          class="form-control"
+                        >
+                        <div class="input-group-append">
+                          <span class="input-group-text">mg</span>
+                        </div>
+                      </div>
+                    </b-col>
+                  </b-row>
+                  <hr>
+                  <b-row>
+                    <b-col><label :for="'manufacturing_total_capsules_per_unit'+variant.variant_id"><strong>Capsule Count:</strong></label></b-col>
+                    <b-col>
+                      <div class="input-group mb-2">
+                        <input
+                          :id="'manufacturing_total_capsules_per_unit'+variant.variant_id"
+                          type="number"
+                          v-model="variant.total_capsules_per_unit"
+                          required
+                          min="0"
+                          disabled
+                          class="form-control"
+                        >
+                        <div class="input-group-append">
+                          <span class="input-group-text">ct</span>
+                        </div>
+                      </div>
+                    </b-col>
+                  </b-row>
+                  <b-row class="mb-2">
+                    <b-col><label :for="'manufacturing_capsule_size'+variant.variant_id"><strong>Capsule Size:</strong></label></b-col>
+                    <b-col>
+                      <select
+                        :id="'manufacturing_capsule_size'+variant.variant_id"
+                        v-model="variant.capsule_size"
+                        disabled
+                        class="form-control"
+
+                      >
+                        <option selected value="">Select Size</option>
+                        <option value="n/a">N/A</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="0">0</option>
+                        <option value="00">00</option>
+                    </select>
+                  </b-col>
+                  </b-row>
+                  <b-row>
+                    <b-col><label for="'manufacturing_mg_empty_capsule'+variant.variant_id"><strong>Capsule Weight:</strong></label></b-col>
+                    <b-col>
+                      <div class="input-group mb-2">
+                        <input
+                          :id="'manufacturing_mg_empty_capsule'+variant.variant_id"
+                          type="number"
+                          v-model="variant.mg_empty_capsule"
+                          required
+                          min="0"
+                          disabled
+                          class="form-control"
+                        >
+                        <div class="input-group-append">
+                          <span class="input-group-text">mg</span>
+                        </div>
+                      </div>
+                    </b-col>
+                  </b-row>
+                </div>
+              </b-card-text>
+            </b-card>
+          </b-collapse>
         </b-container>
         <b-container class="m-0 p-0" style="min-width:100%;">
           <b-row class="mb-1">
@@ -62,7 +332,6 @@
                     v-model="node_buffer.data.custom_ave_percent_loss"
                     min="0"
                     :disabled="!edit || node_buffer.data.use_default_ave_percent_loss"
-                    aria-describedby="custom_ave_percent_loss-live-feedback"
                     :class="[node_buffer.data.custom_ave_percent_loss >= 0 || !edit ? '' : 'is-invalid', 'text-center']"
                     @input="updateNode()"
                   ></b-form-input>
@@ -74,8 +343,7 @@
                     v-model="node_buffer.data.ave_percent_loss"
                     min="0"
                     :disabled="true"
-                    aria-describedby="ave_percent_loss-live-feedback"
-                    :class="[node_buffer.data.ave_percent_loss >= 0 || !edit ? '' : 'is-invalid', 'text-center']"
+                    class="text-center"
                     @input="updateNode()"
                   ></b-form-input>
                 </b-input-group>
@@ -125,11 +393,11 @@
                     min="0"
                     :disabled="!edit || node_buffer.data.custom_setup_time_use_default"
                     aria-describedby="custom_setup_time-live-feedback"
-                    :class="[node_buffer.data.custom_setup_time >= 0 || !edit ? '' : 'is-invalid', 'text-center']"
+                    :class="[(node_buffer.data.custom_setup_time === 0 || node_buffer.data.custom_setup_time > 0) || !edit ? '' : 'is-invalid', 'text-center']"
                     @input="updateNode()"
                   ></b-form-input>
                   <template #append>
-                    <select class="custom-select" v-model="node_buffer.data.custom_setup_time_units" :disabled="!edit || node_buffer.data.custom_setup_time_use_default" @change="updateNode()">
+                    <select :class="[node_buffer.data.custom_setup_time_units || !edit ? '' : 'is-invalid', 'text-center', 'custom-select']" v-model="node_buffer.data.custom_setup_time_units" :disabled="!edit || node_buffer.data.custom_setup_time_use_default" @change="updateNode()">
                       <option value="Seconds">Seconds</option>
                       <option value="Minutes">Minutes</option>
                       <option value="Hours">Hours</option>
@@ -146,7 +414,7 @@
                     min="0"
                     :disabled="!edit || node_buffer.data.custom_setup_time_use_default"
                     aria-describedby="custom_setup_num_employees-live-feedback"
-                    :class="[node_buffer.data.custom_setup_num_employees >= 0 || !edit ? '' : 'is-invalid', 'text-center']"
+                    :class="[(node_buffer.data.custom_setup_num_employees === 0 || node_buffer.data.custom_setup_num_employees > 0) || !edit ? '' : 'is-invalid', 'text-center']"
                     @input="updateNode()"
                   ></b-form-input>
                   <template #append>
@@ -159,27 +427,28 @@
           <b-row class="mb-1">
             <b-col style="max-width:20%;"><label for="box_count"><strong>Target Processing Rate:</strong></label></b-col>
           </b-row>
-          <b-row class="mb-3">
+          <b-row class="mb-3 flex-nowrap">
             <b-col style="max-width:100%;">
-              <b-form inline>
+              <b-form inline class="flex-nowrap">
                 <b-input-group>
-                  <b-form-input class="text-center" type="number" v-model="node_buffer.data.target_process_rate" :disabled="!edit" @input="updateNode()"></b-form-input>
+                  <b-form-input :class="[(node_buffer.data.target_process_rate === 0 || node_buffer.data.target_process_rate > 0) || !edit ? '' : 'is-invalid', 'text-center']" type="number" v-model="node_buffer.data.target_process_rate" :disabled="!edit" @input="updateNode()"></b-form-input>
                   <template #append>
-                    <select class="custom-select" :disabled="!edit" v-model="node_buffer.data.target_process_rate_unit" @change="updateNode()">
+                    <select :class="[node_buffer.data.target_process_rate_unit || !edit ? '' : 'is-invalid', 'text-center', 'custom-select']" :disabled="!edit" v-model="node_buffer.data.target_process_rate_unit" @change="updateNode()">
                       <option value="Products">Products</option>
                       <option value="Ingredients">Ingredients</option>
                       <option value="Barrels">Barrels</option>
                       <option value="Kilos">Kilos</option>
                       <option value="Liters">Liters</option>
                       <option value="Capsules">Capsules</option>
+                      <option value="Batches">Batches</option>
                     </select>
                   </template>
                 </b-input-group>
                 <b-input-group-text class="mx-2">per</b-input-group-text>
                 <b-input-group>
-                  <b-form-input class="text-center" type="number" v-model="node_buffer.data.target_process_rate_per" :disabled="!edit" @input="updateNode()"></b-form-input>
+                  <b-form-input :class="[(node_buffer.data.target_process_rate_per === 0 || node_buffer.data.target_process_rate_per > 0) || !edit ? '' : 'is-invalid', 'text-center']" type="number" v-model="node_buffer.data.target_process_rate_per" :disabled="!edit" @input="updateNode()"></b-form-input>
                   <template #append>
-                    <select class="custom-select" v-model="node_buffer.data.target_process_rate_per_unit" :disabled="!edit" @change="updateNode()">
+                    <select :class="[node_buffer.data.target_process_rate_per_unit || !edit ? '' : 'is-invalid', 'text-center', 'custom-select']" v-model="node_buffer.data.target_process_rate_per_unit" :disabled="!edit" @change="updateNode()">
                       <option value="Seconds">Seconds</option>
                       <option value="Minutes">Minutes</option>
                       <option value="Hours">Hours</option>
@@ -196,7 +465,7 @@
                     min="0"
                     :disabled="!edit"
                     aria-describedby="target_process_num_employees-live-feedback"
-                    :class="[node_buffer.data.target_process_num_employees >= 0 || !edit ? '' : 'is-invalid', 'text-center']"
+                    :class="[(node_buffer.data.target_process_num_employees === 0 || node_buffer.data.target_process_num_employees > 0) || !edit ? '' : 'is-invalid', 'text-center']"
                     @input="updateNode()"
                   ></b-form-input>
                   <template #append>
@@ -230,11 +499,11 @@
                     min="0"
                     :disabled="!edit || node_buffer.data.custom_cleaning_time_use_default"
                     aria-describedby="custom_cleaning_time-live-feedback"
-                    :class="[node_buffer.data.custom_cleaning_time >= 0 || !edit ? '' : 'is-invalid', 'text-center']"
+                    :class="[(node_buffer.data.custom_cleaning_time === 0 || node_buffer.data.custom_cleaning_time > 0) || !edit ? '' : 'is-invalid', 'text-center']"
                     @input="updateNode()"
                   ></b-form-input>
                   <template #append>
-                    <select class="custom-select" v-model="node_buffer.data.custom_cleaning_time_units" :disabled="!edit || node_buffer.data.custom_cleaning_time_use_default" @change="updateNode()">
+                    <select :class="[node_buffer.data.custom_cleaning_time_units || !edit ? '' : 'is-invalid', 'text-center', 'custom-select']" v-model="node_buffer.data.custom_cleaning_time_units" :disabled="!edit || node_buffer.data.custom_cleaning_time_use_default" @change="updateNode()">
                       <option value="Seconds">Seconds</option>
                       <option value="Minutes">Minutes</option>
                       <option value="Hours">Hours</option>
@@ -251,7 +520,7 @@
                     min="0"
                     :disabled="!edit || node_buffer.data.custom_cleaning_time_use_default"
                     aria-describedby="custom_cleaning_num_employees-live-feedback"
-                    :class="[node_buffer.data.custom_cleaning_num_employees >= 0 || !edit ? '' : 'is-invalid', 'text-center']"
+                    :class="[(node_buffer.data.custom_cleaning_num_employees === 0 || node_buffer.data.custom_cleaning_num_employees > 0) || !edit ? '' : 'is-invalid', 'text-center']"
                     @input="updateNode()"
                   ></b-form-input>
                   <template #append>
@@ -562,8 +831,8 @@
   white-space: nowrap
 }
 .custom_vue-flow__handle {
-  width: 16px;
-  height: 16px;
+  width: 32px;
+  height: 32px;
 }
 .card {
   box-shadow: 0 10px 10px rgba(0,0,0,.2);
@@ -605,7 +874,8 @@ export default {
         { label: 'Serial No.', key: 'equipment_sn' },
         { label: 'Status', key: 'status' }
       ],
-      variant: null
+      variant: null,
+      show_variant: false
     }
   },
   props: {
@@ -651,10 +921,17 @@ export default {
     ChooseVariant
   },
   methods: {
+    toggleShowVariant: function () {
+      this.show_variant = !this.show_variant
+      // wait 1 second before resizing node
+      setTimeout(() => {
+        this.$emit('resizeNode', this.node_buffer.data)
+      }, 1000)
+    },
     toggleDefaultPercentLoss: function () {
       this.node_buffer.data.use_default_ave_percent_loss = !this.node_buffer.data.use_default_ave_percent_loss
       if (this.node_buffer.data.use_default_ave_percent_loss) {
-        this.node_buffer.data.custom_percent_loss = this.node_buffer.data.percent_loss
+        this.node_buffer.data.custom_ave_percent_loss = this.node_buffer.data.ave_percent_loss
       }
       this.updateNode()
     },
@@ -797,6 +1074,19 @@ export default {
         ...cloneDeep(newProcess)
       }
       this.node_buffer.data.manufacturing_process_id = newProcess.process_id
+      if (this.node_buffer.data.use_default_ave_percent_loss) {
+        this.node_buffer.data.custom_ave_percent_loss = this.node_buffer.data.ave_percent_loss
+      }
+      if (this.node_buffer.data.custom_setup_time_use_default) {
+        this.node_buffer.data.custom_setup_time = this.node_buffer.data.setup_time
+        this.node_buffer.data.custom_setup_time_units = this.node_buffer.data.setup_time_units
+        this.node_buffer.data.custom_setup_num_employees = this.node_buffer.data.setup_num_employees
+      }
+      if (this.node_buffer.data.custom_cleaning_time_use_default) {
+        this.node_buffer.data.custom_cleaning_time = this.node_buffer.data.cleaning_time
+        this.node_buffer.data.custom_cleaning_time_units = this.node_buffer.data.cleaning_time_units
+        this.node_buffer.data.custom_cleaning_num_employees = this.node_buffer.data.cleaning_num_employees
+      }
       this.updateNode()
     },
     getProcess: function () {
@@ -828,6 +1118,12 @@ export default {
         return null
       }
       return this.component_options.find((c) => c.component_id === this.node_buffer.data.box_id)
+    },
+    filteredVariantOptions: function () {
+      if (this.node_buffer.data.product_variant_type === null) {
+        return this.variant_options
+      }
+      return this.variant_options.filter(variant => variant.variant_type === this.node_buffer.data.product_variant_type)
     }
   },
   created: function () {
