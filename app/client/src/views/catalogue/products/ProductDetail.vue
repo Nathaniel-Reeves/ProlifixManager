@@ -438,7 +438,7 @@ export default {
           response.json().then(data => {
             this.product_data = data.data[0]
             // eslint-disable-next-line
-            console.log(this.product_data)
+            console.log(data)
             this.loaded = true
             this.edit_specs = false
             this.edit_manufacturing = false

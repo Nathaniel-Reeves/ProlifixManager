@@ -188,6 +188,9 @@ CREATE TABLE `Manufacturing_Process` (
   `bid_notes` varchar(2500) DEFAULT NULL,
   `custom_ave_percent_loss` double DEFAULT NULL,
   `use_default_ave_percent_loss` tinyint(1) DEFAULT NULL,
+  `num_retentions` tinyint(3) unsigned DEFAULT 2,
+  `lab_sample_size` double DEFAULT 100,
+  `qc_sample_size` double DEFAULT 5,
   PRIMARY KEY (`process_spec_id`),
   KEY `product_id` (`product_id`),
   KEY `Manufacturing_Process_Product_Variant_FK` (`variant_id`),
@@ -335,4 +338,4 @@ CREATE TABLE `Product_Variant` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-08-09 16:40:15
+-- Dump completed on 2024-08-12 15:45:28

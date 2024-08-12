@@ -173,6 +173,9 @@ class Manufacturing_Process(Base):
     bid_notes: Mapped[str] = mapped_column(default=None)
     custom_ave_percent_loss: Mapped[float] = mapped_column(default=None)
     use_default_ave_percent_loss: Mapped[bool] = mapped_column(default=True)
+    num_retentions: Mapped[int] = mapped_column(default=None)
+    lab_sample_size: Mapped[float] = mapped_column(default=None)
+    qc_sample_size: Mapped[float] = mapped_column(default=None)
 
     # Relationships
     manufacturing_process_id: Mapped[int] = mapped_column(ForeignKey('Manufacturing.Processes.process_id'))
@@ -225,7 +228,10 @@ class Manufacturing_Process(Base):
             'box_id': self.box_id,
             'bid_notes': self.bid_notes,
             'custom_ave_percent_loss': self.custom_ave_percent_loss,
-            'use_default_ave_percent_loss': self.use_default_ave_percent_loss
+            'use_default_ave_percent_loss': self.use_default_ave_percent_loss,
+            'num_retentions': self.num_retentions,
+            'lab_sample_size': self.lab_sample_size,
+            'qc_sample_size': self.qc_sample_size
         }
 
     def get_id(self):

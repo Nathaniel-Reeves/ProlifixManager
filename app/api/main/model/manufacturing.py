@@ -89,10 +89,13 @@ class Processes(Base):
     min_personnel: Mapped[int] = mapped_column(default=0)
     max_personnel: Mapped[int] = mapped_column(default=0)
     bpr_page_template: Mapped[str] = mapped_column()
-    bpr_data_template = Column(MutableDict.as_mutable(JSON))
+    bpr_data_template = Column(JSON, default={})
+    component_filters = Column(JSON, default=[])
     requires_product_variant: Mapped[bool] = mapped_column(default=False)
     requires_components: Mapped[bool] = mapped_column(default=False)
-    requires_box_specs: Mapped[bool] = mapped_column(default=True)
+    requires_box_specs: Mapped[bool] = mapped_column(default=False)
+    requires_samples: Mapped[bool] = mapped_column(default=False)
+    requires_retention: Mapped[bool] = mapped_column(default=False)
     top_handle: Mapped[bool] = mapped_column(default=True)
     bottom_handle: Mapped[bool] = mapped_column(default=False)
     left_handle: Mapped[bool] = mapped_column(default=False)
@@ -146,6 +149,8 @@ class Processes(Base):
             "max_personnel": self.max_personnel,
             "bpr_page_template": self.bpr_page_template,
             "bpr_data_template": self.bpr_data_template,
+            "requires_samples": self.requires_samples,
+            "requires_retention": self.requires_retention,
             "requires_product_variant": self.requires_product_variant,
             "requires_components": self.requires_components,
             "requires_box_specs": self.requires_box_specs,
@@ -154,15 +159,16 @@ class Processes(Base):
             "left_handle": self.left_handle,
             "right_handle": self.right_handle,
             "ave_percent_loss": self.ave_percent_loss,
-            'setup_time': self.setup_time,
-            'setup_time_units': self.setup_time_units,
-            'setup_num_employees': self.setup_num_employees,
-            'cleaning_time': self.cleaning_time,
-            'cleaning_time_units': self.cleaning_time_units,
-            'cleaning_num_employees': self.cleaning_num_employees,
-            'process_sop_link': self.process_sop_link,
-            'equipment_specific': self.equipment_specific,
-            'product_variant_type': self.product_variant_type
+            "setup_time": self.setup_time,
+            "setup_time_units": self.setup_time_units,
+            "setup_num_employees": self.setup_num_employees,
+            "cleaning_time": self.cleaning_time,
+            "cleaning_time_units": self.cleaning_time_units,
+            "cleaning_num_employees": self.cleaning_num_employees,
+            "process_sop_link": self.process_sop_link,
+            "equipment_specific": self.equipment_specific,
+            "product_variant_type": self.product_variant_type,
+            "component_filters": self.component_filters
         }
 
     def get_id(self):

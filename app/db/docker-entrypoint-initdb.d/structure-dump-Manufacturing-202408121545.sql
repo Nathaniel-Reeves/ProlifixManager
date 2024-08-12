@@ -42,7 +42,7 @@ CREATE TABLE `Equipment` (
   PRIMARY KEY (`equipment_id`),
   KEY `process_id` (`process_id`),
   CONSTRAINT `Equipment_ibfk_1` FOREIGN KEY (`process_id`) REFERENCES `Processes` (`process_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -80,9 +80,12 @@ CREATE TABLE `Processes` (
   `process_sop_link` varchar(500) DEFAULT NULL,
   `equipment_specific` tinyint(1) DEFAULT 0,
   `product_variant_type` enum('powder','liquid','capsule') DEFAULT NULL,
+  `component_filters` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
+  `requires_samples` tinyint(1) NOT NULL DEFAULT 0,
+  `requires_retention` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`process_id`),
   CONSTRAINT `Processes_CHECK` CHECK (json_valid(`bpr_data_template`))
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -98,4 +101,4 @@ CREATE TABLE `Processes` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-08-09 16:40:12
+-- Dump completed on 2024-08-12 15:45:27

@@ -351,6 +351,39 @@
             </b-col>
           </b-row>
         </b-container>
+        <b-container class="m-0 p-0" style="min-width:100%;" v-if="node_data.data.requires_samples">
+          <b-row class="mb-1">
+            <b-col style="max-width:20%;"><label for="box_count"><strong>Samples:</strong></label></b-col>
+          </b-row>
+          <b-row class="mb-3">
+            <b-col>
+              <b-form inline>
+                <b-input-group append="g" prepend="Lab Sample:" class="mr-2">
+                  <b-form-input
+                    id="lab_sample_size"
+                    type="number"
+                    v-model="node_buffer.data.lab_sample_size"
+                    min="0"
+                    :disabled="!edit"
+                    :class="[node_buffer.data.lab_sample_size >= 0 || !edit ? '' : 'is-invalid', 'text-center']"
+                    @input="updateNode()"
+                  ></b-form-input>
+                </b-input-group>
+                <b-input-group append="g" prepend="QC Sample:" class="mr-2">
+                  <b-form-input
+                    id="qc_sample_size"
+                    type="number"
+                    v-model="node_buffer.data.qc_sample_size"
+                    min="0"
+                    :disabled="!edit"
+                    :class="[node_buffer.data.qc_sample_size >= 0 || !edit ? '' : 'is-invalid', 'text-center']"
+                    @input="updateNode()"
+                  ></b-form-input>
+                </b-input-group>
+              </b-form>
+            </b-col>
+          </b-row>
+        </b-container>
         <b-container class="m-0 p-0" style="min-width:100%;">
           <b-row class="mb-3">
             <b-col>
@@ -607,7 +640,7 @@
                         <ChooseComponent
                           class="py-3"
                           @comp="(c) => selectComp(c, components.item.components, index)"
-                          :components="component_options" :selected="comp.component_id === 0 ? null : comp"
+                          :components="filtered_component_options" :selected="comp.component_id === 0 ? null : comp"
                         ></ChooseComponent>
                       </b-col>
                     </b-row>
@@ -674,6 +707,28 @@
           <b-row class="mb-3" v-if="edit" v-show="node_buffer.data.requires_components">
             <b-col>
               <b-button v-show="edit" block variant="outline-info" @click="addRow()">Add Row</b-button>
+            </b-col>
+          </b-row>
+        </b-container>
+        <b-container class="m-0 p-0" style="min-width:100%;" v-if="node_data.data.requires_retention">
+          <b-row class="mb-1">
+            <b-col style="max-width:20%;"><label for="box_count"><strong>Retentions:</strong></label></b-col>
+          </b-row>
+          <b-row class="mb-3">
+            <b-col style="max-width:100%;">
+              <b-form inline>
+                <b-input-group append="ct" class="mr-2">
+                  <b-form-input
+                    id="num_retentions"
+                    type="number"
+                    v-model="node_buffer.data.num_retentions"
+                    min="0"
+                    :disabled="!edit"
+                    :class="[node_buffer.data.num_retentions >= 0 || !edit ? '' : 'is-invalid', 'text-center']"
+                    @input="updateNode()"
+                  ></b-form-input>
+                </b-input-group>
+              </b-form>
             </b-col>
           </b-row>
         </b-container>
@@ -1124,10 +1179,22 @@ export default {
         return this.variant_options
       }
       return this.variant_options.filter(variant => variant.variant_type === this.node_buffer.data.product_variant_type)
+    },
+    filtered_component_options: function () {
+      if (!this.component_options) {
+        return []
+      }
+      if (!this.node_buffer.component_filters) {
+        return this.component_options
+      }
+      const filter = this.node_buffer.data.component_filters
+      return this.component_options.filter((c) => filter.indexOf(c.component_type) > -1)
     }
   },
   created: function () {
     this.node_buffer = cloneDeep(this.node_data)
+    const filter = this.node_buffer.data.component_filters
+    console.log('component_filters', filter)
     this.getVariant()
   }
 }

@@ -240,7 +240,10 @@ export default {
         primary_process: node.primary_process,
         bid_notes: node.bid_notes,
         custom_ave_percent_loss: node.custom_ave_percent_loss,
-        use_default_ave_percent_loss: node.use_default_ave_percent_loss
+        use_default_ave_percent_loss: node.use_default_ave_percent_loss,
+        num_retentions: node.num_retentions,
+        lab_sample_size: node.lab_sample_size,
+        qc_sample_size: node.qc_sample_size
       }
       this.req.updateUpsertRecord('Manufacturing_Process', 'process_spec_id', node.process_spec_id, updateManufacturingProcess)
 
@@ -376,7 +379,10 @@ export default {
         primary_process: true,
         bid_notes: null,
         custom_ave_percent_loss: null,
-        use_default_ave_percent_loss: true
+        use_default_ave_percent_loss: true,
+        num_retentions: 2,
+        lab_sample_size: 100,
+        qc_sample_size: 5
       }
       this.nodes_buffer.push(newProcess)
       this.layoutGraph()
@@ -500,6 +506,12 @@ export default {
       if (node.requires_box_specs && !this.validateNodePalletization(node, createToast, errorToast)) {
         flag = false
       }
+      if (node.requires_samples && !this.validateNodeSamples(node, createToast, errorToast)) {
+        flag = false
+      }
+      if (node.requires_retention && !this.validateNodeRetention(node, createToast, errorToast)) {
+        flag = false
+      }
       return flag
     },
     validateNodePercent: function (node, createToast, errorToast) {
@@ -614,6 +626,46 @@ export default {
       }
       return flag
     },
+    validateNodeSamples: function (node, createToast, errorToast) {
+      let flag = true
+      // Check Component Count
+      if (node.lab_sample_size === null || node.lab_sample_size === '') {
+        errorToast.message = 'Lab Sample Size is required.'
+        createToast(errorToast)
+        flag = false
+      }
+      if (node.lab_sample_size < 0) {
+        errorToast.message = 'Lab Sample Size must be greater than or equal to 0.'
+        createToast(errorToast)
+        flag = false
+      }
+      if (node.qc_sample_size === null || node.qc_sample_size === '') {
+        errorToast.message = 'QC Sample Size is required.'
+        createToast(errorToast)
+        flag = false
+      }
+      if (node.qc_sample_size < 0) {
+        errorToast.message = 'QC Sample Size must be greater than or equal to 0.'
+        createToast(errorToast)
+        flag = false
+      }
+      return flag
+    },
+    validateNodeRetention: function (node, createToast, errorToast) {
+      let flag = true
+      // Check Component Count
+      if (node.num_retentions === null || node.num_retentions === '') {
+        errorToast.message = 'Retention Count is required.'
+        createToast(errorToast)
+        flag = false
+      }
+      if (node.num_retentions < 0) {
+        errorToast.message = 'Retention Count must be greater than or equal to 0.'
+        createToast(errorToast)
+        flag = false
+      }
+      return flag
+    },
     validateNodeComponent: function (processComponentRow, createToast, errorToast) {
       let flag = true
       // Check Component Count
@@ -659,11 +711,11 @@ export default {
         createToast(errorToast)
         flag = false
       }
-      if (node.box_weight_in_lbs === null || node.box_weight_in_lbs === '') {
-        errorToast.message = 'Box Weight in lbs is required.'
-        createToast(errorToast)
-        flag = false
-      }
+      // if (node.box_weight_in_lbs === null || node.box_weight_in_lbs === '') {
+      //   errorToast.message = 'Box Weight in lbs is required.'
+      //   createToast(errorToast)
+      //   flag = false
+      // }
       if (node.box_weight_in_lbs <= 0) {
         errorToast.message = 'Box Weight in lbs must be greater than 0.'
         createToast(errorToast)
