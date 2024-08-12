@@ -77,7 +77,7 @@
     <div class="container-fluid mt-3 p-0" id="footer">
       <footer class="bg-dark text-center text-white">
         <div class="text-center bg-dark p-3">
-          © 2024 Copyright | v3.5.0
+          © 2024 Copyright | v3.6.0
         </div>
       </footer>
     </div>
