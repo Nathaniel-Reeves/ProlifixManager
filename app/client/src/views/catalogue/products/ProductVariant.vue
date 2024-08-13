@@ -303,8 +303,8 @@
                       v-model="variant.capsule_size"
                       :disabled="!edit_variants"
                       aria-describedby="capsule_size-live-feedback"
-                      :class="['form-control', 'form-control-md', (variant.capsule_size !== '' ? '' : 'is-invalid')]"
-                      @input="update_variant(variant)"
+                      :class="['form-control', 'form-control-md', (variant.capsule_size !== '' ? '' : 'is-invalid'), 'custom-select']"
+                      @change="update_variant(variant)"
                     >
                       <option selected value="">Select Size</option>
                       <option value="n/a">N/A</option>
@@ -423,7 +423,7 @@ import { cloneDeep } from 'lodash'
 import { CustomRequest, genTempKey, isTempKey } from '../../../common/CustomRequest.js'
 
 export default {
-  name: 'ProductFormula',
+  name: 'ProductVariant',
   props: {
     productVariants: {
       type: Array,
@@ -459,20 +459,20 @@ export default {
       document.getElementById(elmId).focus()
     },
     buffer_new_variant: function () {
-      this.update_variant(this.new_variant)
       this.variants_buffer.unshift(cloneDeep(this.new_variant))
+      this.update_variant(this.new_variant)
       this.new_variant = {}
       this.num_variants += 1
     },
     get_variant_title: function (variant) {
       if (variant.variant_type === 'powder') {
-        return String(variant.total_grams_per_unit) + 'g ' + String(variant.variant_title_suffix ? variant.variant_title_suffix : '')
+        return `${variant.total_grams_per_unit}g ${(variant.variant_title_suffix ? variant.variant_title_suffix : '')}`
       }
       if (variant.variant_type === 'liquid') {
-        return String(variant.total_milliliters_per_unit) + 'ml ' + String(variant.variant_title_suffix ? variant.variant_title_suffix : '')
+        return `${variant.total_milliliters_per_unit}ml ${(variant.variant_title_suffix ? variant.variant_title_suffix : '')}`
       }
       if (variant.variant_type === 'capsule') {
-        return String(variant.total_capsules_per_unit) + 'ct ' + String(variant.variant_title_suffix ? variant.variant_title_suffix : '')
+        return `${variant.total_capsules_per_unit}ct ${(variant.variant_title_suffix ? variant.variant_title_suffix : '')}`
       }
       return 'ERROR TITLE'
     },
@@ -481,7 +481,7 @@ export default {
       const update = {
         variant_id: variant.variant_id,
         product_id: this.productId,
-        variant_title: variant.variant_title ? variant.variant_title : title,
+        variant_title: title,
         variant_title_suffix: variant.variant_title_suffix,
         variant_type: variant.variant_type,
         primary_variant: variant.primary_variant,
@@ -501,8 +501,8 @@ export default {
         capsule_size: variant.capsule_size,
         mg_empty_capsule: variant.mg_empty_capsule
       }
-      const orgVariant = this.variants_buffer.find(v => v.variant_id === variant.variant_id)
-      this.variants_buffer[this.variants_buffer.indexOf(orgVariant)] = { ...orgVariant, ...update }
+      const index = this.variants_buffer.indexOf(variant)
+      this.variants_buffer[index] = { ...this.variants_buffer[index], ...update }
       this.req.updateUpsertRecord('Product_Variant', 'variant_id', variant.variant_id, update)
     },
     add_variant: function () {

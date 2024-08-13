@@ -40,7 +40,7 @@ CREATE TABLE `Component_Names` (
   KEY `component_id` (`component_id`),
   KEY `component_name` (`component_name`),
   CONSTRAINT `component_id` FOREIGN KEY (`component_id`) REFERENCES `Components` (`component_id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1142 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1144 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -204,4 +204,4 @@ CREATE TABLE `Item_id` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-08-12 15:45:27
+-- Dump completed on 2024-08-13 11:25:40

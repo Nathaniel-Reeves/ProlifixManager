@@ -191,6 +191,7 @@ CREATE TABLE `Manufacturing_Process` (
   `num_retentions` tinyint(3) unsigned DEFAULT 2,
   `lab_sample_size` double DEFAULT 100,
   `qc_sample_size` double DEFAULT 5,
+  `boxes_per_layer` tinyint(3) unsigned DEFAULT NULL,
   PRIMARY KEY (`process_spec_id`),
   KEY `product_id` (`product_id`),
   KEY `Manufacturing_Process_Product_Variant_FK` (`variant_id`),
@@ -198,7 +199,7 @@ CREATE TABLE `Manufacturing_Process` (
   CONSTRAINT `Manufacturing_Process_Components_FK` FOREIGN KEY (`box_id`) REFERENCES `Inventory`.`Components` (`component_id`),
   CONSTRAINT `Manufacturing_Process_Product_Variant_FK` FOREIGN KEY (`variant_id`) REFERENCES `Product_Variant` (`variant_id`),
   CONSTRAINT `Manufacturing_Process_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `Product_Master` (`product_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -223,7 +224,7 @@ CREATE TABLE `Manufacturing_Process_Edges` (
   CONSTRAINT `Manufacturing_Process_Edges_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `Product_Master` (`product_id`),
   CONSTRAINT `Manufacturing_Process_Edges_ibfk_2` FOREIGN KEY (`source`) REFERENCES `Manufacturing_Process` (`process_spec_id`),
   CONSTRAINT `Manufacturing_Process_Edges_ibfk_3` FOREIGN KEY (`target`) REFERENCES `Manufacturing_Process` (`process_spec_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -322,7 +323,7 @@ CREATE TABLE `Product_Variant` (
   PRIMARY KEY (`variant_id`),
   KEY `product_id` (`product_id`),
   CONSTRAINT `Product_Variant_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `Product_Master` (`product_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -338,4 +339,4 @@ CREATE TABLE `Product_Variant` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-08-12 15:45:28
+-- Dump completed on 2024-08-13 11:25:42
