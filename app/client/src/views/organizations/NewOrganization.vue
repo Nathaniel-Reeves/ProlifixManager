@@ -28,9 +28,9 @@
                   v-model="name.organization_initial"
                   placeholder="Initials"
                   aria-describedby="inline-form-input-initial-live-feedback"
-                  :class="['form-control', (name.initial?.length > 0 || name.initial?.length < 7 ? '' : 'is-invalid')]"
+                  :class="['form-control', (name.initial?.length && name.initial.length < 10 ? '' : 'is-invalid')]"
                 ></b-form-input>
-                <div id="inline-form-input-initial-live-feedback" class="invalid-feedback">This is a required field that must be no longer than 6 characters.</div>
+                <div id="inline-form-input-initial-live-feedback" class="invalid-feedback">This is a required field that must be no longer than 10 characters.</div>
               </div>
               <div>
                 <b-button @click="radioNames(name.name_id, 'primary')" :disabled="name.primary_name" :pressed="name.primary_name" :variant="name.primary_name ? 'primary' : 'outline-primary'" class="mb-2 mr-sm-2 mb-sm-0">Primary Name</b-button>
@@ -199,8 +199,8 @@ export default {
           createToast(errorToast)
           flag = false
         }
-        if (this.edit_names_buffer[i].organization_initial?.length > 6) {
-          errorToast.message = 'Initials must be no longer than 6 characters.'
+        if (this.edit_names_buffer[i].organization_initial?.length > 10) {
+          errorToast.message = 'Initials must be no longer than 10 characters.'
           createToast(errorToast)
           flag = false
         }
@@ -248,7 +248,7 @@ export default {
       if (resp2.status === 201) {
         Object.values(resp1.data[0].temp_key_lookup).forEach(item => {
           if (item.table_name === 'Organizations') {
-            this.$router.push({ path: `/organizations/${item.new_id}` })
+            this.$router.push({ path: `/organizations/${tempKeyLookup[this.new_org_id].new_id}` })
           }
         })
       }

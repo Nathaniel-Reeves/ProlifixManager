@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3 id="Formulas">Formulas<b-button v-if="!edit_formulas && active_tab_index < numVersions" v-b-tooltip.hover title="Edit Product Formulas" @click="toggle_edit_formulas()" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
+    <h3 id="Formulas">Formulas<b-button v-if="!edit_formulas && active_tab_index < numVersions" v-b-tooltip.hover title="Edit Product Formulas" @click="set_formula_buffer()" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
 
     <b-tabs content-class="mt-3" v-model="active_tab_index">
       <b-tab v-for="(f, index) in formulas" :key="'index-' + index" :disabled="active_tab_index !== index && edit_formulas">
@@ -122,7 +122,7 @@
         </b-card>
       </b-tab>
 
-      <b-tab v-if="edit_formulas" title="New Formula" :disabled="active_tab_index < numVersions && !edit_formulas">
+      <b-tab title="New Formula" :disabled="active_tab_index < numVersions && edit_formulas">
         <b-card class="m-2">
           <b-card-title>New Formula Version {{ numVersions + 1 }}</b-card-title>
           <select id="new_version_selector" class="form-control form-control-lg mb-3" v-model="new_version_select"  @change="set_formula_buffer()" :disabled="disable_version_select">
@@ -306,7 +306,7 @@ export default {
       ingredient_options: [],
       new_formula_id: genTempKey(),
       new_formula_ingredient_id_index: 0,
-      active_tab_index: 0,
+      active_tab_index: this.formulas.indexOf(this.formulas.find(f => f.formula_id === this.defaultFormulaId)),
       req: new CustomRequest(this.$cookies.get('session'))
     }
   },
@@ -648,7 +648,7 @@ export default {
       this.$emit('toggleLoaded', false)
       this.req = new CustomRequest(this.$cookies.get('session'))
 
-      if (this.new_version_select === 'NEW') {
+      if (this.new_version_select === 'NEW' || this.formulas.length === 0) {
         const newFormula = {
           formulation_version: this.numVersions + 1,
           formula_id: this.new_formula_id,
@@ -664,6 +664,10 @@ export default {
         this.$emit('toggleLoaded', true)
         return
       }
+
+      console.log('Setting formula buffer: NOT NEW', this.formulas.length)
+      console.log('active tab:', this.active_tab_index)
+      console.log('version select:', this.new_version_select)
 
       if (this.new_version_select !== '') {
         this.new_formula_buffer = cloneDeep(this.formulas.find(f => f.formulation_version === this.new_version_select))
