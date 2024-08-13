@@ -65,36 +65,34 @@ const routes = [
   {
     path: '/organizations',
     name: 'organizations',
-    component: () => import(/* webpackChunkName: "organizations" */ '../views/organizations/OrganizationsHome.vue'),
-    children: [
-      {
-        path: 'create',
-        name: 'NewOrganization',
-        component: () => import(/* webpackChunkName: "NewOrganization" */ '../views/organizations/NewOrganization.vue')
-      },
-      {
-        path: 'facilities/:id',
-        name: 'FacilitiesDetail',
-        component: () => import(/* webpackChunkName: "FacilitiesDetail" */ '../views/organizations/FacilitiesDetail.vue')
-      },
-      {
-        path: 'facilities/create',
-        props: route => ({ orgId: route.query.orgId, orgName: route.query.orgName, orgInitial: route.query.orgInitial }),
-        name: 'NewFacility',
-        component: () => import(/* webpackChunkName: "NewProduct" */ '../views/organizations/NewFacility.vue')
-      },
-      {
-        path: 'people/:id',
-        name: 'PeopleDetail',
-        component: () => import(/* webpackChunkName: "PeopleDetail" */ '../views/organizations/PeopleDetail.vue')
-      },
-      {
-        path: 'people/create',
-        props: route => ({ orgId: route.query.orgId, orgName: route.query.orgName, orgInitial: route.query.orgInitial }),
-        name: 'NewPerson',
-        component: () => import(/* webpackChunkName: "NewProduct" */ '../views/organizations/NewPerson.vue')
-      }
-    ]
+    component: () => import(/* webpackChunkName: "organizations" */ '../views/organizations/OrganizationsHome.vue')
+  },
+  {
+    path: '/organizations/create',
+    name: 'NewOrganization',
+    component: () => import(/* webpackChunkName: "NewOrganization" */ '../views/organizations/NewOrganization.vue')
+  },
+  {
+    path: '/organizations/facilities/:id',
+    name: 'FacilitiesDetail',
+    component: () => import(/* webpackChunkName: "FacilitiesDetail" */ '../views/organizations/FacilitiesDetail.vue')
+  },
+  {
+    path: '/organizations/facilities/create',
+    props: route => ({ orgId: route.query.orgId, orgName: route.query.orgName, orgInitial: route.query.orgInitial }),
+    name: 'NewFacility',
+    component: () => import(/* webpackChunkName: "NewProduct" */ '../views/organizations/NewFacility.vue')
+  },
+  {
+    path: '/organizations/people/:id',
+    name: 'PeopleDetail',
+    component: () => import(/* webpackChunkName: "PeopleDetail" */ '../views/organizations/PeopleDetail.vue')
+  },
+  {
+    path: '/organizations/people/create',
+    props: route => ({ orgId: route.query.orgId, orgName: route.query.orgName, orgInitial: route.query.orgInitial }),
+    name: 'NewPerson',
+    component: () => import(/* webpackChunkName: "NewProduct" */ '../views/organizations/NewPerson.vue')
   },
   {
     path: '/organizations/:id',
