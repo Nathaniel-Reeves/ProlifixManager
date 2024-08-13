@@ -1,6 +1,16 @@
 <template>
   <div class="my_component">
-    <div class="card my-2">
+    <div v-if="!loaded" class="d-flex justify-content-center">
+      <div class="card my-2" style="box-shadow: 0 20px 40px rgba(0,0,0,.2); max-width:fit-content;">
+        <div class="card-body">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="status"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card my-2" v-else>
       <div class="card-body">
         <h2 class="card-title flex-grow-1">New Organization Form</h2>
 
@@ -18,7 +28,7 @@
                   v-model="name.organization_name"
                   placeholder="Organization Name"
                   aria-describedby="inline-form-input-name-live-feedback"
-                  :class="['form-control', (name.organization_name?.length > 0 ? '' : 'is-invalid')]"
+                  :class="['form-control', (name.organization_name && name.organization_name?.length > 0 ? '' : 'is-invalid')]"
                 ></b-form-input>
                 <div id="inline-form-input-name-live-feedback" class="invalid-feedback">This is a required field.</div>
               </div>
@@ -28,7 +38,7 @@
                   v-model="name.organization_initial"
                   placeholder="Initials"
                   aria-describedby="inline-form-input-initial-live-feedback"
-                  :class="['form-control', (name.initial?.length && name.initial.length < 10 ? '' : 'is-invalid')]"
+                  :class="['form-control', (name.organization_initial && name.organization_initial?.length <= 10 ? '' : 'is-invalid')]"
                 ></b-form-input>
                 <div id="inline-form-input-initial-live-feedback" class="invalid-feedback">This is a required field that must be no longer than 10 characters.</div>
               </div>
@@ -148,6 +158,7 @@ export default {
   name: 'NewOrganization',
   data: function () {
     return {
+      loaded: true,
       new_org_id: null,
       edit_names_buffer: [],
       org_buffer: {
@@ -213,7 +224,9 @@ export default {
       return flag
     },
     submit: async function () {
+      this.loaded = false
       if (!this.validateNewOrg()) {
+        this.loaded = true
         return false
       }
 
@@ -231,27 +244,36 @@ export default {
       const createToast = this.$root.createToast
 
       const resp1 = await this.req.sendRequest(window.origin)
-      resp1.messages.flash.forEach(message => {
-        createToast(message)
-      })
+
+      if (resp1.status !== 201) {
+        resp1.messages.flash.forEach(message => {
+          createToast(message)
+        })
+        this.loaded = true
+        return false
+      }
 
       const tempKeyLookup = this.req.getTempKeyLookup()
       this.req = new CustomRequest(this.$cookies.get('session'))
 
       const updateOrg = {
-        organizaiton_id: tempKeyLookup[this.new_org_id].new_id,
+        organization_id: tempKeyLookup[this.new_org_id].new_id,
         primary_name_id: tempKeyLookup[primaryNameTempKey].new_id
       }
       this.req.upsertRecord('Organizations', updateOrg)
       const resp2 = await this.req.sendRequest(window.origin)
 
-      if (resp2.status === 201) {
-        Object.values(resp1.data[0].temp_key_lookup).forEach(item => {
-          if (item.table_name === 'Organizations') {
-            this.$router.push({ path: `/organizations/${tempKeyLookup[this.new_org_id].new_id}` })
-          }
-        })
+      resp2.messages.flash.forEach(message => {
+        createToast(message)
+      })
+
+      if (resp2.status !== 201) {
+        this.loaded = true
+        return false
       }
+
+      this.$router.push({ path: `/organizations/${updateOrg.organization_id}` })
+      return true
     },
     radioNames: function (id) {
       for (let i = 0; i < this.edit_names_buffer.length; i++) {

@@ -1,6 +1,16 @@
 <template>
   <div class="my_component">
-    <div class="card my-2">
+    <div v-if="!loaded" class="d-flex justify-content-center">
+      <div class="card my-2" style="box-shadow: 0 20px 40px rgba(0,0,0,.2); max-width:fit-content;">
+        <div class="card-body">
+          <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="status"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card my-2" v-else>
       <div class="card-body">
         <h2 class="card-title flex-grow-1">New Component Form</h2>
 
@@ -196,7 +206,7 @@ export default {
   props: {
     orgId: {
       type: Number,
-      default: 0
+      default: null
     },
     orgName: {
       type: String,
@@ -209,6 +219,7 @@ export default {
   },
   data: function () {
     return {
+      loaded: true,
       brand: {
         organization_id: this.orgId,
         organization_primary_name: this.orgName,
@@ -261,20 +272,15 @@ export default {
       certified_us_pharmacopeia: false,
       certified_non_gmo: false,
       certified_vegan: false,
-      doc: {},
       req: new CustomRequest(this.$cookies.get('session'))
     }
   },
   methods: {
     submit: async function () {
+      this.loaded = false
       if (!this.validateNewComponent()) {
+        this.loaded = true
         return false
-      }
-
-      if (this.component_type === 'powder' || this.component_type === 'liquid' || this.component_type === 'capsule') {
-        this.doc = ingredientDoc
-      } else {
-        this.doc = compDoc
       }
 
       const newComponent = {
@@ -294,7 +300,13 @@ export default {
         certified_us_pharmacopeia: this.certified_us_pharmacopeia,
         certified_non_gmo: this.certified_non_gmo,
         certified_vegan: this.certified_vegan,
-        doc: this.doc
+        doc: {}
+      }
+
+      if (this.component_type === 'powder' || this.component_type === 'liquid' || this.component_type === 'capsule') {
+        newComponent.doc = ingredientDoc
+      } else {
+        newComponent.doc = compDoc
       }
 
       let primaryNameTempKey = ''
@@ -310,9 +322,14 @@ export default {
       const createToast = this.$root.createToast
 
       const resp1 = await this.req.sendRequest(window.origin)
-      resp1.messages.flash.forEach(message => {
-        createToast(message)
-      })
+
+      if (resp1.status !== 201) {
+        resp1.messages.flash.forEach(message => {
+          createToast(message)
+        })
+        this.loaded = true
+        return false
+      }
 
       const tempKeyLookup = this.req.getTempKeyLookup()
       this.req = new CustomRequest(this.$cookies.get('session'))
@@ -321,16 +338,20 @@ export default {
         component_id: tempKeyLookup[this.new_component_id].new_id,
         primary_name_id: tempKeyLookup[primaryNameTempKey].new_id
       }
-      this.req.upsertRecort('Components', updateComponent)
+      this.req.upsertRecord('Components', updateComponent)
       const resp2 = await this.req.sendRequest(window.origin)
 
-      if (resp2.status === 201) {
-        Object.values(resp1.data[0].temp_key_lookup).forEach(item => {
-          if (item.table_name === 'Components') {
-            this.$router.push({ path: `/catalogue/components/${item.new_id}` })
-          }
-        })
+      resp2.messages.flash.forEach(message => {
+        createToast(message)
+      })
+
+      if (resp2.status !== 201) {
+        this.loaded = true
+        return false
       }
+
+      this.$router.push({ path: `/catalogue/components/${updateComponent.component_id}` })
+      return true
     },
     validateNewComponent: function () {
       this.$bvToast.hide()
@@ -366,13 +387,26 @@ export default {
         flag = false
       }
 
+      let primaryNameCount = 0
+
       this.edit_names_buffer.forEach(name => {
         if (name.component_name === '') {
           errorToast.message = 'Name cannot be empty.'
           createToast(errorToast)
           flag = false
         }
+
+        if (name.primary_name) {
+          primaryNameCount += 1
+        }
       })
+
+      if (primaryNameCount !== 1) {
+        errorToast.message = 'A Primary Name is required.'
+        createToast(errorToast)
+        flag = false
+      }
+
       return flag
     },
     radioNames: function (id, flag) {
@@ -496,7 +530,6 @@ export default {
     certified_usda_organic: function (val) {
       if (val === true) {
         this.certified_non_gmo = true
-        this.certified_wildcrafted = false
         this.certified_made_with_organic = false
       } else {
         this.certified_non_gmo = false
@@ -507,13 +540,6 @@ export default {
         this.certified_non_gmo = false
         this.certified_wildcrafted = false
         this.certified_usda_organic = false
-      }
-    },
-    certified_wildcrafted: function (val) {
-      if (val === true) {
-        this.certified_non_gmo = true
-        this.certified_usda_organic = false
-        this.certified_made_with_organic = false
       }
     }
   },
@@ -532,7 +558,9 @@ export default {
   },
   created: function () {
     this.new_component_id = genTempKey()
-    this.addName()
+    const newName = this.createName()
+    // newName.primary_name = true
+    this.edit_names_buffer.push(newName)
     this.radioNames(this.edit_names_buffer[0].name_id, 'primary')
     this.get_organizations()
   }
