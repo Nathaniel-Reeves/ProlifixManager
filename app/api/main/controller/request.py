@@ -6,6 +6,7 @@ import pathlib
 from werkzeug.utils import secure_filename
 import hashlib
 from sqlalchemy import select, insert, update, delete, CursorResult
+from sqlalchemy.sql import text
 from base64 import b64decode
 from view.response import (
     VariantType,
@@ -711,3 +712,164 @@ class CustomRequest:
             return None, False
 
         return record_id, True
+
+def check_organization_levenshtein(request):
+    custom_response = CustomResponse()
+
+    data = request.json
+
+    # Connect to the database
+    try:
+        session = get_session()
+    except Exception:
+        error = error_message()
+        custom_response.insert_flash_message(error)
+        custom_response.set_status_code(500)
+        return custom_response
+
+    for name_obj in data:
+        # Validate Request Data
+        if 'organization_name' not in name_obj.keys() or 'organization_initial' not in name_obj.keys():
+            flash_message = FlashMessage(
+                variant=VariantType.DANGER,
+                title="Invalid Request!",
+                message="organization_name or organization_initial is missing."
+            )
+            custom_response.insert_flash_message(flash_message)
+            custom_response.set_status_code(400)
+            session.close()
+            return custom_response
+
+        # Build Query
+        org_name = str(name_obj['organization_name']).strip()
+        org_initial = str(name_obj['organization_initial']).strip()
+        name_obj['similar_names'] = []
+
+        stm = text(f"""
+            SELECT
+                `organization_id`,
+                `organization_name`,
+                `organization_initial`,
+                sys.LEVENSHTEIN_RATIO(`organization_name`, '{org_name}') AS duplicate_probability_score_name,
+                sys.LEVENSHTEIN_RATIO(`organization_initial`, '{org_initial}') AS duplicate_probability_score_initial
+            FROM `Organizations`.`Organization_Names`
+            WHERE
+                sys.LEVENSHTEIN_RATIO(`organization_name`, '{org_name}') > 50 OR
+                sys.LEVENSHTEIN_RATIO(`organization_initial`, '{org_initial}') > 50
+            ORDER BY
+                duplicate_probability_score_name DESC,
+                duplicate_probability_score_initial DESC;""")
+
+        # Execute the query
+        raw_data = {}
+        try:
+            raw_data = session.execute(stm).all()
+        except Exception:
+            error = error_message()
+            custom_response.insert_flash_message(error)
+            custom_response.set_status_code(400)
+            session.close()
+            return custom_response
+        for row in raw_data:
+            d = {
+                'organization_id': int(row[0]),
+                'organization_name': row[1],
+                'organization_initial': row[2],
+                'duplicate_probability_score_name': int(row[3]),
+                'duplicate_probability_score_initial': int(row[4])
+            }
+            name_obj['similar_names'].append(d)
+        custom_response.insert_data(name_obj)
+
+    session.close()
+    custom_response.set_status_code(200)
+    return custom_response
+
+
+def check_component_levenshtein(request):
+    custom_response = CustomResponse()
+
+    data = request.json
+
+    # Connect to the database
+    try:
+        session = get_session()
+    except Exception:
+        error = error_message()
+        custom_response.insert_flash_message(error)
+        custom_response.set_status_code(500)
+        return custom_response
+
+    for name_obj in data:
+        # Validate Request Data
+        if 'component_name' not in name_obj.keys():
+            flash_message = FlashMessage(
+                variant=VariantType.DANGER,
+                title="Invalid Request!",
+                message="component_name is missing."
+            )
+            custom_response.insert_flash_message(flash_message)
+            custom_response.set_status_code(400)
+            session.close()
+            return custom_response
+
+        # Build Query
+        component_name = str(name_obj['component_name']).strip()
+        name_obj['similar_names'] = []
+
+        stm = text(f"""
+            SELECT
+                JSON_ARRAYAGG(JSON_OBJECT(
+                    'component_id', a.`component_id`,
+                    'component_name', a.`component_name`,
+                    'duplicate_probability_score_name', sys.LEVENSHTEIN_RATIO(a.`component_name`, '{component_name}'),
+                    'component_names', (
+                        SELECT JSON_ARRAYAGG(JSON_OBJECT(
+                            'name_id', `name_id`,
+                            'component_id', `component_id`,
+                            'component_name', `component_name`,
+                            'primary_name', `primary_name`,
+                            'botanical_name', `botanical_name`
+                        ))
+                        FROM `Inventory`.`Component_Names`
+                        WHERE `component_id` = a.`component_id`
+                    ),
+                    'certified_usda_organic', b.`certified_usda_organic`,
+                    'certified_halal', b.`certified_halal`,
+                    'certified_kosher', b.`certified_kosher`,
+                    'certified_gluten_free', b.`certified_gluten_free`,
+                    'certified_national_sanitation_foundation', b.`certified_national_sanitation_foundation`,
+                    'certified_us_pharmacopeia', b.`certified_us_pharmacopeia`,
+                    'certified_non_gmo', b.`certified_non_gmo`,
+                    'certified_vegan', b.`certified_vegan`,
+                    'certified_fda', b.`certified_fda`,
+                    'certified_wildcrafted', b.`certified_wildcrafted`,
+                    'certified_made_with_organic', b.`certified_made_with_organic`,
+                    'certified_gmp', b.`certified_gmp`
+                )) AS similar_names,
+                sys.LEVENSHTEIN_RATIO(a.`component_name`, '{component_name}') AS duplicate_probability_score_name
+            FROM `Inventory`.`Component_Names` a
+            JOIN `Inventory`.`Components` b ON
+                a.`component_id` = b.`component_id`
+            WHERE
+                sys.LEVENSHTEIN_RATIO(`component_name`, '{component_name}') > 50
+            ORDER BY
+                duplicate_probability_score_name DESC;""")
+
+        # Execute the query
+        raw_data = {}
+        try:
+            raw_data = session.execute(stm).all()
+        except Exception:
+            error = error_message()
+            custom_response.insert_flash_message(error)
+            custom_response.set_status_code(400)
+            session.close()
+            return custom_response
+        data = raw_data[0][0] if raw_data[0][0] else "[]"
+        name_obj['similar_names'] = json.loads(data)
+        custom_response.insert_data(name_obj)
+
+    session.close()
+    custom_response.set_status_code(200)
+    return custom_response

@@ -3,6 +3,7 @@ from typing import List
 
 from sqlalchemy import Enum, ForeignKey, Column, ForeignKeyConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.dialects.mysql import JSON
 
 from .base import Base
@@ -58,7 +59,7 @@ class Components(Base):
     primary_name_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Component_Names.name_id'))
     is_label: Mapped[bool] = mapped_column(default=False)
 
-    doc = Column(JSON, default={})
+    doc = Column(JSON, default={}, deferred_raiseload=False)
 
     # Common Methods
     def __repr__(self):
@@ -71,6 +72,10 @@ class Components(Base):
         Returns:
             Dict: Columns as Keys
         """
+        try:
+            doc =self.doc
+        except SQLAlchemyError:
+            doc = {}
         return {
             "component_id": self.component_id,
             "component_type": self.component_type,
@@ -88,9 +93,10 @@ class Components(Base):
             "certified_vegan": self.certified_vegan,
             "date_entered": self.date_entered,
             "units": self.units,
-            "doc": self.doc,
             "primary_name_id": self.primary_name_id,
-            "is_label": self.is_label
+            "is_label": self.is_label,
+            "brand_id": self.brand_id,
+            "doc": doc
         }
 
     def get_id(self):

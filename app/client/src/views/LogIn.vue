@@ -69,7 +69,7 @@ export default {
         response.json().then(jsonData => {
           if (response.status === 201) {
             this.userData = jsonData
-            this.$emit('login', jsonData)
+            this.$emit('login', this.userData)
             this.$router.push({ name: 'home' })
           } else if (response.status === 401) {
             this.form_messages = jsonData.messages.form

@@ -87,8 +87,14 @@
                 <span :class="calc_total(f['formula_detail']) !== 100 ? 'text-danger':''">= {{ calc_total(f['formula_detail']) }}%</span>
               </template>
               <template #cell(specific_brand_required)="specific_brand_required">
-                <span v-if="specific_brand_required.value" class="badge badge-success badge-pill" style="font-size: 1.5em;">Yes</span>
-                <span v-else class="badge badge-warning badge-pill" style="font-size: 1.5em;">No</span>
+                <div v-if="!edit_formulas">
+                  <span v-if="specific_brand_required.value" class="badge badge-success badge-pill" style="font-size: 1.5em;">Yes</span>
+                  <span v-else class="badge badge-warning badge-pill" style="font-size: 1.5em;">No</span>
+                </div>
+                <div v-else>
+                  <b-button @click="specific_brand_required.item.specific_brand_required = false;update_row(specific_brand_required.item)" v-show="specific_brand_required.value" class="badge badge-success badge-pill" style="font-size: 1.5em;">Yes</b-button>
+                  <b-button @click="specific_brand_required.item.specific_brand_required = true;update_row(specific_brand_required.item)" v-show="!specific_brand_required.value" class="badge badge-warning badge-pill" style="font-size: 1.5em;">No</b-button>
+                </div>
               </template>
               <template #foot(specific_brand_required)=""></template>
               <template #cell(specific_ingredient_required)="specific_ingredient_required">

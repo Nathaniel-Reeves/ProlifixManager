@@ -462,23 +462,6 @@ const ingredientDoc = {
         test_name: 'Nutritional Assay',
         tests: []
       },
-      organochlorines: {
-        date_issued: '',
-        date_revised: '',
-        file_pointer: '',
-        locations: {
-          in_house: false,
-          primary: 'supplier',
-          supplier: true,
-          third_party_lab: true
-        },
-        required_spec: false,
-        revision_number: 0,
-        id_code: '',
-        statement: '',
-        test_name: 'Organochlorines',
-        tests: []
-      },
       organoleptic: {
         date_issued: '',
         date_revised: '',

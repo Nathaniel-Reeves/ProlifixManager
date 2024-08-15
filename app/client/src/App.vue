@@ -70,14 +70,14 @@
       <div class="container-fluid">
         <div class="row justify-content-center">
           <!-- This is the link that vue uses to include other templates, Do not Delete! -->
-          <RouterView @login="updateUserData" />
+          <RouterView @login="(userData) => updateUserData(userData)" />
         </div>
       </div>
     </div>
     <div class="container-fluid mt-3 p-0" id="footer">
       <footer class="bg-dark text-center text-white">
         <div class="text-center bg-dark p-3">
-          © 2024 Copyright | v3.6.5
+          © 2024 Copyright | v3.6.6
         </div>
       </footer>
     </div>

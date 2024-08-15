@@ -171,6 +171,10 @@
         </b-form>
       </div>
     </div>
+    <div style="display:none;">
+      <NamesComponent></NamesComponent>
+      <CertBadge></CertBadge>
+    </div>
   </div>
 </template>
 
@@ -196,12 +200,16 @@ import compDoc from './compDocTemp.js'
 import { CustomRequest, genTempKey } from '../../../common/CustomRequest.js'
 import ChooseOrg from '../../../components/ChooseOrg.vue'
 import vSelect from 'vue-select'
+import NamesComponent from './NamesComponent.vue'
+import CertBadge from '../../../components/CertBadge.vue'
 
 export default {
   name: 'NewComponent',
   components: {
     vSelect,
-    ChooseOrg
+    ChooseOrg,
+    NamesComponent,
+    CertBadge
   },
   props: {
     orgId: {
@@ -272,13 +280,127 @@ export default {
       certified_us_pharmacopeia: false,
       certified_non_gmo: false,
       certified_vegan: false,
-      req: new CustomRequest(this.$cookies.get('session'))
+      req: new CustomRequest(this.$cookies.get('session')),
+      flash_errors: [],
+      duplicate_flag: null
     }
   },
   methods: {
+    buildDuplicateModalMessage: function (testName, score, potentialDuplicate) {
+      console.log('potentialDuplicate:', potentialDuplicate)
+      const h = this.$createElement
+      const messageVNode = h('div', [
+        h('p', [
+          `'${testName}' (new component) has a ${score}% match with '${potentialDuplicate.component_name}' (pre-existing component).  Are these two components the same?`
+        ]),
+        h('p', [
+          `If so, click YES to go to the '${potentialDuplicate.component_name}' spec page.`
+        ]),
+        h('p', [
+          'If not, click NO to continue creating the new component.'
+        ]),
+        potentialDuplicate.component_names.length > 0 ? h('p', ['The following names and/or certifications are associated with the existing component:']) : null,
+        h('div', [
+          potentialDuplicate.component_names.length > 0 ? h(NamesComponent, { props: { pNames: potentialDuplicate.component_names, namingType: 'component', allowEdit: false, id: potentialDuplicate.component_id, hideHeader: true } }) : null
+        ]),
+        h('div', [
+          h(CertBadge, { props: { data: potentialDuplicate } })
+        ])
+      ])
+      return messageVNode
+    },
+    handleDuplicates: async function (data) {
+      this.duplicate_flag = false
+      for (let i = 0; i < data.length; i++) {
+        for (let j = 0; j < data[i].similar_names.length; j++) {
+          const potentialDuplicate = data[i].similar_names[j]
+          const testName = data[i].component_name
+          const score = data[i].similar_names[j].duplicate_probability_score_name
+          const modal = {
+            title: `Please Confirm '${testName}' is not a Duplicate`,
+            size: 'lg',
+            buttonSize: 'md',
+            okVariant: 'danger',
+            okTitle: 'YES',
+            cancelTitle: 'NO',
+            cancelVariant: 'success',
+            footerClass: 'p-2',
+            hideHeaderClose: true,
+            centered: true,
+            hideBackdrop: false,
+            noStacking: true,
+            noCloseOnBackdrop: true
+          }
+          const value = await this.$bvModal.msgBoxConfirm(
+            [this.buildDuplicateModalMessage(testName, score, potentialDuplicate)], modal
+          )
+          if (this.duplicate_flag) {
+            return false
+          }
+          if (value) {
+            console.log('Duplicate found')
+            this.duplicate_flag = true
+            this.$router.push({ path: `/catalogue/components/${potentialDuplicate.component_id}` })
+            return false
+          }
+        }
+      }
+      console.log('No duplicates found')
+      return true
+    },
+    checkComponentAlreadyExists: async function () {
+      const fetchRequest = window.origin + '/api/v1/submit/check_component'
+      // eslint-disable-next-line
+      console.log(
+        'POST ' + fetchRequest
+      )
+      return fetch(fetchRequest, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(this.edit_names_buffer)
+      }).then(response => {
+        return response.json().then(jsonData => {
+          if (response.status === 200) {
+            return jsonData.data
+          } else if (response.status === 401) {
+            this.form_messages = jsonData.messages.form
+            return false
+          } else {
+            this.flash_messages = jsonData.messages.flash
+            const createToast = this.$root.createToast
+            this.flash_messages.forEach(function (message) {
+              createToast(message)
+            })
+            return false
+          }
+        })
+      }).catch(error => {
+        // eslint-disable-next-line
+        console.log(error)
+        this.flash_errors.push(error)
+        // eslint-disable-next-line
+        console.log(this.flash_errors)
+        return false
+      })
+    },
     submit: async function () {
       this.loaded = false
       if (!this.validateNewComponent()) {
+        this.loaded = true
+        return false
+      }
+
+      const result1 = await this.checkComponentAlreadyExists()
+      if (!result1) {
+        return false
+      }
+      console.log('r1', result1)
+      const result2 = await this.handleDuplicates(result1)
+      console.log('r2', result2)
+      if (!result2) {
         this.loaded = true
         return false
       }

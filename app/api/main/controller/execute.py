@@ -15,8 +15,7 @@ def execute_query(custom_response, stm):
 
     # Execute the query
     try:
-        stream = session.execute(stm)
-        raw_data = stream.all()
+        raw_data = session.execute(stm).all()
     except Exception:
         error = error_message()
         custom_response.insert_flash_message(error)

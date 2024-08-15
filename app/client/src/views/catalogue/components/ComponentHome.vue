@@ -234,7 +234,7 @@ export default {
       return ''
     },
     getComponentData: function () {
-      let fetchRequest = window.origin + '/api/v1/catalogue/components?doc=true'
+      let fetchRequest = window.origin + '/api/v1/catalogue/components?doc=true&populate=component_names'
       if (this.type_filter !== 'all') {
         fetchRequest += '&type=' + this.type_filter
       } else {
@@ -341,15 +341,15 @@ export default {
       this.powder_cert_filter = checked ? this.powder_cert_options.map((obj) => obj.value).slice() : []
     },
     searchFilter: function (component) {
-      // if (component.component_names !== undefined && component.component_names.length > 0) {
-      //   for (let i = 0; i < component.component_names.length; i++) {
-      //     if (component.component_names[i].component_name.toLowerCase().includes(this.search_query.toLowerCase())) {
-      //       return true
-      //     }
-      //   }
-      // }
-      // return false
-      return component.component_primary_name.toLowerCase().includes(this.search_query.toLowerCase())
+      if (component.component_names !== undefined && component.component_names.length > 0) {
+        for (let i = 0; i < component.component_names.length; i++) {
+          if (component.component_names[i].component_name.toLowerCase().includes(this.search_query.toLowerCase())) {
+            return true
+          }
+        }
+      }
+      return false
+      // return component.component_primary_name.toLowerCase().includes(this.search_query.toLowerCase())
     },
     componentTypeFilter: function (component) {
       if (component.component_type === this.type_filter) {
@@ -397,14 +397,14 @@ export default {
   },
   computed: {
     filterActive: function () {
-      if (this.type_filter !== 'all' || this.search_query.length > 3) {
+      if (this.type_filter !== 'all' || this.search_query.length > 0) {
         return true
       }
       return false
     },
     filteredComponents: function () {
       let list = Object.values(structuredClone(this.components_data))
-      if (this.search_query.length > 3) {
+      if (this.search_query.length > 0) {
         list = list.filter(this.searchFilter)
       }
       if (this.type_filter === 'powder' && this.powder_cert_filter.length > 0) {

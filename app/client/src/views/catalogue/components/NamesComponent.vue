@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3 id="Aliases">Aliases<b-button v-show="!edit_names && allow_edit" v-b-tooltip.hover :title="'Edit ' + naming_type + ' names.'" v-on:click="editNames()" v-bind:class="['btn', 'p-1', 'ml-2', 'btn-light']" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
+    <h3 id="Aliases" v-show="!hideHeader">Aliases<b-button v-show="!edit_names && allow_edit" v-b-tooltip.hover :title="'Edit ' + naming_type + ' names.'" v-on:click="editNames()" v-bind:class="['btn', 'p-1', 'ml-2', 'btn-light']" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
     <div v-for="name in names" :key="name.name_id">
       <p v-show="!edit_names" v-bind:class="{ bold: name.primary_name, italic: name.botanical_name }">
         {{ getName(name) }}<b-badge variant="primary" pill class="ml-2" style="font-size:1em;" v-show="name.primary_name">Primary</b-badge><b-badge variant="success" pill class="ml-2" style="font-size:1em;" v-show="name.botanical_name">Botanical</b-badge>
@@ -61,7 +61,11 @@ export default {
     pNames: Array,
     namingType: String,
     allowEdit: Boolean,
-    id: Number
+    id: Number,
+    hideHeader: {
+      type: Boolean,
+      default: false
+    }
   },
   data: function () {
     return {
@@ -70,7 +74,7 @@ export default {
       allow_edit: this.allowEdit,
       edit_names: false,
       edit_names_buffer: [],
-      req: new CustomRequest(this.$cookies.get('session'))
+      req: this.allowEdit ? new CustomRequest(this.$cookies.get('session')) : null
     }
   },
   methods: {
