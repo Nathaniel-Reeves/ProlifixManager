@@ -97,7 +97,7 @@
 
             <div class="mb-3">
               <strong class='mr-3'>Website: </strong>
-              <b-form-group>
+              <b-form-group v-show="edit_org">
                 <b-form-input
                   :disabled="!edit_org"
                   id="website_url"
@@ -106,6 +106,9 @@
                   type="url"
                 ></b-form-input>
               </b-form-group>
+              <p v-show="!edit_org" class="text-info">
+                <b-link :exact="true" :exact-path="true" :href="buildURL(org_data.website_url)" target="_blank">{{ org_data.website_url }}</b-link>
+              </p>
             </div>
 
             <div class="d-flex">
@@ -344,6 +347,12 @@ export default {
     }
   },
   methods: {
+    buildURL: function (url) {
+      if (url && !url.startsWith('http')) {
+        return 'http://' + url
+      }
+      return url
+    },
     sortPeople: function (a, b) {
       if (a.termination_date && b.termination_date) {
         return a.termination_date > b.termination_date ? 1 : -1

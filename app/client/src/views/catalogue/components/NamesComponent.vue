@@ -2,8 +2,8 @@
   <div>
     <h3 id="Aliases" v-show="!hideHeader">Aliases<b-button v-show="!edit_names && allow_edit" v-b-tooltip.hover :title="'Edit ' + naming_type + ' names.'" v-on:click="editNames()" v-bind:class="['btn', 'p-1', 'ml-2', 'btn-light']" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
     <div v-for="name in names" :key="name.name_id">
-      <p v-show="!edit_names" v-bind:class="{ bold: name.primary_name, italic: name.botanical_name }">
-        {{ getName(name) }}<b-badge variant="primary" pill class="ml-2" style="font-size:1em;" v-show="name.primary_name">Primary</b-badge><b-badge variant="success" pill class="ml-2" style="font-size:1em;" v-show="name.botanical_name">Botanical</b-badge>
+      <p v-show="!edit_names" :class="[ name.primary_name ? 'bold' : '', hideHeader ? 'ml-3' : '' ]">
+        {{ hideHeader ? '- ' : '' }}{{ getName(name) }}<b-badge variant="primary" pill class="ml-2" style="font-size:1em;" v-show="name.primary_name">Primary</b-badge><b-badge variant="success" pill class="ml-2" style="font-size:1em;" v-show="name.botanical_name">Botanical</b-badge>
       </p>
     </div>
     <div v-for="name in edit_names_buffer" :key="'edit' + name.name_id">

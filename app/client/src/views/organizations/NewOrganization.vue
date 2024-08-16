@@ -153,9 +153,16 @@
 <script>
 import { CustomRequest, genTempKey } from '../../common/CustomRequest.js'
 import orgDoc from './orgDocTemp.js'
+import NamesComponent from './NamesComponent.vue'
+import { BBadge, BLink } from 'bootstrap-vue'
 
 export default {
   name: 'NewOrganization',
+  components: [
+    NamesComponent,
+    BBadge,
+    BLink
+  ],
   data: function () {
     return {
       loaded: true,
@@ -173,12 +180,138 @@ export default {
         courier: false,
         other: false,
         notes: null,
-        doc: orgDoc
+        doc: orgDoc,
+        flash_errors: [],
+        duplicate_flag: null
       },
       req: new CustomRequest(this.$cookies.get('session'))
     }
   },
   methods: {
+    buildURL: function (url) {
+      if (url && !url.startsWith('http')) {
+        return 'http://' + url
+      }
+      return url
+    },
+    buildDuplicateModalMessage: function (testName, score, potentialDuplicate) {
+      console.log('potentialDuplicate:', potentialDuplicate)
+      const h = this.$createElement
+      const messageVNode = h('div', [
+        h('p', [
+          `'${testName}' (new organization) has a ${score}% match with '${potentialDuplicate.organization_name}' (pre-existing organization).  Are these two organizations the same?`
+        ]),
+        h('p', [
+          `If so, click YES to go to the '${potentialDuplicate.organization_name}' spec page.`
+        ]),
+        h('p', [
+          'If not, click NO to continue creating the new organization.'
+        ]),
+        potentialDuplicate.organization_names.length > 0 ? h('p', ['The following information is associated with the existing organization:']) : null,
+        h('div', [
+          potentialDuplicate.organization_names.length > 0 ? h(NamesComponent, { props: { pNames: potentialDuplicate.organization_names, namingType: 'organization', allowEdit: false, id: potentialDuplicate.organization_id, hideHeader: true } }) : null
+        ]),
+        h('p', [
+          'Type: ',
+          potentialDuplicate.supplier ? h(BBadge, { variant: 'light', class: ['mr-2', 'border'] }, ['Supplier']) : null,
+          potentialDuplicate.client ? h(BBadge, { variant: 'light', class: ['mr-2', 'border'] }, ['Client']) : null,
+          potentialDuplicate.lab ? h(BBadge, { variant: 'light', class: ['mr-2', 'border'] }, ['Lab']) : null,
+          potentialDuplicate.courier ? h(BBadge, { variant: 'light', class: ['mr-2', 'border'] }, ['Courier']) : null,
+          potentialDuplicate.other ? h(BBadge, { variant: 'light', class: ['mr-2', 'border'] }, ['Other']) : null
+        ]),
+        h('p', [
+          'Risk Status: ',
+          potentialDuplicate.risk_level === 'UNKNOWN' ? h(BBadge, { variant: 'danger', class: ['mr-2', 'border'] }, ['Unknown Risk']) : null,
+          potentialDuplicate.risk_level === 'Low_Risk' || potentialDuplicate.risk_level === 'No_Risk' ? h(BBadge, { variant: 'success', class: ['mr-2', 'border'] }, ['Low Risk']) : null,
+          potentialDuplicate.risk_level === 'Medium_Risk' ? h(BBadge, { variant: 'warning', class: ['mr-2', 'border'] }, ['Medium Risk']) : null,
+          potentialDuplicate.risk_level === 'High_Risk' ? h(BBadge, { variant: 'danger', class: ['mr-2', 'border'] }, ['High Risk']) : null
+        ]),
+        h('p', [
+          'Website: ',
+          h(BLink, { exact: true, class: ['text-info'], attrs: { href: this.buildURL(potentialDuplicate.website_url), target: '_blank' } }, [potentialDuplicate.website_url])
+        ])
+      ])
+      return messageVNode
+    },
+    handleDuplicates: async function (data) {
+      this.duplicate_flag = false
+      for (let i = 0; i < data.length; i++) {
+        for (let j = 0; j < data[i].similar_names.length; j++) {
+          const potentialDuplicate = data[i].similar_names[j]
+          const testName = data[i].organization_name
+          const testInitial = data[i].organization_initial
+          const nameScore = data[i].similar_names[j].duplicate_probability_score_name
+          const initialScore = data[i].similar_names[j].duplicate_probability_score_initial
+          const score = nameScore > initialScore ? nameScore : initialScore
+          const pickTestName = nameScore > initialScore ? testName : testInitial
+          const modal = {
+            title: `Please Confirm '${testName}' is not a Duplicate`,
+            size: 'lg',
+            buttonSize: 'md',
+            okVariant: 'danger',
+            okTitle: 'YES',
+            cancelTitle: 'NO',
+            cancelVariant: 'success',
+            footerClass: 'p-2',
+            hideHeaderClose: true,
+            centered: true,
+            hideBackdrop: false,
+            noStacking: true,
+            noCloseOnBackdrop: true
+          }
+          const value = await this.$bvModal.msgBoxConfirm(
+            [this.buildDuplicateModalMessage(pickTestName, score, potentialDuplicate)], modal
+          )
+          if (this.duplicate_flag) {
+            return false
+          }
+          if (value) {
+            this.duplicate_flag = true
+            this.$router.push({ path: `/organizations/${potentialDuplicate.organization_id}` })
+            return false
+          }
+        }
+      }
+      return true
+    },
+    checkOrganizationAlreadyExists: async function () {
+      const fetchRequest = window.origin + '/api/v1/submit/check_organization'
+      // eslint-disable-next-line
+      console.log(
+        'POST ' + fetchRequest
+      )
+      return fetch(fetchRequest, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(this.edit_names_buffer)
+      }).then(response => {
+        return response.json().then(jsonData => {
+          if (response.status === 200) {
+            return jsonData.data
+          } else if (response.status === 401) {
+            this.form_messages = jsonData.messages.form
+            return false
+          } else {
+            this.flash_messages = jsonData.messages.flash
+            const createToast = this.$root.createToast
+            this.flash_messages.forEach(function (message) {
+              createToast(message)
+            })
+            return false
+          }
+        })
+      }).catch(error => {
+        // eslint-disable-next-line
+        console.log(error)
+        this.flash_errors.push(error)
+        // eslint-disable-next-line
+        console.log(this.flash_errors)
+        return false
+      })
+    },
     validateNewOrg: function () {
       this.$bvToast.hide()
 
@@ -227,6 +360,15 @@ export default {
       this.loaded = false
       if (!this.validateNewOrg()) {
         this.loaded = true
+        return false
+      }
+
+      const result1 = await this.checkOrganizationAlreadyExists()
+      if (!result1) {
+        return false
+      }
+      const result2 = await this.handleDuplicates(result1)
+      if (!result2) {
         return false
       }
 

@@ -21,30 +21,39 @@ def get_organizations(
     ):
 
     # Build the query
-    stm = select(db.Organizations, db.Organization_Names)
+    stm_1 = select(db.Organizations, db.Organization_Names)
 
-    stm = stm.join(db.Organization_Names, db.Organizations.primary_name_id == db.Organization_Names.name_id)
+    stm_1 = stm_1.join(db.Organization_Names, db.Organizations.primary_name_id == db.Organization_Names.name_id)
 
     if org_type:
         if 'client' in org_type:
-            stm = stm.where(db.Organizations.client == True)
+            stm_1 = stm_1.where(db.Organizations.client == True)
         if 'supplier' in org_type:
-            stm = stm.where(db.Organizations.supplier == True)
+            stm_1 = stm_1.where(db.Organizations.supplier == True)
         if 'lab' in org_type:
-            stm = stm.where(db.Organizations.lab == True)
+            stm_1 = stm_1.where(db.Organizations.lab == True)
         if 'courier' in org_type:
-            stm = stm.where(db.Organizations.courier == True)
+            stm_1 = stm_1.where(db.Organizations.courier == True)
 
     if org_ids:
-        stm = stm.where(db.Organizations.organization_id.in_(org_ids))
+        stm_1 = stm_1.where(db.Organizations.organization_id.in_(org_ids))
 
     # Execute the query
-    custom_response, raw_data, success = execute_query(custom_response, stm)
+    custom_response, raw_data_1, success = execute_query(custom_response, stm_1)
     if not success:
         return custom_response
 
+    # Build the query
+    if 'organization_names' in populate:
+        stm_2 = select(db.Organization_Names).order_by(db.Organization_Names.organization_id)
+
+        # Execute the query
+        custom_response, raw_data_2, success = execute_query(custom_response, stm_2)
+        if not success:
+            return custom_response
+
     # Process and Package the data
-    for row in raw_data:
+    for row in raw_data_1:
         pk = row[0].get_id()
         organization = row[0].to_dict()
 
@@ -66,10 +75,17 @@ def get_organizations(
 
         # Populate
         if ('organization_names' in populate):
-            r = CustomResponse()
-            resp = get_organization_names(r, [], [pk], False)
-            organization_names = {'organization_names': resp.get_data()}
-            custom_response.insert_flash_messages(r.get_flash_messages())
+            remove_names = []
+            for row in raw_data_2:
+                name = row[0].to_dict()
+                if name['organization_id'] == pk:
+                    organization_names['organization_names'].append(name)
+                    remove_names.append(name['name_id'])
+
+            for i, row in enumerate(raw_data_2):
+                if row[0].to_dict()['name_id'] in remove_names:
+                    raw_data_2.pop(i)
+                    remove_names.remove(row[0].to_dict()['name_id'])
 
         if ('facilities' in populate):
             r = CustomResponse()

@@ -747,18 +747,42 @@ def check_organization_levenshtein(request):
 
         stm = text(f"""
             SELECT
-                `organization_id`,
-                `organization_name`,
-                `organization_initial`,
-                sys.LEVENSHTEIN_RATIO(`organization_name`, '{org_name}') AS duplicate_probability_score_name,
-                sys.LEVENSHTEIN_RATIO(`organization_initial`, '{org_initial}') AS duplicate_probability_score_initial
-            FROM `Organizations`.`Organization_Names`
+            JSON_ARRAYAGG(JSON_OBJECT(
+                'organization_id', a.`organization_id`,
+                'organization_name', a.`organization_name`,
+                'organization_initial', a.`organization_initial`,
+                'website_url', c.`website_url`,
+                'risk_level', c.`risk_level`,
+                'supplier', c.`supplier`,
+                'client', c.`client`,
+                'lab', c.`lab`,
+                'courier', c.`courier`,
+                'other', c.`other`,
+                'organization_names', (
+                    SELECT JSON_ARRAYAGG(JSON_OBJECT(
+                        'name_id', b.`name_id`,
+                        'organization_id', b.`organization_id`,
+                        'organization_name', b.`organization_name`,
+                        'primary_name', b.`primary_name`,
+                        'organization_initial', b.`organization_initial`
+                    ))
+                    FROM `Organizations`.`Organization_Names` b
+                    WHERE b.`organization_id` = a.`organization_id`
+                ),
+                'duplicate_probability_score_name', sys.LEVENSHTEIN_RATIO(a.`organization_name`, '{org_name}'),
+                'duplicate_probability_score_initial', sys.LEVENSHTEIN_RATIO(a.`organization_initial`, '{org_initial}')
+            )),
+            sys.LEVENSHTEIN_RATIO(a.`organization_name`, '{org_name}') AS duplicate_probability_score_name,
+            sys.LEVENSHTEIN_RATIO(a.`organization_initial`, '{org_initial}') AS duplicate_probability_score_initial
+            FROM `Organizations`.`Organization_Names` a
+            JOIN `Organizations`.`Organizations` c ON
+                a.`organization_id` = c.`organization_id`
             WHERE
-                sys.LEVENSHTEIN_RATIO(`organization_name`, '{org_name}') > 50 OR
-                sys.LEVENSHTEIN_RATIO(`organization_initial`, '{org_initial}') > 50
+                sys.LEVENSHTEIN_RATIO(a.`organization_name`, '{org_name}') > 50 OR
+                sys.LEVENSHTEIN_RATIO(a.`organization_initial`, '{org_initial}') > 50
             ORDER BY
-                duplicate_probability_score_name DESC,
-                duplicate_probability_score_initial DESC;""")
+                duplicate_probability_score_name,
+                duplicate_probability_score_initial;""")
 
         # Execute the query
         raw_data = {}
@@ -770,15 +794,8 @@ def check_organization_levenshtein(request):
             custom_response.set_status_code(400)
             session.close()
             return custom_response
-        for row in raw_data:
-            d = {
-                'organization_id': int(row[0]),
-                'organization_name': row[1],
-                'organization_initial': row[2],
-                'duplicate_probability_score_name': int(row[3]),
-                'duplicate_probability_score_initial': int(row[4])
-            }
-            name_obj['similar_names'].append(d)
+        data = raw_data[0][0] if raw_data[0][0] else "[]"
+        name_obj['similar_names'] = json.loads(data)
         custom_response.insert_data(name_obj)
 
     session.close()
@@ -854,7 +871,7 @@ def check_component_levenshtein(request):
             WHERE
                 sys.LEVENSHTEIN_RATIO(`component_name`, '{component_name}') > 50
             ORDER BY
-                duplicate_probability_score_name DESC;""")
+                duplicate_probability_score_name;""")
 
         # Execute the query
         raw_data = {}

@@ -101,11 +101,17 @@ def get_components(
         brand = {'brand':[]}
 
         if 'component_names' in populate:
+            remove_names = []
             for row in raw_data_2:
                 name = row[0].to_dict()
                 if name['component_id'] == pk:
                     component_names['component_names'].append(name)
-                    raw_data_2.remove(row)
+                    remove_names.append(name['name_id'])
+
+            for i, row in enumerate(raw_data_2):
+                if row[0].to_dict()['name_id'] in remove_names:
+                    raw_data_2.pop(i)
+                    remove_names.remove(row[0].to_dict()['name_id'])
 
         if 'purchase_order_detail' in populate:
             r = CustomResponse()

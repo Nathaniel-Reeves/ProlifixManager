@@ -338,14 +338,12 @@ export default {
             return false
           }
           if (value) {
-            console.log('Duplicate found')
             this.duplicate_flag = true
             this.$router.push({ path: `/catalogue/components/${potentialDuplicate.component_id}` })
             return false
           }
         }
       }
-      console.log('No duplicates found')
       return true
     },
     checkComponentAlreadyExists: async function () {
@@ -397,11 +395,8 @@ export default {
       if (!result1) {
         return false
       }
-      console.log('r1', result1)
       const result2 = await this.handleDuplicates(result1)
-      console.log('r2', result2)
       if (!result2) {
-        this.loaded = true
         return false
       }
 
