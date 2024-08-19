@@ -1,4 +1,5 @@
 #!/bin/bash
+echo "Configuring MariaDB..."
 
 # Load environment variables
 if [ -f .env ]; then

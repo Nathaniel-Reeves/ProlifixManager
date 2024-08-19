@@ -35,6 +35,7 @@ services:
     restart: "no"
     volumes:
       - ./db/configure_mariadb.sh:/configure_mariadb.sh
+      - ./db/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
       - ./.env:/.env
       - /var/lib/mysql/:/var/lib/mysql/
     command: ./configure_mariadb.sh
