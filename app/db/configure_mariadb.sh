@@ -52,6 +52,8 @@ if [ -d "/var/lib/mysql/Organizations" ]; then
     exit 0
 fi
 
+ls -l
+
 # Execute all sql files in the docker-entrypoint-initdb.d directory
 for f in `./docker-entrypoint-initdb.d -l *.sql`; do
     echo "Executing $f..."
@@ -61,4 +63,5 @@ for f in `./docker-entrypoint-initdb.d -l *.sql`; do
 
     echo "All SQL files in docker-entrypoint-initdb.d directory have been executed."
 
+echo "MariaDB has been configured."
 exit 0
