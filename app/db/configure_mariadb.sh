@@ -45,4 +45,13 @@ mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host 172.10.10.2 -e "SHOW ENGINES;"
 
 echo "OQGraph engine is installed."
 
+# Execute all sql files in the docker-entrypoint-initdb.d directory
+for f in /docker-entrypoint-initdb.d/*; do
+    case "$f" in
+        *.sql)    echo "$0: running $f"; mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host 172.10.10.2 < "$f"; echo ;;
+        *)        echo "$0: ignoring $f" ;;
+    esac
+
+    echo "All SQL files in docker-entrypoint-initdb.d directory have been executed."
+
 exit 0
