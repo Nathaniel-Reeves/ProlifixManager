@@ -56,7 +56,7 @@ ls -l
 
 # Execute all sql files in the docker-entrypoint-initdb.d directory
 cd /docker-entrypoint-initdb.d
-for i in *.sql; do
+for f in *.sql; do
     echo "Executing $f..."
     mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host 172.10.10.2 < $f
     echo "$f has been executed."
