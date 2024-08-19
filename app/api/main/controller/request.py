@@ -5,7 +5,7 @@ import os
 import pathlib
 from werkzeug.utils import secure_filename
 import hashlib
-from sqlalchemy import select, insert, update, delete, CursorResult
+from sqlalchemy import select, insert, update, delete
 from sqlalchemy.sql import text
 from base64 import b64decode
 from view.response import (

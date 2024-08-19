@@ -30,8 +30,8 @@ class Equipment(Base):
         create_constraint=True,
         validate_strings=True,
         ))
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
-    date_modified: Mapped[datetime.datetime] = mapped_column(default=None)
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     equipment_history = Column(MutableDict.as_mutable(JSON))
 
@@ -53,10 +53,11 @@ class Equipment(Base):
             "process_id": self.process_id,
             "equipment_sn": self.equipment_sn,
             "status": self.status,
-            "date_entered": self.date_entered,
-            "date_modified": self.date_modified,
             "equipment_history": self.equipment_history,
-            "equipment_name": self.equipment_name
+            "equipment_name": self.equipment_name,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):
@@ -83,8 +84,6 @@ class Processes(Base):
     # Table Columns
     process_name: Mapped[str] = mapped_column()
     process_sop: Mapped[str] = mapped_column()
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
-    date_modified: Mapped[datetime.datetime] = mapped_column(default=None)
     rework_process: Mapped[bool] = mapped_column(default=False)
     min_personnel: Mapped[int] = mapped_column(default=0)
     max_personnel: Mapped[int] = mapped_column(default=0)
@@ -126,6 +125,8 @@ class Processes(Base):
         create_constraint=True,
         validate_strings=True
     ))
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     # Common Methods
     def __repr__(self):
@@ -142,8 +143,6 @@ class Processes(Base):
             "process_id": self.process_id,
             "process_name": self.process_name,
             "process_sop": self.process_sop,
-            "date_entered": self.date_entered,
-            "date_modified": self.date_modified,
             "rework_process": self.rework_process,
             "min_personnel": self.min_personnel,
             "max_personnel": self.max_personnel,
@@ -168,7 +167,10 @@ class Processes(Base):
             "process_sop_link": self.process_sop_link,
             "equipment_specific": self.equipment_specific,
             "product_variant_type": self.product_variant_type,
-            "component_filters": self.component_filters
+            "component_filters": self.component_filters,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):

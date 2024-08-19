@@ -22,9 +22,9 @@ class Organizations(Base):
     organization_names: Mapped[List["Organization_Names"]] = relationship()
     people: Mapped[Optional["People"]] = relationship()
     facilities: Mapped[Optional["Facilities"]] = relationship()
+    primary_name_id: Mapped[int] = mapped_column(ForeignKey('Organization_Names.Organization_Names.name_id'))
 
     # Table Columns
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
     website_url: Mapped[str] = mapped_column(default=None)
     vetted: Mapped[bool] = mapped_column()
     date_vetted: Mapped[datetime.datetime] = mapped_column(default=None)
@@ -41,7 +41,8 @@ class Organizations(Base):
     courier: Mapped[bool] = mapped_column(default=False)
     other: Mapped[bool] = mapped_column(default=False)
     notes: Mapped[str] = mapped_column(default=None)
-    primary_name_id: Mapped[int] = mapped_column(ForeignKey('Organization_Names.Organization_Names.name_id'))
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     doc = Column(MutableDict.as_mutable(JSON))
 
@@ -61,7 +62,6 @@ class Organizations(Base):
             'website_url': self.website_url,
             'vetted': self.vetted,
             'date_vetted': self.date_vetted,
-            'date_entered': self.date_entered,
             'risk_level': self.risk_level,
             'supplier': self.supplier,
             'client': self.client,
@@ -70,7 +70,10 @@ class Organizations(Base):
             'other': self.other,
             'doc': self.doc,
             'notes': self.notes,
-            'primary_name_id': self.primary_name_id
+            'primary_name_id': self.primary_name_id,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):
@@ -96,6 +99,8 @@ class Organization_Names(Base):
     organization_name: Mapped[str] = mapped_column(default=None)
     organization_initial: Mapped[str] = mapped_column(default=None)
     primary_name: Mapped[bool] = mapped_column(default=False)
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     # Common Methods
     def __repr__(self):
@@ -113,7 +118,10 @@ class Organization_Names(Base):
             'organization_id': self.organization_id,
             'organization_name': self.organization_name,
             'organization_initial': self.organization_initial,
-            'primary_name': self.primary_name
+            'primary_name': self.primary_name,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):
@@ -141,7 +149,6 @@ class People(Base):
     # Table Columns
     first_name: Mapped[str] = mapped_column(default=None)
     last_name: Mapped[str] = mapped_column(default=None)
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
     job_description: Mapped[str] = mapped_column(default=None)
     department: Mapped[str] = mapped_column(default=None)
     phone_number_primary: Mapped[str] = mapped_column(default=None)
@@ -153,6 +160,8 @@ class People(Base):
     contract_date: Mapped[datetime.datetime] = mapped_column(default=None)
     termination_date: Mapped[datetime.datetime] = mapped_column(default=None)
     clock_number: Mapped[str] = mapped_column(default=None)
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     # Common Methods
     def __repr__(self):
@@ -180,7 +189,10 @@ class People(Base):
             'is_employee': self.is_employee,
             'contract_date': self.contract_date,
             'termination_date': self.termination_date,
-            'clock_number': self.clock_number
+            'clock_number': self.clock_number,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):
@@ -212,11 +224,13 @@ class Users(Base):
     profile_picture: Mapped[str] = mapped_column(default=None)
     ColorThemes = ("Light","Dark")
     color_theme: Mapped[int] = mapped_column(Enum(
-            *ColorThemes,
-            name="ColorThemes",
-            create_constraint=True,
-            validate_strings=True,
-        ))
+        *ColorThemes,
+        name="ColorThemes",
+        create_constraint=True,
+        validate_strings=True,
+    ))
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     doc = Column(MutableDict.as_mutable(JSON))
 
@@ -238,7 +252,10 @@ class Users(Base):
             'encrypted_password': self.encrypted_password,
             'profile_picture': self.profile_picture,
             'color_theme': self.color_theme,
-            'doc': self.doc
+            'doc': self.doc,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):
@@ -298,6 +315,8 @@ class Facilities(Base):
     ))
     ship_time_in_days: Mapped[int] = mapped_column()
     notes: Mapped[str] = mapped_column()
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     def __repr__(self):
         """Return a string representation of Object"""
@@ -334,7 +353,10 @@ class Facilities(Base):
             'ship_time': self.ship_time,
             'ship_time_units': self.ship_time_units,
             'ship_time_in_days': self.ship_time_in_days,
-            'notes': self.notes
+            'notes': self.notes,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):

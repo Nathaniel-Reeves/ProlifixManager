@@ -18,8 +18,6 @@ class Product_Master(Base):
     organization_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
     product_name: Mapped[str] = mapped_column()
     current_product: Mapped[bool] = mapped_column()
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
-    spec_revise_date: Mapped[datetime.datetime] = mapped_column(default=None)
     TimeUnits = ("Years", "Months", "Days")
     exp_unit: Mapped[int] = mapped_column(Enum(
         *TimeUnits,
@@ -54,6 +52,8 @@ class Product_Master(Base):
     default_manufacturing_version: Mapped[int] = mapped_column(default=1)
     num_manufacturing_versions: Mapped[int] = mapped_column(default=1)
     num_product_variants: Mapped[int] = mapped_column()
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     doc = Column(MutableDict.as_mutable(JSON))
 
@@ -77,7 +77,6 @@ class Product_Master(Base):
             'organization_id': self.organization_id,
             'product_name': self.product_name,
             'current_product': self.current_product,
-            'date_entered': self.date_entered,
             'exp_unit': self.exp_unit,
             'exp_type': self.exp_type,
             'exp_time_frame': self.exp_time_frame,
@@ -100,7 +99,10 @@ class Product_Master(Base):
             'num_formula_versions': self.num_formula_versions,
             'default_manufacturing_version': self.default_manufacturing_version,
             'num_manufacturing_versions': self.num_manufacturing_versions,
-            'num_product_variants': self.num_product_variants
+            'num_product_variants': self.num_product_variants,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):
@@ -121,8 +123,6 @@ class Manufacturing_Process(Base):
     # Table Columns
     process_spec_id: Mapped[int] = mapped_column(primary_key=True)
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
-    date_modified: Mapped[datetime.datetime] = mapped_column(default=None)
     current_default_process: Mapped[bool] = mapped_column(default=True)
     process_order: Mapped[int] = mapped_column(default=1)
     special_instruction: Mapped[str] = mapped_column(default=None)
@@ -176,6 +176,8 @@ class Manufacturing_Process(Base):
     num_retentions: Mapped[int] = mapped_column(default=None)
     lab_sample_size: Mapped[float] = mapped_column(default=None)
     qc_sample_size: Mapped[float] = mapped_column(default=None)
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     # Relationships
     manufacturing_process_id: Mapped[int] = mapped_column(ForeignKey('Manufacturing.Processes.process_id'))
@@ -195,8 +197,6 @@ class Manufacturing_Process(Base):
         return {
             'process_spec_id': self.process_spec_id,
             'product_id': self.product_id,
-            'date_entered': self.date_entered,
-            'date_modified': self.date_modified,
             'current_default_process': self.current_default_process,
             'process_order': self.process_order,
             'special_instruction': self.special_instruction,
@@ -231,7 +231,10 @@ class Manufacturing_Process(Base):
             'use_default_ave_percent_loss': self.use_default_ave_percent_loss,
             'num_retentions': self.num_retentions,
             'lab_sample_size': self.lab_sample_size,
-            'qc_sample_size': self.qc_sample_size
+            'qc_sample_size': self.qc_sample_size,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):
@@ -250,9 +253,10 @@ class Formula_Master(Base):
     # Table Columns
     formula_id: Mapped[int] = mapped_column(primary_key=True)
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
     formulation_version: Mapped[int] = mapped_column(default=1)
     notes: Mapped[str] = mapped_column(default=None)
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     # Relationships
 
@@ -269,9 +273,11 @@ class Formula_Master(Base):
         return {
             'formula_id': self.formula_id,
             'product_id': self.product_id,
-            'date_entered': self.date_entered,
             'formulation_version': self.formulation_version,
-            'notes': self.notes
+            'notes': self.notes,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):
@@ -297,6 +303,8 @@ class Formula_Detail(Base):
     notes: Mapped[str] = mapped_column(default=None)
     specific_brand_required: Mapped[bool] = mapped_column(default=False)
     specific_ingredient_required: Mapped[bool] = mapped_column(default=False)
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     # Relationships
 
@@ -319,7 +327,10 @@ class Formula_Detail(Base):
             'grams_per_unit': self.grams_per_unit,
             'notes': self.notes,
             'specific_brand_required': self.specific_brand_required,
-            'specific_ingredient_required': self.specific_ingredient_required
+            'specific_ingredient_required': self.specific_ingredient_required,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):
@@ -340,6 +351,8 @@ class Ingredient_Brands_Join(Base):
     formula_ingredient_id: Mapped[int] = mapped_column(ForeignKey('Products.Formula_Detail.formula_ingredient_id'), nullable=False)
     brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'), nullable=False)
     priority: Mapped[int] = mapped_column(nullable=False)
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     # Relationships
 
@@ -357,7 +370,9 @@ class Ingredient_Brands_Join(Base):
             '_id': self._id,
             'formula_ingredient_id': self.formula_ingredient_id,
             'brand_id': self.brand_id,
-            'priority': self.priority
+            'priority': self.priority,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified
         }
 
     def get_id(self):
@@ -378,6 +393,8 @@ class Ingredients_Join(Base):
     formula_ingredient_id: Mapped[int] = mapped_column(ForeignKey('Products.Formula_Detail.formula_ingredient_id'), nullable=False)
     ingredient_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'), nullable=False)
     priority: Mapped[int] = mapped_column(nullable=False)
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     # Relationships
 
@@ -395,7 +412,10 @@ class Ingredients_Join(Base):
             '_id': self._id,
             'formula_ingredient_id': self.formula_ingredient_id,
             'ingredient_id': self.ingredient_id,
-            'priority': self.priority
+            'priority': self.priority,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):
@@ -417,6 +437,8 @@ class Process_Components(Base):
     specific_component_required: Mapped[bool] = mapped_column(default=False)
     specific_brand_required: Mapped[bool] = mapped_column(default=False)
     qty_per_unit: Mapped[float] = mapped_column()
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     # Relationships
 
@@ -435,7 +457,10 @@ class Process_Components(Base):
             'process_spec_id': self.process_spec_id,
             'specific_component_required': self.specific_component_required,
             'specific_brand_required': self.specific_brand_required,
-            'qty_per_unit': self.qty_per_unit
+            'qty_per_unit': self.qty_per_unit,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):
@@ -456,6 +481,8 @@ class Components_Join(Base):
     process_component_id: Mapped[int] = mapped_column(ForeignKey('Products.Process_Components.process_component_id'), nullable=False)
     component_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'), nullable=False)
     priority: Mapped[int] = mapped_column(nullable=False)
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     # Relationships
 
@@ -473,7 +500,10 @@ class Components_Join(Base):
             '_id': self._id,
             'process_component_id': self.process_component_id,
             'component_id': self.component_id,
-            'priority': self.priority
+            'priority': self.priority,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):
@@ -494,6 +524,8 @@ class Component_Brands_Join(Base):
     process_component_id: Mapped[int] = mapped_column(ForeignKey('Products.Process_Components.process_component_id'), nullable=False)
     brand_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'), nullable=False)
     priority: Mapped[int] = mapped_column(nullable=False)
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     # Relationships
 
@@ -511,7 +543,10 @@ class Component_Brands_Join(Base):
             '_id': self._id,
             'process_component_id': self.process_component_id,
             'brand_id': self.brand_id,
-            'priority': self.priority
+            'priority': self.priority,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):
@@ -545,7 +580,9 @@ class Manufacturing_Process_Edges(Base):
         name="ArrowStates",
         create_constraint=True,
         validate_strings=True,
-        ))
+    ))
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     # Common Methods
     def __repr__(self):
@@ -565,7 +602,10 @@ class Manufacturing_Process_Edges(Base):
             "product_id": self.product_id,
             "label": self.label,
             "animated": self.animated,
-            "marker_end": self.marker_end
+            "marker_end": self.marker_end,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):
@@ -592,8 +632,6 @@ class Product_Variant(Base):
         create_constraint=True,
         validate_strings=True
     ))
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
-    date_modified: Mapped[datetime.datetime] = mapped_column(default=None)
     primary_variant: Mapped[bool] = mapped_column(default=False)
     discontinued: Mapped[bool] = mapped_column(default=False)
     discontinued_reason: Mapped[str] = mapped_column(default=None)
@@ -618,6 +656,8 @@ class Product_Variant(Base):
     min_milliliters_per_unit: Mapped[float] = mapped_column(default=None)
     max_milliliters_per_unit: Mapped[float] = mapped_column(default=None)
     variant_title_suffix: Mapped[str] = mapped_column()
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     # Relationships
 
@@ -636,8 +676,6 @@ class Product_Variant(Base):
             'product_id': self.product_id,
             'variant_title': self.variant_title,
             'variant_type': self.variant_type,
-            'date_entered': self.date_entered,
-            'date_modified': self.date_modified,
             'primary_variant': self.primary_variant,
             'discontinued': self.discontinued,
             'discontinued_reason': self.discontinued_reason,
@@ -654,7 +692,10 @@ class Product_Variant(Base):
             'max_mg_per_capsule': self.max_mg_per_capsule,
             'min_milliliters_per_unit': self.min_milliliters_per_unit,
             'max_milliliters_per_unit': self.max_milliliters_per_unit,
-            'variant_title_suffix': self.variant_title_suffix
+            'variant_title_suffix': self.variant_title_suffix,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):

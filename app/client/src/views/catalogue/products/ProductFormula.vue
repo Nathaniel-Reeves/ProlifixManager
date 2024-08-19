@@ -13,7 +13,7 @@
             <b-badge variant="primary" pill class="ml-2" style="font-size:0.8em;" v-show="f.formula_id === defaultFormulaId">Primary Formula</b-badge>
             <b-button v-show="f.formula_id !== defaultFormulaId && !edit_formulas" variant="outline-primary" pill class="ml-2" style="font-size:0.8em;" @click="set_default_formula_id(f.formula_id)">Set as Primary</b-button>
           </b-card-title>
-          <b-card-sub-title class="mb-3">{{ new Date(f.date_entered).toLocaleDateString() }} {{ new Date(f.date_entered).toLocaleTimeString() }}</b-card-sub-title>
+          <b-card-sub-title class="mb-3">{{ new Date(f.timestamp_entered).toLocaleDateString() }} {{ new Date(f.timestamp_entered).toLocaleTimeString() }}</b-card-sub-title>
           <b-card-text>
             <strong v-show="f.notes != null || f.notes?.length > 0">Notes:</strong>
             <b-form-textarea

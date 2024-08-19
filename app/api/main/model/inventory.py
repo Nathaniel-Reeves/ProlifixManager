@@ -48,7 +48,6 @@ class Components(Base):
     certified_us_pharmacopeia: Mapped[bool] = mapped_column(default=False)
     certified_non_gmo: Mapped[bool] = mapped_column(default=False)
     certified_vegan: Mapped[bool] = mapped_column(default=False)
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
     UnitTypes = ("grams", "kilograms", "units", "boxes", "pallets", "liters", "rolls", "totes", "barrels", "pounds")
     units: Mapped[int] = mapped_column(Enum(
         *UnitTypes,
@@ -58,6 +57,8 @@ class Components(Base):
         ))
     primary_name_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Component_Names.name_id'))
     is_label: Mapped[bool] = mapped_column(default=False)
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     doc = Column(JSON, default={}, deferred_raiseload=False)
 
@@ -91,12 +92,14 @@ class Components(Base):
             "certified_us_pharmacopeia": self.certified_us_pharmacopeia,
             "certified_non_gmo": self.certified_non_gmo,
             "certified_vegan": self.certified_vegan,
-            "date_entered": self.date_entered,
             "units": self.units,
             "primary_name_id": self.primary_name_id,
             "is_label": self.is_label,
             "brand_id": self.brand_id,
-            "doc": doc
+            "doc": doc,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):
@@ -122,6 +125,8 @@ class Component_Names(Base):
     component_name: Mapped[str] = mapped_column()
     primary_name: Mapped[bool] = mapped_column(default=False)
     botanical_name: Mapped[bool] = mapped_column(default=False)
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     # Common Methods
     def __repr__(self):
@@ -139,7 +144,10 @@ class Component_Names(Base):
             "component_id": self.component_id,
             "component_name": self.component_name,
             "primary_name": self.primary_name,
-            "botanical_name": self.botanical_name
+            "botanical_name": self.botanical_name,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):
@@ -164,6 +172,8 @@ class Item_id(Base):
     inventory: Mapped[List["Inventory"]] = relationship()
 
     # Table Columns
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     # Common Methods
     def __repr__(self):
@@ -179,7 +189,10 @@ class Item_id(Base):
         return {
             "item_id": self.item_id,
             "component_id": self.component_id,
-            "product_id": self.product_id
+            "product_id": self.product_id,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):
@@ -210,6 +223,8 @@ class Inventory(Base):
     actual_inventory: Mapped[float] = mapped_column(default=0.0)
     theoretical_inventory: Mapped[float] = mapped_column(default=0.0)
     lot_number: Mapped[str] = mapped_column(primary_key=True)
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     # Common Methods
     def __repr__(self):
@@ -231,7 +246,10 @@ class Inventory(Base):
             "is_product": self.is_product,
             "actual_inventory": self.actual_inventory,
             "theoretical_inventory": self.theoretical_inventory,
-            "lot_number": self.lot_number
+            "lot_number": self.lot_number,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):
@@ -268,7 +286,6 @@ class Inventory_Log(Base):
     supplier_item_id: Mapped[str] = mapped_column(default=None)
     lot_number: Mapped[str] = mapped_column(default=None)
     batch_number: Mapped[str] = mapped_column(default=None)
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
     InventoryStates = ("Ordered", "Revised Order Decreased", "Revised Order Increased", "InTransit", "Back Order", "Checkin Quarantine", "Received", "Produced", "Cycle Count", "Released", "Returned", "Allocated", "Batched", "Used", "Quarantined", "Lost", "Expired", "Wasted","Damaged","Destroyed", "Shipped")
     state: Mapped[int] = mapped_column(Enum(
         *InventoryStates,
@@ -279,6 +296,8 @@ class Inventory_Log(Base):
     state_notes: Mapped[str] = mapped_column(default=None)
     position: Mapped[str] = mapped_column()
     type: Mapped[str] = mapped_column()
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     doc = Column(JSON, nullable=True)
 
@@ -310,12 +329,14 @@ class Inventory_Log(Base):
             "supplier_item_id": self.supplier_item_id,
             "lot_number": self.lot_number,
             "batch_number": self.batch_number,
-            "date_entered": self.date_entered,
             "state": self.state,
             "state_notes": self.state_notes,
             "doc": self.doc,
             "position": self.position,
-            "type": self.type
+            "type": self.type,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):
@@ -350,7 +371,9 @@ class Inventory_Log_Edges(Base):
         name="ArrowStates",
         create_constraint=True,
         validate_strings=True,
-        ))
+    ))
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     # Common Methods
     def __repr__(self):
@@ -369,7 +392,10 @@ class Inventory_Log_Edges(Base):
             "inv_id": self.inv_id,
             "label": self.label,
             "animated": self.animated,
-            "marker_end": self.marker_end
+            "marker_end": self.marker_end,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):

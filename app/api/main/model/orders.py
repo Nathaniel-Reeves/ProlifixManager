@@ -32,12 +32,13 @@ class Sales_Orders(Base):
     order_date: Mapped[datetime.datetime] = mapped_column(default=None)
     target_completion_date: Mapped[datetime.datetime] = mapped_column(default=None)
     completion_date: Mapped[datetime.datetime] = mapped_column(default=None)
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
     billed_date: Mapped[datetime.datetime] = mapped_column(default=None)
     closed_date: Mapped[datetime.datetime] = mapped_column(default=None)
     down_payment_actual: Mapped[float] = mapped_column(default=None)
     theoretical_po_amount: Mapped[float] = mapped_column(default=None)
     total_paid: Mapped[float] = mapped_column(default=None)
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     doc = Column(MutableDict.as_mutable(JSON))
 
@@ -63,13 +64,15 @@ class Sales_Orders(Base):
             'order_date': self.order_date,
             'target_completion_date': self.target_completion_date,
             'completion_date': self.completion_date,
-            'date_entered': self.date_entered,
             'billed_date': self.billed_date,
             'closed_date': self.closed_date,
             'down_payment_actual': self.down_payment_actual,
             'theoretical_po_amount': self.theoretical_po_amount,
             'total_paid': self.total_paid,
-            'doc': self.doc
+            'doc': self.doc,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):
@@ -127,9 +130,10 @@ class Sale_Order_Detail(Base):
     unit_order_qty: Mapped[int] = mapped_column(default=None)
     kilos_order_qty: Mapped[float] = mapped_column(default=None)
     special_instructions: Mapped[str] = mapped_column(default=None)
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
     bit_price_per_unit: Mapped[float] = mapped_column(default=None)
     final_ship_date: Mapped[datetime.datetime] = mapped_column(default=None)
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     doc = Column(MutableDict.as_mutable(JSON))
 
@@ -154,10 +158,12 @@ class Sale_Order_Detail(Base):
             'unit_order_qty': self.unit_order_qty,
             'kilos_order_qty': self.kilos_order_qty,
             'special_instructions': self.special_instructions,
-            'date_entered': self.date_entered,
             'bit_price_per_unit': self.bit_price_per_unit,
             'final_ship_date': self.final_ship_date,
-            'doc': self.doc
+            'doc': self.doc,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):
@@ -211,8 +217,9 @@ class Sales_Orders_Payments(Base):
         name="PaymentTypes",
         create_constraint=True,
         validate_strings=True,
-        ))
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
+    ))
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     doc = Column(MutableDict.as_mutable(JSON))
 
@@ -235,8 +242,10 @@ class Sales_Orders_Payments(Base):
             'suffix': self.suffix,
             'payment_type': self.payment_type,
             'payment_amount': self.payment_amount,
-            'date_entered': self.date_entered,
-            'doc': self.doc
+            'doc': self.doc,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):
@@ -270,7 +279,6 @@ class Lot_Numbers(Base):
     total_shippable_product: Mapped[int] = mapped_column(default=None)
     batch_printed: Mapped[bool] = mapped_column(default=False)
     bpr_printed: Mapped[bool] = mapped_column(default=False)
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
     exp_date: Mapped[datetime.datetime] = mapped_column(default=None)
     ExpirationTypes = ("Best_By", "Exp")
     exp_type: Mapped[int] = mapped_column(Enum(
@@ -278,7 +286,9 @@ class Lot_Numbers(Base):
         name="ExpirationTypes",
         create_constraint=True,
         validate_strings=True,
-        ))
+    ))
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     doc = Column(MutableDict.as_mutable(JSON))
 
@@ -306,10 +316,12 @@ class Lot_Numbers(Base):
             'total_shippable_product': self.total_shippable_product,
             'batch_printed': self.batch_printed,
             'bpr_printed': self.bpr_printed,
-            'date_entered': self.date_entered,
             'exp_date': self.exp_date,
             'exp_type': self.exp_type,
-            'doc': self.doc
+            'doc': self.doc,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):
@@ -346,7 +358,8 @@ class Purchase_Orders(Base):
     supplier_so_num: Mapped[str] = mapped_column(default=None)
     order_date: Mapped[datetime.datetime] = mapped_column(default=None)
     eta_date: Mapped[datetime.datetime] = mapped_column(default=None)
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     doc = Column(MutableDict.as_mutable(JSON))
 
@@ -370,8 +383,10 @@ class Purchase_Orders(Base):
             'supplier_so_num': self.supplier_so_num,
             'order_date': self.order_date,
             'eta_date': self.eta_date,
-            'date_entered': self.date_entered,
-            'doc': self.doc
+            'doc': self.doc,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):
@@ -426,9 +441,10 @@ class Purchase_Order_Detail(Base):
     unit_order_qty: Mapped[int] = mapped_column(default=None)
     kilos_order_qty: Mapped[float] = mapped_column(default=None)
     special_instructions: Mapped[str] = mapped_column(default=None)
-    date_entered: Mapped[datetime.datetime] = mapped_column(default=None)
     bid_price_per_unit: Mapped[float] = mapped_column(default=None)
     bid_price_per_kilo: Mapped[float] = mapped_column(default=None)
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
     doc = Column(MutableDict.as_mutable(JSON))
 
@@ -453,10 +469,12 @@ class Purchase_Order_Detail(Base):
             'unit_order_qty': self.unit_order_qty,
             'kilos_order_qty': self.kilos_order_qty,
             'special_instructions': self.special_instructions,
-            'datetime_entered': self.date_entered,
             'bid_price_per_unit': self.bid_price_per_unit,
             'bid_price_per_kilo': self.bid_price_per_kilo,
-            'doc': self.doc
+            'doc': self.doc,
+            "timestamp_entered": self.timestamp_entered,
+            "timestamp_modified": self.timestamp_modified,
+            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
         }
 
     def get_id(self):

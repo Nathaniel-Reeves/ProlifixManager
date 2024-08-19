@@ -11,7 +11,7 @@ def get_session():
     password = app.config['DB_PASSWORD']
 
     engine = sa.create_engine(
-            f'mariadb+mariadbconnector://{user}:{password}@{host}:{port}',connect_args={'connect_timeout': 3}
+            f'mariadb+mariadbconnector://{user}:{password}@{host}:{port}', connect_args={'connect_timeout': 3}
         )
 
     Session = sa.orm.sessionmaker()
