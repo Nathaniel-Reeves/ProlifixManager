@@ -142,6 +142,8 @@ class CustomRequest:
         if isinstance(timestamp, str):
             timestamp = datetime.datetime.fromisoformat(timestamp.replace('Z', '')+'+00:00')
         if isinstance(timestamp, datetime.datetime):
+            if app.config['DB_HOST'] == '192.168.1.133':
+                return (timestamp - datetime.timedelta(hours=6)).astimezone(pytz.utc)
             return timestamp.astimezone(pytz.utc)
 
     def compare_timestamps(self, table_name, record):
