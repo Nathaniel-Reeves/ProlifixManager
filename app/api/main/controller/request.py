@@ -138,13 +138,15 @@ class CustomRequest:
     def close_session(self):
         self.session.close()
 
-    def get_timestamp(self, timestamp):
+    def get_timestamp(self, timestamp, modified=False):
         if isinstance(timestamp, str):
             timestamp = datetime.datetime.fromisoformat(timestamp.replace('Z', '')+'+00:00')
-            return timestamp
+            if app.config['DB_HOST'] == '192.168.1.133' and modified:
+                return (timestamp + datetime.timedelta(hours=6)).astimezone(pytz.utc)
+            return timestamp.astimezone(pytz.utc)
         if isinstance(timestamp, datetime.datetime):
-            # if app.config['DB_HOST'] == '192.168.1.133' and modified:
-            #     return (timestamp + datetime.timedelta(hours=6)).astimezone(pytz.utc)
+            if app.config['DB_HOST'] == '192.168.1.133' and modified:
+                return (timestamp + datetime.timedelta(hours=6)).astimezone(pytz.utc)
             return timestamp.astimezone(pytz.utc)
 
     def compare_timestamps(self, table_name, record):
@@ -156,7 +158,7 @@ class CustomRequest:
             raw_data = stream.all()
             if len(raw_data) > 0:
                 db_record = raw_data[0][0].to_dict()
-                timestamp_modified = self.get_timestamp(db_record['timestamp_modified'])
+                timestamp_modified = self.get_timestamp(db_record['timestamp_modified'], modified=True)
                 timestamp_fetched = self.get_timestamp(record['timestamp_fetched'])
                 if timestamp_modified > timestamp_fetched:
                     flash_message = FlashMessage(
