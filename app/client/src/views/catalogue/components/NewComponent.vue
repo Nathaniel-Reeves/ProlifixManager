@@ -454,7 +454,8 @@ export default {
 
       const updateComponent = {
         component_id: tempKeyLookup[this.new_component_id].new_id,
-        primary_name_id: tempKeyLookup[primaryNameTempKey].new_id
+        primary_name_id: tempKeyLookup[primaryNameTempKey].new_id,
+        timestamp_fetched: new Date().toISOString()
       }
       this.req.upsertRecord('Components', updateComponent)
       const resp2 = await this.req.sendRequest(window.origin)
