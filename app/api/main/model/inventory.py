@@ -97,9 +97,9 @@ class Components(Base):
             "is_label": self.is_label,
             "brand_id": self.brand_id,
             "doc": doc,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):
@@ -145,9 +145,9 @@ class Component_Names(Base):
             "component_name": self.component_name,
             "primary_name": self.primary_name,
             "botanical_name": self.botanical_name,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):
@@ -190,9 +190,9 @@ class Item_id(Base):
             "item_id": self.item_id,
             "component_id": self.component_id,
             "product_id": self.product_id,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):
@@ -247,9 +247,9 @@ class Inventory(Base):
             "actual_inventory": self.actual_inventory,
             "theoretical_inventory": self.theoretical_inventory,
             "lot_number": self.lot_number,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):
@@ -334,9 +334,9 @@ class Inventory_Log(Base):
             "doc": self.doc,
             "position": self.position,
             "type": self.type,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):
@@ -393,9 +393,9 @@ class Inventory_Log_Edges(Base):
             "label": self.label,
             "animated": self.animated,
             "marker_end": self.marker_end,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):

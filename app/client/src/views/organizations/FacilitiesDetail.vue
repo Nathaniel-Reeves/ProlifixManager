@@ -397,7 +397,8 @@ export default {
         country: this.facility.country,
         postal_area: this.facility.postal_area,
         address_type: this.facility.address_type,
-        address_type_identifier: this.facility.address_type_identifier
+        address_type_identifier: this.facility.address_type_identifier,
+        timestamp_fetched: this.facility.timestamp_fetched
       }
       this.req.updateUpsertRecord('Facilities', 'facility_id', this.facility.facility_id, facility)
     },
@@ -459,6 +460,7 @@ export default {
         this.loaded = false
         this.getFacility()
       } else {
+        this.$root.handleStaleRequest(this.req.isStale(), window.location)
         this.edit = false
         this.loaded = true
       }

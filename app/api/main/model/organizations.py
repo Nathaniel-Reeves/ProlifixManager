@@ -71,9 +71,9 @@ class Organizations(Base):
             'doc': self.doc,
             'notes': self.notes,
             'primary_name_id': self.primary_name_id,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):
@@ -119,9 +119,9 @@ class Organization_Names(Base):
             'organization_name': self.organization_name,
             'organization_initial': self.organization_initial,
             'primary_name': self.primary_name,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):
@@ -190,9 +190,9 @@ class People(Base):
             'contract_date': self.contract_date,
             'termination_date': self.termination_date,
             'clock_number': self.clock_number,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):
@@ -253,9 +253,9 @@ class Users(Base):
             'profile_picture': self.profile_picture,
             'color_theme': self.color_theme,
             'doc': self.doc,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):
@@ -354,9 +354,9 @@ class Facilities(Base):
             'ship_time_units': self.ship_time_units,
             'ship_time_in_days': self.ship_time_in_days,
             'notes': self.notes,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):

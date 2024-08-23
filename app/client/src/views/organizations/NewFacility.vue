@@ -398,7 +398,8 @@ export default {
         country: this.facility.country,
         postal_area: this.facility.postal_area,
         address_type: this.facility.address_type,
-        address_type_identifier: this.facility.address_type_identifier
+        address_type_identifier: this.facility.address_type_identifier,
+        timestamp_fetched: this.facility.timestamp_fetched
       }
       this.req.updateUpsertRecord('Facilities', 'facility_id', this.new_id, facility)
     },
@@ -514,6 +515,7 @@ export default {
   },
   created: function () {
     this.new_id = genTempKey()
+    this.facility.timestamp_fetched = new Date().toISOString()
     this.update()
   }
 }

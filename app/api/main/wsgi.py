@@ -39,7 +39,7 @@ app_dir = os.path.split(os.path.split(parent_dir)[0])[0]
 print("Env Location: ", os.path.join(app_dir,".env"))
 load_dotenv(os.path.join(app_dir,".env"), override=True)
 env_variables = os.environ.items()
-print_config()
+# print_config()
 
 def create_app():
     """

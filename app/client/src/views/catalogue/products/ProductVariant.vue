@@ -396,7 +396,7 @@
             <option value="liquid">Liquid Fill</option>
           </select>
           <div id="variant_type-live-feedback" class="invalid-feedback">This is a required field.</div>
-          <b-button block class="mt-3" variant="outline-success" @click="buffer_new_variant()">Next</b-button>
+          <b-button block class="mt-3" variant="outline-success" @click="buffer_new_variant()" :disabled="!new_variant.variant_type">Next</b-button>
         </b-card-text>
       </b-card>
       <div v-show="variants_buffer.length === 0 && !edit_variants">
@@ -440,6 +440,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false
+    },
+    timestampFetched: {
+      type: String,
+      required: true
     }
   },
   data: function () {
@@ -499,7 +503,8 @@ export default {
         max_mg_per_capsule: variant.max_mg_per_capsule,
         total_capsules_per_unit: variant.total_capsules_per_unit,
         capsule_size: variant.capsule_size,
-        mg_empty_capsule: variant.mg_empty_capsule
+        mg_empty_capsule: variant.mg_empty_capsule,
+        timestamp_fetched: variant.timestamp_fetched
       }
       const index = this.variants_buffer.indexOf(variant)
       this.variants_buffer[index] = { ...this.variants_buffer[index], ...update }
@@ -526,7 +531,8 @@ export default {
         max_mg_per_capsule: null,
         total_capsules_per_unit: null,
         capsule_size: null,
-        mg_empty_capsule: null
+        mg_empty_capsule: null,
+        timestamp_fetched: new Date().toISOString()
       }
       this.new_variant = cloneDeep(add)
     },
@@ -621,7 +627,8 @@ export default {
       // TODO: Conditional for new variant
       const updateProduct = {
         product_id: this.productId,
-        num_product_variants: this.num_variants
+        num_product_variants: this.num_variants,
+        timestamp_fetched: this.timestampFetched
       }
       this.req.upsertRecord('Product_Master', updateProduct)
 
@@ -638,6 +645,7 @@ export default {
         this.$parent.toggleLoaded(false)
         this.$parent.getProductData()
       } else {
+        this.$root.handleStaleRequest(this.req.isStale(), window.location)
         this.edit_variants = false
         this.$parent.edit_variants = false
         this.$parent.toggleLoaded(true)

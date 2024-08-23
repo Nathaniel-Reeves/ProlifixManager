@@ -42,6 +42,7 @@
           <ProductVariant
             v-show="activeSection('variants')"
             :product-id="product_data.product_id"
+            :timestamp-fetched="product_data.timestamp_fetched"
             :num-variants="product_data.num_product_variants"
             :product-variants="product_data.product_variants"
             v-on:edit-variants="(e) => {edit_variants = e}"
@@ -54,6 +55,7 @@
             :id="product_data.product_id"
             :doc="product_data.doc"
             :name="product_data.product_name"
+            :timestamp-fetched="product_data.timestamp_fetched"
             :variant_options="product_data.product_variants"
             v-on:edit-labels="(e) => {edit_labels = e}"
             v-on:toggle-loaded="toggleLoaded"
@@ -65,6 +67,7 @@
             :v-key="formula_key"
             :product-id="product_data.product_id"
             :formulas="product_data.formulas"
+            :timestamp-fetched="product_data.timestamp_fetched"
             :num-versions="product_data.num_formula_versions"
             :default-formula-id="product_data.default_formula_version"
             v-on:edit-formulas="(e) => {edit_formulas = e}"
@@ -130,6 +133,7 @@
             :manufacturing="product_data.manufacturing"
             :edit="edit_manufacturing"
             :variant_options="product_data.product_variants"
+            :timestamp-fetched="product_data.timestamp_fetched"
             v-on:edit-manufacturing="(e) => {edit_manufacturing = e}"
             v-on:toggle-loaded="toggleLoaded"
             v-on:refresh-parent="(v) => refreshParent(v)"
@@ -191,6 +195,7 @@
             v-show="activeSection('specs')"
             :doc="product_data.doc"
             :spectype="'product'"
+            :timestamp-fetched="product_data.timestamp_fetched"
             :name="product_data.product_name"
             :id="product_data.product_id"
             v-on:edit-specs="(e) => edit_specs = e"
@@ -295,6 +300,7 @@ export default {
 
       const updateProduct = {
         product_id: Number(this.id),
+        timestamp_fetched: this.product_data.timestamp_fetched,
         doc: this.product_data.doc
       }
 
@@ -313,6 +319,7 @@ export default {
         this.del_url_previews.forEach(url => URL.revokeObjectURL(url))
         return true
       }
+      this.$root.handleStaleRequest(this.req.isStale(), window.location)
       this.loaded = true
       return false
     },
@@ -322,7 +329,8 @@ export default {
 
       const updateProduct = {
         product_id: Number(this.id),
-        doc: this.product_data.doc
+        doc: this.product_data.doc,
+        timestamp_fetched: this.product_data.timestamp_fetched
       }
 
       this.req.upsertRecord('Product_Master', updateProduct)
@@ -340,6 +348,7 @@ export default {
         this.del_url_previews.forEach(url => URL.revokeObjectURL(url))
         return true
       }
+      this.$root.handleStaleRequest(this.req.isStale(), window.location)
       this.loaded = true
       return false
     },
@@ -386,7 +395,6 @@ export default {
       this.$bvModal.msgBoxConfirm(`Are you sure you want to perminently delete '${document.name}' document?`).then(value => {
         if (value) {
           documents.splice(documents.findIndex((d) => d.id === document.id), 1)
-          console.log(document.file_hash)
           this.req.deleteFile(document.file_hash)
         }
       })
@@ -405,7 +413,7 @@ export default {
         file_hash: null,
         date_uploaded: null
       }
-      documents.unshift(document)
+      documents.push(document)
     },
     toggleLoaded: function (val) {
       this.loaded = val

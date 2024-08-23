@@ -7,6 +7,7 @@ export class CustomRequest {
 
     // Data fields
     this.userSessionKey = sessionKey
+    this.stale_request = false
     this.payload = {
       upsert: {
         Organizations: [],
@@ -115,6 +116,14 @@ export class CustomRequest {
     ]
   }
 
+  isStale () {
+    return this.stale_request
+  }
+
+  setStale () {
+    this.stale_request = true
+  }
+
   getSavedFiles () {
     return this.savedFiles
   }
@@ -141,7 +150,7 @@ export class CustomRequest {
       }
     })
 
-    this.customUpserOrder = order
+    this.customUpsertOrder = order
   }
 
   setDeleteOrder (order) {
@@ -197,7 +206,7 @@ export class CustomRequest {
     if (index === null) {
       return this.upsertRecord(table, record)
     }
-    this.payload.upsert[table][index] = record
+    this.payload.upsert[table][index] = { ...this.payload.upsert[table][index], ...record }
     return true
   }
 
@@ -233,7 +242,7 @@ export class CustomRequest {
     if (index === null) {
       return this.deleteRecord(table, record)
     }
-    this.payload.delete[table][index] = record
+    this.payload.delete[table][index] = { ...this.payload.delete[table][index], ...record }
     return true
   }
 
@@ -327,12 +336,12 @@ export class CustomRequest {
       upsert_order: this.customUpsertOrder,
       delete_order: this.customDeleteOrder
     }
-    // if (this.customUpsertOrder.length > 0) {
-    //   request.upsert_order = this.customUpsertOrder
-    // }
-    // if (this.customDeleteOrder.length > 0) {
-    //   request.delete_order = this.customDeleteOrder
-    // }
+    if (this.customUpsertOrder.length > 0) {
+      request.upsert_order = this.customUpsertOrder
+    }
+    if (this.customDeleteOrder.length > 0) {
+      request.delete_order = this.customDeleteOrder
+    }
     return request
   }
 
@@ -428,17 +437,16 @@ export class CustomRequest {
     } else {
       // eslint-disable-next-line
       console.log('Request failed')
-      console.log(response)
     }
 
     try {
       const data = await response.json()
+      // eslint-disable-next-line
+      console.log('Response Data:', data)
       data.status = response.status
+      this.stale_request = data.stale_request
       this.savedFiles = data.data[0].saved_files
       this.tempKeyLookup = data.data[0].temp_key_lookup
-      // eslint-disable-next-line
-      console.log(data)
-
       return data
     } catch (error) {
       // eslint-disable-next-line

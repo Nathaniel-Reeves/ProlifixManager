@@ -310,7 +310,8 @@ export default {
         job_description: this.person.job_description,
         is_employee: this.person.is_employee,
         contract_date: this.person.contract_date,
-        termination_date: this.person.termination_date
+        termination_date: this.person.termination_date,
+        timestamp_fetched: this.person.timestamp_fetched
       }
       this.req.updateUpsertRecord('People', 'person_id', this.person.person_id, person)
     },
@@ -359,6 +360,7 @@ export default {
         this.loaded = false
         this.getPerson()
       } else {
+        this.$root.handleStaleRequest(this.req.isStale(), window.location)
         this.edit = false
         this.loaded = true
       }

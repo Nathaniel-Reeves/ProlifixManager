@@ -37,7 +37,7 @@
           <b-row class="mb-3">
             <b-col>
               <b-form-datepicker
-                id="request_date"
+                :id="'p-supplier_questionnaire-request_date-'+doc_buffer.supplier_risk_assessments[0].risk_assesment_id"
                 v-model="doc_buffer.supplier_risk_assessments[0].supplier_questionnaire.request_date"
                 :max="new Date()"
                 :readonly="!doc_buffer.supplier_risk_assessments[0].edit"
@@ -105,7 +105,7 @@
           <b-row class="mb-3">
             <b-col>
               <b-form-datepicker
-                id="request_date"
+                :id="'p-supplier_certs-request_date-'+doc_buffer.supplier_risk_assessments[0].risk_assesment_id"
                 v-model="doc_buffer.supplier_risk_assessments[0].supplier_certs.request_date"
                 :max="new Date()"
                 :readonly="!doc_buffer.supplier_risk_assessments[0].edit"
@@ -173,7 +173,7 @@
           <b-row class="mb-3">
             <b-col>
               <b-form-datepicker
-                id="request_date"
+                :id="'p-food_safety_plan-request_date-'+doc_buffer.supplier_risk_assessments[0].risk_assesment_id"
                 v-model="doc_buffer.supplier_risk_assessments[0].food_safety_plan.request_date"
                 :max="new Date()"
                 :readonly="!doc_buffer.supplier_risk_assessments[0].edit"
@@ -338,7 +338,7 @@
               <b-row class="mb-3">
                 <b-col>
                   <b-form-datepicker
-                    id="request_date"
+                    :id="'supplier_questionnaire-request_date-'+assessment.risk_assesment_id"
                     v-model="assessment.supplier_questionnaire.request_date"
                     :max="new Date()"
                     :readonly="!assessment.edit"
@@ -406,7 +406,7 @@
               <b-row class="mb-3">
                 <b-col>
                   <b-form-datepicker
-                    id="request_date"
+                    :id="'supplier_certs-request_date-'+assessment.risk_assesment_id"
                     v-model="assessment.supplier_certs.request_date"
                     :max="new Date()"
                     :readonly="!assessment.edit"
@@ -474,7 +474,7 @@
               <b-row class="mb-3">
                 <b-col>
                   <b-form-datepicker
-                    id="request_date"
+                    :id="'food_safety_plan-request_date-'+assessment.risk_assesment_id"
                     v-model="assessment.food_safety_plan.request_date"
                     :max="new Date()"
                     :readonly="!assessment.edit"
@@ -627,6 +627,10 @@ export default {
       type: Number
     },
     orgName: {
+      required: true,
+      type: String
+    },
+    timestampFetched: {
       required: true,
       type: String
     }
@@ -800,7 +804,8 @@ export default {
       const updateOrg = {
         organization_id: this.id,
         risk_level: this.doc_buffer.supplier_risk_assessments[0].risk_level_granted,
-        doc: this.doc_buffer
+        doc: this.doc_buffer,
+        timestamp_fetched: this.timestampFetched
       }
       if (this.doc_buffer.supplier_risk_assessments[0].risk_level_granted === 'Low_Risk') {
         updateOrg.vetted = true
@@ -823,6 +828,7 @@ export default {
         this.del_url_previews.forEach(url => URL.revokeObjectURL(url))
         return true
       }
+      this.$root.handleStaleRequest(this.req.isStale(), window.location)
       this.$emit('toggleLoaded', true)
       this.edit = true
       this.$parent.edit_supplier_risk_assessment = true

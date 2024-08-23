@@ -326,7 +326,8 @@ export default {
         job_description: this.person.job_description,
         is_employee: this.person.is_employee,
         contract_date: this.person.contract_date,
-        termination_date: this.person.termination_date
+        termination_date: this.person.termination_date,
+        timestamp_fetched: this.person.timestamp_fetched
       }
       this.req.updateUpsertRecord('People', 'person_id', this.new_id, person)
     },
@@ -405,6 +406,7 @@ export default {
   },
   created: function () {
     this.new_id = genTempKey()
+    this.person.timestamp_fetched = new Date().toISOString()
     this.update()
   }
 }

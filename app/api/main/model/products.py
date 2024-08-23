@@ -54,6 +54,8 @@ class Product_Master(Base):
     num_product_variants: Mapped[int] = mapped_column()
     timestamp_entered: Mapped[datetime.datetime] = mapped_column()
     timestamp_modified: Mapped[datetime.datetime] = mapped_column()
+    num_manufacturing_processes: Mapped[int] = mapped_column()
+    num_manufacturing_edges: Mapped[int] = mapped_column()
 
     doc = Column(MutableDict.as_mutable(JSON))
 
@@ -100,9 +102,11 @@ class Product_Master(Base):
             'default_manufacturing_version': self.default_manufacturing_version,
             'num_manufacturing_versions': self.num_manufacturing_versions,
             'num_product_variants': self.num_product_variants,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat(),
+            'num_manufacturing_processes': self.num_manufacturing_processes,
+            'num_manufacturing_edges': self.num_manufacturing_edges
         }
 
     def get_id(self):
@@ -178,6 +182,7 @@ class Manufacturing_Process(Base):
     qc_sample_size: Mapped[float] = mapped_column(default=None)
     timestamp_entered: Mapped[datetime.datetime] = mapped_column()
     timestamp_modified: Mapped[datetime.datetime] = mapped_column()
+    num_process_components: Mapped[int] = mapped_column()
 
     # Relationships
     manufacturing_process_id: Mapped[int] = mapped_column(ForeignKey('Manufacturing.Processes.process_id'))
@@ -232,9 +237,10 @@ class Manufacturing_Process(Base):
             'num_retentions': self.num_retentions,
             'lab_sample_size': self.lab_sample_size,
             'qc_sample_size': self.qc_sample_size,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat(),
+            'num_process_components': self.num_process_components
         }
 
     def get_id(self):
@@ -275,9 +281,9 @@ class Formula_Master(Base):
             'product_id': self.product_id,
             'formulation_version': self.formulation_version,
             'notes': self.notes,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):
@@ -305,6 +311,8 @@ class Formula_Detail(Base):
     specific_ingredient_required: Mapped[bool] = mapped_column(default=False)
     timestamp_entered: Mapped[datetime.datetime] = mapped_column()
     timestamp_modified: Mapped[datetime.datetime] = mapped_column()
+    num_brands: Mapped[int] = mapped_column(default=0)
+    num_ingredients: Mapped[int] = mapped_column(default=0)
 
     # Relationships
 
@@ -328,9 +336,11 @@ class Formula_Detail(Base):
             'notes': self.notes,
             'specific_brand_required': self.specific_brand_required,
             'specific_ingredient_required': self.specific_ingredient_required,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat(),
+            'num_brands': self.num_brands,
+            'num_ingredients': self.num_ingredients
         }
 
     def get_id(self):
@@ -371,8 +381,9 @@ class Ingredient_Brands_Join(Base):
             'formula_ingredient_id': self.formula_ingredient_id,
             'brand_id': self.brand_id,
             'priority': self.priority,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):
@@ -413,9 +424,9 @@ class Ingredients_Join(Base):
             'formula_ingredient_id': self.formula_ingredient_id,
             'ingredient_id': self.ingredient_id,
             'priority': self.priority,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):
@@ -439,6 +450,8 @@ class Process_Components(Base):
     qty_per_unit: Mapped[float] = mapped_column()
     timestamp_entered: Mapped[datetime.datetime] = mapped_column()
     timestamp_modified: Mapped[datetime.datetime] = mapped_column()
+    num_brands: Mapped[int] = mapped_column(default=0)
+    num_components: Mapped[int] = mapped_column(default=0)
 
     # Relationships
 
@@ -458,9 +471,11 @@ class Process_Components(Base):
             'specific_component_required': self.specific_component_required,
             'specific_brand_required': self.specific_brand_required,
             'qty_per_unit': self.qty_per_unit,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat(),
+            'num_brands': self.num_brands,
+            'num_components': self.num_components
         }
 
     def get_id(self):
@@ -501,9 +516,9 @@ class Components_Join(Base):
             'process_component_id': self.process_component_id,
             'component_id': self.component_id,
             'priority': self.priority,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):
@@ -544,9 +559,9 @@ class Component_Brands_Join(Base):
             'process_component_id': self.process_component_id,
             'brand_id': self.brand_id,
             'priority': self.priority,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):
@@ -603,9 +618,9 @@ class Manufacturing_Process_Edges(Base):
             "label": self.label,
             "animated": self.animated,
             "marker_end": self.marker_end,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):
@@ -693,9 +708,9 @@ class Product_Variant(Base):
             'min_milliliters_per_unit': self.min_milliliters_per_unit,
             'max_milliliters_per_unit': self.max_milliliters_per_unit,
             'variant_title_suffix': self.variant_title_suffix,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):

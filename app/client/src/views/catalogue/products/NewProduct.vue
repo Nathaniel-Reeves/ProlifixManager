@@ -200,7 +200,8 @@ export default {
         certified_national_sanitation_foundation: this.certified_national_sanitation_foundation,
         certified_us_pharmacopeia: this.certified_us_pharmacopeia,
         certified_non_gmo: this.certified_non_gmo,
-        certified_vegan: this.certified_vegan
+        certified_vegan: this.certified_vegan,
+        timestamp_fetched: new Date().toISOString()
       }
 
       this.req.upsertRecord('Product_Master', newProduct)

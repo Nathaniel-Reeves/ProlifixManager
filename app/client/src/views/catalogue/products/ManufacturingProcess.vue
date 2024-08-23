@@ -1040,7 +1040,8 @@ export default {
           brand_id: org.organization_id,
           priority: brands[index].priority,
           process_component_id: brands[index].process_component_id,
-          ...org
+          ...org,
+          timestamp_fetched: org.timestamp_fetched
         }
         brands[index] = brand
         this.updateRow()
@@ -1051,7 +1052,8 @@ export default {
         _id: genTempKey(),
         process_component_id: processComponentId,
         brand_id: 0,
-        priority: brands.length + 1
+        priority: brands.length + 1,
+        timestamp_fetched: new Date().toISOString()
       }
       brands.push(newBrand)
       this.updateRow()
@@ -1069,7 +1071,8 @@ export default {
           component_id: comp.component_id,
           priority: components[index].priority,
           process_component_id: components[index].process_component_id,
-          ...comp
+          ...comp,
+          timestamp_fetched: comp.timestamp_fetched
         }
         components[index] = component
         this.updateRow()
@@ -1080,7 +1083,8 @@ export default {
         _id: genTempKey(),
         process_component_id: processComponentId,
         component_id: 0,
-        priority: components.length + 1
+        priority: components.length + 1,
+        timestamp_fetched: new Date().toISOString()
       }
       components.push(newComponent)
       this.updateRow()
@@ -1107,7 +1111,8 @@ export default {
             priority: 1
           }
         ],
-        brands: []
+        brands: [],
+        timestamp_fetched: new Date().toISOString()
       }
       this.node_buffer.data.process_components.push(newRow)
       this.updateNode()

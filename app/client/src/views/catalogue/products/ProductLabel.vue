@@ -222,6 +222,10 @@ export default {
     variant_options: {
       required: true,
       type: Array
+    },
+    timestampFetched: {
+      type: String,
+      required: true
     }
   },
   components: {
@@ -368,7 +372,8 @@ export default {
           formula_files: this.doc.formula_files,
           manufacturing_files: this.doc.manufacturing_files
         },
-        product_id: this.id
+        product_id: this.id,
+        timestamp_fetched: this.timestampFetched
       }
       this.product = product
     },
@@ -392,7 +397,8 @@ export default {
         component_id: label.component_id,
         component_name: this.createComponentName(label),
         primary_name: true,
-        botanical_name: false
+        botanical_name: false,
+        timestamp_fetched: new Date().toISOString()
       }
       const component = {
         component_id: label.component_id,
@@ -412,13 +418,15 @@ export default {
         brand_id: this.$parent.product_data.organization_id,
         is_label: true,
         units: 'units',
-        doc: this.loadDoc(label)
+        doc: this.loadDoc(label),
+        timestamp_fetched: new Date().toISOString()
       }
       this.req.upsertRecord('Components', component)
       this.req.upsertRecord('Component_Names', componentName)
       const c = {
         component_id: label.component_id,
-        primary_name_id: nameId
+        primary_name_id: nameId,
+        timestamp_fetched: new Date().toISOString()
       }
       this.update_components.push(c)
     },
@@ -449,6 +457,7 @@ export default {
         resp1.messages.flash.forEach(message => {
           createToast(message)
         })
+        this.$root.handleStaleRequest(this.req.isStale(), window.location)
         return false
       }
 
@@ -476,6 +485,7 @@ export default {
         if (isTempKey(this.update_components[i].component_id)) {
           this.update_components[i].component_id = tempKeyLookup[this.update_components[i].component_id].new_id
           this.update_components[i].primary_name_id = tempKeyLookup[this.update_components[i].primary_name_id].new_id
+          this.update_components[i].timestamp_fetched = new Date().toISOString()
           this.req.upsertRecord('Components', this.update_components[i])
         }
       }
@@ -488,6 +498,7 @@ export default {
 
       if (resp2.status !== 201) {
         console.error('Request Error: ', resp2)
+        this.$root.handleStaleRequest(this.req.isStale(), window.location)
         return false
       }
 

@@ -70,9 +70,9 @@ class Sales_Orders(Base):
             'theoretical_po_amount': self.theoretical_po_amount,
             'total_paid': self.total_paid,
             'doc': self.doc,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):
@@ -161,9 +161,9 @@ class Sale_Order_Detail(Base):
             'bit_price_per_unit': self.bit_price_per_unit,
             'final_ship_date': self.final_ship_date,
             'doc': self.doc,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):
@@ -243,9 +243,9 @@ class Sales_Orders_Payments(Base):
             'payment_type': self.payment_type,
             'payment_amount': self.payment_amount,
             'doc': self.doc,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):
@@ -319,9 +319,9 @@ class Lot_Numbers(Base):
             'exp_date': self.exp_date,
             'exp_type': self.exp_type,
             'doc': self.doc,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):
@@ -384,9 +384,9 @@ class Purchase_Orders(Base):
             'order_date': self.order_date,
             'eta_date': self.eta_date,
             'doc': self.doc,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):
@@ -472,9 +472,9 @@ class Purchase_Order_Detail(Base):
             'bid_price_per_unit': self.bid_price_per_unit,
             'bid_price_per_kilo': self.bid_price_per_kilo,
             'doc': self.doc,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):

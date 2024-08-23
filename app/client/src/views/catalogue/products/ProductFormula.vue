@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3 id="Formulas">Formulas<b-button v-if="!edit_formulas && active_tab_index < numVersions" v-b-tooltip.hover title="Edit Product Formulas" @click="set_formula_buffer()" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
+    <h3 id="Formulas">Formulas<b-button v-if="!edit_formulas && active_tab_index < numVersions" v-b-tooltip.hover title="Edit Product Formulas" @click="set_formula_buffer(false)" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
 
     <b-tabs content-class="mt-3" v-model="active_tab_index">
       <b-tab v-for="(f, index) in formulas" :key="'index-' + index" :disabled="active_tab_index !== index && edit_formulas">
@@ -131,7 +131,7 @@
       <b-tab title="New Formula" :disabled="active_tab_index < numVersions && edit_formulas">
         <b-card class="m-2">
           <b-card-title>New Formula Version {{ numVersions + 1 }}</b-card-title>
-          <select id="new_version_selector" class="form-control form-control-lg mb-3" v-model="new_version_select"  @change="set_formula_buffer()" :disabled="disable_version_select">
+          <select id="new_version_selector" class="form-control form-control-lg mb-3" v-model="new_version_select"  @change="set_formula_buffer(true)" :disabled="disable_version_select">
             <option v-for="option in versions" :key="option.value" :value="option.value">{{ option.text }}</option>
           </select>
           <div v-if="disable_version_select && active_tab_index !== numVersions + 1 && edit_formulas">
@@ -238,9 +238,9 @@
         </b-card>
       </b-tab>
     </b-tabs>
-    <b-card v-if="numVersions === 0 && !edit_formulas">
+    <!-- <b-card v-if="numVersions === 0 && !edit_formulas">
       <b-card-title>No Formulas Exist Yet</b-card-title>
-    </b-card>
+    </b-card> -->
   </div>
 </template>
 
@@ -291,6 +291,10 @@ export default {
     productId: {
       type: Number,
       required: true
+    },
+    timestampFetched: {
+      type: String,
+      required: true
     }
   },
   data: function () {
@@ -310,7 +314,7 @@ export default {
       versions: [],
       organization_options: [],
       ingredient_options: [],
-      new_formula_id: genTempKey(),
+      new_formula_id: null,
       new_formula_ingredient_id_index: 0,
       active_tab_index: this.formulas.indexOf(this.formulas.find(f => f.formula_id === this.defaultFormulaId)),
       req: new CustomRequest(this.$cookies.get('session'))
@@ -326,7 +330,8 @@ export default {
 
       const sProduct = {
         product_id: this.productId,
-        default_formula_version: id
+        default_formula_version: id,
+        timestamp_fetched: this.timestampFetched
       }
       this.req.upsertRecord('Product_Master', sProduct)
 
@@ -344,13 +349,15 @@ export default {
           })
           this.$parent.getProductData()
         }
+        this.$root.handleStaleRequest(this.req.isStale(), window.location)
       })
     },
     update_formula: function (formula) {
       const update = {
         formula_id: formula.formula_id,
         notes: formula.notes,
-        product_id: this.productId
+        product_id: this.productId,
+        timestamp_fetched: formula.timestamp_fetched
       }
       this.req.updateUpsertRecord('Formula_Master', 'formula_id', formula.formula_id, update)
     },
@@ -437,7 +444,8 @@ export default {
       if (this.new_version_select !== '' || this.new_version_select === 'NEW') {
         const updateProduct = {
           product_id: this.productId,
-          num_formula_versions: this.numVersions + 1
+          num_formula_versions: this.numVersions + 1,
+          timestamp_fetched: this.timestampFetched
         }
         // if (this.numVersions + 1 === 1) {
         //   updateProduct.default_formula_version = this.new_formula_id
@@ -457,6 +465,7 @@ export default {
           this.versions = []
           this.build_formula_versions()
         } else {
+          this.$root.handleStaleRequest(this.req.isStale(), window.location)
           this.$parent.toggleLoaded(true)
         }
       })
@@ -496,7 +505,8 @@ export default {
           _id: brands[i]._id,
           brand_id: brands[i].organization_id,
           priority: brands[i].priority,
-          formula_ingredient_id: brands[i].formula_ingredient_id
+          formula_ingredient_id: brands[i].formula_ingredient_id,
+          timestamp_fetched: brands[i].timestamp_fetched
         }
         if (isTempKey(brand._id)) {
           this.req.updateUpsertRecord('Ingredient_Brands_Join', '_id', brands[i]._id, b)
@@ -504,6 +514,12 @@ export default {
           this.req.upsertRecord('Ingredient_Brands_Join', b)
         }
       }
+      const formulaDetailUpdate = {
+        formula_ingredient_id: brand.formula_ingredient_id,
+        num_brands: brands.length,
+        timestamp_fetched: this.timestampFetched
+      }
+      this.req.updateUpsertRecord('Formula_Detail', 'formula_ingredient_id', brand.formula_ingredient_id, formulaDetailUpdate)
     },
     add_brand: function (formulaIngredientId, brands) {
       const brand = {
@@ -512,7 +528,8 @@ export default {
         formula_ingredient_id: formulaIngredientId,
         organization_id: null,
         organization_primary_name: null,
-        organization_primary_initial: null
+        organization_primary_initial: null,
+        timestamp_fetched: new Date().toISOString()
       }
       brands.push(brand)
     },
@@ -523,7 +540,8 @@ export default {
           _id: brands[index]._id,
           brand_id: brands[index].organization_id,
           priority: brands[index].priority,
-          formula_ingredient_id: brands[index].formula_ingredient_id
+          formula_ingredient_id: brands[index].formula_ingredient_id,
+          timestamp_fetched: brands[index].timestamp_fetched
         }
         brands[index] = org
         brands[index].priority = priority
@@ -531,8 +549,15 @@ export default {
         brands[index].brand_id = org.organization_id
         brands[index].priority = priority
         brands[index].formula_ingredient_id = brand.formula_ingredient_id
+        brands[index].timestamp_fetched = brand.timestamp_fetched
         this.req.updateUpsertRecord('Ingredient_Brands_Join', '_id', brand._id, brand)
       }
+      const formulaDetailUpdate = {
+        formula_ingredient_id: brands[index].formula_ingredient_id,
+        num_brands: brands.length,
+        timestamp_fetched: this.timestampFetched
+      }
+      this.req.updateUpsertRecord('Formula_Detail', 'formula_ingredient_id', brands[index].formula_ingredient_id, formulaDetailUpdate)
     },
     remove_ing: function (ingredientsDetail, index) {
       const ingDet = ingredientsDetail.splice(index, 1)[0]
@@ -547,7 +572,8 @@ export default {
           _id: ingredientsDetail[i]._id,
           ingredient_id: ingredientsDetail[i].component_id,
           priority: ingredientsDetail[i].priority,
-          formula_ingredient_id: ingredientsDetail[i].formula_ingredient_id
+          formula_ingredient_id: ingredientsDetail[i].formula_ingredient_id,
+          timestamp_fetched: ingredientsDetail[i].timestamp_fetched
         }
         if (isTempKey(ingDet._id)) {
           this.req.updateUpsertRecord('Ingredients_Join', '_id', ingredientsDetail[i]._id, ing)
@@ -555,6 +581,12 @@ export default {
           this.req.upsertRecord('Ingredients_Join', ing)
         }
       }
+      const formulaDetailUpdate = {
+        formula_ingredient_id: ingredientsDetail[index].formula_ingredient_id,
+        num_ingredients: ingredientsDetail.length,
+        timestamp_fetched: this.timestampFetched
+      }
+      this.req.updateUpsertRecord('Formula_Detail', 'formula_ingredient_id', ingredientsDetail[index].formula_ingredient_id, formulaDetailUpdate)
     },
     add_ing: function (formulaIngredientId, ingredientsDetail) {
       const ing = {
@@ -562,7 +594,8 @@ export default {
         component_id: null,
         priority: ingredientsDetail.length + 1,
         formula_ingredient_id: formulaIngredientId,
-        component_name: null
+        component_name: null,
+        timestamp_fetched: new Date().toISOString()
       }
       ingredientsDetail.push(ing)
     },
@@ -573,7 +606,8 @@ export default {
           _id: ingredients[index]._id,
           ingredient_id: ingredients[index].component_id,
           priority: ingredients[index].priority,
-          formula_ingredient_id: ingredients[index].formula_ingredient_id
+          formula_ingredient_id: ingredients[index].formula_ingredient_id,
+          timestamp_fetched: ingredients[index].timestamp_fetched
         }
         ingredients[index] = ing
         ingredients[index].priority = priority
@@ -581,7 +615,14 @@ export default {
         ingredients[index].component_id = ing.component_id
         ingredients[index].priority = priority
         ingredients[index].formula_ingredient_id = ingredient.formula_ingredient_id
+        ingredients[index].timestamp_fetched = ingredient.timestamp_fetched
         this.req.updateUpsertRecord('Ingredients_Join', '_id', ingredient._id, ingredient)
+        const formulaDetailUpdate = {
+          formula_ingredient_id: ingredients[index].formula_ingredient_id,
+          num_ingredients: ingredients.length,
+          timestamp_fetched: this.timestampFetched
+        }
+        this.req.updateUpsertRecord('Formula_Detail', 'formula_ingredient_id', ingredients[index].formula_ingredient_id, formulaDetailUpdate)
       }
     },
     delete_row: function (index) {
@@ -614,7 +655,8 @@ export default {
         notes: row.notes,
         percent: row.percent,
         specific_brand_required: row.specific_brand_required,
-        specific_ingredient_required: row.specific_ingredient_required
+        specific_ingredient_required: row.specific_ingredient_required,
+        timestamp_fetched: row.timestamp_fetched
       }
       this.req.updateUpsertRecord('Formula_Detail', 'formula_ingredient_id', id, updateRowBuffer)
     },
@@ -630,13 +672,15 @@ export default {
             ingredient_id: null,
             component_id: null,
             priority: 1,
-            formula_ingredient_id: formulaIngredientId
+            formula_ingredient_id: formulaIngredientId,
+            timestamp_fetched: new Date().toISOString()
           }
         ],
         notes: null,
         percent: 0,
         specific_brand_required: false,
-        specific_ingredient_required: false
+        specific_ingredient_required: false,
+        timestamp_fetched: new Date().toISOString()
       }
       this.new_formula_ingredient_id_index++
       this.new_formula_buffer.formula_detail.push(rowBuffer)
@@ -646,89 +690,87 @@ export default {
         notes: null,
         percent: 0,
         specific_brand_required: false,
-        specific_ingredient_required: false
+        specific_ingredient_required: false,
+        timestamp_fetched: new Date().toISOString()
       }
       this.req.upsertRecord('Formula_Detail', row)
     },
-    set_formula_buffer: function () {
+    set_formula_buffer: function (selector) {
       this.$emit('toggleLoaded', false)
       this.req = new CustomRequest(this.$cookies.get('session'))
 
-      if (this.new_version_select === 'NEW' || this.formulas.length === 0) {
-        const newFormula = {
-          formulation_version: this.numVersions + 1,
-          formula_id: this.new_formula_id,
-          product_id: this.productId,
-          notes: ''
-        }
-        this.req.upsertRecord('Formula_Master', newFormula)
-        this.new_formula_buffer = cloneDeep(newFormula)
-        this.new_formula_buffer.formula_detail = []
-        this.disable_version_select = true
-        this.edit_formulas = true
-        this.$emit('editFormulas', this.edit_formulas)
-        this.$emit('toggleLoaded', true)
-        return
+      let buffer = {}
+      buffer.formulation_version = this.numVersions + 1
+      buffer.formula_id = this.new_formula_id
+      buffer.product_id = this.productId
+      buffer.notes = ''
+      buffer.timestamp_fetched = new Date().toISOString()
+      buffer.formula_detail = []
+
+      const newFormula = {
+        formula_id: this.new_formula_id,
+        formulation_version: this.numVersions + 1,
+        product_id: this.productId,
+        notes: '',
+        timestamp_fetched: new Date().toISOString()
       }
 
-      console.log('Setting formula buffer: NOT NEW', this.formulas.length)
-      console.log('active tab:', this.active_tab_index)
-      console.log('version select:', this.new_version_select)
+      this.req.upsertRecord('Formula_Master', newFormula)
 
-      if (this.new_version_select !== '') {
-        this.new_formula_buffer = cloneDeep(this.formulas.find(f => f.formulation_version === this.new_version_select))
-        this.new_formula_buffer.formulation_version = this.numVersions + 1
-        this.new_formula_buffer.formula_id = this.new_formula_id
-      } else {
-        this.new_formula_buffer = cloneDeep(this.formulas[this.active_tab_index])
-      }
+      if (selector && this.new_version_select !== 'NEW') {
+        const copy = cloneDeep(this.formulas.find(f => f.formulation_version === this.new_version_select))
 
-      if (this.new_version_select !== '') {
-        const newformula = {
-          formulation_version: this.new_formula_buffer.formulation_version,
-          formula_id: this.new_formula_buffer.formula_id,
-          product_id: this.productId,
-          notes: this.new_formula_buffer.notes
-        }
-        this.req.upsertRecord('Formula_Master', newformula)
+        buffer.notes = copy.notes
 
-        this.new_formula_buffer.formula_detail.forEach((f, i) => {
+        copy.formula_detail.forEach((f, i) => {
           const k = genTempKey()
           f.formula_ingredient_id = k
           const row = {
-            formula_ingredient_id: f.formula_ingredient_id,
-            formula_id: this.new_formula_buffer.formula_id,
+            formula_ingredient_id: k,
+            formula_id: this.new_formula_id,
             notes: f.notes,
             percent: f.percent,
             specific_brand_required: f.specific_brand_required,
-            specific_ingredient_required: f.specific_ingredient_required
+            specific_ingredient_required: f.specific_ingredient_required,
+            timestamp_fetched: new Date().toISOString(),
+            num_brands: f.brands.length,
+            num_ingredients: f.ingredients_detail.length
           }
           this.req.upsertRecord('Formula_Detail', row)
+          buffer.formula_detail.push({ ...f, ...row })
           f.ingredients_detail.forEach((ing, j) => {
             const newIng = {
               _id: genTempKey(),
               ingredient_id: ing.ingredient_id ? ing.ingredient_id : ing.component_id,
               priority: ing.priority,
-              formula_ingredient_id: k
+              formula_ingredient_id: k,
+              timestamp_fetched: new Date().toISOString()
             }
             this.req.updateUpsertRecord('Ingredients_Join', '_id', newIng._id, newIng)
+            buffer.formula_detail[i].ingredients_detail[j] = { ...ing, ...newIng }
           })
           f.brands.forEach((b, j) => {
             const newBrand = {
               _id: genTempKey(),
               brand_id: b.brand_id ? b.brand_id : b.organization_id,
               priority: b.priority,
-              formula_ingredient_id: k
+              formula_ingredient_id: k,
+              timestamp_fetched: new Date().toISOString()
             }
             this.req.updateUpsertRecord('Ingredient_Brands_Join', '_id', newBrand._id, newBrand)
+            buffer.formula_detail[i].brands[j] = { ...b, ...newBrand }
           })
         })
+      } else if (this.new_version_select !== 'NEW') {
+        buffer = this.formulas[this.active_tab_index]
       }
 
       this.disable_version_select = true
       this.edit_formulas = true
-      this.$emit('editFormulas', this.edit_formulas)
-      this.$emit('toggleLoaded', true)
+      this.new_formula_buffer = cloneDeep(buffer)
+      this.$parent.edit_formulas = true
+      this.edit_formulas = true
+      this.$parent.toggleLoaded(true)
     },
     build_formula_versions: function () {
       for (const f in this.formulas) {
@@ -816,6 +858,7 @@ export default {
     }
   },
   created: function () {
+    this.new_formula_id = genTempKey()
     this.build_formula_versions()
     this.get_organizations()
     this.get_ingredients()

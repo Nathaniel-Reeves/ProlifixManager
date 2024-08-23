@@ -243,6 +243,21 @@ class CustomResponse:
         self.form_messages = form_messages or {}
         self.json = data or []
         self.status_code = 200
+        self.stale_request = False
+
+    def set_stale_request(self, stale_request):
+        """
+        Args:
+            stale_request (bool): Stale Request.
+        """
+        self.stale_request = stale_request
+
+    def request_stale(self):
+        """
+        Returns:
+            bool: Stale Request.
+        """
+        return self.stale_request
 
     def get_data(self):
         """Returns the data."""
@@ -254,6 +269,8 @@ class CustomResponse:
             flash_message (FlashMessage): Flash message.
         """
         self.flash_messages.append(flash_message)
+        if len(self.flash_messages) > 60:
+            raise ValueError("Too many flash messages")
 
     def insert_flash_messages(self, flash_messages):
         """
@@ -261,6 +278,8 @@ class CustomResponse:
             flash_messages (list): List of FlashMessage Objects
         """
         self.flash_messages += flash_messages
+        if len(self.flash_messages) > 60:
+            raise ValueError("Too many flash messages")
 
     def get_flash_messages(self):
         """Return Flash Messages"""
@@ -301,6 +320,7 @@ class CustomResponse:
             }
         return {
             "data": self.json,
+            "stale_request": self.stale_request,
             "messages": {
                 "flash": flash_messages,
                 "form": form_messages

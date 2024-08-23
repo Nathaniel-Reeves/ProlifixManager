@@ -417,7 +417,8 @@ export default {
         certified_us_pharmacopeia: this.certified_us_pharmacopeia,
         certified_non_gmo: this.certified_non_gmo,
         certified_vegan: this.certified_vegan,
-        doc: {}
+        doc: {},
+        timestamp_fetched: new Date().toISOString()
       }
 
       if (this.component_type === 'powder' || this.component_type === 'liquid' || this.component_type === 'capsule') {
@@ -564,7 +565,8 @@ export default {
         component_id: this.new_component_id,
         component_name: '',
         primary_name: false,
-        botanical_name: false
+        botanical_name: false,
+        timestamp_fetched: new Date().toISOString()
       }
       return newName
     },

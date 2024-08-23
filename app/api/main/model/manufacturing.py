@@ -55,9 +55,9 @@ class Equipment(Base):
             "status": self.status,
             "equipment_history": self.equipment_history,
             "equipment_name": self.equipment_name,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):
@@ -168,9 +168,9 @@ class Processes(Base):
             "equipment_specific": self.equipment_specific,
             "product_variant_type": self.product_variant_type,
             "component_filters": self.component_filters,
-            "timestamp_entered": self.timestamp_entered,
-            "timestamp_modified": self.timestamp_modified,
-            "timestamp_fetched": datetime.datetime.now(datetime.timezone.utc)
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
         }
 
     def get_id(self):

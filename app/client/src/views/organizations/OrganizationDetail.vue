@@ -125,6 +125,7 @@
             v-show="activeSection('names')"
             :p-names="org_data.organization_names"
             :id="org_data.organization_id"
+            :timestamp-fetched="org_data.timestamp_fetched"
             naming-type="organization"
             :allow-edit="true"
             v-on:edit-names="(e) => edit_names = e"
@@ -140,6 +141,7 @@
             :id="org_data.organization_id"
             :doc="org_data.doc"
             :org-name="org_data.organization_primary_name"
+            :timestamp-fetched="org_data.timestamp_fetched"
             v-on:edit-risk-assessment="(e) => edit_supplier_risk_assessment = e"
             v-on:toggle-loaded="toggleLoaded"
             v-on:refresh-parent="refreshParent"
@@ -307,7 +309,7 @@
               ></b-pagination>
             </div>
           </div>
-          <hr>
+          <hr v-show="activeSection('products')">
 
         </b-card-body>
       </b-card>
@@ -418,7 +420,8 @@ export default {
         client: this.edit_org_buffer.client,
         lab: this.edit_org_buffer.lab,
         courier: this.edit_org_buffer.courier,
-        other: this.edit_org_buffer.other
+        other: this.edit_org_buffer.other,
+        timestamp_fetched: this.edit_org_buffer.timestamp_fetched
       }
 
       this.req.upsertRecord('Organizations', org)
@@ -431,6 +434,7 @@ export default {
       })
 
       if (resp.status !== 201) {
+        this.$root.handleStaleRequest(this.req.isStale(), window.location)
         return false
       }
 
@@ -472,6 +476,7 @@ export default {
         if (response.status === 200) {
           response.json().then(data => {
             this.org_data = data.data[0]
+            this.edit_org_buffer = cloneDeep(this.org_data)
             // eslint-disable-next-line
             console.log(this.org_data)
             this.loaded = true

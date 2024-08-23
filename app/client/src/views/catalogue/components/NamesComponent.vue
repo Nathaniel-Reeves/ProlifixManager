@@ -62,6 +62,7 @@ export default {
     namingType: String,
     allowEdit: Boolean,
     id: Number,
+    timestampFetched: String,
     hideHeader: {
       type: Boolean,
       default: false
@@ -105,24 +106,29 @@ export default {
             this.req.upsertRecord('Component_Names', name)
             if (name.primary_name) {
               primary = name.name_id
+              this.req.upsertRecord('Components', { component_id: this.id, primary_name_id: primary, timestamp_fetched: this.timestampFetched })
             }
-            this.req.upsertRecord('Components', { component_id: this.id, primary_name_id: primary })
           })
         } else {
           throw new Error('Invalid naming_type: "' + this.naming_type + '". Only component is allowed')
         }
 
+        this.req.setUpsertOrder(['Component_Names', 'Components'])
+
         const resp = await this.req.sendRequest(window.origin)
         this.$emit('toggleLoaded', false)
-        this.$emit('refreshParent')
 
         const createToast = this.$root.createToast
         resp.messages.flash.forEach(message => {
           createToast(message)
         })
 
+        const hsr = this.$root.handleStaleRequest
+        hsr(this.req.isStale(), window.location)
+
         if (resp.status === 201) {
           this.cancelEditNames()
+          this.$emit('refreshParent')
         }
       }
     },
@@ -165,7 +171,8 @@ export default {
           component_id: this.id,
           component_name: '',
           primary_name: false,
-          botanical_name: false
+          botanical_name: false,
+          timestamp_fetched: new Date().toISOString()
         }
         return newName
       } else {

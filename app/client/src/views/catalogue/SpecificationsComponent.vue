@@ -338,7 +338,8 @@ export default {
     id: {
       type: Number,
       required: true
-    }
+    },
+    timestampFetched: String
   },
   data: function () {
     return {
@@ -485,7 +486,8 @@ export default {
         doc: {
           specifications: this.edit_specs_buffer
         },
-        component_id: this.id
+        component_id: this.id,
+        timestamp_fetched: this.timestampFetched
       }
       this.req.upsertRecord('Components', component)
 
@@ -497,6 +499,7 @@ export default {
 
         if (resp.status !== 201) {
           this.$parent.loaded = true
+          this.$root.handleStaleRequest(this.req.isStale(), window.location)
           return false
         }
         this.del_url_previews.forEach(url => URL.revokeObjectURL(url))

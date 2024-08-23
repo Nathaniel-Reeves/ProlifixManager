@@ -18,6 +18,8 @@ import model as db
 from model.connector import get_session
 
 import json
+import datetime
+import pytz
 
 class CustomRequest:
 
@@ -75,7 +77,7 @@ class CustomRequest:
 
         if not self.error:
             self.error = not self.validate_request_data()
-        print("validate request data:", self.error)
+        # print("validate request data:", self.error)
 
         # if self.custom_upsert:
         #     print(self.request.json['upsert_order'])
@@ -84,19 +86,19 @@ class CustomRequest:
 
         if not self.error:
             self.error = not self.delete_files()
-        print('delete files:', self.error)
+        # print('delete files:', self.error)
 
         if not self.error:
             self.error = not self.save_files()
-        print('save files:', self.error)
+        # print('save files:', self.error)
 
         if not self.error:
             self.error = not self.process_upserts()
-        print('process upserts:', self.error)
+        # print('process upserts:', self.error)
 
         if not self.error:
             self.error = not self.process_deletes()
-        print('process deletes:', self.error)
+        # print('process deletes:', self.error)
 
         self.finish_transaction()
         self.close_session()
@@ -136,6 +138,53 @@ class CustomRequest:
     def close_session(self):
         self.session.close()
 
+    def get_timestamp(self, timestamp):
+        if isinstance(timestamp, str):
+            timestamp = datetime.datetime.fromisoformat(timestamp.replace('Z', '')+'+00:00')
+        if isinstance(timestamp, datetime.datetime):
+            return timestamp.astimezone(pytz.utc)
+
+    def compare_timestamps(self, table_name, record):
+        table = getattr(db, table_name)
+        pk_col = table().get_id_name()
+        if pk_col in record.keys():
+            stm = select(table).where(getattr(table, pk_col) == record[pk_col])
+            stream = self.session.execute(stm)
+            raw_data = stream.all()
+            if len(raw_data) > 0:
+                db_record = raw_data[0][0].to_dict()
+                timestamp_modified = self.get_timestamp(db_record['timestamp_modified'])
+                timestamp_fetched = self.get_timestamp(record['timestamp_fetched'])
+                print("pk:    ", record[pk_col])
+                print("table: ", table_name)
+                print("mod:   ", timestamp_modified)
+                print("fetch: ", timestamp_fetched)
+                if timestamp_modified > timestamp_fetched:
+                    flash_message = FlashMessage(
+                        variant=VariantType.DANGER,
+                        title="Conflict!",
+                        message=f"Record {record[pk_col]} has been modified since last fetched."
+                    )
+                    self.custom_response.insert_flash_message(flash_message)
+                    self.custom_response.set_status_code(409)
+                    self.custom_response.set_stale_request(True)
+                    return False
+            record.pop('timestamp_fetched')
+            if 'timestamp_entered' in record.keys():
+                record.pop('timestamp_entered')
+            if 'timestamp_modified' in record.keys():
+                record.pop('timestamp_modified')
+            return True
+        else:
+            flash_message = FlashMessage(
+                variant=VariantType.DANGER,
+                title="Invalid Request!",
+                message=f'{pk_col} is missing from the upsert request for {table}.'
+            )
+            self.custom_response.insert_flash_message(flash_message)
+            self.custom_response.set_status_code(400)
+            return False
+
     def process_upserts(self):
         upserts = self.request.json['payload']['upsert']
         if self.custom_upsert:
@@ -146,9 +195,11 @@ class CustomRequest:
         for table in tables:
             if table in upserts.keys():
                 for record in upserts[table]:
+                    flag = self.compare_timestamps(table, record)
+                    if not flag:
+                        return flag
                     flag = self._upsert_record(table, record)
                     if not flag:
-
                         return flag
         return flag
 
@@ -326,6 +377,25 @@ class CustomRequest:
                 self.custom_response.insert_flash_message(flash_message)
                 self.custom_response.set_status_code(400)
                 flag = False
+            for record in self.request.json['payload']['upsert'][table]:
+                if not isinstance(record, dict):
+                    flash_message = FlashMessage(
+                        variant=VariantType.DANGER,
+                        title="Invalid Request!",
+                        message=f'Invalid record for {table}.'
+                    )
+                    self.custom_response.insert_flash_message(flash_message)
+                    self.custom_response.set_status_code(400)
+                    flag = False
+                if 'timestamp_fetched' not in record:
+                    flash_message = FlashMessage(
+                        variant=VariantType.DANGER,
+                        title="Invalid Request!",
+                        message="timestamp_fetched is missing."
+                    )
+                    self.custom_response.insert_flash_message(flash_message)
+                    self.custom_response.set_status_code(400)
+                    flag = False
 
         if not 'delete' in self.request.json['payload']:
             flash_message = FlashMessage(
@@ -347,6 +417,47 @@ class CustomRequest:
                 self.custom_response.insert_flash_message(flash_message)
                 self.custom_response.set_status_code(400)
                 flag = False
+                for record in self.request.json['payload']['delete'][table]:
+                    if not isinstance(record, dict):
+                        flash_message = FlashMessage(
+                            variant=VariantType.DANGER,
+                            title="Invalid Request!",
+                            message=f'Invalid record for {table}.'
+                        )
+                        self.custom_response.insert_flash_message(flash_message)
+                        self.custom_response.set_status_code(400)
+                        flag = False
+                    if 'timestamp_fetched' not in record:
+                        flash_message = FlashMessage(
+                            variant=VariantType.DANGER,
+                            title="Invalid Request!",
+                            message="timestamp_fetched is missing."
+                        )
+                        self.custom_response.insert_flash_message(flash_message)
+                        self.custom_response.set_status_code(400)
+                        flag = False
+
+                    try:
+                        datetime.datetime.fromisoformat(record['timestamp_fetched'])
+                    except Exception:
+                        flash_message = FlashMessage(
+                            variant=VariantType.DANGER,
+                            title="Invalid Request!",
+                            message="timestamp_fetched is not in ISO format."
+                        )
+                        self.custom_response.insert_flash_message(flash_message)
+                        self.custom_response.set_status_code(400)
+                        flag = False
+
+                    if record['timestamp_fetched'].find('+00:00') == -1:
+                        flash_message = FlashMessage(
+                            variant=VariantType.DANGER,
+                            title="Invalid Request!",
+                            message="timestamp_fetched is not in UTC timezone."
+                        )
+                        self.custom_response.insert_flash_message(flash_message)
+                        self.custom_response.set_status_code(400)
+                        flag = False
 
         if not 'upsert_file_data' in self.request.json:
             flash_message = FlashMessage(
@@ -801,7 +912,6 @@ def check_organization_levenshtein(request):
     session.close()
     custom_response.set_status_code(200)
     return custom_response
-
 
 def check_component_levenshtein(request):
     custom_response = CustomResponse()

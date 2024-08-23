@@ -41,7 +41,7 @@
       <div v-show="edit_names">
         <b-button variant="outline-info" class="m-2" v-on:click="addName()">New Name</b-button>
         <b-button variant="outline-danger" class="m-2" v-on:click="cancelEditNames()">Cancel</b-button>
-        <b-button type="outline-submit" :disabled="edit_names_buffer.length <= 0" variant="success" class="m-2" v-on:click="editNames()">Save</b-button>
+        <b-button type="submit" :disabled="edit_names_buffer.length <= 0" variant="outline-success" class="m-2" v-on:click="editNames()">Save</b-button>
       </div>
     </div>
   </div>
@@ -73,7 +73,8 @@ export default {
     hideHeader: {
       type: Boolean,
       default: false
-    }
+    },
+    timestampFetched: String
   },
   data: function () {
     return {
@@ -101,14 +102,14 @@ export default {
           this.req.upsertRecord('Organization_Names', name)
           if (name.primary_name) {
             newPrimary = name.name_id
-          }
-          if (isTempKey(name.name_id)) {
-            primaryTempKey = true
+            if (isTempKey(name.name_id)) {
+              primaryTempKey = true
+            }
           }
         })
 
         if (!primaryTempKey) {
-          this.req.upsertRecord('Organizations', { organization_id: this.id, primary_name_id: newPrimary })
+          this.req.upsertRecord('Organizations', { organization_id: this.id, primary_name_id: newPrimary, timestamp_fetched: this.timestampFetched })
         }
 
         const resp1 = await this.req.sendRequest(window.origin)
@@ -118,24 +119,21 @@ export default {
           resp1.messages.flash.forEach(message => {
             createToast(message)
           })
+          this.$root.handleStaleRequest(this.req.isStale(), window.location)
           return false
         }
 
         if (!primaryTempKey) {
-          resp1.messages.flash.forEach(message => {
-            createToast(message)
-          })
+          this.cancelEditNames()
+          this.$parent.edit_names = false
           this.$parent.refreshParent()
           return true
         }
 
         const tempKeyLookup = this.req.getTempKeyLookup()
-        console.log('TempKeyLookup', tempKeyLookup)
-        console.log('newPrimary', newPrimary)
-
         this.req = new CustomRequest(this.$cookies.get('session'))
 
-        this.req.upsertRecord('Organizations', { organization_id: this.id, primary_name_id: tempKeyLookup[newPrimary].new_id })
+        this.req.upsertRecord('Organizations', { organization_id: this.id, primary_name_id: tempKeyLookup[newPrimary].new_id, timestamp_fetched: this.timestampFetched })
         const resp2 = await this.req.sendRequest(window.origin)
 
         resp2.messages.flash.forEach(message => {
@@ -143,10 +141,12 @@ export default {
         })
 
         if (resp2.status === 201) {
-          this.$parent.refreshParent()
           this.cancelEditNames()
+          this.$parent.edit_names = false
+          this.$parent.refreshParent()
           return true
         }
+        this.$root.handleStaleRequest(this.req.isStale(), window.location)
         return false
       }
     },
@@ -204,7 +204,8 @@ export default {
         organization_id: this.id,
         organization_name: null,
         organization_initial: null,
-        primary_name: false
+        primary_name: false,
+        timestamp_fetched: new Date().toISOString()
       }
       return newName
     }

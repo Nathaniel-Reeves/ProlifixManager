@@ -77,7 +77,7 @@
     <div class="container-fluid mt-3 p-0" id="footer">
       <footer class="bg-dark text-center text-white">
         <div class="text-center bg-dark p-3">
-          © 2024 Copyright | v3.7.0
+          © 2024 Copyright | v3.8.0
         </div>
       </footer>
     </div>
@@ -198,6 +198,26 @@ export default {
         solid: true,
         toaster: 'b-toaster-bottom-right'
       })
+    },
+    handleStaleRequest: function (isStale, location) {
+      if (isStale) {
+        const modal = {
+          title: 'Stale Session',
+          size: 'lg',
+          buttonSize: 'md',
+          okVariant: 'danger',
+          okTitle: 'Refresh Page',
+          footerClass: 'p-2',
+          hideHeaderClose: true,
+          centered: true,
+          hideBackdrop: false,
+          noStacking: true,
+          noCloseOnBackdrop: true
+        }
+        this.$bvModal.msgBoxOk('Your session has expired. Please refresh the page to continue.', modal).then(value => {
+          location.reload()
+        })
+      }
     }
   },
   created: function () {

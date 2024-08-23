@@ -121,6 +121,10 @@ export default {
     variant_options: {
       type: Array,
       required: true
+    },
+    timestampFetched: {
+      type: String,
+      required: true
     }
   },
   data: function () {
@@ -163,6 +167,7 @@ export default {
         this.req.updateUpsertRecord('Component_Brands_Join', '_id', row.brands[i]._id, { _id: row.brands[i]._id, priority: i + 1 })
         nodeData.process_components[rowIndex].brands[i].priority = i + 1
       }
+      this.req.updateUpsertRecord('Process_Components', 'process_component_id', row.process_component_id, { process_component_id: row.process_component_id, timestamp_fetched: this.timestampFetched, num_brands: row.brands.length })
       this.resizeNode(this.nodes_buffer[nodeIndex])
     },
     deleteNodeRowComponent: function (nodeData, rowIndex, compIndex) {
@@ -178,6 +183,7 @@ export default {
         this.req.updateUpsertRecord('Components_Join', '_id', row.components[i]._id, { _id: row.components[i]._id, priority: i + 1 })
         nodeData.process_components[rowIndex].components[i].priority = i + 1
       }
+      this.req.updateUpsertRecord('Process_Components', 'process_component_id', row.process_component_id, { process_component_id: row.process_component_id, timestamp_fetched: this.timestampFetched, num_components: row.components.length })
       this.resizeNode(this.nodes_buffer[nodeIndex])
     },
     deleteNodeRow: function (nodeData, rowIndex) {
@@ -243,7 +249,9 @@ export default {
         use_default_ave_percent_loss: node.use_default_ave_percent_loss,
         num_retentions: node.num_retentions,
         lab_sample_size: node.lab_sample_size,
-        qc_sample_size: node.qc_sample_size
+        qc_sample_size: node.qc_sample_size,
+        timestamp_fetched: node.timestamp_fetched,
+        num_process_components: node.process_components.length
       }
       this.req.updateUpsertRecord('Manufacturing_Process', 'process_spec_id', node.process_spec_id, updateManufacturingProcess)
 
@@ -255,7 +263,10 @@ export default {
           process_spec_id: node.process_spec_id,
           qty_per_unit: row.qty_per_unit,
           specific_brand_required: row.specific_brand_required,
-          specific_component_required: row.specific_component_required
+          specific_component_required: row.specific_component_required,
+          timestamp_fetched: row.timestamp_fetched,
+          num_brands: row.brands.length,
+          num_components: row.components.length
         }
         this.req.updateUpsertRecord('Process_Components', 'process_component_id', row.process_component_id, updateProcessComponents)
 
@@ -266,7 +277,8 @@ export default {
             _id: comp._id,
             process_component_id: row.process_component_id,
             component_id: comp.component_id,
-            priority: comp.priority
+            priority: comp.priority,
+            timestamp_fetched: comp.timestamp_fetched
           }
           this.req.updateUpsertRecord('Components_Join', '_id', comp._id, updateComponentsJoin)
         }
@@ -278,7 +290,8 @@ export default {
             _id: brand._id,
             process_component_id: row.process_component_id,
             brand_id: brand.brand_id,
-            priority: brand.priority
+            priority: brand.priority,
+            timestamp_fetched: brand.timestamp_fetched
           }
           this.req.updateUpsertRecord('Component_Brands_Join', '_id', brand._id, updateComponentBrandsJoin)
         }
@@ -308,10 +321,12 @@ export default {
         source: params.source,
         target: params.target,
         animated: false,
-        marker_end: 'ArrowClosed'
+        marker_end: 'ArrowClosed',
+        timestamp_fetched: new Date().toISOString()
       }
       this.edges_buffer.push(cloneDeep(newEdge))
       this.req.upsertRecord('Manufacturing_Process_Edges', newEdge)
+      this.req.updateUpsertRecord('Product_Master', 'product_id', this.productId, { product_id: this.productId, timestamp_fetched: this.timestampFetched, num_manufacturing_edges: this.edges_buffer.length })
       this.layoutGraph()
     },
     deleteEdge: function (edgeId) {
@@ -323,16 +338,19 @@ export default {
         this.edges_buffer.splice(i, 1)
         this.req.deleteRecord('Manufacturing_Process_Edges', { id: Number(edgeId) })
       }
+      this.req.updateUpsertRecord('Product_Master', 'product_id', this.productId, { product_id: this.productId, timestamp_fetched: this.timestampFetched, num_manufacturing_edges: this.edges_buffer.length })
       this.layoutGraph()
     },
     onEdgeUpdateEnd: function (edge) {
       const i = this.edges_buffer.findIndex((e) => e.id === edge.id)
       this.edges_buffer[i].source = edge.sourceNode?.data.process_spec_id
       this.edges_buffer[i].target = edge.targetNode?.data.process_spec_id
+      this.edges_buffer[i].timestamp_fetched = edge.timestamp_fetched
       this.req.updateUpsertRecord('Manufacturing_Process_Edges', 'id', edge.id, this.edges_buffer[i])
+      this.req.updateUpsertRecord('Product_Master', 'product_id', this.productId, { product_id: this.productId, timestamp_fetched: this.timestampFetched, num_manufacturing_edges: this.edges_buffer.length })
     },
     addProcess: function () {
-      console.log()
+      this.req.updateUpsertRecord('Product_Master', 'product_id', this.productId, { product_id: this.productId, timestamp_fetched: this.timestampFetched, num_manufacturing_processes: this.nodes_buffer.length + 1 })
       const newKey = genTempKey()
       const newProcess = {
         process_spec_id: newKey,
@@ -382,7 +400,9 @@ export default {
         use_default_ave_percent_loss: true,
         num_retentions: 2,
         lab_sample_size: 100,
-        qc_sample_size: 5
+        qc_sample_size: 5,
+        timestamp_fetched: new Date().toISOString(),
+        num_process_components: 0
       }
       this.nodes_buffer.push(newProcess)
       this.layoutGraph()
@@ -414,6 +434,7 @@ export default {
       } else {
         this.req.deleteRecord('Manufacturing_Process', { process_spec_id: node.process_spec_id })
       }
+      this.req.updateUpsertRecord('Product_Master', 'product_id', this.productId, { product_id: this.productId, timestamp_fetched: this.timestampFetched, num_manufacturing_processes: this.nodes_buffer.length })
       this.layoutGraph()
     },
     setProcessesBuffer: function () {
@@ -449,6 +470,7 @@ export default {
       } else {
         this.edit_manufacturing = false
         this.$parent.edit_manufacturing = false
+        this.$root.handleStaleRequest(this.req.isStale(), window.location)
         this.$nextTick(() => {
           this.$parent.toggleLoaded(true)
         })

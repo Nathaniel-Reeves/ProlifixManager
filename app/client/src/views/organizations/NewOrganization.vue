@@ -195,7 +195,6 @@ export default {
       return url
     },
     buildDuplicateModalMessage: function (testName, score, potentialDuplicate) {
-      console.log('potentialDuplicate:', potentialDuplicate)
       const h = this.$createElement
       const messageVNode = h('div', [
         h('p', [
@@ -400,7 +399,8 @@ export default {
 
       const updateOrg = {
         organization_id: tempKeyLookup[this.new_org_id].new_id,
-        primary_name_id: tempKeyLookup[primaryNameTempKey].new_id
+        primary_name_id: tempKeyLookup[primaryNameTempKey].new_id,
+        timestamp_fetched: new Date().toISOString()
       }
       this.req.upsertRecord('Organizations', updateOrg)
       const resp2 = await this.req.sendRequest(window.origin)
@@ -443,7 +443,8 @@ export default {
         organization_id: this.new_org_id,
         organization_name: null,
         organization_initial: null,
-        primary_name: false
+        primary_name: false,
+        timestamp_fetched: new Date().toISOString()
       }
       return newName
     }
@@ -451,6 +452,7 @@ export default {
   created: function () {
     this.new_org_id = genTempKey()
     this.org_buffer.organization_id = this.new_org_id
+    this.org_buffer.timestamp_fetched = new Date().toISOString()
     this.addName()
     this.radioNames(this.edit_names_buffer[0].name_id, 'primary')
   }
