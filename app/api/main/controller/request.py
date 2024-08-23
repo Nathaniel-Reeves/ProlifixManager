@@ -160,6 +160,9 @@ class CustomRequest:
                 db_record = raw_data[0][0].to_dict()
                 timestamp_modified = self.get_timestamp(db_record['timestamp_modified'], modified=True)
                 timestamp_fetched = self.get_timestamp(record['timestamp_fetched'])
+                print(app.config['DB_HOST'])
+                print(timestamp_modified, ' > ', timestamp_fetched)
+                print(timestamp_modified > timestamp_fetched)
                 if timestamp_modified > timestamp_fetched:
                     flash_message = FlashMessage(
                         variant=VariantType.DANGER,
