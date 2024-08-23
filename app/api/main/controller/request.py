@@ -141,11 +141,11 @@ class CustomRequest:
     def get_timestamp(self, timestamp, modified=False):
         if isinstance(timestamp, str):
             timestamp = datetime.datetime.fromisoformat(timestamp.replace('Z', '')+'+00:00')
-            if app.config['DB_HOST'] == '192.168.1.133' and modified:
+            if app.config['DB_HOST'] == '172.10.10.2' and modified:
                 return (timestamp + datetime.timedelta(hours=6)).astimezone(pytz.utc)
             return timestamp.astimezone(pytz.utc)
         if isinstance(timestamp, datetime.datetime):
-            if app.config['DB_HOST'] == '192.168.1.133' and modified:
+            if app.config['DB_HOST'] == '172.10.10.2' and modified:
                 return (timestamp + datetime.timedelta(hours=6)).astimezone(pytz.utc)
             return timestamp.astimezone(pytz.utc)
 
