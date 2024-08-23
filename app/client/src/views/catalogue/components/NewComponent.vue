@@ -579,7 +579,7 @@ export default {
       }
     },
     get_organizations: function () {
-      const fetchRequest = window.origin + '/api/v1/organizations?org-type=client'
+      const fetchRequest = window.origin + '/api/v1/organizations?org-type=supplier'
       // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest

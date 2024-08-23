@@ -69,12 +69,13 @@
                 <b-card class="m-2" style="min-width: 22rem; max-width: 22rem;" no-body>
                   <b-card-body>
                     <b-card-title class="my-1" v-show="document.document_type">
-                      {{ document.document_type === 'questionnaire' ? 'Questionnaire' : null }}
+                      {{ document.document_type === 'spec_sheet' ? 'Spec Sheet' : null }}
                       {{ document.document_type === 'certificate' ? 'Certificate' : null }}
-                      {{ document.document_type === 'food_safety_plan' ? 'Food Safety Plan' : null }}
-                      {{ document.document_type === 'flow_chart' ? 'Flow Chart' : null }}
-                      {{ document.document_type === 'audit' ? 'Audit' : null }}
+                      {{ document.document_type === 'email' ? 'Email' : null }}
                       {{ document.document_type === 'letter' ? 'Letter' : null }}
+                      {{ document.document_type === 'drawing' ? 'Drawing' : null }}
+                      {{ document.document_type === 'bid' ? 'Bid' : null }}
+                      {{ document.document_type === 'invoice' ? 'Invoice' : null }}
                       {{ document.document_type === 'other' ? 'Other' : null }}
                     </b-card-title>
                     <v-select v-show="!document.document_type" v-model="document.document_type" required label="text" :reduce="doc => doc.value" placeholder="Select Document Type"
