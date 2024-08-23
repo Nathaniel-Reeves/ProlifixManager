@@ -155,8 +155,8 @@ class CustomRequest:
             raw_data = stream.all()
             if len(raw_data) > 0:
                 db_record = raw_data[0][0].to_dict()
-                timestamp_modified = self.get_timestamp(db_record['timestamp_modified'], modified=True)
-                timestamp_fetched = self.get_timestamp(record['timestamp_fetched'])
+                timestamp_modified = self.get_timestamp(db_record['timestamp_modified'])
+                timestamp_fetched = self.get_timestamp(record['timestamp_fetched'], modified=True)
                 if timestamp_modified > timestamp_fetched:
                     flash_message = FlashMessage(
                         variant=VariantType.DANGER,
