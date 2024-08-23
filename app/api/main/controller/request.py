@@ -155,10 +155,6 @@ class CustomRequest:
                 db_record = raw_data[0][0].to_dict()
                 timestamp_modified = self.get_timestamp(db_record['timestamp_modified'])
                 timestamp_fetched = self.get_timestamp(record['timestamp_fetched'])
-                print("pk:    ", record[pk_col])
-                print("table: ", table_name)
-                print("mod:   ", timestamp_modified)
-                print("fetch: ", timestamp_fetched)
                 if timestamp_modified > timestamp_fetched:
                     flash_message = FlashMessage(
                         variant=VariantType.DANGER,
