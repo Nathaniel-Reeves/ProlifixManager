@@ -510,12 +510,13 @@ export default {
       })
     },
     saveProductUpdates: async function () {
-      const doc = cloneDeep(this.doc)
       this.$parent.loaded = false
-      doc.specifications = this.edit_specs_buffer
       const product = {
-        doc: doc,
-        product_id: this.id
+        doc: {
+          specifications: this.edit_specs_buffer
+        },
+        product_id: this.id,
+        timestamp_fetched: this.timestampFetched
       }
       this.req.upsertRecord('Product_Master', product)
 

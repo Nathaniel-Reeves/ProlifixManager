@@ -6,7 +6,7 @@
       label="variant_title"
       v-model="selected_variant"
       :loading="!variants_loaded"
-      :placeholder="!variants_loaded ? 'Loading...':'Choose Product Variant...'"
+      :placeholder="placeholder"
       aria-describedby="select_variant-live-feedback"
       :class="[((selected_variant !== null && selected_variant.variant_id > 0) || !variantReq ? '' : 'is-invalid'), 'wide']"
       :disabled="(selected_variant !== null && selected_variant.variant_id > 0) || disabled"
@@ -83,10 +83,21 @@ export default {
       id: Math.floor(Math.random() * 100000),
       observer: null,
       limit: 10,
-      search: ''
+      search: '',
+      placeholder: 'Loading...'
     }
   },
   methods: {
+    calPlaceholder: function () {
+      if (this.variants_loaded) {
+        this.placeholder = 'Choose Product Variant...'
+      }
+      setTimeout(() => {
+        if (!this.variants_loaded || this.variants.length === 0) {
+          this.placeholder = 'No Variants Available, Make a New Variant.'
+        }
+      }, 1500)
+    },
     async onOpen () {
       if (this.hasNextPage) {
         await this.$nextTick()
@@ -136,6 +147,7 @@ export default {
   },
   created: function () {
     this.selected_variant = this.selected != null ? this.selected : null
+    this.calPlaceholder()
   }
 }
 </script>
