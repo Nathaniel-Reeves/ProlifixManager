@@ -513,6 +513,7 @@ export default {
       this.$parent.loaded = false
       const product = {
         doc: {
+          ...this.edit_specs_buffer.doc,
           specifications: this.edit_specs_buffer
         },
         product_id: this.id,

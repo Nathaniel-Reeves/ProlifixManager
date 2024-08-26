@@ -77,7 +77,7 @@
     <div class="container-fluid mt-3 p-0" id="footer">
       <footer class="bg-dark text-center text-white">
         <div class="text-center bg-dark p-3">
-          © 2024 Copyright | v3.8.12
+          © 2024 Copyright | v3.8.13
         </div>
       </footer>
     </div>
@@ -248,7 +248,11 @@ export default {
 
 @media print {
   body {
-    margin: 25mm 25mm 25mm 25mm;
+    margin: 5mm 5mm 5mm 5mm;
+  }
+  .card {
+    box-shadow: none;
+    width: 100%;
   }
 }
 </style>

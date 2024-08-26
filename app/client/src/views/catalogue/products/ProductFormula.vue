@@ -334,7 +334,8 @@ export default {
 
       const sProduct = {
         product_id: this.productId,
-        default_formula_version: id,
+        default_formula_id: id,
+        default_formula_version: this.formulas.find(f => f.formula_id === id).formulation_version,
         timestamp_fetched: this.timestampFetched
       }
       this.req.upsertRecord('Product_Master', sProduct)
