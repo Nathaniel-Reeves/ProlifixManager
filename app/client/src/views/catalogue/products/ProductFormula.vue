@@ -295,6 +295,10 @@ export default {
     timestampFetched: {
       type: String,
       required: true
+    },
+    organic: {
+      type: Boolean,
+      default: false
     }
   },
   data: function () {
@@ -595,6 +599,7 @@ export default {
         priority: ingredientsDetail.length + 1,
         formula_ingredient_id: formulaIngredientId,
         component_name: null,
+        component_primary_name: null,
         timestamp_fetched: new Date().toISOString()
       }
       ingredientsDetail.push(ing)
@@ -818,7 +823,10 @@ export default {
       })
     },
     get_ingredients: function () {
-      const fetchRequest = window.origin + '/api/v1/catalogue/components?type=powder'
+      let fetchRequest = window.origin + '/api/v1/catalogue/components?type=powder&populdate=component_names'
+      if (this.organic) {
+        fetchRequest += '&certification=usda_organic'
+      }
       // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest

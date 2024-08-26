@@ -66,6 +66,7 @@
             v-show="activeSection('formulas')"
             :v-key="formula_key"
             :product-id="product_data.product_id"
+            :organic="product_data.certified_usda_organic"
             :formulas="product_data.formulas"
             :timestamp-fetched="product_data.timestamp_fetched"
             :num-versions="product_data.num_formula_versions"
