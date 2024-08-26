@@ -484,6 +484,7 @@ export default {
       this.$parent.loaded = false
       const component = {
         doc: {
+          ...this.doc,
           specifications: this.edit_specs_buffer
         },
         component_id: this.id,
@@ -513,7 +514,7 @@ export default {
       this.$parent.loaded = false
       const product = {
         doc: {
-          ...this.edit_specs_buffer.doc,
+          ...this.doc,
           specifications: this.edit_specs_buffer
         },
         product_id: this.id,
