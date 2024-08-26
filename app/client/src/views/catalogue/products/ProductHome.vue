@@ -12,6 +12,16 @@
               <button class="btn btn-outline-secondary" type="button" id="button-addon2" v-on:click="search()"><b-icon icon="search"></b-icon></button>
             </div>
           </div>
+
+          <form class="mt-2">
+            <b>Powder Certification Filter:</b><br>
+            <div class="custom-control custom-checkbox" v-for="cert in powder_cert_options" :key="cert.value">
+              <input class="custom-control-input" type="checkbox" :id="cert.value" :value="cert.value" v-model="powder_cert_filter">
+              <label class="custom-control-label" :for="cert.value">
+                <span>{{ cert.text }}</span>
+              </label>
+            </div>
+          </form>
         </div>
       </b-sidebar>
     </div>
@@ -95,10 +105,32 @@ export default {
       loaded: false,
       search_query: '',
       search_query_buff: '',
-      products_data: []
+      products_data: [],
+      powder_cert_options: [
+        { value: 'certified_usda_organic', text: 'Certified USDA Organic', active: false },
+        { value: 'certified_halal', text: 'Certified Halal', active: false },
+        { value: 'certified_kosher', text: 'Certified Kosher', active: false },
+        { value: 'certified_national_sanitation_foundation', text: 'Certified NSF', active: false },
+        { value: 'certified_us_pharmacopeia', text: 'Certified US Pharma', active: false },
+        { value: 'certified_non_gmo', text: 'Certified Non-GMO', active: false },
+        { value: 'certified_vegan', text: 'Certified Vegan', active: false }
+      ],
+      powder_cert_filter: [],
+      allPowderCertSelected: false,
+      powderCertIndeterminate: false
     }
   },
   methods: {
+    certFilter: function (product) {
+      let flag = false
+      for (let i = 0; i < this.powder_cert_options.length; i++) {
+        if (product[this.powder_cert_options[i].value] && this.powder_cert_filter.includes(this.powder_cert_options[i].value)) { flag = true }
+      }
+      return flag
+    },
+    toggleAllCerts: function (checked) {
+      this.powder_cert_filter = checked ? this.powder_cert_options.map((obj) => obj.value).slice() : []
+    },
     clearSearch: function () {
       this.search_query = ''
       this.search_query_buff = ''
@@ -181,11 +213,14 @@ export default {
       if (this.search_query.length > 3) {
         list = list.filter(this.searchFilter)
       }
+      if (this.powder_cert_filter.length > 0) {
+        list = list.filter(this.certFilter)
+      }
       list = list.sort(this.alphabetical).sort(this.productBrand)
       return list
     },
     filterActive: function () {
-      if (this.search_query.length > 3) {
+      if (this.search_query.length > 3 || this.powder_cert_filter.length > 0) {
         return true
       }
       return false
