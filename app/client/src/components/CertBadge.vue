@@ -1,10 +1,14 @@
 <template>
   <span v-if="data != null">
     <span v-for="cert, index in certs" :key="index">
-      <span v-if="cert.key && data[cert.key]">
+      <span v-if="cert.key && data[cert.key]" :class="[!printIcon ? 'd-print-none' : '']">
         <b-img :id="'cert' + index + cert.r" style="width:4em;" circle class="mr-2 p-2" :src="cert.img"></b-img>
         <b-tooltip :target="'cert' + index + cert.r" triggers="hover">{{ cert.alt }}</b-tooltip>
       </span>
+    </span>
+    <span v-if="data['certified_usda_organic']" :class="['d-none', printIcon ? 'd-print-none' : 'd-print-inline-block']">
+      Organic
+      <!-- <b-img :id="'cert' + index + cert.r" style="width:4em;" circle class="mr-2 p-2" :src="cert.img"></b-img> -->
     </span>
   </span>
 </template>
@@ -12,7 +16,10 @@
 <script>
 export default {
   name: 'CertBadge',
-  props: ['data'],
+  props: {
+    data: { type: Object, default: null, required: true },
+    printIcon: { type: Boolean, default: false }
+  },
   data: function () {
     return {
       certs: [

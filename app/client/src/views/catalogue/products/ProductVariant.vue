@@ -5,7 +5,7 @@
     <b-card-group deck class="mb-3">
       <div v-for="variant in variants_buffer" :key="variant.variant_id">
         <b-overlay :show="variant.discontinued" :opacity="0.50" rounded="sm">
-          <b-card>
+          <b-card style="max-width: 22rem;">
             <b-card-title class="d-flex justify-content-between">
               <span v-if="variant.variant_type === 'powder'">Powder Fill - {{ (variant?.total_grams_per_unit ? variant.total_grams_per_unit : 0) + 'g' }} {{ variant?.variant_title_suffix ? variant.variant_title_suffix : '' }}</span>
               <span v-if="variant.variant_type === 'liquid'">Liquid Fill - {{ (variant?.total_milliliters_per_unit ? variant.total_milliliters_per_unit : 0) + 'ml' }} {{ variant?.variant_title_suffix ? variant.variant_title_suffix : '' }}</span>
@@ -227,7 +227,7 @@
                   </b-col>
                 </b-row>
                 <b-row>
-                  <b-col><label for="total_mg_per_capsule"><strong>Target mg per Product:</strong></label></b-col>
+                  <b-col><label for="total_mg_per_capsule"><strong>Target mg per Capsule:</strong></label></b-col>
                   <b-col>
                     <div class="input-group mb-2">
                       <input
@@ -245,7 +245,7 @@
                       <div class="input-group-append">
                         <span class="input-group-text">mg</span>
                       </div>
-                      <div id="total_mg_per_capsule-live-feedback" class="invalid-feedback">This is a required field.</div>
+                      <div id="total_mg_per_capsule-live-feedback" class="invalid-feedback">This is a required field.  Do not include the empty capsule weight.</div>
                     </div>
                   </b-col>
                 </b-row>
@@ -334,7 +334,7 @@
                       <div class="input-group-append">
                         <span class="input-group-text">mg</span>
                       </div>
-                      <div id="mg_empty_capsule-live-feedback" class="invalid-feedback">This required field must be greater than or equal to zero.</div>
+                      <div id="mg_empty_capsule-live-feedback" class="invalid-feedback">This required field must be greater than or equal to zero.  Empty capsule weight only.</div>
                     </div>
                   </b-col>
                 </b-row>

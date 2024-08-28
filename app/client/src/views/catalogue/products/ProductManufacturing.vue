@@ -1,8 +1,9 @@
 <template>
-  <b-overlay id="Manufacturing" :show="loading" :opacity="0.75">
-    <h3>Manufacturing<b-button v-if="!edit_manufacturing" v-b-tooltip.hover title="Edit Manufacturing Process" v-on:click="setProcessesBuffer()" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
+  <b-overlay id="Manufacturing" :show="loading" :opacity="0.75" style="break-inside: avoid;">
+    <h3>Manufacturing<b-button v-if="!edit_manufacturing && !print" v-b-tooltip.hover title="Edit Manufacturing Process" v-on:click="setProcessesBuffer()" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
+
     <div class="my_component d-flex flex-wrap justify-content-center">
-      <div class="d-flex justify-content-center" style="width: 100%; height: 700px">
+      <div class="d-flex justify-content-center" :style="{'width': '100%', 'height': !print ? '700px' : '1400px', 'break-inside': 'avoid'}">
         <VueFlow
           @pane-ready="onPaneReady"
           @connect="onConnect"
@@ -17,15 +18,15 @@
           :no-wheel-class-name="false"
           :prevent-scrolling="false"
         >
-          <Background />
-          <Panel position="top-right">
+          <Background v-if="!print"/>
+          <Panel position="top-right" v-if="!print">
             <b-button-group>
               <b-button variant="light" style="border-width: 1px; border-color:#999999" @click="zoomin()"><b-icon icon="zoom-in"></b-icon></b-button>
               <b-button variant="light" style="border-width: 1px; border-color:#999999" @click="zoomout()"><b-icon icon="zoom-out"></b-icon></b-button>
               <b-button variant="light" style="border-width: 1px; border-color:#999999" @click="zoomfit()"><b-icon icon="fullscreen"></b-icon></b-button>
             </b-button-group>
           </Panel>
-          <Panel position="bottom-left">
+          <Panel position="bottom-left" v-if="!print">
             <div class="d-flex">
               <div style="background-color: white;" class="mr-2" v-show="edit_manufacturing">
                 <b-button variant="outline-success" @click="submit()">Save Changes</b-button>
@@ -38,9 +39,28 @@
               </div>
             </div>
           </Panel>
-          <MiniMap />
+          <MiniMap v-if="!print"/>
           <template #node-manufacturing-process="node_data">
             <ManufacturingProcess
+              :id="node_data.process_spec_id"
+              :node_data="node_data"
+              :component_options="component_options"
+              :brand_options="brand_options"
+              :process_options="process_options"
+              :variant_options="variant_options"
+              :edit="edit_manufacturing"
+              :overlay="overlay || loading"
+              v-on:resize-node="node => resizeNode(node)"
+              v-on:set-graph="layoutGraph()"
+              v-on:update-node-data="(node) => updateNodeData(node)"
+              v-on:delete-node="(node) => deleteProcess(node)"
+              v-on:delete-node-row="(node, rowIndex) => deleteNodeRow(node, rowIndex)"
+              v-on:delete-node-row-brand="(node, rowIndex, brandIndex) => deleteNodeRowBrand(node, rowIndex, brandIndex)"
+              v-on:delete-node-row-component="(node, rowIndex, compIndex) => deleteNodeRowComponent(node, rowIndex, compIndex)"
+            />
+          </template>
+          <template #node-manufacturing-process-print="node_data">
+            <ManufacturingProcessPrint
               :id="node_data.process_spec_id"
               :node_data="node_data"
               :component_options="component_options"
@@ -94,6 +114,7 @@ import { Panel, VueFlow, MarkerType, getSmoothStepPath, BaseEdge } from '@vue-fl
 import { Background } from '@vue-flow/background'
 import { MiniMap } from '@vue-flow/minimap'
 import ManufacturingProcess from './ManufacturingProcess.vue'
+import ManufacturingProcessPrint from './ManufacturingProcessPrint.vue'
 import { CustomRequest, genTempKey, isTempKey } from '../../../common/CustomRequest.js'
 import { cloneDeep } from 'lodash'
 import EdgeWithButton from './EdgeWithButton.vue'
@@ -106,6 +127,7 @@ export default {
     Background,
     Panel,
     ManufacturingProcess,
+    ManufacturingProcessPrint,
     EdgeWithButton,
     BaseEdge
   },
@@ -125,6 +147,14 @@ export default {
     timestampFetched: {
       type: String,
       required: true
+    },
+    print: {
+      type: Boolean,
+      default: false
+    },
+    edit: {
+      type: Boolean,
+      default: false
     }
   },
   data: function () {
@@ -133,8 +163,8 @@ export default {
       edges: [],
       nodes_buffer: [],
       edges_buffer: [],
-      edit_manufacturing: false,
       instance: null,
+      edit_manufacturing: this.edit,
       req: new CustomRequest(this.$cookies.get('session')),
       component_options: [],
       brand_options: [],
@@ -791,6 +821,19 @@ export default {
       if (this.nodes.length > 0) {
         this.instance.setViewport({ x: this.nodes[0].position.x / 2, y: 0, zoom: 0.2 })
       }
+      if (this.print) {
+        // let minX = 0
+        // let maxX = 0
+        // for (let i = 0; i < this.nodes.length; i++) {
+        //   if (this.nodes[i].position.x < minX) {
+        //     minX = this.nodes[i].position.x
+        //   }
+        //   if (this.nodes[i].position.x > maxX) {
+        //     maxX = this.nodes[i].position.x
+        //   }
+        // }
+        this.instance.setViewport({ x: -100, y: 0, zoom: 0.35 })
+      }
     },
     renderGraph: function () {
       this.nodes = []
@@ -799,7 +842,7 @@ export default {
 
       // build Nodes
       for (let i = 0; i < this.nodes_buffer.length; i++) {
-        const data = this.nodes_buffer[i]
+        const data = cloneDeep(this.nodes_buffer[i])
         const node = {
           id: data.process_spec_id.toString(),
           label: data.process_name,
@@ -807,6 +850,10 @@ export default {
           data: data,
           type: 'manufacturing-process',
           toolbarVisible: false
+        }
+        if (this.print) {
+          node.toolbarVisible = false
+          node.type = 'manufacturing-process-print'
         }
         // Render Node
         this.nodes.push(node)

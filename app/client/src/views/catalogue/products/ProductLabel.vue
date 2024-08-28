@@ -56,11 +56,11 @@
       <b-button variant="outline-danger" @click="cancel()">Cancel</b-button>
     </div>
 
-    <div class="d-flex justify-content-center">
+    <div class="d-flex justify-content-center d-print-none">
       <b-button v-show="!show_files" @click="show_files = true" class="m-1" variant="light">View All Labels</b-button>
       <b-button v-show="show_files" @click="show_files = false" class="m-1" variant="light">Hide Labels</b-button>
     </div>
-    <b-collapse id="show_files" v-model="show_files">
+    <b-collapse id="show_files d-print-none" v-model="show_files">
       <hr>
       <b-card-group deck style="width: 100%;">
         <div v-for="(label, index) in edit_labels_buffer.all_labels" v-show="!label.primary" :key="index" style="max-height: 30rem;" class="m-5">

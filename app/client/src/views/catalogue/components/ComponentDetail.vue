@@ -12,9 +12,9 @@
       <b-card class=" my-2" v-if="loaded" style="box-shadow: 0 20px 40px rgba(0,0,0,.2);">
         <b-card-body>
           <div class="card-title d-flex align-items-center flex-wrap">
-            <b-img style="max-width: 15rem;" class="d-none d-print-inline p-2" src="../../../assets/Company Images/logos jpg/Cropped Logo.jpg"></b-img>
+            <b-img style="max-width: 15rem;" class="d-none d-print-inline p-2 m-3" src="../../../assets/Company Images/logos jpg/Cropped Logo.jpg"></b-img>
             <h2 class="card-title">{{ get_component_primary_name(component_data) }} {{ format_string(component_data.component_type) }}</h2>
-            <CertBadge :data="component_data"></CertBadge>
+            <CertBadge :data="component_data" :print-icon="true"></CertBadge>
           </div>
           <hr class="d-print-none">
           <b-nav pills card-header slot="header" v-b-scrollspy:nav-scroller class="text-nowrap d-print-none">
@@ -62,7 +62,7 @@
           ></SpecificationsComponent>
 
           <!-- Documents -->
-          <div v-show="!edit_specs && !edit_names">
+          <div v-show="!edit_specs && !edit_names" class="d-print-none">
             <h3 id="MiscDocuments">Miscellaneous Documents<b-button v-if="!edit_misc_doc" v-b-tooltip.hover title="Edit Miscellaneous Documents" @click="toggleEditMiscDocs()" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
             <b-card-group class="ml-3">
               <div v-for="(document, index) in component_data.doc.documents" :key="index">
@@ -115,7 +115,7 @@
               </div>
             </div>
           </div>
-          <hr>
+          <hr class="d-print-none">
 
           <!-- Label -->
           <div v-show="component_data.is_label">
@@ -183,18 +183,6 @@
 .customize-table {
   --easy-table-body-item-padding:10px 10px 10px 10px;
 }
-@media print {
-  .scrollbox {
-    height: 100%;
-    overflow-y:auto;
-  }
-  @page {
-    margin: 30mm 30mm 10mm 10mm;
-  }
-  body {
-    margin: 0px;
-  }
-}
 .bold {
     font-weight: bold;
 }
@@ -202,14 +190,23 @@
     width: 95%;
 }
 @media (max-width: 1024px) {
-    .my_component {
-        width: 98%;
-    }
+  .my_component {
+      width: 98%;
+  }
 }
 @media (max-width: 400px) {
-    .my_component {
-        width: 100%;
-    }
+  .my_component {
+      width: 100%;
+  }
+}
+@media print {
+  .scrollbox {
+    height: 100%;
+    overflow-y:auto;
+  }
+  .my_component {
+    width: 100%;
+  }
 }
 </style>
 

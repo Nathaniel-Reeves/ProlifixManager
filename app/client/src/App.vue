@@ -74,10 +74,10 @@
         </div>
       </div>
     </div>
-    <div class="container-fluid mt-3 p-0" id="footer">
+    <div class="container-fluid mt-3 p-0 d-print-none" id="footer">
       <footer class="bg-dark text-center text-white">
         <div class="text-center bg-dark p-3">
-          © 2024 Copyright | v3.8.14
+          © 2024 Copyright | v3.8.15
         </div>
       </footer>
     </div>
@@ -248,11 +248,26 @@ export default {
 
 @media print {
   body {
-    margin: 5mm 5mm 5mm 5mm;
+    margin: 0px;
   }
   .card {
-    box-shadow: none;
+    box-shadow: none !important;
+    height: fit-content;
+  }
+  .container-fluid > .card {
+    border: none !important;
     width: 100%;
+  }
+  @page {
+    margin-top: 20mm;
+    margin-bottom: 20mm;
+    margin-left: 15mm;
+    margin-right: 15mm;
+  }
+  .scrollbox {
+    height: fit-content;
+    background-color: white;
+    overflow-y:auto;
   }
 }
 </style>

@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <h3 id="Formulas">Formulas<b-button v-if="!edit_formulas && active_tab_index < numVersions" v-b-tooltip.hover title="Edit Product Formulas" @click="set_formula_buffer(false)" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
+  <div style="break-inside: avoid;">
+    <h3 id="Formulas" class="d-print-none">Formulas<b-button v-if="!edit_formulas && active_tab_index < numVersions" v-b-tooltip.hover title="Edit Product Formulas" @click="set_formula_buffer(false)" class="btn p-1 ml-2 btn-light" type="button"><b-icon icon="pencil-square" class="d-print-none"></b-icon></b-button></h3>
+    <h3 class="d-none d-print-block">Formula</h3>
 
     <b-tabs content-class="mt-3" v-model="active_tab_index">
       <b-tab v-for="(f, index) in formulas" :key="'index-' + index" :disabled="active_tab_index !== index && edit_formulas">
@@ -11,7 +12,7 @@
           <b-card-title>
             Version {{ f.formulation_version }}
             <b-badge variant="primary" pill class="ml-2" style="font-size:0.8em;" v-show="f.formula_id === defaultFormulaId">Primary Formula</b-badge>
-            <b-button v-show="f.formula_id !== defaultFormulaId && !edit_formulas" variant="outline-primary" pill class="ml-2" style="font-size:0.8em;" @click="set_default_formula_id(f.formula_id)">Set as Primary</b-button>
+            <b-button v-show="f.formula_id !== defaultFormulaId && !edit_formulas" variant="outline-primary" pill class="ml-2 d-print-none" style="font-size:0.8em;" @click="set_default_formula_id(f.formula_id)">Set as Primary</b-button>
           </b-card-title>
           <b-card-sub-title class="mb-3">{{ new Date(f.timestamp_entered).toLocaleDateString() }} {{ new Date(f.timestamp_entered).toLocaleTimeString() }}</b-card-sub-title>
           <b-card-text>
@@ -128,8 +129,8 @@
         </b-card>
       </b-tab>
 
-      <b-tab title="New Formula" :disabled="active_tab_index < numVersions && edit_formulas">
-        <b-card class="m-2">
+      <b-tab title="New Formula" :disabled="active_tab_index < numVersions && edit_formulas" class="d-print-none">
+        <b-card class="m-2 d-print-none">
           <b-card-title>New Formula Version {{ numVersions + 1 }}</b-card-title>
           <select id="new_version_selector" class="form-control form-control-lg mb-3" v-model="new_version_select"  @change="set_formula_buffer(true)" :disabled="disable_version_select">
             <option v-for="option in versions" :key="option.value" :value="option.value">{{ option.text }}</option>
