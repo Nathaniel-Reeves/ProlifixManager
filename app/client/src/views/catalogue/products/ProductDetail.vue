@@ -17,6 +17,7 @@
               <div class="card-title d-flex align-items-center">
                 <h1>{{ product_data.product_name }}</h1>
                 <CertBadge :data="product_data" :print-icon="true"></CertBadge>
+                <h2><b-badge v-show="!product_data.current_product" class="ml-3" variant="danger">Discontinued</b-badge></h2>
               </div>
               <router-link :to="'/organizations/'+product_data.organization_id" target="_blank"><h4 class="card-subtitle text-muted mb-2">{{ product_data.organization_name }} {{ product_data.organizaiton_initial ? '(' + product_data.organizaiton_initial + ')' : '' }}</h4></router-link>
             </div>
@@ -158,7 +159,7 @@
           <hr v-show="activeSection('manufacturing')" class="d-none d-print-block">
           <div v-show="!edit_manufacturing & !edit_manufacturing_docs & !edit_formulas & !edit_formula_docs & !edit_specs & !edit_labels & !edit_variants">
             <h3 id="ComponentsSummary">Components Summary</h3>
-            <b-table :items="components" :fields="component_fields" striped bordered sticky-header head-variant="light" style="max-height: 600px; min-width: 1100px;" show-empty :empty-text="'No Components Selected for this Process'">
+            <b-table :items="components" :fields="component_fields" striped bordered sticky-header head-variant="light" style="max-height: 600px; min-width: 1100px;" show-empty :empty-text="'No Components Yet'">
               <template #cell(components)="components">
                 <div v-for="(comp, index) in components.value" :key="comp.component_id+'-components'">
                   <b-row align-v="baseline" class="flex-nowrap">

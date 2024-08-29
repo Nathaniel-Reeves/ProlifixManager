@@ -50,11 +50,12 @@
               <h2 class="d-flex mb-0">
                 <b-button class="text-left" v-b-toggle="'collapse' + product.product_id" variant="light" style="width:100%;">
                   <b-container fluid class="m-0">
-                    <b-row align-v="baseline">
+                    <b-row align-v="center">
                       <b-col sm="0.5"><b-icon icon="chevron-down"></b-icon></b-col>
                       <b-col sm="4"><h4 class="p-2">{{ product.product_name }}</h4></b-col>
                       <b-col sm="4"><h4 class="p-2">{{ product.organization_name }}</h4></b-col>
                       <b-col><div class="p-2"><CertBadge :data="product"></CertBadge></div></b-col>
+                      <b-col sm="0.5"><h3 class="mx-3 my-0"><b-badge v-show="!product.current_product" class="p-2 align-middle" variant="danger">Discontinued</b-badge></h3></b-col>
                       <b-col sm="1.5">
                         <router-link :to="{path:`/catalogue/products/${product.product_id}`}"><button type="button" class="btn btn-light ms-auto" style="border-width: 2px; border-color:#999999">View Details</button></router-link>
                       </b-col>

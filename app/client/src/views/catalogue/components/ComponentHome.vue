@@ -68,12 +68,12 @@
               <h2 class="d-flex mb-0">
                 <b-button class="text-left" v-b-toggle="'collapse' + component.component_id" @click="populateComponent(component)" variant="light" style="width:100%;">
                   <b-container fluid class="m-0">
-                    <b-row align-v="baseline">
+                    <b-row align-v="center">
                       <b-col sm="0.5"><b-icon icon="chevron-down"></b-icon></b-col>
                       <b-col sm="1.5"><h4 class="p-2">{{ component.component_type.toLowerCase().split('_').map((s) => s.charAt(0).toUpperCase() + s.substring(1)).join(' ') }}</h4></b-col>
                       <b-col sm="4"><h4 class="p-2">{{ component.component_primary_name }}         {{ getBrandName(component) }}</h4></b-col>
                       <b-col><div class="p-2"><CertBadge :data="component"></CertBadge></div></b-col>
-                      <b-col sm="0.5"><div class="p-1"><b-badge class="p-1" v-show="!verifySpecs(component)" variant="warning">Incomplete Specs</b-badge></div></b-col>
+                      <b-col sm="0.5"><h3 class="mx-3 my-0"><b-badge class="p-2 align-middle" v-show="!verifySpecs(component)" variant="warning">Incomplete Specs</b-badge></h3></b-col>
                       <b-col  sm="1.5">
                         <router-link :to="{path:`/catalogue/components/${component.component_id}`}"><button type="button" class="btn btn-light ms-auto" style="border-width: 2px; border-color:#999999">View Details</button></router-link>
                       </b-col>
