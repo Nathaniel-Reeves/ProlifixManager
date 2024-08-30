@@ -1,6 +1,6 @@
 <template>
   <b-card
-    img-src="../assets/Company Images/logos jpg/Cropped Logo.jpg"
+    img-src="../../assets/Company Images/logos jpg/Cropped Logo.jpg"
     img-alt="Prolifix Nutrition Logo"
     img-top
     style="max-width: 25rem;"
