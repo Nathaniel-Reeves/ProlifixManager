@@ -6,6 +6,17 @@ const routes = [
     name: 'home',
     component: () => import(/* webpackChunkName: "barchart" */ '../views/HomeView.vue')
   },
+  {
+    path: '/experiments',
+    name: 'experiments',
+    children: [
+      {
+        path: 'barcode-reader',
+        name: 'barcode-reader',
+        component: () => import(/* webpackChunkName: "barcode-reader" */ '../views/experiments/BarcodeReader.vue')
+      }
+    ]
+  },
   // {
   //   path: '/inventory',
   //   name: 'inventory',
