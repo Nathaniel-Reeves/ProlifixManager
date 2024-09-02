@@ -126,7 +126,7 @@ services:
     image: nginx:latest
     volumes:
      - ./webserver/nginx.conf:/etc/nginx/nginx.conf:ro
-     - ./webserver/ssl:/etc/nginx/ssl/
+     - ./webserver/ssl:/etc/ssl/
     restart: always
     tty: true
     ports:
