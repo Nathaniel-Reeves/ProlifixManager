@@ -16,11 +16,6 @@ def get_session():
     user = app.config['DB_USER']
     password = app.config['DB_PASSWORD']
 
-    host = 'prolifixmanager.com'
-    port = '3306'
-    user = 'root'
-    password = 'c!DT~0Wt05z~DU9r'
-
     engine = sa.create_engine(
             f'mariadb+mariadbconnector://{user}:{password}@{host}:{port}',connect_args={'connect_timeout': 3}
         )
