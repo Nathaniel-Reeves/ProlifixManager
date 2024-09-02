@@ -20,9 +20,9 @@ services:
       - 3306:3306
     networks:
       mrp:
-        ipv4_address: 172.10.10.2
+        ipv4_address: 172.10.0.2
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "172.10.10.2", "--port", "3306", "-p${MARIADB_ROOT_PASSWORD}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "172.10.0.2", "--port", "3306", "-p${MARIADB_ROOT_PASSWORD}"]
       interval: 10s
       timeout: 10s
       retries: 5
@@ -76,7 +76,7 @@ services:
      - "5000:5000"
     networks:
       mrp:
-        ipv4_address: 172.10.10.6
+        ipv4_address: 172.10.0.6
     tty: true
 
   # Nginx Service
@@ -91,7 +91,7 @@ services:
         - './db/files:/db/files'
     networks:
       mrp:
-        ipv4_address: 172.10.10.5
+        ipv4_address: 172.10.0.5
     depends_on:
       - api-lb
     ports:
@@ -110,7 +110,7 @@ services:
       - "6379:6379"
     networks:
       mrp:
-        ipv4_address: 172.10.10.3
+        ipv4_address: 172.10.0.3
     volumes:
       - ./redis/data:/data
       - /etc/timezone:/etc/timezone:ro
@@ -130,15 +130,17 @@ services:
     tty: true
     ports:
       - "80:80"
+      - "81:81"
+      - "443:443"
     networks:
       mrp:
-        ipv4_address: 172.10.10.4
+        ipv4_address: 172.10.0.4
 
 networks:
   mrp:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.10.10.0/16
-          ip_range: 172.10.11.0/26
-          gateway: 172.10.10.1
+        - subnet: 172.10.0.0/16
+          ip_range: 172.10.1.0/26
+          gateway: 172.10.0.1
