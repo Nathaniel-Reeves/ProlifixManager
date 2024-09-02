@@ -423,6 +423,7 @@ export default {
       }
       this.req.upsertRecord('Components', component)
       this.req.upsertRecord('Component_Names', componentName)
+      this.req.upsertRecord('Item_id', { component_id: label.component_id, timestamp_fetched: new Date().toISOString() })
       const c = {
         component_id: label.component_id,
         primary_name_id: nameId,

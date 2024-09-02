@@ -119,6 +119,11 @@ const routes = [
         path: 'po',
         name: 'PurchaseOrdersHome',
         component: () => import(/* webpackChunkName: "purchase_orders" */ '../views/orders/purchase_orders/PurchaseOrdersHome.vue')
+      },
+      {
+        path: 'so',
+        name: 'SalesOrdersHome',
+        component: () => import(/* webpackChunkName: "sales_orders" */ '../views/orders/sales_orders/SalesOrdersHome.vue')
       }
     ]
   },

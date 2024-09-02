@@ -206,6 +206,11 @@ export default {
 
       this.req.upsertRecord('Product_Master', newProduct)
 
+      this.req.upsertRecord('Item_id', {
+        product_id: this.new_product_id,
+        timestamp_fetched: new Date().toISOString()
+      })
+
       this.req.sendRequest(window.origin).then(resp => {
         const createToast = this.$root.createToast
         resp.messages.flash.forEach(message => {

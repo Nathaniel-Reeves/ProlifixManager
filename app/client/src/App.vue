@@ -33,8 +33,8 @@
               <b-dropdown-item @click="$router.push({ path: '/catalogue/products' })">All Products</b-dropdown-item>
             </b-nav-item-dropdown>
             <b-nav-item-dropdown text="Orders" active-class>
-              <b-dropdown-item to="/orders/po">Purchase Orders</b-dropdown-item>
-              <!-- <b-dropdown-item to="/orders/so">Sale Orders</b-dropdown-item> -->
+              <b-dropdown-item to="/orders/po">Purchases</b-dropdown-item>
+              <b-dropdown-item to="/orders/so">Sales</b-dropdown-item>
             </b-nav-item-dropdown>
             <!-- <b-nav-item to="/barcodereader" active-class>barcodereader</b-nav-item> -->
           </b-navbar-nav>

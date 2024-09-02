@@ -1,6 +1,6 @@
 <template>
   <b-overlay :show="overlay" :opacity="1" rounded="sm">
-    <b-card :id="'my_node-'+node_buffer.data.process_spec_id" style="min-width: 600px; min-height:600px;">
+    <b-card :id="'my_node-'+node_buffer.data.process_spec_id" style="min-width: 1200px; min-height:600px;">
       <b-card-title v-if="node_buffer.data.manufacturing_process_id">{{ node_buffer.data.process_name }}{{ variant?.variant_title ? ' - ' + variant.variant_title : '' }}
         <b-badge v-show="variant?.discontinued" class="ml-3" variant="danger">Discontinued</b-badge>
         <b-badge v-show="node_buffer.data.primary_process && !edit" class="ml-3" variant="primary">Primary</b-badge>
