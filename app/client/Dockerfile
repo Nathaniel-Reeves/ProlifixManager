@@ -9,6 +9,7 @@ COPY ./client/package*.json .
 
 # install and cache client dependencies
 RUN npm install -g --omit=dev --force
+RUN npm install @vue/cli --force
 COPY ./client .
 
 # build client
