@@ -364,7 +364,7 @@ export default {
         return
       }
 
-      const resp = await this.req.sendRequest(window.origin)
+      const resp = await this.req.sendRequest(this.$root.getOrigin())
 
       const createToast = this.$root.createToast
       resp.messages.flash.forEach(message => {

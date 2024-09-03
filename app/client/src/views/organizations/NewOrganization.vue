@@ -274,7 +274,7 @@ export default {
       return true
     },
     checkOrganizationAlreadyExists: async function () {
-      const fetchRequest = window.origin + '/api/v1/submit/check_organization'
+      const fetchRequest = this.$root.getOrigin() + '/api/v1/submit/check_organization'
       // eslint-disable-next-line
       console.log(
         'POST ' + fetchRequest
@@ -384,7 +384,7 @@ export default {
 
       const createToast = this.$root.createToast
 
-      const resp1 = await this.req.sendRequest(window.origin)
+      const resp1 = await this.req.sendRequest(this.$root.getOrigin())
 
       if (resp1.status !== 201) {
         resp1.messages.flash.forEach(message => {
@@ -403,7 +403,7 @@ export default {
         timestamp_fetched: new Date().toISOString()
       }
       this.req.upsertRecord('Organizations', updateOrg)
-      const resp2 = await this.req.sendRequest(window.origin)
+      const resp2 = await this.req.sendRequest(this.$root.getOrigin())
 
       resp2.messages.flash.forEach(message => {
         createToast(message)

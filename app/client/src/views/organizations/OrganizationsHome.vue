@@ -179,7 +179,7 @@ export default {
         return
       }
       // TODO: Fix Component Names and add them to Populate
-      const fetchRequest = window.origin + '/api/v1/organizations/?org-id=' + orgId + '&populate=facilities&populate=people&populate=products&populate=organization_names'
+      const fetchRequest = this.$root.getOrigin() + '/api/v1/organizations/?org-id=' + orgId + '&populate=facilities&populate=people&populate=products&populate=organization_names'
       // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest
@@ -230,7 +230,7 @@ export default {
       })
     },
     getOrgData: function () {
-      const fetchRequest = window.origin + '/api/v1/organizations'
+      const fetchRequest = this.$root.getOrigin() + '/api/v1/organizations'
       // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest

@@ -1,5 +1,5 @@
 # base image
-FROM node:18.16-alpine as builder
+FROM node:18.16-alpine AS builder
 
 # Set working directory
 WORKDIR /client_build
@@ -17,7 +17,7 @@ RUN npm run build
 
 
 # Start nginx to serve Vue client
-FROM nginx:stable-alpine as production-build
+FROM nginx:stable-alpine AS production-build
 
 COPY ./client/nginx.conf /etc/nginx/nginx.conf
 

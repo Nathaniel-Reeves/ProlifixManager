@@ -140,7 +140,7 @@ export default {
       this.search_query = this.search_query_buff
     },
     getProductData: function () {
-      const fetchRequest = window.origin + '/api/v1/catalogue/products/'
+      const fetchRequest = this.$root.getOrigin() + '/api/v1/catalogue/products/'
       // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest

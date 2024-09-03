@@ -730,7 +730,7 @@ export default {
     },
     getFile: function (document) {
       if (document.file_hash) {
-        const url = window.origin + '/api/v1/uploads/' + document.file_pointer
+        const url = this.$root.getOrigin() + '/api/v1/uploads/' + document.file_pointer
         return url
       } else {
         return document.url_preview
@@ -814,7 +814,7 @@ export default {
 
       this.req.upsertRecord('Organizations', updateOrg)
 
-      const resp = await this.req.sendRequest(window.origin)
+      const resp = await this.req.sendRequest(this.$root.getOrigin())
 
       resp.messages.flash.forEach(message => {
         createToast(message)

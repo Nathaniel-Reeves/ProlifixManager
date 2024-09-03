@@ -426,7 +426,7 @@ export default {
 
       this.req.upsertRecord('Organizations', org)
 
-      const resp = await this.req.sendRequest(window.origin)
+      const resp = await this.req.sendRequest(this.$root.getOrigin())
 
       console.error('Request Error: ', resp)
       resp.messages.flash.forEach(message => {
@@ -461,7 +461,7 @@ export default {
       }
     },
     getOrganization: function () {
-      const fetchRequest = window.origin + '/api/v1/organizations?org-id=' + this.id + '&populate=facilities&populate=people&populate=products&populate=organization_names&populate=components'
+      const fetchRequest = this.$root.getOrigin() + '/api/v1/organizations?org-id=' + this.id + '&populate=facilities&populate=people&populate=products&populate=organization_names&populate=components'
       // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest

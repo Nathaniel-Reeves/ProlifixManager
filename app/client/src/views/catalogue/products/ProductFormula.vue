@@ -341,7 +341,7 @@ export default {
       }
       this.req.upsertRecord('Product_Master', sProduct)
 
-      this.req.sendRequest(window.origin).then(resp => {
+      this.req.sendRequest(this.$root.getOrigin()).then(resp => {
         const createToast = this.$root.createToast
         resp.messages.flash.forEach(message => {
           createToast(message)
@@ -459,7 +459,7 @@ export default {
         this.req.upsertRecord('Product_Master', updateProduct)
       }
 
-      this.req.sendRequest(window.origin).then(resp => {
+      this.req.sendRequest(this.$root.getOrigin()).then(resp => {
         const createToast = this.$root.createToast
         resp.messages.flash.forEach(message => {
           createToast(message)
@@ -786,7 +786,7 @@ export default {
       this.versions.push({ value: 'NEW', text: 'New Formula' })
     },
     get_organizations: function () {
-      const fetchRequest = window.origin + '/api/v1/organizations'
+      const fetchRequest = this.$root.getOrigin() + '/api/v1/organizations'
       // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest
@@ -825,7 +825,7 @@ export default {
       })
     },
     get_ingredients: function () {
-      let fetchRequest = window.origin + '/api/v1/catalogue/components?type=powder&populdate=component_names'
+      let fetchRequest = this.$root.getOrigin() + '/api/v1/catalogue/components?type=powder&populdate=component_names'
       if (this.organic) {
         fetchRequest += '&certification=usda_organic'
       }

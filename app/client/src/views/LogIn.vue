@@ -50,7 +50,7 @@ export default {
   },
   methods: {
     login: function () {
-      const fetchRequest = window.origin + '/api/v1/auth/sessions'
+      const fetchRequest = this.$root.getOrigin() + '/api/v1/auth/sessions'
       // eslint-disable-next-line
       console.log(
         'POST ' + fetchRequest

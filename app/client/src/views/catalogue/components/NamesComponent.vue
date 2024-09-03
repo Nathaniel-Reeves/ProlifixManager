@@ -115,7 +115,7 @@ export default {
 
         this.req.setUpsertOrder(['Component_Names', 'Components'])
 
-        const resp = await this.req.sendRequest(window.origin)
+        const resp = await this.req.sendRequest(this.$root.getOrigin())
         this.$emit('toggleLoaded', false)
 
         const createToast = this.$root.createToast

@@ -37,7 +37,7 @@ export default {
   methods: {
     getFile: function (filename) {
       if (filename) {
-        const url = window.origin + '/api/v1/uploads/' + filename
+        const url = this.$root.getOrigin() + '/api/v1/uploads/' + filename
         return url
       } else {
         return ''
@@ -142,7 +142,7 @@ export default {
       await this.req.addFile(this.file, 1, 'code')
       this.req.upsertRecord('Components', component)
 
-      const resp = await this.req.sendRequest(window.origin)
+      const resp = await this.req.sendRequest(this.$root.getOrigin())
       this.req = new CustomRequest(this.$cookies.get('session'))
       const createToast = this.$root.createToast
       resp.messages.flash.forEach(function (message) {

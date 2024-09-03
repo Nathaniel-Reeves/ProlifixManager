@@ -112,7 +112,7 @@ export default {
           this.req.upsertRecord('Organizations', { organization_id: this.id, primary_name_id: newPrimary, timestamp_fetched: this.timestampFetched })
         }
 
-        const resp1 = await this.req.sendRequest(window.origin)
+        const resp1 = await this.req.sendRequest(this.$root.getOrigin())
 
         if (resp1.status !== 201) {
           console.error('Request Error: ', resp1)
@@ -134,7 +134,7 @@ export default {
         this.req = new CustomRequest(this.$cookies.get('session'))
 
         this.req.upsertRecord('Organizations', { organization_id: this.id, primary_name_id: tempKeyLookup[newPrimary].new_id, timestamp_fetched: this.timestampFetched })
-        const resp2 = await this.req.sendRequest(window.origin)
+        const resp2 = await this.req.sendRequest(this.$root.getOrigin())
 
         resp2.messages.flash.forEach(message => {
           createToast(message)

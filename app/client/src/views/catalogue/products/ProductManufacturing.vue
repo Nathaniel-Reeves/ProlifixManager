@@ -486,7 +486,7 @@ export default {
         return
       }
 
-      const resp = await this.req.sendRequest(window.origin)
+      const resp = await this.req.sendRequest(this.$root.getOrigin())
 
       const createToast = this.$root.createToast
       resp.messages.flash.forEach(message => {
@@ -926,7 +926,7 @@ export default {
       this.loading = false
     },
     get_brands: function () {
-      const fetchRequest = window.origin + '/api/v1/organizations'
+      const fetchRequest = this.$root.getOrigin() + '/api/v1/organizations'
       // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest
@@ -963,7 +963,7 @@ export default {
       })
     },
     get_components: function () {
-      const fetchRequest = window.origin + '/api/v1/catalogue/components?type=container&type=pouch&type=shrink_band&type=lid&type=label&type=capsule&type=misc&type=scoop&type=desiccant&type=box&type=carton&type=packaging_material'
+      const fetchRequest = this.$root.getOrigin() + '/api/v1/catalogue/components?type=container&type=pouch&type=shrink_band&type=lid&type=label&type=capsule&type=misc&type=scoop&type=desiccant&type=box&type=carton&type=packaging_material'
       // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest
@@ -995,7 +995,7 @@ export default {
       })
     },
     get_processes: function () {
-      const fetchRequest = window.origin + '/api/v1/processes?populate=equipment'
+      const fetchRequest = this.$root.getOrigin() + '/api/v1/processes?populate=equipment'
       // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest

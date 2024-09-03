@@ -348,7 +348,7 @@ export default {
         return
       }
 
-      const resp = await this.req.sendRequest(window.origin)
+      const resp = await this.req.sendRequest(this.$root.getOrigin())
 
       const createToast = this.$root.createToast
       resp.messages.flash.forEach(message => {
@@ -386,7 +386,7 @@ export default {
       }
     },
     getPerson: function () {
-      const fetchRequest = window.origin + '/api/v1/organizations/people?person_id=' + this.id + '&populate=organizations'
+      const fetchRequest = this.$root.getOrigin() + '/api/v1/organizations/people?person_id=' + this.id + '&populate=organizations'
       // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest

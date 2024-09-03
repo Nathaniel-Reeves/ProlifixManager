@@ -112,7 +112,7 @@ export default {
       this.search_query = ''
     },
     fetchInventoryData () {
-      const fetchRequest = window.origin + '/api/v1/inventory'
+      const fetchRequest = this.$root.getOrigin() + '/api/v1/inventory'
       // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest

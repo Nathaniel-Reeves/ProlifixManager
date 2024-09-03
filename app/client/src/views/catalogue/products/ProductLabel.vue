@@ -450,7 +450,7 @@ export default {
       this.prepareLabelsData()
 
       // Save Component and Component_Name First.  Get the ids of these new items.
-      const resp1 = await this.req.sendRequest(window.origin)
+      const resp1 = await this.req.sendRequest(this.$root.getOrigin())
       this.$emit('toggleLoaded', false)
 
       if (resp1.status !== 201) {
@@ -491,7 +491,7 @@ export default {
         }
       }
 
-      const resp2 = await this.req.sendRequest(window.origin)
+      const resp2 = await this.req.sendRequest(this.$root.getOrigin())
 
       resp2.messages.flash.forEach(message => {
         createToast(message)
@@ -511,7 +511,7 @@ export default {
     },
     getFile: function (filename) {
       if (filename) {
-        const url = window.origin + '/api/v1/uploads/' + filename
+        const url = this.$root.getOrigin() + '/api/v1/uploads/' + filename
         return url
       } else {
         return ''

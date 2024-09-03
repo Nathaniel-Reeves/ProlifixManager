@@ -403,7 +403,7 @@ export default {
     },
     getFile: function (filename) {
       if (filename) {
-        const url = window.origin + '/api/v1/uploads/' + filename
+        const url = this.$root.getOrigin() + '/api/v1/uploads/' + filename
         return url
       } else {
         return ''
@@ -482,7 +482,7 @@ export default {
       }
       this.req.upsertRecord('Components', component)
 
-      return this.req.sendRequest(window.origin).then(resp => {
+      return this.req.sendRequest(this.$root.getOrigin()).then(resp => {
         const createToast = this.$root.createToast
         resp.messages.flash.forEach(message => {
           createToast(message)
@@ -512,7 +512,7 @@ export default {
       }
       this.req.upsertRecord('Product_Master', product)
 
-      const resp = await this.req.sendRequest(window.origin)
+      const resp = await this.req.sendRequest(this.$root.getOrigin())
       this.$emit('toggleLoaded', false)
       this.$emit('refreshParent')
 

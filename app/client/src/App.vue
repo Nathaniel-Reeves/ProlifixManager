@@ -102,6 +102,14 @@ export default {
     }
   },
   methods: {
+    getOrigin: function () {
+      const dev = false
+      if (dev) {
+        return 'http://' + new URL(window.origin).hostname + ':' + new URL(window.origin).port
+      } else {
+        return 'https://' + new URL(window.origin).hostname + ':' + new URL(window.origin).port
+      }
+    },
     logout: function () {
       const fetchRequest = window.origin + '/api/v1/auth/sessions'
       // eslint-disable-next-line

@@ -234,7 +234,7 @@ export default {
       return ''
     },
     getComponentData: function () {
-      let fetchRequest = window.origin + '/api/v1/catalogue/components/?doc=true&populate=component_names'
+      let fetchRequest = this.$root.getOrigin() + '/api/v1/catalogue/components/?doc=true&populate=component_names'
       if (this.type_filter !== 'all') {
         fetchRequest += '&type=' + this.type_filter
       } else {
@@ -279,7 +279,7 @@ export default {
       if (component.populated) {
         return
       }
-      const fetchRequest = window.origin + '/api/v1/catalogue/components?doc=true&populate=component_names&component-id=' + component.component_id
+      const fetchRequest = this.$root.getOrigin() + '/api/v1/catalogue/components?doc=true&populate=component_names&component-id=' + component.component_id
       // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest

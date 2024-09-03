@@ -211,7 +211,7 @@ export default {
         timestamp_fetched: new Date().toISOString()
       })
 
-      this.req.sendRequest(window.origin).then(resp => {
+      this.req.sendRequest(this.$root.getOrigin()).then(resp => {
         const createToast = this.$root.createToast
         resp.messages.flash.forEach(message => {
           createToast(message)
@@ -257,7 +257,7 @@ export default {
       return flag
     },
     get_organizations: function () {
-      const fetchRequest = window.origin + '/api/v1/organizations?org-type=client'
+      const fetchRequest = this.$root.getOrigin() + '/api/v1/organizations?org-type=client'
       // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest
