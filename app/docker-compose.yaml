@@ -57,29 +57,33 @@ services:
         - ./client/public:/api/client/public
         - ${UPLOAD_FOLDER}:${UPLOAD_FOLDER}
         - ./webserver/ssl:/etc/ssl/
+        - ./webserver/nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
-      - "5000"
+      # - "5000"
+      - "80:80"
+      - "81:81"
+      - "443:443"
     networks:
       - mrp
     tty: true
 
   # Nginx Service
-  api-lb:
-    container_name: api_lb
-    image: nginx:latest
-    restart: always
-    volumes:
-     - ./api/main/nginx.conf:/etc/nginx/nginx.conf:ro
-     - ./client/public:/public
-     - ./webserver/ssl:/etc/ssl/
-    depends_on:
-      - api
-    ports:
-     - "5000:5000"
-    networks:
-      mrp:
-        ipv4_address: 172.10.0.6
-    tty: true
+  # api-lb:
+  #   container_name: api_lb
+  #   image: nginx:latest
+  #   restart: always
+  #   volumes:
+  #    - ./api/main/nginx.conf:/etc/nginx/nginx.conf:ro
+  #    - ./client/public:/public
+  #    - ./webserver/ssl:/etc/ssl/
+  #   depends_on:
+  #     - api
+  #   ports:
+  #    - "5000:5000"
+  #   networks:
+  #     mrp:
+  #       ipv4_address: 172.10.0.6
+  #   tty: true
 
   # Nginx Service
   client:
@@ -91,14 +95,18 @@ services:
       dockerfile: client/Dockerfile
     volumes:
         - './db/files:/db/files'
+        - ./webserver/nginx.conf:/etc/nginx/nginx.conf:ro
         - ./webserver/ssl:/etc/ssl/
     networks:
       mrp:
         ipv4_address: 172.10.0.5
-    depends_on:
-      - api-lb
+    # depends_on:
+    #   - api-lb
     ports:
-      - "3000:3000"
+      # - "3000:3000"
+      - "80:80"
+      - "81:81"
+      - "443:443"
     tty: true
 
   # Redis - Key-value Store
@@ -122,23 +130,23 @@ services:
       - api-lb
 
   # Nginx Service
-  web-server:
-    container_name: web_server
-    depends_on:
-      - client
-    image: nginx:latest
-    volumes:
-     - ./webserver/nginx.conf:/etc/nginx/nginx.conf:ro
-     - ./webserver/ssl:/etc/ssl/
-    restart: always
-    tty: true
-    ports:
-      - "80:80"
-      - "81:81"
-      - "443:443"
-    networks:
-      mrp:
-        ipv4_address: 172.10.0.4
+  # web-server:
+  #   container_name: web_server
+  #   depends_on:
+  #     - client
+  #   image: nginx:latest
+  #   volumes:
+  #    - ./webserver/nginx.conf:/etc/nginx/nginx.conf:ro
+  #    - ./webserver/ssl:/etc/ssl/
+  #   restart: always
+  #   tty: true
+  #   ports:
+  #     - "80:80"
+  #     - "81:81"
+  #     - "443:443"
+  #   networks:
+  #     mrp:
+  #       ipv4_address: 172.10.0.4
 
 networks:
   mrp:

@@ -13,7 +13,7 @@ COPY ./.env ./.env
 USER root
 
 RUN apt-get update && apt-get install -y curl
-RUN apt-get update && apt-get install -y apt-transport-https 
+RUN apt-get update && apt-get install -y apt-transport-https
 RUN apt-get update && apt-get install -y wget
 RUN wget https://dlm.mariadb.com/3/MariaDB/mariadb_repo_setup
 RUN chmod +x mariadb_repo_setup
@@ -28,4 +28,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install Python dependencies
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-CMD ["gunicorn", "-b", "0.0.0.0:5000", "wsgi:create_app()"]
+CMD ["gunicorn", "-b", "0.0.0.0:443", "wsgi:create_app()"]
