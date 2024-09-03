@@ -234,7 +234,7 @@ export default {
       return ''
     },
     getComponentData: function () {
-      let fetchRequest = window.origin + '/api/v1/catalogue/components?doc=true&populate=component_names'
+      let fetchRequest = window.origin + '/api/v1/catalogue/components/?doc=true&populate=component_names'
       if (this.type_filter !== 'all') {
         fetchRequest += '&type=' + this.type_filter
       } else {

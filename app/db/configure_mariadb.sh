@@ -18,22 +18,22 @@ fi
 apt-get update && apt-get install -y mariadb-client
 
 # Grant root user remote access from any host
-mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host 172.10.10.2 -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '$MARIADB_ROOT_PASSWORD' WITH GRANT OPTION;"
-mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host 172.10.10.2 -e "FLUSH PRIVILEGES;"
+mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host "$DB_HOST" -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '$MARIADB_ROOT_PASSWORD' WITH GRANT OPTION;"
+mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host "$DB_HOST" -e "FLUSH PRIVILEGES;"
 
 echo "Remote access for root user from any host has been granted."
 
 # Execute SQL commands to create the client user
-mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host 172.10.10.2 -e "CREATE USER '$DB_USER'@'%' IDENTIFIED BY '$DB_PASSWORD';"
-mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host 172.10.10.2 -e "GRANT ALL PRIVILEGES ON *.* TO '$DB_USER'@'%';"
-mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host 172.10.10.2 -e "FLUSH PRIVILEGES;"
+mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host "$DB_HOST" -e "CREATE USER '$DB_USER'@'%' IDENTIFIED BY '$DB_PASSWORD';"
+mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host "$DB_HOST" -e "GRANT ALL PRIVILEGES ON *.* TO '$DB_USER'@'%';"
+mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host "$DB_HOST" -e "FLUSH PRIVILEGES;"
 
 echo "User $DB_USER has been created and granted all privileges."
 
 # Execute SQL commands to create database backup user
-mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host 172.10.10.2 -e "CREATE USER '$DB_BACKUP_USER'@'%' IDENTIFIED BY '$DB_BACKUP_PASSWORD';"
-mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host 172.10.10.2 -e "GRANT SELECT, SHOW VIEW, TRIGGER, EVENT, RELOAD, LOCK TABLES ON *.* TO '$DB_BACKUP_USER'@'$DB_BACKUP_HOST';"
-mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host 172.10.10.2 -e "FLUSH PRIVILEGES;"
+mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host "$DB_HOST" -e "CREATE USER '$DB_BACKUP_USER'@'%' IDENTIFIED BY '$DB_BACKUP_PASSWORD';"
+mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host "$DB_HOST" -e "GRANT SELECT, SHOW VIEW, TRIGGER, EVENT, RELOAD, LOCK TABLES ON *.* TO '$DB_BACKUP_USER'@'$DB_BACKUP_HOST';"
+mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host "$DB_HOST" -e "FLUSH PRIVILEGES;"
 
 echo "User backup has been created and granted SELECT, SHOW VIEW, TRIGGER, EVENT, RELOAD, LOCK TABLES privileges."
 
@@ -41,8 +41,8 @@ echo "User backup has been created and granted SELECT, SHOW VIEW, TRIGGER, EVENT
 # apt update
 # apt upgrade -y
 # apt-get install mariadb-plugin-oqgraph
-mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host 172.10.10.2 -e "INSTALL SONAME 'ha_oqgraph';"
-mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host 172.10.10.2 -e "SHOW ENGINES;"
+mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host "$DB_HOST" -e "INSTALL SONAME 'ha_oqgraph';"
+mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host "$DB_HOST" -e "SHOW ENGINES;"
 
 echo "OQGraph engine is installed."
 
@@ -58,7 +58,7 @@ ls -l
 cd /docker-entrypoint-initdb.d
 for f in *.sql; do
     echo "Executing $f..."
-    mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host 172.10.10.2 < $f
+    mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host "$DB_HOST" < $f
     echo "$f has been executed."
 done
 
