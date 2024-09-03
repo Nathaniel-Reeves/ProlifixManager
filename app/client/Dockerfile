@@ -26,5 +26,7 @@ COPY ./client/nginx.conf /etc/nginx/nginx.conf
 # Copy files from builder stage
 COPY --from=builder /client_build/dist /var/www
 
-EXPOSE 3000
+EXPOSE 80
+EXPOSE 81
+EXPOSE 443
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
