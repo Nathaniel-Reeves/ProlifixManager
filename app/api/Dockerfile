@@ -28,4 +28,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install Python dependencies
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-CMD ["gunicorn", "-b", "0.0.0.0:443", "wsgi:create_app()"]
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "wsgi:create_app()"]
