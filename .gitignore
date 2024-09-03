@@ -1,9 +1,9 @@
 *.pyc
 app/client/node_modules/*
+app/ssl/*
 app/db/mariadb_data/*
 app/db/files/*
 app/redis/data/*
 app/.env
 specs
 app/api/main/controller/prod_server_db_creds.md
-app/webserver/ssl/*

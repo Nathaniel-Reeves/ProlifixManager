@@ -21,7 +21,7 @@ RUN npm run build
 # Start nginx to serve Vue client
 FROM nginx:stable-alpine as production-build
 
-COPY ./webserver/nginx.conf /etc/nginx/nginx.conf
+COPY ./client/nginx.conf /etc/nginx/nginx.conf
 
 # Copy files from builder stage
 COPY --from=builder /client_build/dist /var/www
