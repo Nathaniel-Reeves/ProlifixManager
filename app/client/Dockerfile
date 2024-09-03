@@ -7,11 +7,8 @@ WORKDIR /client_build
 # Copy the package.json and install dependencies
 COPY ./client/package*.json .
 
-RUN npm install -g npm@9.6.7
-RUN npm install --omit=dev --force
-RUN npm install @vue/cli --force
-
 # install and cache client dependencies
+RUN npm install -g --omit=dev --force
 COPY ./client .
 
 # build client
@@ -25,6 +22,7 @@ COPY ./client/nginx.conf /etc/nginx/nginx.conf
 
 # Copy files from builder stage
 COPY --from=builder /client_build/dist /var/www
+COPY --from=builder /client_build/dist /usr/share/nginx/html
 
 EXPOSE 80
 EXPOSE 81
