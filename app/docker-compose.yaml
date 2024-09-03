@@ -54,8 +54,9 @@ services:
       context: .
       dockerfile: api/Dockerfile
     volumes:
-        - './client/public:/api/client/public'
-        - '${UPLOAD_FOLDER}:${UPLOAD_FOLDER}'
+        - ./client/public:/api/client/public
+        - ${UPLOAD_FOLDER}:${UPLOAD_FOLDER}
+        - ./webserver/ssl:/etc/ssl/
     ports:
       - "5000"
     networks:
@@ -69,7 +70,8 @@ services:
     restart: always
     volumes:
      - ./api/main/nginx.conf:/etc/nginx/nginx.conf:ro
-     - './client/public:/public'
+     - ./client/public:/public
+     - ./webserver/ssl:/etc/ssl/
     depends_on:
       - api
     ports:
@@ -89,6 +91,7 @@ services:
       dockerfile: client/Dockerfile
     volumes:
         - './db/files:/db/files'
+        - ./webserver/ssl:/etc/ssl/
     networks:
       mrp:
         ipv4_address: 172.10.0.5
