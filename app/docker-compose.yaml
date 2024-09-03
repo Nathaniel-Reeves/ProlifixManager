@@ -126,8 +126,8 @@ services:
       - ./redis/data:/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-    depends_on:
-      - api-lb
+    # depends_on:
+    #   - api-lb
 
   # Nginx Service
   # web-server:
