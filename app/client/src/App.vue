@@ -110,7 +110,6 @@ export default {
       } else {
         origin = 'https://' + new URL(window.origin).hostname
       }
-      console.log('Origin: ', origin)
       return origin
     },
     logout: function () {
