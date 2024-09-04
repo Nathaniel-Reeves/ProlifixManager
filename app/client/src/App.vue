@@ -108,7 +108,7 @@ export default {
       if (dev) {
         origin = 'http://' + new URL(window.origin).hostname + ':' + new URL(window.origin).port
       } else {
-        origin = 'https://' + new URL(window.origin).hostname + ':' + new URL(window.origin).port
+        origin = 'https://' + new URL(window.origin).hostname
       }
       console.log('Origin: ', origin)
       return origin
