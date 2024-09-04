@@ -104,11 +104,14 @@ export default {
   methods: {
     getOrigin: function () {
       const dev = false
+      let origin = ''
       if (dev) {
-        return 'http://' + new URL(window.origin).hostname + ':' + new URL(window.origin).port
+        origin = 'http://' + new URL(window.origin).hostname + ':' + new URL(window.origin).port
       } else {
-        return 'https://' + new URL(window.origin).hostname + ':' + new URL(window.origin).port
+        origin = 'https://' + new URL(window.origin).hostname + ':' + new URL(window.origin).port
       }
+      console.log('Origin: ', origin)
+      return origin
     },
     logout: function () {
       const fetchRequest = window.origin + '/api/v1/auth/sessions'
