@@ -114,7 +114,7 @@ export default {
       return origin
     },
     logout: function () {
-      const fetchRequest = window.origin + '/api/v1/auth/sessions'
+      const fetchRequest = this.getOrigin() + '/api/v1/auth/sessions'
       // eslint-disable-next-line
       console.log(
         'DELETE ' + fetchRequest
@@ -159,7 +159,7 @@ export default {
       const sessionToken = getCookie('session')
 
       // Get user data
-      const fetchRequest = window.origin + '/api/v1/auth/sessions?session-token=' + sessionToken
+      const fetchRequest = this.getOrigin() + '/api/v1/auth/sessions?session-token=' + sessionToken
       // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest
