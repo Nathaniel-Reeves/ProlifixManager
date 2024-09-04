@@ -90,6 +90,8 @@ def create_app():
             "DELETE",
         ],
         allow_origins=[
+            "https://prolifixmanager.com",
+            "http://prolifixmanager.com",
             "prolifixmanager.com",
             "localhost:8080",
             "127.0.0.1:8080",
