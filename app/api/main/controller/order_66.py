@@ -63,7 +63,8 @@ def order_66(request):
     # custom_response = fix_product_master(custom_response)
     # custom_response = fix_old_components_template(custom_response)
     # custom_response = fix_org_doc(custom_response)
-    custom_response = fix_item_id_table(custom_response)
+    # custom_response = fix_item_id_table(custom_response)
+    custom_response = fix_organochlorines(custom_response)
 
     if custom_response.status_code == 200:
         fm = FlashMessage(
@@ -1027,7 +1028,22 @@ def fix_item_id_table(custom_response):
 
     return custom_response
 
+def fix_organochlorines(custom_response):
+    stm = select(db.Product_Master)
+    custom_response, raw_data, success = execute_query(custom_response, stm)
+    if not success:
+        custom_response.set_status_code(400)
+        return custom_response
 
+    for row in raw_data:
+        doc = row[0].to_dict()['doc']
+        if 'organochlorines' in doc['specifications']['specs']:
+            del doc['specifications']['specs']['organochlorines']
+
+            stm = update(db.Product_Master).values(doc=doc).where(db.Product_Master.product_id == row[0].get_id())
+            custom_response, raw_data, success = execute_query(custom_response, stm)
+
+    return custom_response
 
 
 

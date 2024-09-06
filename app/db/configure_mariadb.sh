@@ -37,6 +37,9 @@ mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host "$DB_HOST" -e "FLUSH PRIVILEGE
 
 echo "User backup has been created and granted SELECT, SHOW VIEW, TRIGGER, EVENT, RELOAD, LOCK TABLES privileges."
 
+# Set Time zone to UTC
+mysql -u "root" -p"$MARIADB_ROOT_PASSWORD" --host "$DB_HOST" -e "SET GLOBAL time_zone = '+00:00'";
+
 # Setup OQGraph engine for Mariadb
 # apt update
 # apt upgrade -y
