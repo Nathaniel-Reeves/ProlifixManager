@@ -400,7 +400,7 @@ export default {
         return false
       }
 
-      this.req.upsertRecord('Item_id', { component_id: this.new_component_id, timestamp_fetched: new Date().toISOString() })
+      this.req.upsertRecord('Item_id', { item_id: genTempKey(), component_id: this.new_component_id, timestamp_fetched: new Date().toISOString() })
 
       const newComponent = {
         component_id: this.new_component_id,

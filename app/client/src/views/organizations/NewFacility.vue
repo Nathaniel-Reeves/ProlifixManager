@@ -15,7 +15,7 @@
             <b-img style="max-width: 15rem;" class="d-none d-print-inline p-2" src="../../assets/Company Images/logos jpg/Cropped Logo.jpg"></b-img>
             <div>
               <div class="card-title d-flex align-items-center">
-                <h1>{{ facility.building_name }}</h1>
+                <h1>{{ facility.building_name ? facility.building_name : 'New Facility' }}</h1>
               </div>
               <router-link :to="'/organizations/'+orgId" target="_blank"><h4 class="card-subtitle text-muted mb-2">{{ orgName }} {{ orgInitial ? '(' + orgInitial + ')' : '' }}</h4></router-link>
             </div>

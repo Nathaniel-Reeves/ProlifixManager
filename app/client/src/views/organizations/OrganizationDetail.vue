@@ -150,7 +150,7 @@
 
           <!-- People -->
           <div v-show="activeSection('people')">
-            <h3 id="People">People<b-button @click="$router.push({ path:'/organizations/people/create', query: { orgId: org_data.organization_id, orgName: org_data.organization_primary_name, orgInitial: org_data.organization_primary_initial } })" v-b-tooltip.hover :title="'Add a new product.'" v-bind:class="['btn', 'p-1', 'ml-2', 'btn-light']" type="button"><b-icon icon="plus" class="d-print-none"></b-icon></b-button></h3>
+            <h3 id="People">People<b-button @click="$router.push({ path:'/organizations/people/create', query: { orgId: org_data.organization_id, orgName: org_data.organization_primary_name, orgInitial: org_data.organization_primary_initial } })" v-b-tooltip.hover :title="'Add a new person.'" v-bind:class="['btn', 'p-1', 'ml-2', 'btn-light']" type="button"><b-icon icon="plus" class="d-print-none"></b-icon></b-button></h3>
             <b-table striped :items="sorted_people" show-empty id="people-table" :per-page="perPage" :current-page="currentProductPage" bordered
               :fields="[
                 { key: 'name', label: 'Name', thStyle: { width: '25%' } },
@@ -191,7 +191,7 @@
 
           <!-- Facilities -->
           <div v-show="activeSection('facilities')">
-            <h3 id="Facilities">Facilities<b-button @click="$router.push({ path:'/organizations/facilities/create', query: { orgId: org_data.organization_id, orgName: org_data.organization_primary_name, orgInitial: org_data.organization_primary_initial } })" v-b-tooltip.hover :title="'Add a new product.'" v-bind:class="['btn', 'p-1', 'ml-2', 'btn-light']" type="button"><b-icon icon="plus" class="d-print-none"></b-icon></b-button></h3>
+            <h3 id="Facilities">Facilities<b-button @click="$router.push({ path:'/organizations/facilities/create', query: { orgId: org_data.organization_id, orgName: org_data.organization_primary_name, orgInitial: org_data.organization_primary_initial } })" v-b-tooltip.hover :title="'Add a new facility.'" v-bind:class="['btn', 'p-1', 'ml-2', 'btn-light']" type="button"><b-icon icon="plus" class="d-print-none"></b-icon></b-button></h3>
             <b-table striped :items="org_data.facilities" show-empty id="facilities-table" :per-page="perPage" :current-page="currentProductPage" bordered
               :fields="[
                 { key: 'building_name', label: 'Building', thStyle: { width: '25%' } },

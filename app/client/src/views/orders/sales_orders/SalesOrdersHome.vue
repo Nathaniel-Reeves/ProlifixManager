@@ -35,8 +35,19 @@
           </div>
         </div>
 
-        <div v-show="loaded" style="height:100vh;">
-          <b-table striped hover :items="orders" :fields="fields"></b-table>
+        <div v-show="loaded">
+          <b-table striped hover :items="orders" :fields="fields" show-empty responsive stacked="md" sticky-header outlined>
+            <template #empty>
+              <div class="d-flex justify-content-center">
+                <h4>No orders yet!  Add some by clicking the '+' button above.</h4>
+              </div>
+            </template>
+            <template #emptyfiltered>
+              <div class="d-flex justify-content-center">
+                <h4>No orders match your filters.</h4>
+              </div>
+            </template>
+          </b-table>
         </div>
       </div>
     </div>
