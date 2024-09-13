@@ -1,0 +1,132 @@
+{
+    "document": 1,
+    "title": "Quality Assurance",
+    "subtitle": "Standard Operating Procedure",
+    "description": "",
+    "abv": "QA",
+    "timestamp_issued": "2020-01-01",
+    "timestamp_modified": "2020-01-01",
+    "revision": 1,
+    "authors": [
+        {
+            "key": 1,
+            "name": "John Doe",
+            "role": "QA Manager"
+        }
+    ],
+    "chapters": {
+        "1": {
+            "title": "QA Responsiilities",
+            "subtitle": "Standard Operating Procedure",
+            "description": "",
+            "timestamp_issued": "2020-01-01",
+            "timestamp_modified": "2020-01-01",
+            "revision": 1,
+            "authors": [1,2,3],
+            "employee_training": {
+                "user_id": {
+                    "date": "2020-01-01",
+                    "status": "completed",
+                    "trainer": 0
+                }
+            },
+            "sections": {
+                "1": {
+                    "title": "Overview",
+                    "subtitle": "Standard Operating Procedure",
+                    "content": {
+                        "1": {
+                            "type": "paragraph",
+                            "data": "The Quality Assurance (QA) department is responsible for ensuring that the company's products and services meet the required quality standards. This includes developing and implementing quality control procedures, conducting audits and inspections, and providing training to employees on quality assurance best practices.",
+                            "attributes": {
+                                "bold": false,
+                                "italic": false,
+                                "underline": false,
+                                "color": null,
+                                "size": null
+                            }
+                        },
+                        "2": {
+                            "type": "images",
+                            "data": [
+                                {
+                                    "id": null,
+                                    "description": null,
+                                    "name": null,
+                                    "type": null,
+                                    "id_code": null,
+                                    "file_pointer": null,
+                                    "file_preview_pointer": null,
+                                    "file_type": null,
+                                    "url_preview": null,
+                                    "file_hash": null,
+                                    "date_uploaded": null
+                                }
+                            ],
+                            "attributes": {
+                                "show_date": false,
+                                "show_description": false,
+                                "show_name": false
+                            }
+                        },
+                        "3": {
+                            "type": "table",
+                            "data": [
+                                [{"text": "", "bold": true}, {"text": "", "bold": true}],
+                                [{"text": "", "bold": true}, {"text": "", "bold": true}],
+                                [{"text": "", "bold": true}, {"text": "", "bold": true}]
+                            ],
+                            "attributes": {
+                                "show_header": true,
+                                "show_border": true
+                            }
+                        },
+                        "4": {
+                            "type": "list",
+                            "data": [
+                                "Develop and implement quality control procedures",
+                                ["Conduct audits and inspections", "Provide training to employees on quality assurance best practices"],
+                                "Conduct audits and inspections",
+                                "Provide training to employees on quality assurance best practices"
+                            ],
+                            "attributes": {
+                                "l1_number": false,
+                                "l2_number": true,
+                                "l3_number": false,
+                                "l4_number": false
+                            }
+                        },
+                        "5": {
+                            "content": "https://vueup.github.io/vue-quill/",
+                            "references": [],
+                            "regulations": [
+                                {
+                                    "requlation_date": null,
+                                    "title": null,
+                                    "subtitle": null,
+                                    "chapter": null,
+                                    "subchapter": null,
+                                    "part": null,
+                                    "subpart": null,
+                                    "section": null
+                                }
+                            ]
+                        }
+                    },
+                    "regulations": [
+                        {
+                            "requlation_date": null,
+                            "title": null,
+                            "subtitle": null,
+                            "chapter": null,
+                            "subchapter": null,
+                            "part": null,
+                            "subpart": null,
+                            "section": null
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}
