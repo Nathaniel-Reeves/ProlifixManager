@@ -83,14 +83,20 @@
             <pre>{{ infoModal.content }}</pre>
           </b-modal>
         </div>
+        <QuillComponent></QuillComponent>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import QuillComponent from './QuillComponent.vue'
+
 export default {
   name: 'PurchaseOrdersHome',
+  components: {
+    QuillComponent
+  },
   data: function () {
     return {
       loaded: true,

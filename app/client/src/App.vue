@@ -103,7 +103,7 @@ export default {
   },
   methods: {
     getOrigin: function () {
-      const dev = false
+      const dev = true
       let origin = ''
       if (dev) {
         origin = 'http://' + new URL(window.origin).hostname + ':' + new URL(window.origin).port
