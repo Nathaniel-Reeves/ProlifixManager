@@ -83,23 +83,25 @@
             <pre>{{ infoModal.content }}</pre>
           </b-modal>
         </div>
-        <QuillComponent></QuillComponent>
+        <TipTap v-model="contents"></TipTap>
+        {{ contents }}
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import QuillComponent from './QuillComponent.vue'
+import TipTap from './TipTap.vue'
 
 export default {
   name: 'PurchaseOrdersHome',
   components: {
-    QuillComponent
+    TipTap
   },
   data: function () {
     return {
       loaded: true,
+      contents: null,
       search_query_buff: '',
       search_query: '',
       hide: true,
