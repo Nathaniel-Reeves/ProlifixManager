@@ -83,8 +83,8 @@
             <pre>{{ infoModal.content }}</pre>
           </b-modal>
         </div>
-        <TipTap v-model="contents"></TipTap>
-        {{ contents }}
+        <TipTap v-model="contents" :edit="true"></TipTap>
+        <!-- <div v-html="contents"></div> -->
       </div>
     </div>
   </div>
@@ -101,7 +101,7 @@ export default {
   data: function () {
     return {
       loaded: true,
-      contents: null,
+      contents: '<h3>Text</h3><p><u>Here</u><s> is</s> <em>some</em> <strong>text</strong>!</p><ul><li><p>item 1</p></li><li><p>thing 2</p></li><li><p>object 3</p><ul><li><p>sub object</p></li></ul></li></ul><p style="text-align: center"><span style="font-family: monospace">Center TEXT</span></p><p style="text-align: center"><span style="font-family: monospace">asdf </span></p><p></p>',
       search_query_buff: '',
       search_query: '',
       hide: true,
