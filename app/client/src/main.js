@@ -28,6 +28,10 @@ import 'vue3-easy-data-table/dist/style.css'
 // import vue-select css
 import 'vue-select/dist/vue-select.css'
 
+// Right Click Menu / Context Menu
+import '@imengyu/vue3-context-menu/lib/vue3-context-menu.css'
+import ContextMenu from '@imengyu/vue3-context-menu'
+
 configureCompat({
   WATCH_ARRAY: 'suppress-warning',
   RENDER_FUNCTION: 'suppress-warning',
@@ -55,6 +59,7 @@ Vue.use(IconsPlugin)
 const app = createApp(App)
 app.use(router)
 app.use(jquery)
+app.use(ContextMenu)
 app.component('EasyDataTable', Vue3EasyDataTable)
 app.component('qr-code', VueQRCodeComponent)
 
