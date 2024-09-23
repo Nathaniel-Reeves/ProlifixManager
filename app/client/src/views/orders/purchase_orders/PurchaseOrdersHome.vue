@@ -83,27 +83,17 @@
             <pre>{{ infoModal.content }}</pre>
           </b-modal>
         </div>
-        <TipTap v-model="contents" :edit="true"></TipTap>
-        <TipTap v-model="contents" :edit="true"></TipTap>
-        <TipTap v-model="contents" :edit="true"></TipTap>
-        <!-- <div v-html="contents"></div> -->
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import TipTap from '../../../components/TipTap.vue'
-
 export default {
   name: 'PurchaseOrdersHome',
-  components: {
-    TipTap
-  },
   data: function () {
     return {
       loaded: true,
-      contents: '<h3>Text</h3><p><u>Here</u><s> is</s> <em>some</em> <strong>text</strong>!</p><ul><li><p>item 1</p></li><li><p>thing 2</p></li><li><p>object 3</p><ul><li><p>sub object</p></li></ul></li></ul><p style="text-align: center"><span style="font-family: monospace">Center TEXT</span></p><p style="text-align: center"><span style="font-family: monospace">asdf </span></p><p></p><table><thead><tr><th>Header 1</th><th>Header 2</th></tr></thead><tbody><tr><td>data 1</td><td>data 2</td></tr><tr><td>data 3</td><td>data 4</td></tr></tbody></table><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p>',
       search_query_buff: '',
       search_query: '',
       hide: true,

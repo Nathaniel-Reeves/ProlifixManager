@@ -128,6 +128,11 @@ const routes = [
     ]
   },
   {
+    path: '/policies',
+    name: 'policies',
+    component: () => import(/* webpackChunkName: "policies" */ '../views/policies/PoliciesHome.vue')
+  },
+  {
     path: '/login',
     name: 'login',
     component: () => import(/* webpackChunkName: "login" */ '../views/LogIn.vue')

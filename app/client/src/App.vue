@@ -11,8 +11,7 @@
                 <b-dropdown-item to="/inventory/checkins">checkins</b-dropdown-item>
                 <b-dropdown-item to="/inventory/checkouts">checkouts</b-dropdown-item>
               </b-nav-item-dropdown> -->
-            <b-nav-item to="/organizations" text="Organizations" active-class>Organizations
-            </b-nav-item>
+            <b-nav-item to="/organizations" text="Organizations" active-class>Organizations</b-nav-item>
             <b-nav-item-dropdown text="Catalogue" active-class>
               <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'all' } })">All Components</b-dropdown-item>
               <b-dropdown-item @click="$router.push({ path: '/catalogue/components', query: { type: 'powder' } })">Powders</b-dropdown-item>
@@ -36,6 +35,7 @@
               <b-dropdown-item to="/orders/po">Purchases</b-dropdown-item>
               <b-dropdown-item to="/orders/so">Sales</b-dropdown-item>
             </b-nav-item-dropdown>
+            <b-nav-item to="/policies" text="Policies" active-class>Policies</b-nav-item>
             <!-- <b-nav-item to="/barcodereader" active-class>barcodereader</b-nav-item> -->
           </b-navbar-nav>
         </b-collapse>
