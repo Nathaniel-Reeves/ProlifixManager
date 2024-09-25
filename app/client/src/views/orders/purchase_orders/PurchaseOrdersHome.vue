@@ -12,7 +12,6 @@
               <button class="btn btn-outline-secondary" type="button" id="button-addon2" v-on:click="search()"><b-icon icon="search"></b-icon></button>
             </div>
           </div>
-
         </div>
       </b-sidebar>
     </div>
