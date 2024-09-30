@@ -1,7 +1,11 @@
 from __future__ import annotations
 from typing import List
 
-from sqlalchemy import Enum, ForeignKey, Column, ForeignKeyConstraint
+# Composite Primary Keys were initially part of the ORM Models, however due to the complexity,
+# They were replaced with single primary keys.  This module has leftover notes from the initial
+# implementation for reference in case Composite Primary Keys are needed in the future.
+
+from sqlalchemy import Enum, ForeignKey, Column # , ForeignKeyConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.dialects.mysql import JSON
@@ -15,12 +19,15 @@ class Sales_Orders(Base):
     __tablename__ = 'Sales_Orders'
     __table_args__ = {'schema': 'Orders'}
 
-    # Primary Key
-    prefix: Mapped[str] = mapped_column(primary_key=True)
-    year: Mapped[int] = mapped_column(primary_key=True)
-    month: Mapped[int] = mapped_column(primary_key=True)
-    sec_number: Mapped[int] = mapped_column(primary_key=True)
-    suffix: Mapped[str] = mapped_column(primary_key=True)
+    # Primary Key  (Old Composite Key)
+    # prefix: Mapped[str] = mapped_column(primary_key=True)
+    # year: Mapped[int] = mapped_column(primary_key=True)
+    # month: Mapped[int] = mapped_column(primary_key=True)
+    # sec_number: Mapped[int] = mapped_column(primary_key=True)
+    # suffix: Mapped[str] = mapped_column(primary_key=True)
+
+    # New Primary Key
+    so_id: Mapped[int] = mapped_column(primary_key=True)
 
     # Relationships
     organization_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
@@ -28,6 +35,11 @@ class Sales_Orders(Base):
     sale_order_detail: Mapped[List["Sale_Order_Detail"]] = relationship()
 
     # Table Columns
+    prefix: Mapped[str] = mapped_column(default=None)
+    year: Mapped[int] = mapped_column(default=None)
+    month: Mapped[int] = mapped_column(default=None)
+    sec_number: Mapped[int] = mapped_column(default=None)
+    suffix: Mapped[str] = mapped_column(default=None)
     client_po_num: Mapped[str] = mapped_column(default=None)
     order_date: Mapped[datetime.datetime] = mapped_column(default=None)
     target_completion_date: Mapped[datetime.datetime] = mapped_column(default=None)
@@ -54,6 +66,7 @@ class Sales_Orders(Base):
             Dict: Columns as Keys
         """
         return {
+            'so_id': self.so_id,
             'prefix': self.prefix,
             'year': self.year,
             'month': self.month,
@@ -77,17 +90,19 @@ class Sales_Orders(Base):
 
     def get_id(self):
         """Get Row Id"""
-        return str(self.prefix) + str(self.year) + str(self.month) + str(self.sec_number)
+        # return str(self.prefix) + str(self.year) + str(self.month) + str(self.sec_number)
+        return self.so_id
 
     def get_id_name(self):
         """Get Primary ID Column Name"""
-        return (
-            "prefix",
-            "year",
-            "month",
-            "sec_number",
-            "suffix"
-        )
+        # return (
+        #     "prefix",
+        #     "year",
+        #     "month",
+        #     "sec_number",
+        #     "suffix"
+        # )
+        return "so_id"
 
 class Sale_Order_Detail(Base):
     """Sale Order Detail ORM Model"""
@@ -98,31 +113,35 @@ class Sale_Order_Detail(Base):
     so_detail_id: Mapped[int] = mapped_column(primary_key=True)
 
     # Relationships
-    prefix: Mapped[str] = mapped_column(nullable=False)
-    year: Mapped[int] = mapped_column(nullable=False)
-    month: Mapped[int] = mapped_column(nullable=False)
-    sec_number: Mapped[int] = mapped_column(nullable=False)
-    suffix: Mapped[str] = mapped_column(nullable=False)
-    fk_constraint = ForeignKeyConstraint(
-                    [
-                        prefix,
-                        year,
-                        month,
-                        sec_number,
-                        suffix
-                    ],
-                    [
-                        "Orders.Sales_Orders.prefix",
-                        "Orders.Sales_Orders.year",
-                        "Orders.Sales_Orders.month",
-                        "Orders.Sales_Orders.sec_number",
-                        "Orders.Sales_Orders.suffix"
-                    ],
-                    name="Sales_Order_Number_fk"
-                )
-    __table_args__ = (fk_constraint, {
-        'schema': 'Orders'
-    })
+
+    # Old Composite Foreign Key (Notes)
+    # prefix: Mapped[str] = mapped_column(nullable=False)
+    # year: Mapped[int] = mapped_column(nullable=False)
+    # month: Mapped[int] = mapped_column(nullable=False)
+    # sec_number: Mapped[int] = mapped_column(nullable=False)
+    # suffix: Mapped[str] = mapped_column(nullable=False)
+    # fk_constraint = ForeignKeyConstraint(
+    #                 [
+    #                     prefix,
+    #                     year,
+    #                     month,
+    #                     sec_number,
+    #                     suffix
+    #                 ],
+    #                 [
+    #                     "Orders.Sales_Orders.prefix",
+    #                     "Orders.Sales_Orders.year",
+    #                     "Orders.Sales_Orders.month",
+    #                     "Orders.Sales_Orders.sec_number",
+    #                     "Orders.Sales_Orders.suffix"
+    #                 ],
+    #                 name="Sales_Order_Number_fk"
+    #             )
+    # __table_args__ = (fk_constraint, {
+    #     'schema': 'Orders'
+    # })
+
+    so_id: Mapped[int] = mapped_column(ForeignKey('Orders.Sales_Orders.so_id'))
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
     lot_numbers: Mapped[List["Lot_Numbers"]] = relationship()
 
@@ -149,11 +168,8 @@ class Sale_Order_Detail(Base):
             Dict: Columns as Keys
         """
         return {
-            'prefix': self.prefix,
-            'year': self.year,
-            'month': self.month,
-            'sec_number': self.sec_number,
-            'suffix': self.suffix,
+            'so_detail_id': self.so_detail_id,
+            'so_id': self.so_id,
             'product_id': self.product_id,
             'unit_order_qty': self.unit_order_qty,
             'kilos_order_qty': self.kilos_order_qty,
@@ -183,31 +199,7 @@ class Sales_Orders_Payments(Base):
     payment_id: Mapped[int] = mapped_column(primary_key=True)
 
     # Relationships
-    prefix: Mapped[str] = mapped_column(nullable=False)
-    year: Mapped[int] = mapped_column(nullable=False)
-    month: Mapped[int] = mapped_column(nullable=False)
-    sec_number: Mapped[int] = mapped_column(nullable=False)
-    suffix: Mapped[str] = mapped_column(nullable=False)
-    fk_constraint = ForeignKeyConstraint(
-                    [
-                        prefix,
-                        year,
-                        month,
-                        sec_number,
-                        suffix
-                    ],
-                    [
-                        "Orders.Sales_Orders.prefix",
-                        "Orders.Sales_Orders.year",
-                        "Orders.Sales_Orders.month",
-                        "Orders.Sales_Orders.sec_number",
-                        "Orders.Sales_Orders.suffix"
-                    ],
-                    name="Sales_Order_Number_fk"
-                )
-    __table_args__ = (fk_constraint, {
-        'schema': 'Orders'
-    })
+    so_id: Mapped[int] = mapped_column(ForeignKey('Orders.Sales_Orders.so_id'))
 
     # Table Columns
     payment_amount: Mapped[float] = mapped_column(default=None)
@@ -235,11 +227,8 @@ class Sales_Orders_Payments(Base):
             Dict: Columns as Keys
         """
         return {
-            'prefix': self.prefix,
-            'year': self.year,
-            'month': self.month,
-            'sec_number': self.sec_number,
-            'suffix': self.suffix,
+            'payment_id': self.payment_id,
+            'so_id': self.so_id,
             'payment_type': self.payment_type,
             'payment_amount': self.payment_amount,
             'doc': self.doc,
@@ -262,17 +251,18 @@ class Lot_Numbers(Base):
     __table_args__ = {'schema': 'Orders'}
 
     # Primary Key
-    prefix: Mapped[str] = mapped_column(primary_key=True)
-    year: Mapped[int] = mapped_column(primary_key=True)
-    month: Mapped[int] = mapped_column(primary_key=True)
-    sec_number: Mapped[int] = mapped_column(primary_key=True)
-    suffix: Mapped[str] = mapped_column(primary_key=True)
+    lot_num_id: Mapped[int] = mapped_column(primary_key=True)
 
     # Relationships
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
     so_detail_id: Mapped[int] = mapped_column(ForeignKey('Orders.Sale_Order_Detail.so_detail_id'))
 
     # Table Columns
+    prefix: Mapped[str] = mapped_column(default=None)
+    year: Mapped[int] = mapped_column(default=None)
+    month: Mapped[int] = mapped_column(default=None)
+    sec_number: Mapped[int] = mapped_column(default=None)
+    suffix: Mapped[str] = mapped_column(default=None)
     target_unit_yield: Mapped[int] = mapped_column(default=None)
     actual_unit_yield: Mapped[int] = mapped_column(default=None)
     retentions: Mapped[int] = mapped_column(default=None)
@@ -304,6 +294,7 @@ class Lot_Numbers(Base):
             Dict: Columns as Keys
         """
         return {
+            'lot_num_id': self.lot_num_id,
             'prefix': self.prefix,
             'year': self.year,
             'month': self.month,
@@ -326,17 +317,11 @@ class Lot_Numbers(Base):
 
     def get_id(self):
         """Get Row Id"""
-        return str(self.prefix) + str(self.year) + str(self.month) + str(self.sec_number)
+        return self.lot_num_id
 
     def get_id_name(self):
         """Get Primary ID Column Name"""
-        return (
-            "prefix",
-            "year",
-            "month",
-            "sec_number",
-            "suffix"
-        )
+        return "lot_num_id"
 
 class Purchase_Orders(Base):
     """Purchase Orders ORM Model"""
@@ -344,17 +329,18 @@ class Purchase_Orders(Base):
     __table_args__ = {'schema': 'Orders'}
 
     # Primary Key
-    prefix: Mapped[str] = mapped_column(primary_key=True)
-    year: Mapped[int] = mapped_column(primary_key=True)
-    month: Mapped[int] = mapped_column(primary_key=True)
-    sec_number: Mapped[int] = mapped_column(primary_key=True)
-    suffix: Mapped[str] = mapped_column(primary_key=True)
+    po_id: Mapped[int] = mapped_column(primary_key=True)
 
     # Relationships
     organization_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
     purchase_order_details: Mapped[List["Purchase_Order_Detail"]] = relationship()
 
     # Table Columns
+    prefix: Mapped[str] = mapped_column(default=None)
+    year: Mapped[int] = mapped_column(default=None)
+    month: Mapped[int] = mapped_column(default=None)
+    sec_number: Mapped[int] = mapped_column(default=None)
+    suffix: Mapped[str] = mapped_column(default=None)
     supplier_so_num: Mapped[str] = mapped_column(default=None)
     order_date: Mapped[datetime.datetime] = mapped_column(default=None)
     eta_date: Mapped[datetime.datetime] = mapped_column(default=None)
@@ -375,6 +361,7 @@ class Purchase_Orders(Base):
             Dict: Columns as Keys
         """
         return {
+            'po_id': self.po_id,
             'prefix': self.prefix,
             'year': self.year,
             'month': self.month,
@@ -391,16 +378,11 @@ class Purchase_Orders(Base):
 
     def get_id(self):
         """Get Row Id"""
-        return str(self.prefix) + str(self.year) + str(self.month) + str(self.sec_number)
+        return self.po_id
 
     def get_id_name(self):
         """Get Primary ID Column Name"""
-        return (
-            "prefix",
-            "year",
-            "month",
-            "sec_number"
-        )
+        return 'po_id'
 
 class Purchase_Order_Detail(Base):
     """Purchase Order Detail ORM Model"""
@@ -411,30 +393,7 @@ class Purchase_Order_Detail(Base):
     po_detail_id: Mapped[int] = mapped_column(primary_key=True)
 
     # Relationships
-    po_detail_id: Mapped[int] = mapped_column(primary_key=True)
-    prefix: Mapped[str] = mapped_column(nullable=False)
-    year: Mapped[int] = mapped_column(nullable=False)
-    month: Mapped[int] = mapped_column(nullable=False)
-    suffix: Mapped[str] = mapped_column(nullable=False)
-    sec_number: Mapped[int] = mapped_column(nullable=False)
-    fk_constraint = ForeignKeyConstraint(
-                    [
-                        prefix,
-                        year,
-                        month,
-                        sec_number
-                    ],
-                    [
-                        "Orders.Purchase_Orders.prefix",
-                        "Orders.Purchase_Orders.year",
-                        "Orders.Purchase_Orders.month",
-                        "Orders.Purchase_Orders.sec_number"
-                    ],
-                    name="Purchase_Order_Number_fk"
-                )
-    __table_args__ = (fk_constraint, {
-        'schema': 'Orders'
-    })
+    po_id: Mapped[int] = mapped_column(ForeignKey('Orders.Purchase_Orders.po_id'))
     component_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'), nullable=False)
 
     # Table Columns
@@ -461,10 +420,7 @@ class Purchase_Order_Detail(Base):
         """
         return {
             'po_detail_id': self.po_detail_id,
-            'prefix': self.prefix,
-            'year': self.year,
-            'month': self.month,
-            'sec_number': self.sec_number,
+            'po_id': self.po_id,
             'component_id': self.component_id,
             'unit_order_qty': self.unit_order_qty,
             'kilos_order_qty': self.kilos_order_qty,

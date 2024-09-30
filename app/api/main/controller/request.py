@@ -62,7 +62,13 @@ class CustomRequest:
             'Ingredients_Join',
             'Component_Brands_Join',
             'Components_Join',
-            'Inventory_Log_Edges'
+            'Inventory_Log_Edges',
+            'Documents',
+            'Chapters',
+            'Chapter_Sections',
+            'Regulations',
+            'Chapter_Regulation_Join',
+            'Authors_Join'
         )
 
         # print("Payload", json.dumps(self.request.json['payload'], indent=4))

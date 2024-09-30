@@ -8,6 +8,7 @@ from .products import *
 from .inventory import *
 from .manufacturing import *
 from .files import *
+from .policies import *
 
 from .connector import get_session
 

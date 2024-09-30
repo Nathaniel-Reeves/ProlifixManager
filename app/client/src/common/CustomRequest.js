@@ -39,7 +39,13 @@ export class CustomRequest {
         Ingredients_Join: [],
         Component_Brands_Join: [],
         Components_Join: [],
-        Inventory_Log_Edges: []
+        Inventory_Log_Edges: [],
+        Documents: [],
+        Chapters: [],
+        Chapter_Sections: [],
+        Regulations: [],
+        Chapter_Regulation_Join: [],
+        Authors_Join: []
       },
       delete: {
         Organizations: [],
@@ -71,7 +77,13 @@ export class CustomRequest {
         Ingredients_Join: [],
         Component_Brands_Join: [],
         Components_Join: [],
-        Inventory_Log_Edges: []
+        Inventory_Log_Edges: [],
+        Documents: [],
+        Chapters: [],
+        Chapter_Sections: [],
+        Regulations: [],
+        Chapter_Regulation_Join: [],
+        Authors_Join: []
       }
     }
     this.upsertFileData = {}
@@ -112,7 +124,13 @@ export class CustomRequest {
       'Ingredients_Join',
       'Component_Brands_Join',
       'Components_Join',
-      'Inventory_Log_Edges'
+      'Inventory_Log_Edges',
+      'Documents',
+      'Chapters',
+      'Chapter_Sections',
+      'Regulations',
+      'Chapter_Regulation_Join',
+      'Authors_Join'
     ]
   }
 
