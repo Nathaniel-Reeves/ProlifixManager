@@ -123,6 +123,9 @@ def create_app():
     from view.organizations import bp as organizations_bp
     api_blueprint.register_blueprint(organizations_bp)
 
+    from view.orders import bp as orders_bp
+    api_blueprint.register_blueprint(orders_bp)
+
     from view.catalogue import bp_cat as catalogue_bp
     api_blueprint.register_blueprint(catalogue_bp)
 
