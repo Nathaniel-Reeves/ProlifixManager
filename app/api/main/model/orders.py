@@ -143,7 +143,8 @@ class Sale_Order_Detail(Base):
 
     so_id: Mapped[int] = mapped_column(ForeignKey('Orders.Sales_Orders.so_id'))
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
-    lot_numbers: Mapped[List["Lot_Numbers"]] = relationship()
+    variant_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Variants.variant_id'))
+    formula_id: Mapped[int] = mapped_column(ForeignKey('Products.Formulas.formula_id'))
 
     # Table Columns
     unit_order_qty: Mapped[int] = mapped_column(default=None)
@@ -170,6 +171,8 @@ class Sale_Order_Detail(Base):
         return {
             'so_detail_id': self.so_detail_id,
             'so_id': self.so_id,
+            'variant_id': self.variant_id,
+            'formula_id': self.formula_id,
             'product_id': self.product_id,
             'unit_order_qty': self.unit_order_qty,
             'kilos_order_qty': self.kilos_order_qty,
@@ -245,16 +248,15 @@ class Sales_Orders_Payments(Base):
         """Get Primary ID Column Name"""
         return "payment_id"
 
-class Lot_Numbers(Base):
-    """Lot Numbers ORM Model"""
-    __tablename__ = 'Lot_Numbers'
+class Lot_And_Batch_Numbers(Base):
+    """Lot And Batch Numbers ORM Model"""
+    __tablename__ = 'Lot_And_Batch_Numbers'
     __table_args__ = {'schema': 'Orders'}
 
     # Primary Key
     lot_num_id: Mapped[int] = mapped_column(primary_key=True)
 
     # Relationships
-    product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
     so_detail_id: Mapped[int] = mapped_column(ForeignKey('Orders.Sale_Order_Detail.so_detail_id'))
 
     # Table Columns
@@ -279,13 +281,18 @@ class Lot_Numbers(Base):
     ))
     timestamp_entered: Mapped[datetime.datetime] = mapped_column()
     timestamp_modified: Mapped[datetime.datetime] = mapped_column()
+    batch_record: Mapped[bool] = mapped_column(default=False)
+    total_batch_size: Mapped[float] = mapped_column(default=None)
+    production_record: Mapped[bool] = mapped_column(default=False)
+    allocated_batch_size: Mapped[float] = mapped_column(default=None)
+    allocated_from_lot_num_id: Mapped[int] = mapped_column(ForeignKey('Orders.Lot_And_Batch_Numbers.lot_num_id'), default=None)
 
     doc = Column(MutableDict.as_mutable(JSON))
 
     # Common Methods
     def __repr__(self):
         """Return a string representation of Object"""
-        return f'<Lot_Numbers Lot#:{self.prefix} {self.year}{self.month}{self.sec_number} {self.suffix} Product_id:{self.product_id} >'
+        return f'<Lot_And_Batch_Numbers Lot#:{self.prefix} {self.year}{self.month}{self.sec_number} {self.suffix} Product_id:{self.product_id} >'
 
     def to_dict(self):
         """Converts Data to Dictionary representation
@@ -300,7 +307,6 @@ class Lot_Numbers(Base):
             'month': self.month,
             'sec_number': self.sec_number,
             'suffix': self.suffix,
-            'product_id': self.product_id,
             'target_unit_yield': self.target_unit_yield,
             'actual_unit_yield': self.actual_unit_yield,
             'retentions': self.retentions,

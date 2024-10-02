@@ -207,6 +207,7 @@ export default {
       this.req.upsertRecord('Product_Master', newProduct)
 
       this.req.upsertRecord('Item_id', {
+        item_id: genTempKey(),
         product_id: this.new_product_id,
         timestamp_fetched: new Date().toISOString()
       })

@@ -35,7 +35,7 @@ def handle_get_sales():
 
     try:
         year = datetime.datetime.strptime(request.args.get('year'), '%Y').year
-    except:
+    except (ValueError, TypeError):
         year = None
 
     populate_request = request.args.getlist('populate')

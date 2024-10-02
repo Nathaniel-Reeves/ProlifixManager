@@ -56,7 +56,7 @@ class CustomRequest:
             'Formula_Detail',
             'Manufacturing_Process_Edges',
             'Process_Components',
-            'Lot_Numbers',
+            'Lot_And_Batch_Numbers',
             'Inventory_Log',
             'Ingredient_Brands_Join',
             'Ingredients_Join',

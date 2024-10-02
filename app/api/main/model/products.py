@@ -61,7 +61,7 @@ class Product_Master(Base):
 
     # Relationships
     # formulas: Mapped[List["Formula_Master"]] = relationship()
-    # lot_numbers: Mapped[List["Lot_Numbers"]] = relationship()
+    # lot_and_batch_numbers: Mapped[List["Lot_And_Batch_Numbers"]] = relationship()
     # items: Mapped[List["Item_id"]] = relationship()
 
     def __repr__(self):

@@ -20,7 +20,6 @@ mapper_registry = registry()
 Components.purchase_order_detail = relationship(Purchase_Order_Detail, primaryjoin=Components.component_id == Purchase_Order_Detail.component_id)
 
 # Product_Master
-Product_Master.lot_numbers = relationship(Lot_Numbers, primaryjoin=Product_Master.product_id == Lot_Numbers.product_id)
 Product_Master.item_id = relationship(Item_id, primaryjoin=Product_Master.product_id == Item_id.product_id)
 
 # Purchase_Order_Detail

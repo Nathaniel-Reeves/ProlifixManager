@@ -169,6 +169,7 @@ class Item_id(Base):
     # Relationships
     component_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'))
     product_id: Mapped[int] = mapped_column(ForeignKey('Products.Product_Master.product_id'))
+    variant_id: Mapped[int] = mapped_column(ForeignKey('Products.Variants.variant_id'))
     inventory: Mapped[List["Inventory"]] = relationship()
 
     # Table Columns
@@ -190,6 +191,7 @@ class Item_id(Base):
             "item_id": self.item_id,
             "component_id": self.component_id,
             "product_id": self.product_id,
+            "variant_id": self.variant_id,
             "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_fetched": datetime.datetime.now().isoformat()
@@ -212,17 +214,19 @@ class Inventory(Base):
     inv_id: Mapped[int] = mapped_column(primary_key=True)
 
     # Relationships
-    item_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Item_id.item_id'), primary_key=True)
-    owner_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'), primary_key=True)
+    item_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Item_id.item_id'))
+    owner_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
     recent_cycle_count_id: Mapped[int] = mapped_column(default=0)
     inventory_log: Mapped[List["Inventory_Log"]] = relationship()
+    num_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Lot_And_Batch_Numbers.lot_num_id'))
 
     # Table Columns
     is_component: Mapped[bool] = mapped_column(default=False)
     is_product: Mapped[bool] = mapped_column(default=False)
+    is_variant: Mapped[bool] = mapped_column(default=False)
     actual_inventory: Mapped[float] = mapped_column(default=0.0)
     theoretical_inventory: Mapped[float] = mapped_column(default=0.0)
-    lot_number: Mapped[str] = mapped_column(primary_key=True)
+    lot_number: Mapped[str] = mapped_column()
     timestamp_entered: Mapped[datetime.datetime] = mapped_column()
     timestamp_modified: Mapped[datetime.datetime] = mapped_column()
 
@@ -241,9 +245,11 @@ class Inventory(Base):
             "inv_id": self.inv_id,
             "item_id": self.item_id,
             "owner_id": self.owner_id,
+            "num_id": self.num_id,
             "recent_cycle_count_id": self.recent_cycle_count_id,
             "is_component": self.is_component,
             "is_product": self.is_product,
+            "is_variant": self.is_variant,
             "actual_inventory": self.actual_inventory,
             "theoretical_inventory": self.theoretical_inventory,
             "lot_number": self.lot_number,
@@ -275,6 +281,7 @@ class Inventory_Log(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Users.user_id'))
     po_detail_id: Mapped[int] = mapped_column(ForeignKey('Orders.Purchase_Order_Detail.po_detail_id'))
     so_detail_id: Mapped[int] = mapped_column(ForeignKey('Orders.Sale_Order_Detail.so_detail_id'))
+    num_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Lot_And_Batch_Numbers.lot_num_id'))
 
     # Table Columns
     pre_change_actual_inventory: Mapped[float] = mapped_column(default=0.0)
@@ -320,6 +327,7 @@ class Inventory_Log(Base):
             "user_id": self.user_id,
             "po_detail_id": self.po_detail_id,
             "so_detail_id": self.so_detail_id,
+            "num_id": self.num_id,
             "pre_change_actual_inventory": self.pre_change_actual_inventory,
             "post_change_actual_inventory": self.post_change_actual_inventory,
             "pre_change_theoretical_inventory": self.pre_change_theoretical_inventory,
@@ -350,17 +358,15 @@ class Inventory_Log(Base):
 class Inventory_Log_Edges(Base):
     """Inventory Log Edges ORM Model"""
     __tablename__ = 'Inventory_Log_Edges'
+    __table_args__ = {'schema': 'Inventory'}
 
     # Primary Key
-    source: Mapped[int] = mapped_column(primary_key=True)
-    target: Mapped[int] = mapped_column(primary_key=True)
-
-    __table_args__ = (ForeignKeyConstraint([source, target],
-                                           [Inventory_Log.log_id, Inventory_Log.log_id]),
-                      {'schema': 'Inventory'})
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
     # Relationships
     inv_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Inventory.inv_id'))
+    source: Mapped[int] = mapped_column(ForeignKey('Inventory.Inventory_Log.log_id'))
+    target: Mapped[int] = mapped_column(ForeignKey('Inventory.Inventory_Log.log_id'))
 
     # Table Columns
     label: Mapped[str] = mapped_column()

@@ -511,8 +511,9 @@ export default {
       this.req.updateUpsertRecord('Product_Variant', 'variant_id', variant.variant_id, update)
     },
     add_variant: function () {
+      const tempKey = genTempKey()
       const add = {
-        variant_id: genTempKey(),
+        variant_id: tempKey,
         product_id: this.productId,
         variant_title: null,
         variant_type: null,
@@ -535,12 +536,14 @@ export default {
         timestamp_fetched: new Date().toISOString()
       }
       this.new_variant = cloneDeep(add)
+      this.req.upsertRecord('Item_id', { item_id: genTempKey(), variant_id: tempKey, timestamp_fetched: new Date().toISOString() })
     },
     delete_temp_variant: function (variant) {
       if (isTempKey(variant.variant_id)) {
         this.variants_buffer.splice(this.variants_buffer.indexOf(variant), 1)
         this.num_variants -= 1
         this.req.removeUpsertRecord('Product_Variant', 'variant_id', variant.variant_id)
+        this.req.removeUpsertRecord('Item_id', 'variant_id', variant.variant_id)
       }
     },
     discontinue_variant: function (variant, reason) {

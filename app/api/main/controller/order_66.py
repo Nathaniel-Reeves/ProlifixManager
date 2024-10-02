@@ -63,8 +63,8 @@ def order_66(request):
     # custom_response = fix_product_master(custom_response)
     # custom_response = fix_old_components_template(custom_response)
     # custom_response = fix_org_doc(custom_response)
-    # custom_response = fix_item_id_table(custom_response)
-    custom_response = fix_organochlorines(custom_response)
+    custom_response = fix_item_id_table(custom_response)
+    # custom_response = fix_organochlorines(custom_response)
 
     if custom_response.status_code == 200:
         fm = FlashMessage(
@@ -1020,6 +1020,30 @@ def fix_item_id_table(custom_response):
 
         if not raw_data:
             stm = insert(db.Item_id).values({ 'product_id': row[0].get_id() })
+
+            custom_response, raw_data, success = execute_query(custom_response, stm)
+            if not success:
+                custom_response.set_status_code(400)
+                return custom_response
+
+    # Fix Variants
+    stm = select(db.Product_Variant)
+    custom_response, raw_data, success = execute_query(custom_response, stm)
+    if not success:
+        custom_response.set_status_code(400)
+        return custom_response
+
+    for row in raw_data:
+        stm = select(db.Item_id)
+        stm = stm.where(db.Item_id.variant_id == row[0].get_id())
+        custom_response, raw_data, success = execute_query(custom_response, stm)
+
+        if not success:
+            custom_response.set_status_code(400)
+            return custom_response
+
+        if not raw_data:
+            stm = insert(db.Item_id).values({ 'variant_id': row[0].get_id() })
 
             custom_response, raw_data, success = execute_query(custom_response, stm)
             if not success:
