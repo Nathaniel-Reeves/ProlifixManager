@@ -9,6 +9,17 @@ def only_integers(iterable):
         except ValueError:
             pass
 
+def str_to_int(string):
+    '''
+    Converts a string to an integer.
+    '''
+    if not isinstance(string, str):
+        return None
+    try:
+        return int(string)
+    except ValueError:
+        return None
+
 def validate_float_in_dict(dictionary, field, minimum=0, maximum=999999, equal_to=True):
     '''
     Validates that the value of a field in a dictionary

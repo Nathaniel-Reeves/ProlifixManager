@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import List
 
+from .handle_exclude import handle_exclude
+
 # Composite Primary Keys were initially part of the ORM Models, however due to the complexity,
 # They were replaced with single primary keys.  This module has leftover notes from the initial
 # implementation for reference in case Composite Primary Keys are needed in the future.
@@ -59,13 +61,13 @@ class Sales_Orders(Base):
         """Return a string representation of Object"""
         return f'<Sales_Order SO#{self.prefix}{self.year}~{self.month}~{self.sec_number}{self.suffix}>'
 
-    def to_dict(self):
+    def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation
 
         Returns:
             Dict: Columns as Keys
         """
-        return {
+        out = {
             'so_id': self.so_id,
             'prefix': self.prefix,
             'year': self.year,
@@ -87,6 +89,7 @@ class Sales_Orders(Base):
             "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_fetched": datetime.datetime.now().isoformat()
         }
+        return handle_exclude(out, exclude)
 
     def get_id(self):
         """Get Row Id"""
@@ -150,7 +153,7 @@ class Sale_Order_Detail(Base):
     unit_order_qty: Mapped[int] = mapped_column(default=None)
     kilos_order_qty: Mapped[float] = mapped_column(default=None)
     special_instructions: Mapped[str] = mapped_column(default=None)
-    bit_price_per_unit: Mapped[float] = mapped_column(default=None)
+    bid_price_per_unit: Mapped[float] = mapped_column(default=None)
     final_ship_date: Mapped[datetime.datetime] = mapped_column(default=None)
     timestamp_entered: Mapped[datetime.datetime] = mapped_column()
     timestamp_modified: Mapped[datetime.datetime] = mapped_column()
@@ -162,13 +165,16 @@ class Sale_Order_Detail(Base):
         """Return a string representation of Object"""
         return f'<Sales_Order_Detail SO#{self.prefix}{self.year}~{self.month}~{self.sec_number} Product_id:{self.product_id} Qty:{self.unit_order_qty}{self.kilos_order_qty}{self.suffix}>'
 
-    def to_dict(self):
+    def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation
+
+        Parameters:
+            exclude (List): Columns to exclude from the output
 
         Returns:
             Dict: Columns as Keys
         """
-        return {
+        out = {
             'so_detail_id': self.so_detail_id,
             'so_id': self.so_id,
             'variant_id': self.variant_id,
@@ -177,13 +183,16 @@ class Sale_Order_Detail(Base):
             'unit_order_qty': self.unit_order_qty,
             'kilos_order_qty': self.kilos_order_qty,
             'special_instructions': self.special_instructions,
-            'bit_price_per_unit': self.bit_price_per_unit,
+            'bid_price_per_unit': self.bid_price_per_unit,
             'final_ship_date': self.final_ship_date,
             'doc': self.doc,
             "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_fetched": datetime.datetime.now().isoformat()
         }
+        return handle_exclude(out, exclude)
+
+
 
     def get_id(self):
         """Get Row Id"""
@@ -223,13 +232,13 @@ class Sales_Orders_Payments(Base):
         """Return a string representation of Object"""
         return f'<Sales_Order_Payments SO#{self.prefix}{self.year}~{self.month}~{self.sec_number} Type:{self.payment_type} Amount:{self.payment_amount}{self.suffix}>'
 
-    def to_dict(self):
+    def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation
 
         Returns:
             Dict: Columns as Keys
         """
-        return {
+        out = {
             'payment_id': self.payment_id,
             'so_id': self.so_id,
             'payment_type': self.payment_type,
@@ -239,6 +248,7 @@ class Sales_Orders_Payments(Base):
             "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_fetched": datetime.datetime.now().isoformat()
         }
+        return handle_exclude(out, exclude)
 
     def get_id(self):
         """Get Row Id"""
@@ -294,13 +304,13 @@ class Lot_And_Batch_Numbers(Base):
         """Return a string representation of Object"""
         return f'<Lot_And_Batch_Numbers Lot#:{self.prefix} {self.year}{self.month}{self.sec_number} {self.suffix} Product_id:{self.product_id} >'
 
-    def to_dict(self):
+    def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation
 
         Returns:
             Dict: Columns as Keys
         """
-        return {
+        out = {
             'lot_num_id': self.lot_num_id,
             'prefix': self.prefix,
             'year': self.year,
@@ -320,6 +330,7 @@ class Lot_And_Batch_Numbers(Base):
             "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_fetched": datetime.datetime.now().isoformat()
         }
+        return handle_exclude(out, exclude)
 
     def get_id(self):
         """Get Row Id"""
@@ -360,13 +371,13 @@ class Purchase_Orders(Base):
         """Return a string representation of Object"""
         return f'<Purchase_Orders PO#:{self.prefix} {self.year}{self.month}{self.sec_number} >'
 
-    def to_dict(self):
+    def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation
 
         Returns:
             Dict: Columns as Keys
         """
-        return {
+        out = {
             'po_id': self.po_id,
             'prefix': self.prefix,
             'year': self.year,
@@ -381,6 +392,7 @@ class Purchase_Orders(Base):
             "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_fetched": datetime.datetime.now().isoformat()
         }
+        return handle_exclude(out, exclude)
 
     def get_id(self):
         """Get Row Id"""
@@ -418,13 +430,13 @@ class Purchase_Order_Detail(Base):
         """Return a string representation of Object"""
         return f'<Purchase_Order_Detail PO#:{self.prefix} {self.year}{self.month}{self.sec_number} >'
 
-    def to_dict(self):
+    def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation
 
         Returns:
             Dict: Columns as Keys
         """
-        return {
+        out = {
             'po_detail_id': self.po_detail_id,
             'po_id': self.po_id,
             'component_id': self.component_id,
@@ -438,6 +450,7 @@ class Purchase_Order_Detail(Base):
             "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_fetched": datetime.datetime.now().isoformat()
         }
+        return handle_exclude(out, exclude)
 
     def get_id(self):
         """Get Row Id"""

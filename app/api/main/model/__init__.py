@@ -1,3 +1,5 @@
+import logging
+
 from sqlalchemy.orm import registry
 from sqlalchemy.orm import relationship
 from sqlalchemy import select

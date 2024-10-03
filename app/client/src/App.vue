@@ -31,11 +31,11 @@
               <hr>
               <b-dropdown-item @click="$router.push({ path: '/catalogue/products' })">All Products</b-dropdown-item>
             </b-nav-item-dropdown>
-            <!-- <b-nav-item-dropdown text="Orders" active-class>
+            <b-nav-item-dropdown text="Orders" active-class>
               <b-dropdown-item to="/orders/po">Purchases</b-dropdown-item>
               <b-dropdown-item to="/orders/so">Sales</b-dropdown-item>
             </b-nav-item-dropdown>
-            <b-nav-item to="/policies" text="Policies" active-class>Policies</b-nav-item> -->
+            <b-nav-item to="/policies" text="Policies" active-class>Policies</b-nav-item>
             <!-- <b-nav-item to="/barcodereader" active-class>barcodereader</b-nav-item> -->
           </b-navbar-nav>
         </b-collapse>
@@ -103,7 +103,7 @@ export default {
   },
   methods: {
     getOrigin: function () {
-      const dev = false
+      const dev = true
       let origin = ''
       if (dev) {
         origin = 'http://' + new URL(window.origin).hostname + ':' + new URL(window.origin).port

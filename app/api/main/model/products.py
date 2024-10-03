@@ -1,6 +1,8 @@
 from __future__ import annotations
 import datetime
 
+from .handle_exclude import handle_exclude
+
 from sqlalchemy import Enum, ForeignKey, Column, ForeignKeyConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.ext.mutable import MutableDict
@@ -68,13 +70,13 @@ class Product_Master(Base):
         """Return a string representation of Object"""
         return f'<Product_Master id:{self.product_id} org_id:{self.organization_id} {self.product_name}>'
 
-    def to_dict(self):
+    def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation
 
         Returns:
             Dict: Columns as Keys
         """
-        return {
+        out = {
             'product_id': self.product_id,
             'organization_id': self.organization_id,
             'product_name': self.product_name,
@@ -108,6 +110,7 @@ class Product_Master(Base):
             'num_manufacturing_processes': self.num_manufacturing_processes,
             'num_manufacturing_edges': self.num_manufacturing_edges
         }
+        return handle_exclude(out, exclude)
 
     def get_id(self):
         """Get Row Id"""

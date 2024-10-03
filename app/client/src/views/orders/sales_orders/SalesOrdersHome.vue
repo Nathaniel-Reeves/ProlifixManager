@@ -27,6 +27,12 @@
           <b-button v-b-tooltip.hover title="Filter" v-b-toggle.sidebar-right style="border-width: 2px; border-color:#999999" v-bind:class="['btn', 'my-2', 'mx-1', filterActive ? 'btn-info' : 'btn-light']" type="button" id="button-addon2">
             <b-icon icon="filter"></b-icon>
           </b-button>
+          <b-button v-show="hide" :disabled="isMd" v-b-tooltip.hover title="Show All Columns" @click="hide = false" style="border-width: 2px; border-color:#999999" v-bind:class="['btn', 'my-2', 'mx-1', 'btn-light']" type="button" id="button-addon2">
+            <b-icon icon="eye-fill"></b-icon>
+          </b-button>
+          <b-button v-show="!hide" :disabled="isMd" v-b-tooltip.hover title="Hide PO Columns" @click="hide = true" style="border-width: 2px; border-color:#999999" v-bind:class="['btn', 'my-2', 'mx-1', 'btn-light']" type="button" id="button-addon2">
+            <b-icon icon="eye-slash-fill"></b-icon>
+          </b-button>
         </div>
 
         <div v-show="!loaded">
@@ -36,7 +42,31 @@
         </div>
 
         <div v-show="loaded">
-          <b-table striped hover :items="orders" :fields="fields" show-empty responsive stacked="md" sticky-header outlined>
+          <div
+            v-b-visible="handleVisible"
+            class="position-fixed d-block d-lg-none"
+            style="z-index: 20000; height: 1px;"
+          ></div>
+          <b-table primary-key="" striped hover :items="orders" v-model="orders" :fields="hide || isMd ? fields_hidden : fields_show" show-empty responsive stacked="md" small no-border-collapse sticky-header outlined>
+            <template #cell(actions)="row">
+              <b-button size="sm" @click="row.toggleDetails" class="btn-light" style="border-width: 2px; border-color:#999999" v-b-tooltip.hover title="Peek Order Details">
+                <b-icon v-show="row.detailsShowing" icon="chevron-up"></b-icon>
+                <b-icon v-show="!row.detailsShowing" icon="chevron-down"></b-icon>
+              </b-button>
+              <b-button size="sm ml-2"  class="btn-light" style="border-width: 2px; border-color:#999999" v-b-tooltip.hover title="Go to Order Page">
+                <b-icon icon="box"></b-icon>
+              </b-button>
+              <b-button size="sm ml-2" @click="info(row.item, row.index, $event.target)" v-b-tooltip.hover title="Quick Edit" class="btn-light" style="border-width: 2px; border-color:#999999">
+                <b-icon icon="pencil-square"></b-icon>
+              </b-button>
+            </template>
+            <template #row-details="row">
+              <b-card class="no-shaddow">
+                <ul>
+                  <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
+                </ul>
+              </b-card>
+            </template>
             <template #empty>
               <div class="d-flex justify-content-center">
                 <h4>No orders yet!  Add some by clicking the '+' button above.</h4>
@@ -48,6 +78,10 @@
               </div>
             </template>
           </b-table>
+          <!-- Info modal -->
+          <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
+            <pre>{{ infoModal.content }}</pre>
+          </b-modal>
         </div>
       </div>
     </div>
@@ -62,9 +96,22 @@ export default {
       loaded: true,
       search_query_buff: '',
       search_query: '',
+      hide: true,
+      isMd: false,
       orders: [
       ],
-      fields: [
+      fields_hidden: [
+        { key: 'pk', label: 'SO#', sortable: true },
+        { key: 'client_po_num', label: 'Client PO', sortable: true },
+        { key: 'organization_primary_name', label: 'Client', sortable: true },
+        { key: 'organization_primary_initial', label: 'CI', sortable: true },
+        { key: 'order_date', label: 'Date Ordered', sortable: true },
+        { key: 'target_completion_date', label: 'ETA', sortable: true },
+        { key: 'completion_date', label: 'Finished', sortable: true },
+        { key: 'closed_date', label: 'Closed on', sortable: true },
+        { key: 'actions', label: 'Actions' }
+      ],
+      fields_show: [
         { key: 'prefix', label: 'Pre', sortable: true },
         { key: 'year', label: 'Y', sortable: true },
         { key: 'month', label: 'M', sortable: true },
@@ -78,7 +125,12 @@ export default {
         { key: 'completion_date', label: 'Finished', sortable: true },
         { key: 'closed_date', label: 'Closed on', sortable: true },
         { key: 'actions', label: 'Actions' }
-      ]
+      ],
+      infoModal: {
+        id: 'info-modal',
+        title: '',
+        content: ''
+      }
     }
   },
   computed: {
@@ -90,12 +142,24 @@ export default {
     }
   },
   methods: {
+    info: function (item, index, button) {
+      this.infoModal.title = `Row index: ${index}`
+      this.infoModal.content = JSON.stringify(item, null, 2)
+      this.$root.$emit('bv::show::modal', this.infoModal.id, button)
+    },
+    resetInfoModal: function () {
+      this.infoModal.title = ''
+      this.infoModal.content = ''
+    },
     clearSearch: function () {
       this.search_query = ''
       this.search_query_buff = ''
     },
     search: function () {
       this.search_query = this.search_query_buff
+    },
+    handleVisible: function (isVisible) {
+      this.isMd = isVisible
     }
   }
 }

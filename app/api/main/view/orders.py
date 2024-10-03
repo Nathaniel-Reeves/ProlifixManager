@@ -9,7 +9,7 @@ from flask import (
 )
 from controller import orders as ord
 from .auth import check_authenticated
-from .helper import only_integers, check_type
+from .helper import only_integers, check_type, str_to_int
 from .response import CustomResponse
 
 import datetime
@@ -24,19 +24,16 @@ def handle_get_sales():
     """
 
     # Clean Request
-    so_ids = list(only_integers(request.args.getlist('so-id')))
+    so_ids = list(only_integers(request.args.getlist('so_id')))
 
-    client_ids = list(only_integers(request.args.getlist('client-id')))
+    client_ids = list(only_integers(request.args.getlist('client_id')))
 
     year_to_date = False
-    yeartodate = request.args.get('year-to-date')
+    yeartodate = request.args.get('year_to_date')
     if yeartodate == "true":
         year_to_date = True
 
-    try:
-        year = datetime.datetime.strptime(request.args.get('year'), '%Y').year
-    except (ValueError, TypeError):
-        year = None
+    years = list(only_integers(request.args.getlist('year')))
 
     populate_request = request.args.getlist('populate')
     valid_populate = [
@@ -62,7 +59,7 @@ def handle_get_sales():
         so_ids,
         client_ids,
         year_to_date,
-        year,
+        years,
         populate,
         doc
     )

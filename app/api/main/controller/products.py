@@ -23,6 +23,10 @@ def get_products(
     stm = select(*tables)
     stm = stm.join(db.Organization_Names, db.Product_Master.organization_id == db.Organization_Names.organization_id, isouter=True)
     stm = stm.where(db.Organization_Names.primary_name == True)
+    exclude = []
+
+    if not doc:
+        exclude.append('doc')
 
     if product_ids:
         stm = stm.where(db.Product_Master.product_id.in_(product_ids))
@@ -64,7 +68,7 @@ def get_products(
     # Process and Package the data
     for row in raw_data:
         pk = row[0].get_id()
-        product_master = row[0].to_dict()
+        product_master = row[0].to_dict(exclude=exclude)
         organization_names = row[1].to_dict()
         formulas = {'formulas':[]}
         manufacturing = {'manufacturing': {'nodes': [], 'edges': []}}
