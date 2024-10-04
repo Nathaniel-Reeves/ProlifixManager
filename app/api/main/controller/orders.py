@@ -46,6 +46,8 @@ def get_sales_orders(
     if years:
         stm = stm.where(db.Sales_Orders.year.in_(years))
 
+    stm = stm.order_by(db.Sales_Orders.so_id.desc())
+
     # execute the query
     custom_response, raw_data, success = execute_query(custom_response, stm)
 
@@ -67,7 +69,7 @@ def get_sales_orders(
 
         if 'sale_order_detail' in populate:
             r = CustomResponse()
-            resp = get_sale_order_detail(r, [], [pk], [], [], [], ['product','variant'], False)
+            resp = get_sale_order_detail(r, [], [pk], [], [], [], ['product','variant', 'formula'], False)
             sale_order_detail = {'sale_order_detail':resp.get_data()}
             custom_response.insert_flash_messages(r.get_flash_messages())
 
