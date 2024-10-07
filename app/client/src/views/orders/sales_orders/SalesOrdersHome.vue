@@ -21,7 +21,7 @@
       <div class="card-body">
         <div class="input-group d-flex">
           <h2 class="card-title flex-grow-1">Sales</h2>
-          <b-button v-b-tooltip.hover title="New Order" style="border-width: 2px; border-color:#999999" class="btn my-2 mx-1 btn-light" type="button">
+          <b-button :to="{ name: 'NewSalesOrder'}" v-b-tooltip.hover title="New Order" style="border-width: 2px; border-color:#999999" class="btn my-2 mx-1 btn-light" type="button">
             <b-icon icon="plus"></b-icon>
           </b-button>
           <b-button v-b-tooltip.hover title="Filter" v-b-toggle.sidebar-right style="border-width: 2px; border-color:#999999" v-bind:class="['btn', 'my-2', 'mx-1', filterActive ? 'btn-info' : 'btn-light']" type="button" id="button-addon2">
