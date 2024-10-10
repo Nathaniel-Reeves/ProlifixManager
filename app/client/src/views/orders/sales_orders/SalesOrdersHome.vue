@@ -54,11 +54,14 @@
                   <b-icon v-show="row.detailsShowing" icon="chevron-up"></b-icon>
                   <b-icon v-show="!row.detailsShowing" icon="chevron-down"></b-icon>
                 </b-button>
-                <b-button size="sm ml-2"  class="btn-light" style="border-width: 2px; border-color:#999999" v-b-tooltip.hover title="Go to Order Page">
+                <b-button size="sm ml-2" :to="'/orders/so/'+row.item.so_id" class="btn-light" style="border-width: 2px; border-color:#999999" v-b-tooltip.hover title="Go to Order Page">
                   <b-icon icon="box"></b-icon>
                 </b-button>
                 <b-button size="sm ml-2" @click="info(row.item, row.index, $event.target)" v-b-tooltip.hover title="Quick Edit" class="btn-light" style="border-width: 2px; border-color:#999999">
                   <b-icon icon="pencil-square"></b-icon>
+                </b-button>
+                <b-button v-show="!row.item.lot_num_assigned" size="sm ml-2" :to="'/orders/so/'+row.item.so_id" class="btn-warning" style="border-width: 2px; border-color:#999999" v-b-tooltip.hover title="Lot Number Assignment Incomplete">
+                  <b-icon icon="exclamation-triangle-fill"></b-icon>
                 </b-button>
               </div>
             </template>

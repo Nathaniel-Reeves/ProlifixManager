@@ -127,6 +127,7 @@ const routes = [
         name: 'SalesOrdersHome',
         children: [
           { path: '', component: () => import(/* webpackChunkName: "sales_orders" */ '../views/orders/sales_orders/SalesOrdersHome.vue') },
+          { path: ':id', component: () => import(/* webpackChunkName: "sales_orders" */ '../views/orders/sales_orders/SaleOrderDetail.vue') },
           {
             path: 'create',
             name: 'NewSalesOrder',

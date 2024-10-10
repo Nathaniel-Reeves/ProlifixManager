@@ -478,7 +478,7 @@ export class CustomRequest {
               title: 'Response Parsing Error!',
               message: 'Error parsing response from server. ' + error,
               variant: 'danger',
-              debug_code: 'RESPONSE_PARSE_ERROR  CustomRequest.js line: 416',
+              debug_code: 'RESPONSE_PARSE_ERROR  CustomRequest.js line: 481',
               link: '',
               auto_hide_delay: 5000,
               no_auto_hide: false,

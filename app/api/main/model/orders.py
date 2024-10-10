@@ -53,6 +53,7 @@ class Sales_Orders(Base):
     total_paid: Mapped[float] = mapped_column(default=None)
     timestamp_entered: Mapped[datetime.datetime] = mapped_column()
     timestamp_modified: Mapped[datetime.datetime] = mapped_column()
+    lot_num_assigned: Mapped[bool] = mapped_column(default=False)
 
     doc = Column(MutableDict.as_mutable(JSON))
 
@@ -85,6 +86,7 @@ class Sales_Orders(Base):
             'theoretical_po_amount': self.theoretical_po_amount,
             'total_paid': self.total_paid,
             'doc': self.doc,
+            'lot_num_assigned': self.lot_num_assigned,
             "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_fetched": datetime.datetime.now().isoformat()
@@ -157,6 +159,8 @@ class Sale_Order_Detail(Base):
     final_ship_date: Mapped[datetime.datetime] = mapped_column(default=None)
     timestamp_entered: Mapped[datetime.datetime] = mapped_column()
     timestamp_modified: Mapped[datetime.datetime] = mapped_column()
+    lot_num_assigned: Mapped[bool] = mapped_column(default=False)
+    percent_overage: Mapped[float] = mapped_column(default=None)
 
     doc = Column(MutableDict.as_mutable(JSON))
 
@@ -186,6 +190,8 @@ class Sale_Order_Detail(Base):
             'bid_price_per_unit': self.bid_price_per_unit,
             'final_ship_date': self.final_ship_date,
             'doc': self.doc,
+            'lot_num_assigned': self.lot_num_assigned,
+            'percent_overage': self.percent_overage,
             "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_fetched": datetime.datetime.now().isoformat()

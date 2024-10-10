@@ -69,7 +69,7 @@ def get_sales_orders(
 
         if 'sale_order_detail' in populate:
             r = CustomResponse()
-            resp = get_sale_order_detail(r, [], [pk], [], [], [], ['product','variant', 'formula'], False)
+            resp = get_sale_order_detail(r, [], [pk], [], [], [], ['product','variant','formula'], False)
             sale_order_detail = {'sale_order_detail':resp.get_data()}
             custom_response.insert_flash_messages(r.get_flash_messages())
 
@@ -184,13 +184,13 @@ def get_sale_order_detail(
 
         if 'variant' in populate:
             r = CustomResponse()
-            resp = get_product_variants( r, [sale_order_detail['product_id']], [], False)
+            resp = get_product_variants( r, [sale_order_detail['variant_id']], [], False)
             variant = {'variant':resp.get_data()}
             custom_response.insert_flash_messages(r.get_flash_messages())
 
         if 'formula' in populate:
             r = CustomResponse()
-            resp = get_formulas( r, [sale_order_detail['product_id']], [], [], doc)
+            resp = get_formulas( r, [sale_order_detail['formula_id']], [], [], doc)
             formula = {'formula':resp.get_data()}
             custom_response.insert_flash_messages(r.get_flash_messages())
 
