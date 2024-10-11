@@ -197,59 +197,67 @@
                         </b-col>
                       </b-row> -->
                     </b-container>
-                    <!-- <b-container v-if="selected_product.product_and_formula_selected">
+                    <b-container v-if="batch.product_with_formula_selected">
                       <b-row class="my-1">
                         <b-col>
-                          <strong>Variant</strong>
+                          <strong>Order</strong>
                         </b-col>
                         <b-col>
-                          <strong>Qty</strong>
+                          <strong>Bulk Allocated</strong>
                         </b-col>
                         <b-col>
                           <strong>Percent Overage</strong>
                         </b-col>
                         <b-col>
-                          <strong>Bulk Qty</strong>
+                          <strong>Target Unit Yield</strong>
                         </b-col>
                       </b-row>
                       <hr class="mb-2">
-                      <div v-for="production, vindex in batch.productions" :key="vindex">
+                      <div v-for="production, pindex in batch.productions" :key="pindex">
                         <b-row class="my-1">
                           <b-col>
-                            <ChooseVariant :variants="selected_product.variants" :selected="variant" @variant="(v) => variant = updateVariant(variant, v, index, vindex)" :disabled-prop="false" :variant-req="true"></ChooseVariant>
+                            <ChooseVariant :variants="getVariants(batch)" :selected="batch.productions[pindex]" @variant="(v) => batch.productions[pindex] = updateProduction(batch.productions[pindex], v, index, pindex)" :disabled-prop="false" :variant-req="true"></ChooseVariant>
                           </b-col>
                           <b-col>
                             <div class="input-group">
-                              <b-form-input v-model="variant.qty" type="number"
-                                aria-describedby="qty-live-feedback"
-                                :class="[(variant.qty > 0 ? '' : 'is-invalid')]"
+                              <b-form-input v-model="batch.allocated_batch_size" type="number"
+                                aria-describedby="allocated_batch_size-live-feedback"
+                                :class="[(batch.allocated_batch_size >= 0 && batch.allocated_batch_size !== null && batch.allocated_batch_size !== '' && batch.allocated_batch_size <= 100 ? '' : 'is-invalid')]"
                               ></b-form-input>
                               <div class="input-group-append">
-                                <span class="input-group-text">ct</span>
+                                <span v-if="batch.batch_type === 'Powder'" class="input-group-text">Kg</span>
+                                <span v-else-if="batch.batch_type === 'Liquid'" class="input-group-text">L</span>
+                                <span v-else class="input-group-text">?</span>
                               </div>
-                              <div id="qty-live-feedback" class="invalid-feedback">This required field must be between greater than 0.</div>
+                              <div id="allocated_batch_size-live-feedback" class="invalid-feedback">This required field must be between 0 and {{ batch.batch_size }}.</div>
                             </div>
                           </b-col>
                           <b-col>
                             <div class="input-group">
-                              <b-form-input v-model="variant.percent_overage" type="number"
+                              <b-form-input v-model="batch.percent_overage" type="number"
                                 disabled
                                 aria-describedby="percent_overage-live-feedback"
-                                :class="[(variant.percent_overage >= 0 && variant.percent_overage !== null && variant.percent_overage !== '' && variant.percent_overage <= 100 ? '' : 'is-invalid')]"
                               ></b-form-input>
                               <div class="input-group-append">
                                 <span class="input-group-text">%</span>
                               </div>
-                              <div id="percent_overage-live-feedback" class="invalid-feedback">This required field must be between 0 and 100.</div>
                             </div>
                           </b-col>
                           <b-col>
-                            <div>
-                              <b-textarea v-model="variant.special_instructions" rows="1" max-rows="6"></b-textarea>
+                            <div class="input-group">
+                              <b-form-input v-model="production.target_unit_yield" type="number"
+                                aria-describedby="target_unit_yield-live-feedback"
+                                disabled
+                                :class="[(production.target_unit_yield > 0 ? '' : 'is-invalid')]"
+                              ></b-form-input>
+                              <div class="input-group-append">
+                                <span class="input-group-text">ct</span>
+                              </div>
+                              <div id="target_unit_yield-live-feedback" class="invalid-feedback">This required field must be between greater than 0.</div>
                             </div>
                           </b-col>
                           <b-col class="mt-2">
-                            <div v-if="variant.variant_type === 'powder'">
+                            <!-- <div v-if="variant.variant_type === 'powder'">
                               {{ Math.ceil((variant.total_grams_per_unit * variant.qty) / 1000) + (Math.ceil((variant.total_grams_per_unit * variant.qty) / 1000) * (variant.percent_overage / 100)) }} kg
                             </div>
                             <div v-else-if="variant.variant_type === 'capsule'">
@@ -257,15 +265,16 @@
                             </div>
                             <div v-else-if="variant.variant_type === 'liquid'">
                               {{ Math.ceil((variant.total_milliliters_per_unit * variant.qty) / 1000) + (Math.ceil((variant.total_milliliters_per_unit * variant.qty) / 1000) * (variant.percent_overage / 100)) }} L
-                            </div>
+                            </div> -->
                           </b-col>
                         </b-row>
                         <hr class="mb-2">
+                        {{ production }}
                       </div>
                     </b-container>
                     <div class="m-3">
-                      <b-button block variant="outline-info" @click="addVariant(index)" v-if="selected_product.product_and_formula_selected">Add Variant</b-button>
-                    </div> -->
+                      <b-button block variant="outline-info" @click="addProductionRun(index)" v-if="batch.product_with_formula_selected">Add Production Run</b-button>
+                    </div>
                   </b-card-body>
                 </b-card>
               </div>
@@ -277,7 +286,7 @@
               </b-card>
               <b-tooltip target="add-product" triggers="hover">Add Product to Order</b-tooltip>
             </b-card-group>
-            <pre>{{ JSON.stringify(order, null, 4) }}</pre>
+            <!-- <pre>{{ JSON.stringify(order, null, 4) }}</pre> -->
           </b-card-body>
         </b-card>
       </div>
@@ -291,6 +300,7 @@ import { CustomRequest, genTempKey } from '../../../common/CustomRequest.js'
 import { cloneDeep } from 'lodash'
 import OrderDetailsTable from './OrderDetailsTable.vue'
 import ChooseProductWithFormula from '@/components/ChooseProductWithFormula.vue'
+import ChooseVariant from '@/components/ChooseVariant.vue'
 import CertBadge from '@/components/CertBadge.vue'
 
 export default {
@@ -299,7 +309,8 @@ export default {
     vSelect,
     OrderDetailsTable,
     ChooseProductWithFormula,
-    CertBadge
+    CertBadge,
+    ChooseVariant
   },
   data: function () {
     return {
@@ -336,13 +347,37 @@ export default {
     }
   },
   methods: {
+    updateProduction: function (production, variant, index, pindex) {
+      const update = {
+        ...production,
+        variant: variant,
+        variant_id: variant.variant_id
+      }
+      this.batches[index].productions[pindex] = update
+      return update
+    },
+    getVariants: function (batch) {
+      const variants = []
+      batch.productions_allowed.forEach((production) => {
+        variants.push(production.variant[0])
+      })
+      return variants
+    },
+    addProductionRun: function (index) {
+      this.batches[index].productions.push({
+        target_unit_yield: 0,
+        allocated_batch_size: 0,
+        production_record: true,
+        percent_overage: 0
+      })
+    },
     getProductionsAllowed: function (index) {
       const productId = this.batches[index].product_id
       const formulaId = this.batches[index].formula_id
 
       this.order.sale_order_detail.forEach((detail) => {
         if (detail.product_id === productId && detail.formula_id === formulaId) {
-          this.batches[index].productions_allowed = cloneDeep(detail)
+          this.batches[index].productions_allowed.push(cloneDeep(detail))
         }
       })
     },
