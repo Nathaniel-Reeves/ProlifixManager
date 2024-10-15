@@ -27,7 +27,7 @@
                 </b-col>
                 <b-col class="d-flex justify-content-end">
                   <div>
-                    <b-button @click="toggleAssignLotNumbers()" v-if="!order.lot_num_assigned" class="mr-2 mb-2" variant="outline-primary" :block="isMd">Assign Lot Numbers</b-button>
+                    <b-button @click="toggleAssignLotNumbers()" v-if="!order.lot_num_assigned" v-show="!assign_lot_numbers_mode" class="mr-2 mb-2" variant="outline-primary" :block="isMd">Assign Lot Numbers</b-button>
                     <b-badge v-if="!order.lot_num_assigned" variant="warning" class="p-2" :block="isMd">
                       <b-icon icon="exclamation-triangle-fill"></b-icon> Lot Number Assignment Incomplete
                     </b-badge>
@@ -125,168 +125,272 @@
                 </div>
               </div>
             </div>
-            <h4>Order Details<b-button @click="toggleAssignLotNumbers()" v-if="!order.lot_num_assigned" v-show="!assign_lot_numbers_mode" class="ml-2" variant="outline-primary">Assign Lot Numbers</b-button></h4>
+            <div class="d-flex justify-content-between mb-2">
+              <h4>Order Details</h4>
+              <b-button @click="toggleAssignLotNumbers()" v-if="!order.lot_num_assigned" v-show="!assign_lot_numbers_mode" class="ml-2" variant="outline-primary">Assign Lot Numbers</b-button>
+            </div>
             <OrderDetailsTable :order-details="order.sale_order_detail"></OrderDetailsTable>
-            <b-card-group class="d-flex flex-column">
-              <div v-for="batch, index in batches" :key="index">
-                <b-card class="custom_card mb-2" style="width: 100%;" no-body>
-                  <b-card-title class="m-3 d-flex justify-content-between">
-                    <div v-if="batch.product_with_formula_selected" class="m-2 d-flex flex-row">
-                      <h3 class="m-0">Batch #{{ index + 1 }}:
-                        <router-link class="mr-2 mt-2 text-info" :to="'/catalogue/products/'+batch.product_id" target="_blank">
-                          {{ batch.title }}
-                        </router-link>
-                      </h3>
-                      <h6><CertBadge :data="batch.product[0]"></CertBadge></h6>
-                    </div>
-                    <div v-if="batch.product_with_formula_selected">
-                      <b-button variant="outline-danger" class="text-nowrap" @click="removeRow(index)">Remove Batch</b-button>
-                    </div>
-                  </b-card-title>
-                  <b-card-body>
-                    <b-container v-if="!batch.product_with_formula_selected">
-                      <b-row class="mb-2">
-                        <b-col md="2">
-                          <span><strong>Batch for Product: </strong></span>
-                        </b-col>
-                        <b-col class="d-flex flex-row flex-nowrap">
-                          <ChooseProductWithFormula :products-with-formulas="product_with_formula_menu" :selected="batch" @product-with-formula="(pwf) => selectProductWithFormula(index, pwf)" :disabled="false" :product-req="true"></ChooseProductWithFormula>
-                        </b-col>
-                      </b-row>
-                    </b-container>
-                    <b-container v-if="batch.product_with_formula_selected" fluid>
-                      <b-row align-v="center">
-                        <b-col md="3" class="mb-2" align-v="center">
-                          <b>Blending Required: </b>
-                          <div class="d-flex justify-content-center">
-                            <b-button @click="batch.batch_requires_blending = false" v-show="batch.batch_requires_blending" class="badge badge-success badge-pill" style="font-size: 1.5em;">Yes</b-button>
-                            <b-button @click="batch.batch_requires_blending = true" v-show="!batch.batch_requires_blending" class="badge badge-danger badge-pill" style="font-size: 1.5em;">No</b-button>
-                          </div>
-                        </b-col>
-                        <b-col md="3" class="mb-2">
-                          <b>Batch Type:</b>
-                          <v-select v-model="batch.batch_type" required label="text" :reduce="doc => doc.value" placeholder="Batch Type"
-                          :options="[
-                            { value: 'Powder', text: 'Powder' },
-                            { value: 'Liquid', text: 'Liquid' }
-                          ]">
-                          </v-select>
-                        </b-col>
-                        <b-col md="3" class="mb-2">
-                          <b>Batch Size: </b>
-                          <div class="input-group">
-                            <b-form-input v-model="batch.batch_size" type="number"
-                              aria-describedby="batch_size-live-feedback"
-                              :class="[(!batch.batch_requires_blending || (batch.batch_size > 0 && batch.batch_size !== null && batch.batch_size !== '') ? '' : 'is-invalid')]"
-                            ></b-form-input>
-                            <div class="input-group-append">
-                              <span v-if="batch.batch_type === 'Powder'" class="input-group-text">Kg</span>
-                              <span v-else-if="batch.batch_type === 'Liquid'" class="input-group-text">L</span>
-                              <span v-else class="input-group-text">?</span>
-                            </div>
-                            <div id="batch_size-live-feedback" class="invalid-feedback">This required field must be greater than 0.</div>
-                          </div>
-                        </b-col>
-                      </b-row>
-                      <!-- <b-row class="mb-2">
-                        <b-col md="2">
-                          <span><strong>Avaliable Productions: </strong></span>
-                        </b-col>
-                        <b-col>
-                          <pre>{{ JSON.stringify(batch.productions_allowed, null, 4) }}</pre>
-                        </b-col>
-                      </b-row> -->
-                    </b-container>
-                    <b-container v-if="batch.product_with_formula_selected">
-                      <b-row class="my-1">
-                        <b-col>
-                          <strong>Order</strong>
-                        </b-col>
-                        <b-col>
-                          <strong>Bulk Allocated</strong>
-                        </b-col>
-                        <b-col>
-                          <strong>Percent Overage</strong>
-                        </b-col>
-                        <b-col>
-                          <strong>Target Unit Yield</strong>
-                        </b-col>
-                      </b-row>
-                      <hr class="mb-2">
-                      <div v-for="production, pindex in batch.productions" :key="pindex">
-                        <b-row class="my-1">
-                          <b-col>
-                            <ChooseVariant :variants="getVariants(batch)" :selected="batch.productions[pindex]" @variant="(v) => batch.productions[pindex] = updateProduction(batch.productions[pindex], v, index, pindex)" :disabled-prop="false" :variant-req="true"></ChooseVariant>
+            <div style="position:relative; max-height:60vh; overflow-y:scroll;border: 1px solid lightgray;" v-show="assign_lot_numbers_mode">
+              <b-card-group class="d-flex flex-column p-2">
+                <div v-for="batch, index in batches" :key="index">
+                  <b-card class="custom_card mb-2" style="width: 100%;" no-body>
+                    <b-card-title class="m-3 d-flex justify-content-between">
+                      <div v-if="batch.product_with_formula_selected" class="m-2 d-flex flex-row">
+                        <h3 class="m-0">Batch #{{ index + 1 }}:
+                          <router-link class="mr-2 mt-2 text-info" :to="'/catalogue/products/'+batch.product_id" target="_blank">
+                            {{ batch.title }}
+                          </router-link>
+                        </h3>
+                        <h6><CertBadge :data="batch.product[0]"></CertBadge></h6>
+                      </div>
+                      <div v-if="batch.product_with_formula_selected">
+                        <b-button variant="outline-info" class="text-nowrap mr-2" @click="copyBatch(index)">Copy Batch</b-button>
+                        <b-button variant="outline-danger" class="text-nowrap" @click="removeRow(index)">Remove Batch</b-button>
+                      </div>
+                    </b-card-title>
+                    <b-card-body>
+                      <b-container v-if="!batch.product_with_formula_selected">
+                        <b-row class="mb-2">
+                          <b-col md="2">
+                            <span><strong>Batch for Product: </strong></span>
                           </b-col>
-                          <b-col>
+                          <b-col class="d-flex flex-row flex-nowrap">
+                            <ChooseProductWithFormula :products-with-formulas="product_with_formula_menu" :selected="batch" @product-with-formula="(pwf) => selectProductWithFormula(index, pwf)" :disabled="false" :product-req="true"></ChooseProductWithFormula>
+                          </b-col>
+                        </b-row>
+                      </b-container>
+                      <b-container v-if="batch.product_with_formula_selected" fluid class="mb-3">
+                        <b-row align-v="center">
+                          <b-col md="3" class="mb-2" align-v="center">
+                            <b>Multiple Variants: </b>
+                            <div class="d-flex justify-content-center">
+                              <b-button @click="batch.multiple_variants = false" v-show="batch.multiple_variants" class="badge badge-info badge-pill" style="font-size: 1.5em;">Yes</b-button>
+                              <b-button @click="batch.multiple_variants = true" v-show="!batch.multiple_variants" class="badge badge-light badge-pill" style="font-size: 1.5em;">No</b-button>
+                            </div>
+                          </b-col>
+                          <b-col md="3" class="mb-2" align-v="center">
+                            <b>Blending Required: </b>
+                            <div class="d-flex justify-content-center">
+                              <b-button @click="batch.batch_requires_blending = false" v-show="batch.batch_requires_blending" class="badge badge-info badge-pill" style="font-size: 1.5em;">Yes</b-button>
+                              <b-button @click="batch.batch_requires_blending = true" v-show="!batch.batch_requires_blending" class="badge badge-light badge-pill" style="font-size: 1.5em;">No</b-button>
+                            </div>
+                          </b-col>
+                          <b-col md="3" class="mb-2">
+                            <b>Batch Type:</b>
+                            <v-select v-model="batch.batch_type" required label="text" :reduce="doc => doc.value" placeholder="Batch Type"
+                            :options="[
+                              { value: 'Powder', text: 'Powder' },
+                              { value: 'Liquid', text: 'Liquid' }
+                            ]">
+                            </v-select>
+                          </b-col>
+                          <b-col md="3" class="mb-2">
+                            <b>Batch Size: </b>
                             <div class="input-group">
-                              <b-form-input v-model="batch.allocated_batch_size" type="number"
-                                aria-describedby="allocated_batch_size-live-feedback"
-                                :class="[(batch.allocated_batch_size >= 0 && batch.allocated_batch_size !== null && batch.allocated_batch_size !== '' && batch.allocated_batch_size <= 100 ? '' : 'is-invalid')]"
+                              <b-form-input v-model="batch.batch_size" type="number" @input="syncBatchWithAllocated(index, 'batch');updateBatch(index)"
+                                aria-describedby="batch_size-live-feedback"
+                                :class="[(!batch.batch_requires_blending || (batch.batch_size > 0 && batch.batch_size !== null && batch.batch_size !== '') ? '' : 'is-invalid')]"
                               ></b-form-input>
                               <div class="input-group-append">
                                 <span v-if="batch.batch_type === 'Powder'" class="input-group-text">Kg</span>
                                 <span v-else-if="batch.batch_type === 'Liquid'" class="input-group-text">L</span>
                                 <span v-else class="input-group-text">?</span>
                               </div>
-                              <div id="allocated_batch_size-live-feedback" class="invalid-feedback">This required field must be between 0 and {{ batch.batch_size }}.</div>
+                              <div id="batch_size-live-feedback" class="invalid-feedback">This required field must be greater than 0.</div>
                             </div>
+                          </b-col>
+                        </b-row>
+                        <!-- <b-row class="mb-2">
+                          <b-col md="2">
+                            <span><strong>Avaliable Productions: </strong></span>
                           </b-col>
                           <b-col>
-                            <div class="input-group">
-                              <b-form-input v-model="batch.percent_overage" type="number"
-                                disabled
-                                aria-describedby="percent_overage-live-feedback"
-                              ></b-form-input>
-                              <div class="input-group-append">
-                                <span class="input-group-text">%</span>
-                              </div>
-                            </div>
+                            <pre>{{ JSON.stringify(batch.productions_allowed, null, 4) }}</pre>
+                          </b-col>
+                        </b-row> -->
+                      </b-container>
+                      <hr v-if="batch.product_with_formula_selected" class="my-3">
+                      <b-container v-if="batch.product_with_formula_selected" fluid class="mt-3">
+                        <b-row class="my-1">
+                          <b-col md="3">
+                            <strong>Product</strong>
                           </b-col>
                           <b-col>
-                            <div class="input-group">
-                              <b-form-input v-model="production.target_unit_yield" type="number"
-                                aria-describedby="target_unit_yield-live-feedback"
-                                disabled
-                                :class="[(production.target_unit_yield > 0 ? '' : 'is-invalid')]"
-                              ></b-form-input>
-                              <div class="input-group-append">
-                                <span class="input-group-text">ct</span>
-                              </div>
-                              <div id="target_unit_yield-live-feedback" class="invalid-feedback">This required field must be between greater than 0.</div>
-                            </div>
+                            <strong>Bulk Allocated</strong>
                           </b-col>
-                          <b-col class="mt-2">
-                            <!-- <div v-if="variant.variant_type === 'powder'">
-                              {{ Math.ceil((variant.total_grams_per_unit * variant.qty) / 1000) + (Math.ceil((variant.total_grams_per_unit * variant.qty) / 1000) * (variant.percent_overage / 100)) }} kg
-                            </div>
-                            <div v-else-if="variant.variant_type === 'capsule'">
-                              {{ Math.ceil((variant.total_mg_per_capsule * variant.total_capsules_per_unit * variant.qty) / 1000000) + (Math.ceil((variant.total_mg_per_capsule * variant.total_capsules_per_unit * variant.qty) / 1000000) * (variant.percent_overage / 100)) }} kg
-                            </div>
-                            <div v-else-if="variant.variant_type === 'liquid'">
-                              {{ Math.ceil((variant.total_milliliters_per_unit * variant.qty) / 1000) + (Math.ceil((variant.total_milliliters_per_unit * variant.qty) / 1000) * (variant.percent_overage / 100)) }} L
-                            </div> -->
+                          <b-col>
+                            <strong>Percent Loss</strong>
+                          </b-col>
+                          <b-col>
+                            <strong>Target Unit Yield</strong>
+                          </b-col>
+                          <b-col>
+                            <strong>Min Unit Yield</strong>
+                          </b-col>
+                          <b-col>
+                            <strong>Max Unit Yield</strong>
                           </b-col>
                         </b-row>
                         <hr class="mb-2">
-                        {{ production }}
+                        <div v-for="production, pindex in batch.productions" :key="pindex">
+                          <b-row class="my-1">
+                            <b-col md="3">
+                              <div v-if="!production.variant">
+                                <ChooseVariant :variants="getVariants(batch)" :selected="production.variant" @variant="(v) => batch.productions[pindex] = updateProduction(batch.productions[pindex], v, index, pindex)" :disabled-prop="false" :variant-req="true"></ChooseVariant>
+                              </div>
+                              <div v-else class="input-group">
+                                <b-form-input disabled :value="batch.title + ' ' + production.variant.variant_title">
+                                {{ batch.title }} {{ production.variant.variant_title }}
+                                </b-form-input>
+                              </div>
+                            </b-col>
+                            <b-col>
+                              <div class="input-group">
+                                <b-form-input v-model="production.allocated_batch_size" @input="calculateYield(index, production);syncBatchWithAllocated(index, 'production')" type="number"
+                                  aria-describedby="allocated_batch_size-live-feedback"
+                                  :disabled="!production.variant_id"
+                                  :class="[(validAllocation(production, batch) ? '' : 'is-invalid')]"
+                                ></b-form-input>
+                                <div class="input-group-append">
+                                  <span v-if="batch.batch_type === 'Powder'" class="input-group-text">Kg</span>
+                                  <span v-else-if="batch.batch_type === 'Liquid'" class="input-group-text">L</span>
+                                  <span v-else class="input-group-text">?</span>
+                                </div>
+                                <div id="allocated_batch_size-live-feedback" class="invalid-feedback">This required field must be between 0 and {{ batch.batch_size }}.</div>
+                              </div>
+                            </b-col>
+                            <b-col>
+                              <div class="input-group">
+                                <b-form-input v-model="production.percent_loss" @input="calculateYield(index, production)" type="number"
+                                  aria-describedby="percent_loss-live-feedback"
+                                  :disabled="!production.variant_id"
+                                  :class="[(production.percent_loss > 0 && production.percent_loss <= 100 ? '' : 'is-invalid')]"
+                                ></b-form-input>
+                                <div class="input-group-append">
+                                  <span class="input-group-text">%</span>
+                                </div>
+                                <div id="percent_loss-live-feedback" class="invalid-feedback">This required field must be greater than 0 and between 0 and 100.</div>
+                              </div>
+                            </b-col>
+                            <b-col>
+                              <div class="input-group">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text">Tgt</span>
+                                </div>
+                                <b-form-input v-model="production.target_unit_yield" type="number"
+                                  aria-describedby="target_unit_yield-live-feedback"
+                                  :class="[(production.target_unit_yield > production.min_unit_yield && production.target_unit_yield < production.max_unit_yield ? '' : 'is-invalid')]"
+                                  disabled
+                                ></b-form-input>
+                                <div class="input-group-append">
+                                  <span class="input-group-text">ct</span>
+                                </div>
+                              </div>
+                            </b-col>
+                            <b-col>
+                              <div class="input-group">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text">Min</span>
+                                </div>
+                                <b-form-input v-model="production.min_unit_yield" type="number"
+                                  aria-describedby="min_unit_yield-live-feedback"
+                                  disabled
+                                ></b-form-input>
+                                <div class="input-group-append">
+                                  <span class="input-group-text">ct</span>
+                                </div>
+                              </div>
+                            </b-col>
+                            <b-col>
+                              <div class="input-group">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text">Max</span>
+                                </div>
+                                <b-form-input v-model="production.max_unit_yield" type="number"
+                                  aria-describedby="max_unit_yield-live-feedback"
+                                  disabled
+                                ></b-form-input>
+                                <div class="input-group-append">
+                                  <span class="input-group-text">ct</span>
+                                </div>
+                              </div>
+                            </b-col>
+                          </b-row>
+                          <hr class="mb-2">
+                        </div>
+                      </b-container>
+                      <div class="m-3" v-if="batch.multiple_variants">
+                        <b-button block variant="outline-info" @click="addProductionRun(index)" v-if="batch.product_with_formula_selected">Add Production Run</b-button>
                       </div>
-                    </b-container>
-                    <div class="m-3">
-                      <b-button block variant="outline-info" @click="addProductionRun(index)" v-if="batch.product_with_formula_selected">Add Production Run</b-button>
-                    </div>
+                      <b-container class="m-0" v-if="batch.product_with_formula_selected">
+                        <b-row>
+                          <b-col class="mb-2">
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text">Batch Size:</span>
+                              </div>
+                              <b-form-input v-model="batch.batch_size" type="number"
+                                disabled
+                                aria-describedby="batch_size-live-feedback"
+                              ></b-form-input>
+                              <div class="input-group-append">
+                                <span v-if="batch.batch_type === 'Powder'" class="input-group-text">Kg</span>
+                                <span v-else-if="batch.batch_type === 'Liquid'" class="input-group-text">L</span>
+                                <span v-else class="input-group-text">?</span>
+                              </div>
+                            </div>
+                          </b-col>
+                          <b-col class="mb-2">
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text">Batch Allocated:</span>
+                              </div>
+                              <b-form-input v-model="batch.batch_allocated" type="number"
+                                aria-describedby="batch_allocated-live-feedback"
+                                disabled
+                                :class="[(batch.batch_allocated > 0? 'is-valid' : 'is-invalid')]"
+                              ></b-form-input>
+                              <div class="input-group-append">
+                                <span v-if="batch.batch_type === 'Powder'" class="input-group-text">Kg</span>
+                                <span v-else-if="batch.batch_type === 'Liquid'" class="input-group-text">L</span>
+                                <span v-else class="input-group-text">?</span>
+                              </div>
+                              <div id="batch_allocated-live-feedback" class="invalid-feedback">This required field must be greateer than 0.</div>
+                            </div>
+                          </b-col>
+                          <b-col class="mb-2">
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text">Batch Remaining:</span>
+                              </div>
+                              <b-form-input v-model="batch.batch_remaining" type="number"
+                                aria-describedby="batch_remaining-live-feedback"
+                                disabled
+                                :class="[(batch.batch_remaining === 0? 'is-valid' : 'is-invalid')]"
+                              ></b-form-input>
+                              <div class="input-group-append">
+                                <span v-if="batch.batch_type === 'Powder'" class="input-group-text">Kg</span>
+                                <span v-else-if="batch.batch_type === 'Liquid'" class="input-group-text">L</span>
+                                <span v-else class="input-group-text">?</span>
+                              </div>
+                              <div id="batch_remaining-live-feedback" class="invalid-feedback">This required field must be equal to 0.</div>
+                            </div>
+                          </b-col>
+                        </b-row>
+                      </b-container>
+                    </b-card-body>
+                  </b-card>
+                </div>
+                <b-card id="add-product" class="custom_card mb-2" style="width: 100%;cursor: pointer;" no-body @click="addBatch()">
+                  <b-card-body class="d-flex justify-content-center">
+                    <!-- <b-icon icon="plus-lg" size="2rem"></b-icon> -->
+                    <b>Add a Batch</b>
                   </b-card-body>
                 </b-card>
-              </div>
-              <b-card id="add-product" class="custom_card mb-2" style="width: 100%;cursor: pointer;" no-body @click="addRow()">
-                <b-card-body class="d-flex justify-content-center">
-                  <!-- <b-icon icon="plus-lg" size="2rem"></b-icon> -->
-                   <b>Add a Batch</b>
-                </b-card-body>
-              </b-card>
-              <b-tooltip target="add-product" triggers="hover">Add Product to Order</b-tooltip>
-            </b-card-group>
-            <!-- <pre>{{ JSON.stringify(order, null, 4) }}</pre> -->
+                <b-tooltip target="add-product" triggers="hover">Add Product to Order</b-tooltip>
+              </b-card-group>
+              <!-- <pre>{{ JSON.stringify(order, null, 4) }}</pre> -->
+            </div>
           </b-card-body>
         </b-card>
       </div>
@@ -347,6 +451,95 @@ export default {
     }
   },
   methods: {
+    validAllocation: function (production, batch) {
+      return production.allocated_batch_size > 0 && production.allocated_batch_size !== null && production.allocated_batch_size !== '' && production.allocated_batch_size <= batch.batch_size
+    },
+    copyBatch: function (index) {
+      const batch = cloneDeep(this.batches[index])
+      this.batches.splice(index + 1, 0, batch)
+      this.updateBatch(index + 1)
+    },
+    syncBatchWithAllocated: function (index, input) {
+      if (!this.batches[index].multiple_variants) {
+        if (input === 'production') {
+          this.batches[index].batch_size = this.batches[index].productions[0].allocated_batch_size
+        } else if (input === 'batch') {
+          this.batches[index].productions[0].allocated_batch_size = this.batches[index].batch_size
+        }
+        this.calculateYield(index, this.batches[index].productions[0])
+        this.$nextTick(() => {
+          this.updateBatch(index)
+        })
+      }
+    },
+    calculateYield: function (index, production) {
+      if (production.variant?.variant_type === 'powder') {
+        // Target Unit Yield = (Allocated Batch Size * 1000) / Total Grams Per Unit
+        const productionYield = (production.allocated_batch_size * 1000) / production.variant.total_grams_per_unit
+        const loss = productionYield * (production.percent_loss / 100)
+        production.target_unit_yield = Math.floor(productionYield - loss)
+
+        // Min Unit Yield = (Allocated Batch Size * 1000) / Max Grams Per Unit
+        const minProductionYield = (production.allocated_batch_size * 1000) / production.variant.max_grams_per_unit
+        production.min_unit_yield = Math.floor(minProductionYield)
+        if (productionYield - loss < minProductionYield) {
+          production.min_unit_yield = Math.floor(productionYield - loss - 1)
+        }
+
+        // Max Unit Yield = (Allocated Batch Size * 1000) / Min Grams Per Unit
+        const maxProductionYield = (production.allocated_batch_size * 1000) / production.variant.min_grams_per_unit
+        production.max_unit_yield = Math.floor(maxProductionYield)
+      } else if (production.variant?.variant_type === 'capsule') {
+        // Target Unit Yield = (Allocated Batch Size * 1000000) / (Total Mg Per Capsule * Total Capsules Per Unit)
+        const powderPerJar = production.variant.total_mg_per_capsule * production.variant.total_capsules_per_unit
+        const productionYield = (production.allocated_batch_size * 1000000) / powderPerJar
+        const loss = productionYield * (production.percent_loss / 100)
+        production.target_unit_yield = Math.floor(productionYield - loss)
+
+        // Min Unit Yield = (Allocated Batch Size * 1000000) / (Max Mg Per Capsule * Capsules Per Unit)
+        const minPowderPerJar = production.variant.max_mg_per_capsule * production.variant.total_capsules_per_unit
+        const minProductionYield = (production.allocated_batch_size * 1000000) / minPowderPerJar
+        production.min_unit_yield = Math.floor(minProductionYield)
+        if (productionYield - loss < minProductionYield) {
+          production.min_unit_yield = Math.floor(productionYield - loss - 1)
+        }
+
+        // Max Unit Yield = (Allocated Batch Size * 1000000) / (Min Mg Per Capsule * Capsules Per Unit)
+        const maxPowderPerJar = production.variant.min_mg_per_capsule * production.variant.total_capsules_per_unit
+        const maxProductionYield = (production.allocated_batch_size * 1000000) / maxPowderPerJar
+        production.max_unit_yield = Math.floor(maxProductionYield)
+      } else if (production.variant?.variant_type === 'liquid') {
+        // Target Unit Yield = (Allocated Batch Size * 1000) / Total Milliliters Per Unit
+        const productionYield = production.allocated_batch_size * 1000 / production.variant.total_milliliters_per_unit
+        const loss = productionYield * (production.percent_loss / 100)
+        production.target_unit_yield = Math.floor(productionYield - loss)
+
+        // Min Unit Yield = (Allocated Batch Size * 1000) / Max Milliliters Per Unit
+        const minProductionYield = production.allocated_batch_size * 1000 / production.variant.max_milliliters_per_unit
+        production.min_unit_yield = Math.floor(minProductionYield)
+        if (productionYield - loss < minProductionYield) {
+          production.min_unit_yield = Math.floor(productionYield - loss - 1)
+        }
+
+        // Max Unit Yield = (Allocated Batch Size * 1000) / Min Milliliters Per Unit
+        const maxProductionYield = production.allocated_batch_size * 1000 / production.variant.min_milliliters_per_unit
+        production.max_unit_yield = Math.floor(maxProductionYield)
+      } else {
+        production.target_unit_yield = 0
+        production.min_unit_yield = 0
+        production.max_unit_yield = 0
+      }
+      this.updateBatch(index)
+    },
+    updateBatch: function (index) {
+      let totalAllocated = 0
+      for (let i = 0; i < this.batches[index].productions.length; i++) {
+        // convert allocated_batch_size to number
+        totalAllocated += Number(this.batches[index].productions[i].allocated_batch_size)
+      }
+      this.batches[index].batch_allocated = Math.floor(totalAllocated * 100) / 100
+      this.batches[index].batch_remaining = Math.floor((this.batches[index].batch_size - totalAllocated) * 100) / 100
+    },
     updateProduction: function (production, variant, index, pindex) {
       const update = {
         ...production,
@@ -354,21 +547,27 @@ export default {
         variant_id: variant.variant_id
       }
       this.batches[index].productions[pindex] = update
+      this.updateBatch(index)
+      this.calculateYield(index, update)
       return update
     },
     getVariants: function (batch) {
       const variants = []
       batch.productions_allowed.forEach((production) => {
-        variants.push(production.variant[0])
+        const variant = production.variant[0]
+        variant.percent_loss = production.percent_loss
+        variants.push(variant)
       })
       return variants
     },
     addProductionRun: function (index) {
       this.batches[index].productions.push({
-        target_unit_yield: 0,
-        allocated_batch_size: 0,
+        target_unit_yield: 0.0,
+        min_unit_yield: 0.0,
+        max_unit_yield: 0.0,
+        allocated_batch_size: 0.0,
         production_record: true,
-        percent_overage: 0
+        percent_loss: 0.0
       })
     },
     getProductionsAllowed: function (index) {
@@ -398,7 +597,7 @@ export default {
     removeRow: function (index) {
       this.batches.splice(index, 1)
     },
-    addRow: function () {
+    addBatch: function () {
       this.batches.push({
         product_id: null,
         product: null,
@@ -406,12 +605,22 @@ export default {
         formula: null,
         title: null,
         productions_allowed: [],
-        productions: [],
+        productions: [
+          {
+            target_unit_yield: 0.0,
+            min_unit_yield: 0.0,
+            max_unit_yield: 0.0,
+            allocated_batch_size: 300.0,
+            production_record: true,
+            percent_loss: 0
+          }
+        ],
         product_with_formula_selected: false,
-        batch_size: 300,
+        batch_size: 300.0,
         batch_requires_blending: true,
-        batch_allocated: 0,
-        batch_remaining: 0,
+        multiple_variants: false,
+        batch_allocated: 0.0,
+        batch_remaining: 0.0,
         batch_type: 'Powder'
       })
     },

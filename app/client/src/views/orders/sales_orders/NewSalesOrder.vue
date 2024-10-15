@@ -159,7 +159,7 @@
                                   aria-describedby="bid_price_per_unit-live-feedback"
                                   :class="[(variant.bid_price_per_unit >= 0 && variant.bid_price_per_unit !== null ? '' : 'is-invalid')]"
                                 ></b-form-input>
-                                <div id="bid_price_per_unit-live-feedback" class="invalid-feedback">This required field must be between 0 and 100.</div>
+                                <div id="bid_price_per_unit-live-feedback" class="invalid-feedback">This required field must be greater than 0.</div>
                               </div>
                             </b-col>
                             <b-col>
@@ -181,13 +181,13 @@
                             </b-col>
                             <b-col class="mt-2">
                               <div v-if="variant.variant_type === 'powder'">
-                                {{ Math.ceil((variant.total_grams_per_unit * variant.qty) / 1000) + (Math.ceil((variant.total_grams_per_unit * variant.qty) / 1000) * (variant.percent_overage / 100)) }} kg
+                                {{ calcBulkPowder(variant) }} kg
                               </div>
                               <div v-else-if="variant.variant_type === 'capsule'">
-                                {{ Math.ceil((variant.total_mg_per_capsule * variant.total_capsules_per_unit * variant.qty) / 1000000) + (Math.ceil((variant.total_mg_per_capsule * variant.total_capsules_per_unit * variant.qty) / 1000000) * (variant.percent_overage / 100)) }} kg
+                                {{ calcBulkCapsule(variant) }} kg
                               </div>
                               <div v-else-if="variant.variant_type === 'liquid'">
-                                {{ Math.ceil((variant.total_milliliters_per_unit * variant.qty) / 1000) + (Math.ceil((variant.total_milliliters_per_unit * variant.qty) / 1000) * (variant.percent_overage / 100)) }} L
+                                {{ calcBulkLiquid(variant) }} L
                               </div>
                             </b-col>
                           </b-row>
@@ -320,6 +320,21 @@ export default {
     }
   },
   methods: {
+    calcBulkCapsule: function (variant) {
+      const totalPowderInKg = Math.ceil((variant.total_mg_per_capsule / 1000 * variant.total_capsules_per_unit) * variant.qty / 1000)
+      const overage = Math.ceil(totalPowderInKg * (variant.percent_overage / 100))
+      return totalPowderInKg + overage
+    },
+    calcBulkPowder: function (variant) {
+      const totalPowderInKg = Math.ceil(variant.total_grams_per_unit * variant.qty / 1000)
+      const overage = Math.ceil(totalPowderInKg * (variant.percent_overage / 100))
+      return totalPowderInKg + overage
+    },
+    calcBulkLiquid: function (variant) {
+      const totalLiquidInL = Math.ceil(variant.total_milliliters_per_unit * variant.qty / 1000)
+      const overage = Math.ceil(totalLiquidInL * (variant.percent_overage / 100))
+      return totalLiquidInL + overage
+    },
     getFile: function (document) {
       if (document.file_hash) {
         const url = this.$root.getOrigin() + '/api/v1/uploads/' + document.file_pointer
