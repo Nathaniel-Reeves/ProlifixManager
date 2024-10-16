@@ -282,13 +282,16 @@ class Lot_And_Batch_Numbers(Base):
     sec_number: Mapped[int] = mapped_column(default=None)
     suffix: Mapped[str] = mapped_column(default=None)
     target_unit_yield: Mapped[int] = mapped_column(default=None)
+    min_unit_yield: Mapped[int] = mapped_column(default=None)
+    max_unit_yield: Mapped[int] = mapped_column(default=None)
+    anticipated_loss_percent: Mapped[float] = mapped_column(default=None)
     actual_unit_yield: Mapped[int] = mapped_column(default=None)
     retentions: Mapped[int] = mapped_column(default=None)
     total_shippable_product: Mapped[int] = mapped_column(default=None)
     batch_printed: Mapped[bool] = mapped_column(default=False)
     bpr_printed: Mapped[bool] = mapped_column(default=False)
     exp_date: Mapped[datetime.datetime] = mapped_column(default=None)
-    ExpirationTypes = ("Best_By", "Exp")
+    ExpirationTypes = ("Best By", "Exp")
     exp_type: Mapped[int] = mapped_column(Enum(
         *ExpirationTypes,
         name="ExpirationTypes",
@@ -324,6 +327,9 @@ class Lot_And_Batch_Numbers(Base):
             'sec_number': self.sec_number,
             'suffix': self.suffix,
             'target_unit_yield': self.target_unit_yield,
+            'min_unit_yield': self.min_unit_yield,
+            'max_unit_yield': self.max_unit_yield,
+            'anticipated_loss_percent': self.anticipated_loss_percent,
             'actual_unit_yield': self.actual_unit_yield,
             'retentions': self.retentions,
             'total_shippable_product': self.total_shippable_product,

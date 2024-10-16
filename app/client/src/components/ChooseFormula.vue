@@ -16,9 +16,10 @@
       @close="onClose"
       @search="(query) => (search = query)"
       >
-      <template #option="{ formulation_version }">
+      <template #option="{ formula_id, formulation_version }">
         <div style="display:flex; flex-direction: row; align-items: center; min-height: 40px;">
-          <div>V{{ formulation_version }}</div>
+          <div>Formula V{{ formulation_version }}</div>
+          <b-badge variant="primary" class="ml-2" v-if="formula_id === primaryFormulaId">Primary</b-badge>
         </div>
       </template>
       <template #list-footer>
@@ -63,6 +64,10 @@ export default {
     formulas: {
       type: Array,
       required: true
+    },
+    primaryFormulaId: {
+      type: Number,
+      default: 0
     },
     selected: {
       type: Object,

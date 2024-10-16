@@ -102,16 +102,16 @@
                             <ChooseProduct :products="products" :selected="selected_product.product" @product="(p) => selectProduct(index, p)" :disabled-prop="false" :product-req="true"></ChooseProduct>
                           </b-col>
                         </b-row>
-                        <b-row class="mb-2" v-if="selected_products[index].formulas.length > 0">
+                        <b-row class="mb-2" v-if="selected_products[index].formulas?.length > 0">
                           <b-col md="2">
                             <span><strong>Formula: </strong></span>
                           </b-col>
                           <b-col class="d-flex flex-row flex-nowrap">
-                            <ChooseFormula :formulas="selected_product.formulas" :selected="selected_product.selected_formula" @formula="(f) => selectFormula(index, f)" :disabled-prop="false" :formula-req="true"></ChooseFormula>
+                            <ChooseFormula :primary-formula-id="selected_product.default_formula_id" :formulas="selected_product.formulas" :selected="selected_product.selected_formula" @formula="(f) => selectFormula(index, f)" :disabled-prop="false" :formula-req="true"></ChooseFormula>
                           </b-col>
                         </b-row>
                       </b-container>
-                      <b-container v-if="selected_product.product_and_formula_selected">
+                      <b-container v-if="selected_product.product_and_formula_selected" fluid>
                         <b-row class="my-1">
                           <b-col>
                             <strong>Variant</strong>
@@ -129,7 +129,7 @@
                             <strong>Special Instructions</strong>
                           </b-col>
                           <b-col>
-                            <strong>Bulk Qty</strong>
+                            <strong>Estimated Bulk Qty</strong>
                           </b-col>
                         </b-row>
                         <hr class="mb-2">
@@ -194,15 +194,16 @@
                           <hr class="mb-2">
                         </div>
                       </b-container>
-                      <div class="m-3">
+                      <!-- <div class="m-3">
                         <b-button block variant="outline-info" @click="addVariant(index)" v-if="selected_product.product_and_formula_selected">Add Variant</b-button>
-                      </div>
+                      </div> -->
                     </b-card-body>
                   </b-card>
                 </div>
                 <b-card id="add-product" class="custom_card mb-2" style="width: 100%;cursor: pointer;" no-body @click="addRow()">
-                  <b-card-body class="d-flex justify-content-center">
+                  <b-card-body class="d-flex justify-content-center align-items-center">
                     <b-icon icon="plus-lg" size="2rem"></b-icon>
+                    <b class="ml-2">Add Product</b>
                   </b-card-body>
                 </b-card>
                 <b-tooltip target="add-product" triggers="hover">Add Product to Order</b-tooltip>
@@ -323,17 +324,29 @@ export default {
     calcBulkCapsule: function (variant) {
       const totalPowderInKg = Math.ceil((variant.total_mg_per_capsule / 1000 * variant.total_capsules_per_unit) * variant.qty / 1000)
       const overage = Math.ceil(totalPowderInKg * (variant.percent_overage / 100))
-      return totalPowderInKg + overage
+      const out = totalPowderInKg + overage
+      if (out) {
+        return out
+      }
+      return 0
     },
     calcBulkPowder: function (variant) {
       const totalPowderInKg = Math.ceil(variant.total_grams_per_unit * variant.qty / 1000)
       const overage = Math.ceil(totalPowderInKg * (variant.percent_overage / 100))
-      return totalPowderInKg + overage
+      const out = totalPowderInKg + overage
+      if (out) {
+        return out
+      }
+      return 0
     },
     calcBulkLiquid: function (variant) {
       const totalLiquidInL = Math.ceil(variant.total_milliliters_per_unit * variant.qty / 1000)
       const overage = Math.ceil(totalLiquidInL * (variant.percent_overage / 100))
-      return totalLiquidInL + overage
+      const out = totalLiquidInL + overage
+      if (out) {
+        return out
+      }
+      return 0
     },
     getFile: function (document) {
       if (document.file_hash) {
@@ -569,6 +582,7 @@ export default {
       this.selected_products[index].product_id = product.product_id
       this.selected_products[index].variants = product.product_variants
       this.selected_products[index].formulas = product.formulas
+      this.selected_products[index].default_formula_id = product.default_formula_id
     },
     removeRow: function (index) {
       this.selected_products.splice(index, 1)
@@ -576,13 +590,23 @@ export default {
     addRow: function () {
       this.selected_products.push({
         product_id: null,
-        product: null,
+        product: {},
         selected_formula: null,
         variants: [],
-        selected_variants: [],
+        selected_variants: [
+          {
+            qty: null,
+            percent_overage: null,
+            bid_price_per_unit: null,
+            special_instructions: '',
+            variant_id: null,
+            variant_title: ''
+          }
+        ],
         formulas: [],
         formula_id: null,
         formulation_version: null,
+        default_formula_id: null,
         product_and_formula_selected: false
       })
     },

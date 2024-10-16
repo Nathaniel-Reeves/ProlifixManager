@@ -10,7 +10,7 @@
           :loading="!productsWithFormulasLoaded"
           :placeholder="placeholder"
           aria-describedby="select_product_with_formula-live-feedback"
-          :class="[((selected_product_with_formula !== null && selected_product_with_formula.product_id > 0) || !variantReq ? '' : 'is-invalid'), 'wide']"
+          :class="[((selected_product_with_formula !== null && selected_product_with_formula.product_id > 0) || !productReq ? '' : 'is-invalid'), 'wide']"
           :disabled="(selected_product_with_formula !== null && selected_product_with_formula.product_id > 0) || disabled"
           :clearable="false"
           :filterable="false"

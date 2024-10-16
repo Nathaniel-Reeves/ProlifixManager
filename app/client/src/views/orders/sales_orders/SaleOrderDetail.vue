@@ -27,9 +27,9 @@
                 </b-col>
                 <b-col class="d-flex justify-content-end">
                   <div>
-                    <b-button @click="toggleAssignLotNumbers()" v-if="!order.lot_num_assigned" v-show="!assign_lot_numbers_mode" class="mr-2 mb-2" variant="outline-primary" :block="isMd">Assign Lot Numbers</b-button>
+                    <!-- <b-button @click="toggleAssignLotNumbers()" v-if="!order.lot_num_assigned" v-show="!assign_lot_numbers_mode" class="mr-2 mb-2" variant="outline-primary" :block="isMd">Assign Lot Numbers</b-button> -->
                     <b-badge v-if="!order.lot_num_assigned" variant="warning" class="p-2" :block="isMd">
-                      <b-icon icon="exclamation-triangle-fill"></b-icon> Lot Number Assignment Incomplete
+                      <b-icon icon="exclamation-triangle-fill"></b-icon> Batch & Lot Number Assignment Incomplete
                     </b-badge>
                   </div>
                 </b-col>
@@ -127,7 +127,7 @@
             </div>
             <div class="d-flex justify-content-between mb-2">
               <h4>Order Details</h4>
-              <b-button @click="toggleAssignLotNumbers()" v-if="!order.lot_num_assigned" v-show="!assign_lot_numbers_mode" class="ml-2" variant="outline-primary">Assign Lot Numbers</b-button>
+              <b-button @click="toggleAssignLotNumbers()" v-if="!order.lot_num_assigned" v-show="!assign_lot_numbers_mode" class="ml-2" variant="outline-primary">Assign Batch & Lot Numbers</b-button>
             </div>
             <OrderDetailsTable :order-details="order.sale_order_detail"></OrderDetailsTable>
             <div style="position:relative; max-height:60vh; overflow-y:scroll;border: 1px solid lightgray;" v-show="assign_lot_numbers_mode">
@@ -135,24 +135,24 @@
                 <div v-for="batch, index in batches" :key="index">
                   <b-card class="custom_card mb-2" style="width: 100%;" no-body>
                     <b-card-title class="m-3 d-flex justify-content-between">
-                      <div v-if="batch.product_with_formula_selected" class="m-2 d-flex flex-row">
+                      <div class="m-2 d-flex flex-row align-items-center">
                         <h3 class="m-0">Batch #{{ index + 1 }}:
-                          <router-link class="mr-2 mt-2 text-info" :to="'/catalogue/products/'+batch.product_id" target="_blank">
+                          <router-link v-if="batch.product_with_formula_selected" class="mr-2 mt-2 text-info" :to="'/catalogue/products/'+batch.product_id" target="_blank">
                             {{ batch.title }}
                           </router-link>
                         </h3>
-                        <h6><CertBadge :data="batch.product[0]"></CertBadge></h6>
+                        <h6 v-if="batch.product_with_formula_selected"><CertBadge :data="batch.product[0]" size="3em"></CertBadge></h6>
                       </div>
-                      <div v-if="batch.product_with_formula_selected">
-                        <b-button variant="outline-info" class="text-nowrap mr-2" @click="copyBatch(index)">Copy Batch</b-button>
-                        <b-button variant="outline-danger" class="text-nowrap" @click="removeRow(index)">Remove Batch</b-button>
+                      <div>
+                        <b-button :disabled="!batch.product_with_formula_selected" variant="outline-info" class="text-nowrap mr-2" @click="copyBatch(index)">Copy Batch</b-button>
+                        <b-button variant="outline-danger" class="text-nowrap" @click="deleteBatch(index)">Remove Batch</b-button>
                       </div>
                     </b-card-title>
                     <b-card-body>
-                      <b-container v-if="!batch.product_with_formula_selected">
+                      <b-container v-if="!batch.product_with_formula_selected" fluid>
                         <b-row class="mb-2">
-                          <b-col md="2">
-                            <span><strong>Batch for Product: </strong></span>
+                          <b-col md="3">
+                            <span><strong>Select Product Formula: </strong></span>
                           </b-col>
                           <b-col class="d-flex flex-row flex-nowrap">
                             <ChooseProductWithFormula :products-with-formulas="product_with_formula_menu" :selected="batch" @product-with-formula="(pwf) => selectProductWithFormula(index, pwf)" :disabled="false" :product-req="true"></ChooseProductWithFormula>
@@ -160,36 +160,51 @@
                         </b-row>
                       </b-container>
                       <b-container v-if="batch.product_with_formula_selected" fluid class="mb-3">
-                        <b-row align-v="center">
-                          <b-col md="3" class="mb-2" align-v="center">
+                        <b-row>
+                          <b-col md="2" class="mb-2" align-v="center" v-b-tooltip.hover title="Allocate multiple productions to one batch. This saves time and labor. The default is one production per one batch.">
                             <b>Multiple Variants: </b>
-                            <div class="d-flex justify-content-center">
-                              <b-button @click="batch.multiple_variants = false" v-show="batch.multiple_variants" class="badge badge-info badge-pill" style="font-size: 1.5em;">Yes</b-button>
-                              <b-button @click="batch.multiple_variants = true" v-show="!batch.multiple_variants" class="badge badge-light badge-pill" style="font-size: 1.5em;">No</b-button>
+                            <div class="d-flex justify-content-center mr-2 w-100">
+                              <b-button @click="batch.multiple_variants = false" v-show="batch.multiple_variants" class="badge badge-info w-100" style="font-size: 1.4em;">Yes</b-button>
+                              <b-button @click="batch.multiple_variants = true" v-show="!batch.multiple_variants" class="badge badge-light w-100" style="font-size: 1.4em;">No</b-button>
                             </div>
                           </b-col>
-                          <b-col md="3" class="mb-2" align-v="center">
-                            <b>Blending Required: </b>
-                            <div class="d-flex justify-content-center">
-                              <b-button @click="batch.batch_requires_blending = false" v-show="batch.batch_requires_blending" class="badge badge-info badge-pill" style="font-size: 1.5em;">Yes</b-button>
-                              <b-button @click="batch.batch_requires_blending = true" v-show="!batch.batch_requires_blending" class="badge badge-light badge-pill" style="font-size: 1.5em;">No</b-button>
-                            </div>
-                          </b-col>
-                          <b-col md="3" class="mb-2">
+                          <b-col md="2" class="mb-2" v-b-tooltip.hover title="Is this a 'Powder' or 'Liquid' batch?">
                             <b>Batch Type:</b>
-                            <v-select v-model="batch.batch_type" required label="text" :reduce="doc => doc.value" placeholder="Batch Type"
+                            <v-select v-model="batch.batch_type" required label="text" :reduce="doc => doc.value" placeholder="Batch Type" :clearable="false"
                             :options="[
                               { value: 'Powder', text: 'Powder' },
                               { value: 'Liquid', text: 'Liquid' }
                             ]">
                             </v-select>
                           </b-col>
-                          <b-col md="3" class="mb-2">
+                          <b-col md="2" class="mb-2" v-b-tooltip.hover title="The total batch size.  All production allocations must sum to this total.">
                             <b>Batch Size: </b>
                             <div class="input-group">
                               <b-form-input v-model="batch.batch_size" type="number" @input="syncBatchWithAllocated(index, 'batch');updateBatch(index)"
                                 aria-describedby="batch_size-live-feedback"
                                 :class="[(!batch.batch_requires_blending || (batch.batch_size > 0 && batch.batch_size !== null && batch.batch_size !== '') ? '' : 'is-invalid')]"
+                              ></b-form-input>
+                              <div class="input-group-append">
+                                <span v-if="batch.batch_type === 'Powder'" class="input-group-text">Kg</span>
+                                <span v-else-if="batch.batch_type === 'Liquid'" class="input-group-text">L</span>
+                                <span v-else class="input-group-text">?</span>
+                              </div>
+                              <div id="batch_size-live-feedback" class="invalid-feedback">This required field must be greater than 0.</div>
+                            </div>
+                          </b-col>
+                          <b-col md="2" class="mb-2" align-v="center" v-b-tooltip.hover title="If there are multiple ingredients in the selected formula, blending should be required.">
+                            <b>Blending Required: </b>
+                            <div class="d-flex justify-content-center mr-2 w-100">
+                              <b-button @click="batch.batch_requires_blending = false" v-show="batch.batch_requires_blending" class="badge badge-info w-100" style="font-size: 1.4em;">Yes</b-button>
+                              <b-button @click="batch.batch_requires_blending = true" v-show="!batch.batch_requires_blending" class="badge badge-light w-100" style="font-size: 1.4em;">No</b-button>
+                            </div>
+                          </b-col>
+                          <b-col md="2" class="mb-2" v-b-tooltip.hover title="Use this to ensure the total batch can fit in the blender.">
+                            <b>Max Blender Capacity: </b>
+                            <div class="input-group">
+                              <b-form-input v-model="batch.max_blender_capacity" type="number"
+                                aria-describedby="batch_size-live-feedback"
+                                :class="[(!batch.batch_requires_blending || (batch.max_blender_capacity > 0 && batch.max_blender_capacity !== null && batch.max_blender_capacity !== '') ? '' : 'is-invalid')]"
                               ></b-form-input>
                               <div class="input-group-append">
                                 <span v-if="batch.batch_type === 'Powder'" class="input-group-text">Kg</span>
@@ -209,9 +224,11 @@
                           </b-col>
                         </b-row> -->
                       </b-container>
-                      <hr v-if="batch.product_with_formula_selected" class="my-3">
-                      <b-container v-if="batch.product_with_formula_selected" fluid class="mt-3">
+                      <b-container v-if="batch.product_with_formula_selected" fluid class="mt-3 border rounded p-3">
                         <b-row class="my-1">
+                          <b-col col md="auto">
+                            <strong>Prod #</strong>
+                          </b-col>
                           <b-col md="3">
                             <strong>Product</strong>
                           </b-col>
@@ -231,9 +248,12 @@
                             <strong>Max Unit Yield</strong>
                           </b-col>
                         </b-row>
-                        <hr class="mb-2">
                         <div v-for="production, pindex in batch.productions" :key="pindex">
+                          <hr>
                           <b-row class="my-1">
+                            <b-col col md="auto">
+                              <h4><b-badge variant="info">{{ pindex + 1 }}</b-badge></h4>
+                            </b-col>
                             <b-col md="3">
                               <div v-if="!production.variant">
                                 <ChooseVariant :variants="getVariants(batch)" :selected="production.variant" @variant="(v) => batch.productions[pindex] = updateProduction(batch.productions[pindex], v, index, pindex)" :disabled-prop="false" :variant-req="true"></ChooseVariant>
@@ -242,6 +262,11 @@
                                 <b-form-input disabled :value="batch.title + ' ' + production.variant.variant_title">
                                 {{ batch.title }} {{ production.variant.variant_title }}
                                 </b-form-input>
+                                <div class="input-group-append">
+                                  <b-button @click="deleteProductionRun(index, pindex)" variant="outline-danger">
+                                    <b-icon icon="trash"></b-icon>
+                                  </b-button>
+                                </div>
                               </div>
                             </b-col>
                             <b-col>
@@ -256,7 +281,7 @@
                                   <span v-else-if="batch.batch_type === 'Liquid'" class="input-group-text">L</span>
                                   <span v-else class="input-group-text">?</span>
                                 </div>
-                                <div id="allocated_batch_size-live-feedback" class="invalid-feedback">This required field must be between 0 and {{ batch.batch_size }}.</div>
+                                <div id="allocated_batch_size-live-feedback" class="invalid-feedback">This required field must be between 0 and {{ batch.max_blender_capacity }}.</div>
                               </div>
                             </b-col>
                             <b-col>
@@ -316,15 +341,14 @@
                               </div>
                             </b-col>
                           </b-row>
-                          <hr class="mb-2">
                         </div>
+                        <b-row class="m-3" v-if="batch.multiple_variants || batch.productions.length < 1">
+                          <b-button block variant="outline-info" @click="addProductionRun(index)" v-if="batch.product_with_formula_selected">Create Production Run (Lot#)</b-button>
+                        </b-row>
                       </b-container>
-                      <div class="m-3" v-if="batch.multiple_variants">
-                        <b-button block variant="outline-info" @click="addProductionRun(index)" v-if="batch.product_with_formula_selected">Add Production Run</b-button>
-                      </div>
-                      <b-container class="m-0" v-if="batch.product_with_formula_selected">
+                      <b-container class="m-0 mt-3" v-if="batch.product_with_formula_selected" fluid>
                         <b-row>
-                          <b-col class="mb-2">
+                          <b-col md="3" class="mb-2">
                             <div class="input-group">
                               <div class="input-group-prepend">
                                 <span class="input-group-text">Batch Size:</span>
@@ -340,7 +364,7 @@
                               </div>
                             </div>
                           </b-col>
-                          <b-col class="mb-2">
+                          <b-col md="3" class="mb-2">
                             <div class="input-group">
                               <div class="input-group-prepend">
                                 <span class="input-group-text">Batch Allocated:</span>
@@ -358,7 +382,7 @@
                               <div id="batch_allocated-live-feedback" class="invalid-feedback">This required field must be greateer than 0.</div>
                             </div>
                           </b-col>
-                          <b-col class="mb-2">
+                          <b-col md="3" class="mb-2">
                             <div class="input-group">
                               <div class="input-group-prepend">
                                 <span class="input-group-text">Batch Remaining:</span>
@@ -376,20 +400,40 @@
                               <div id="batch_remaining-live-feedback" class="invalid-feedback">This required field must be equal to 0.</div>
                             </div>
                           </b-col>
+                          <b-col md="3" class="mb-2">
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text">Batch Size</span>
+                              </div>
+                              <b-form-input :value="batch.batch_requires_blending ? '≤' : '≠'" type="text" style="width: 4rem;"
+                                aria-describedby="batch_le_blend-live-feedback"
+                                disabled
+                                :class="[(!batch.batch_requires_blending || (batch.batch_size <= batch.max_blender_capacity)? 'is-valid' : 'is-invalid')]"
+                              ></b-form-input>
+                              <div class="input-group-append">
+                                <span class="input-group-text">Blender Capacity</span>
+                              </div>
+                              <div id="batch_le_blend-live-feedback" class="invalid-feedback">Batch size must be less than or equal to the blender capacity.</div>
+                            </div>
+                          </b-col>
                         </b-row>
                       </b-container>
                     </b-card-body>
                   </b-card>
                 </div>
                 <b-card id="add-product" class="custom_card mb-2" style="width: 100%;cursor: pointer;" no-body @click="addBatch()">
-                  <b-card-body class="d-flex justify-content-center">
-                    <!-- <b-icon icon="plus-lg" size="2rem"></b-icon> -->
-                    <b>Add a Batch</b>
+                  <b-card-body class="d-flex justify-content-center align-items-center">
+                    <b-icon icon="plus-lg" size="2rem"></b-icon>
+                    <b class="ml-2">Create a Batch (Batch#)</b>
                   </b-card-body>
                 </b-card>
-                <b-tooltip target="add-product" triggers="hover">Add Product to Order</b-tooltip>
+                <b-tooltip target="add-product" triggers="hover">Create a batch, allocate the batch to products.</b-tooltip>
               </b-card-group>
               <!-- <pre>{{ JSON.stringify(order, null, 4) }}</pre> -->
+            </div>
+            <div class="mt-3" v-if="assign_lot_numbers_mode">
+              <b-button :disabled="!order.lot_num_assigned" class="mr-2" variant="outline-success" @click="saveBatchAndLotNumbers()">Save</b-button>
+              <b-button variant="outline-danger" to="/orders/so">Cancel</b-button>
             </div>
           </b-card-body>
         </b-card>
@@ -421,6 +465,7 @@ export default {
       loaded: false,
       id: this.$route.params.id,
       edit_documents: false,
+      le: '≤',
       batches: [],
       order: {},
       fields: [
@@ -450,14 +495,282 @@ export default {
       return Object.values(productWithFormula)
     }
   },
+  watch: {
+    batches: {
+      deep: true,
+      handler (newVal, oldVal) {
+        const keys = Object.keys(this.getTotalProductsInProduction())
+        this.$nextTick(() => {
+          keys.forEach((key) => this.matchupProductionWithOrder(key))
+        })
+      }
+    }
+  },
   methods: {
+    saveBatchAndLotNumbers: function () {
+      this.loaded = false
+      if (!this.validateBatchesAndProductionRuns()) {
+        this.loaded = true
+        return
+      }
+
+      // Prepare request
+      this.setBatchAndLotNumbers()
+      this.order.sale_order_detail.forEach((detail, index) => {
+        const saleOrderDetail = {
+          so_detail_id: detail.so_detail_id,
+          lot_num_assigned: true,
+          timestamp_fetched: detail.timestamp_fetched,
+          timestamp_modified: detail.timestamp_modified
+        }
+        this.req.upsertRecord('Sale_Order_Detail', saleOrderDetail)
+      })
+      const sale = {
+        so_id: Number(this.id),
+        lot_num_assigned: true,
+        timestamp_fetched: this.order.timestamp_fetched,
+        timestamp_modified: this.order.timestamp_modified
+      }
+      this.req.upsertRecord('Sales_Orders', sale)
+
+      this.req.sendRequest(this.$root.getOrigin()).then(resp => {
+        const createToast = this.$root.createToast
+        resp.messages.flash.forEach(message => {
+          createToast(message)
+        })
+
+        if (resp.status === 201) {
+          this.$router.push({ path: `/orders/so/${this.id}` })
+        } else {
+          this.loaded = true
+        }
+      })
+    },
+    validateBatchesAndProductionRuns: function () {
+      this.$bvToast.hide()
+
+      const errorToast = {
+        title: 'Invalid Batch/Production Assignment',
+        message: '',
+        variant: 'warning',
+        visible: true,
+        no_close_button: false,
+        no_auto_hide: true,
+        auto_hide_delay: false
+      }
+      const createToast = this.$root.createToast
+      let valid = true
+
+      this.batches.forEach((batch, index) => {
+        if (!batch.product_with_formula_selected) {
+          errorToast.message = `Batch #${index + 1} is missing a product with formula selection.`
+          createToast(errorToast)
+          valid = false
+        }
+
+        if (batch.productions.length < 1) {
+          errorToast.message = `Batch #${index + 1} must have at least one production run.`
+          createToast(errorToast)
+          valid = false
+        }
+
+        if (batch.batch_size <= 0 || batch.batch_size === null || batch.batch_size === '') {
+          errorToast.message = `Batch #${index + 1} Batch Size must be greater than 0.`
+          createToast(errorToast)
+          valid = false
+        }
+
+        if (batch.batch_requires_blending && (batch.max_blender_capacity <= 0 || batch.max_blender_capacity === null || batch.max_blender_capacity === '')) {
+          errorToast.message = `Batch #${index + 1} Max Blender Capacity must be greater than 0.`
+          createToast(errorToast)
+          valid = false
+        }
+
+        if (batch.batch_requires_blending && batch.batch_size > batch.max_blender_capacity) {
+          errorToast.message = `Batch #${index + 1} Batch Size must be less than or equal to the Max Blender Capacity.`
+          createToast(errorToast)
+          valid = false
+        }
+
+        if (batch.batch_allocated <= 0 || batch.batch_allocated === null || batch.batch_allocated === '') {
+          errorToast.message = `Batch #${index + 1} Batch Allocated must be greater than 0.`
+          createToast(errorToast)
+          valid = false
+        }
+
+        if (batch.batch_remaining !== 0) {
+          errorToast.message = `Batch #${index + 1} Batch Remaining must be equal to 0.`
+          createToast(errorToast)
+          valid = false
+        }
+
+        batch.productions.forEach((production, pindex) => {
+          if (!production.variant) {
+            errorToast.message = `Batch #${index + 1} Production #${pindex + 1} is missing a variant selection.`
+            createToast(errorToast)
+            valid = false
+          }
+
+          if (production.allocated_batch_size <= 0 || production.allocated_batch_size === null || production.allocated_batch_size === '') {
+            errorToast.message = `Batch #${index + 1} Production #${pindex + 1} Allocated Batch Size must be greater than 0.`
+            createToast(errorToast)
+            valid = false
+          }
+
+          if (production.percent_loss <= 0 || production.percent_loss > 100) {
+            errorToast.message = `Batch #${index + 1} Production #${pindex + 1} Percent Loss must be greater than 0 and less than or equal to 100.`
+            createToast(errorToast)
+            valid = false
+          }
+
+          if (production.target_unit_yield <= 0 || production.target_unit_yield === null || production.target_unit_yield === '') {
+            errorToast.message = `Batch #${index + 1} Production #${pindex + 1} Target Unit Yield must be greater than 0.`
+            createToast(errorToast)
+            valid = false
+          }
+        })
+      })
+
+      this.checkOrder()
+      if (!this.order.lot_num_assigned) {
+        errorToast.message = 'Not all products have been assigned a batch and/or production run.'
+        createToast(errorToast)
+        valid = false
+      }
+
+      return valid
+    },
+    setBatchAndLotNumbers: function () {
+      const lotAndBatchNumbers = []
+      this.batches.forEach((batch) => {
+        const lotAndBatchId = genTempKey()
+        batch.productions.forEach((production, index) => {
+          let orderIndex = null
+          let soDetailId = null
+          for (let i = 0; i < this.order.sale_order_detail.length; i++) {
+            if (
+              this.order.sale_order_detail[i].product_id === production.product_id &&
+              this.order.sale_order_detail[i].formula_id === production.formula_id &&
+              this.order.sale_order_detail[i].variant_id === production.variant_id
+            ) {
+              orderIndex = i
+              break
+            }
+          }
+
+          if (orderIndex !== null) {
+            soDetailId = this.order.sale_order_detail[orderIndex].so_detail_id
+          }
+          if (index === 0) {
+            const lotAndBatch = {
+              lot_num_id: lotAndBatchId,
+              so_detail_id: soDetailId,
+              batch_record: true,
+              total_batch_size: batch.batch_size,
+              production_record: true,
+              allocated_batch_size: production.allocated_batch_size,
+              target_unit_yield: production.target_unit_yield,
+              min_unit_yield: production.min_unit_yield,
+              max_unit_yield: production.max_unit_yield,
+              anticipated_loss_percent: production.percent_loss,
+              timestamp_fetched: new Date().toISOString(),
+              timestamp_modified: new Date().toISOString()
+            }
+            lotAndBatchNumbers.push(lotAndBatch)
+          } else {
+            const lot = {
+              lot_num_id: genTempKey(),
+              so_detail_id: soDetailId,
+              batch_record: false,
+              production_record: true,
+              allocated_batch_size: production.allocated_batch_size,
+              allocated_from_lot_num_id: lotAndBatchId,
+              target_unit_yield: production.target_unit_yield,
+              min_unit_yield: production.min_unit_yield,
+              max_unit_yield: production.max_unit_yield,
+              anticipated_loss_percent: production.percent_loss,
+              timestamp_fetched: new Date().toISOString(),
+              timestamp_modified: new Date().toISOString()
+            }
+            lotAndBatchNumbers.push(lot)
+          }
+        })
+      })
+      this.req = new CustomRequest(this.$cookies.get('session'))
+      lotAndBatchNumbers.forEach((lotAndBatch) => {
+        this.req.upsertRecord('Lot_And_Batch_Numbers', lotAndBatch)
+      })
+    },
+    checkOrder: function () {
+      this.order.sale_order_detail.forEach((detail, index) => {
+        this.order.sale_order_detail[index].lot_num_assigned = false
+      })
+      this.order.lot_num_assigned = false
+      const keys = Object.keys(this.getTotalProductsInProduction())
+      keys.forEach((key) => this.matchupProductionWithOrder(key))
+    },
+    getTotalProductsInProduction: function () {
+      const productionRuns = {}
+      this.batches.forEach((batch) => {
+        batch.productions.forEach((production) => {
+          const key = `product_${batch.product_id}-formula_${batch.formula_id}-variant_${production.variant_id}`
+          if (productionRuns[key]) {
+            productionRuns[key].allocated_batch_size += batch.batch_allocated
+            productionRuns[key].target_unit_yield += production.target_unit_yield
+            productionRuns[key].min_unit_yield += production.min_unit_yield
+            productionRuns[key].max_unit_yield += production.max_unit_yield
+          } else {
+            productionRuns[key] = {
+              product_id: batch.product_id,
+              formula_id: batch.formula_id,
+              variant_id: production.variant_id,
+              allocated_batch_size: batch.batch_allocated,
+              percent_loss: production.percent_loss,
+              target_unit_yield: production.target_unit_yield,
+              min_unit_yield: production.min_unit_yield,
+              max_unit_yield: production.max_unit_yield
+            }
+          }
+        })
+      })
+      return productionRuns
+    },
+    matchupProductionWithOrder: function (key) {
+      const prodInPro = this.getTotalProductsInProduction()
+      const minProductionQty = prodInPro[key]?.min_unit_yield
+      if (minProductionQty) {
+        let orderIndex = null
+        this.order.sale_order_detail.forEach((detail, index) => {
+          if (
+            detail.product_id === prodInPro[key].product_id &&
+            detail.formula_id === prodInPro[key].formula_id &&
+            detail.variant_id === prodInPro[key].variant_id
+          ) {
+            orderIndex = index
+          }
+        })
+
+        if (orderIndex !== null) {
+          this.order.sale_order_detail[orderIndex].lot_num_assigned = this.order.sale_order_detail[orderIndex].unit_order_qty <= minProductionQty
+        }
+      }
+
+      let allLotsAssigned = true
+      this.order.sale_order_detail.forEach((detail) => {
+        if (!detail.lot_num_assigned) {
+          allLotsAssigned = false
+        }
+      })
+      this.order.lot_num_assigned = allLotsAssigned
+    },
     validAllocation: function (production, batch) {
-      return production.allocated_batch_size > 0 && production.allocated_batch_size !== null && production.allocated_batch_size !== '' && production.allocated_batch_size <= batch.batch_size
+      return production.allocated_batch_size > 0 && production.allocated_batch_size !== null && production.allocated_batch_size !== '' && production.allocated_batch_size <= batch.max_blender_capacity
     },
     copyBatch: function (index) {
       const batch = cloneDeep(this.batches[index])
       this.batches.splice(index + 1, 0, batch)
       this.updateBatch(index + 1)
+      this.checkOrder()
     },
     syncBatchWithAllocated: function (index, input) {
       if (!this.batches[index].multiple_variants) {
@@ -538,17 +851,30 @@ export default {
         totalAllocated += Number(this.batches[index].productions[i].allocated_batch_size)
       }
       this.batches[index].batch_allocated = Math.floor(totalAllocated * 100) / 100
-      this.batches[index].batch_remaining = Math.floor((this.batches[index].batch_size - totalAllocated) * 100) / 100
+      this.batches[index].batch_remaining = Math.ceil((this.batches[index].batch_size - totalAllocated) * 100) / 100
+
+      this.$nextTick(() => {
+        this.checkOrder()
+      })
     },
     updateProduction: function (production, variant, index, pindex) {
+      let percentLoss = 0
+      if (variant.variant_type === 'powder') {
+        percentLoss = 3
+      } else if (variant.variant_type === 'capsule') {
+        percentLoss = 5
+      } else if (variant.variant_type === 'liquid') {
+        percentLoss = 3
+      }
       const update = {
         ...production,
         variant: variant,
-        variant_id: variant.variant_id
+        variant_id: variant.variant_id,
+        percent_loss: percentLoss
       }
       this.batches[index].productions[pindex] = update
-      this.updateBatch(index)
       this.calculateYield(index, update)
+      this.updateBatch(index)
       return update
     },
     getVariants: function (batch) {
@@ -560,6 +886,14 @@ export default {
       })
       return variants
     },
+    deleteProductionRun: function (index, pindex) {
+      this.batches[index].productions.splice(pindex, 1)
+      this.order.sale_order_detail.forEach((detail, index) => {
+        this.order.sale_order_detail[index].lot_num_assigned = false
+      })
+      this.order.lot_num_assigned = false
+      this.updateBatch(index)
+    },
     addProductionRun: function (index) {
       this.batches[index].productions.push({
         target_unit_yield: 0.0,
@@ -569,6 +903,7 @@ export default {
         production_record: true,
         percent_loss: 0.0
       })
+      this.checkOrder()
     },
     getProductionsAllowed: function (index) {
       const productId = this.batches[index].product_id
@@ -594,15 +929,16 @@ export default {
       }
       this.getProductionsAllowed(index)
     },
-    removeRow: function (index) {
+    deleteBatch: function (index) {
       this.batches.splice(index, 1)
+      this.checkOrder()
     },
     addBatch: function () {
       this.batches.push({
         product_id: null,
-        product: null,
+        product: {},
         formula_id: null,
-        formula: null,
+        formula: {},
         title: null,
         productions_allowed: [],
         productions: [
@@ -610,18 +946,19 @@ export default {
             target_unit_yield: 0.0,
             min_unit_yield: 0.0,
             max_unit_yield: 0.0,
-            allocated_batch_size: 300.0,
+            allocated_batch_size: 0,
             production_record: true,
             percent_loss: 0
           }
         ],
         product_with_formula_selected: false,
-        batch_size: 300.0,
+        batch_size: 0,
         batch_requires_blending: true,
         multiple_variants: false,
         batch_allocated: 0.0,
         batch_remaining: 0.0,
-        batch_type: 'Powder'
+        batch_type: 'Powder',
+        max_blender_capacity: 312.0
       })
     },
     toggleAssignLotNumbers: function () {

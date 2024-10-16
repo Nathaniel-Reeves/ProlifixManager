@@ -219,9 +219,17 @@ class CustomRequest:
                         record, flag = special_handle_sales_orders(record)
 
                     if table == 'Lot_And_Batch_Numbers':
-                        record, flag = special_handle_lot_and_batch_numbers(record)
+                        record, flag = self._special_handle_lot_and_batch_numbers(record)
 
                     if not flag:
+                        message = f'Failed to upsert record for {table}.'
+                        flash_message = FlashMessage(
+                            variant=VariantType.DANGER,
+                            title="Failure!",
+                            message=message
+                        )
+                        self.custom_response.insert_flash_message(flash_message)
+                        self.custom_response.set_status_code(400)
                         return flag
 
                     flag = self._upsert_record(table, record)
@@ -270,7 +278,7 @@ class CustomRequest:
                     record.pop('date_entered')
                 if 'date_modified' in record.keys():
                     record.pop('date_modified')
-                stm = update(table).values(record).where(getattr(table, pk_col) == record[pk_col])
+                stm = update(table).values(record).where(getattr(table, pk_col) == record[pk_col]).returning(getattr(table, pk_col))
             elif isinstance(record[pk_col], str) and "temp-" in record[pk_col]:
                 temp_key = record.pop(pk_col)
                 stm = insert(table).values(record)
@@ -298,6 +306,38 @@ class CustomRequest:
             data = { 'table_name': table_name, 'new_id' : new_id, 'pk' : pk_col, 'temp_key': temp_key }
             self.temp_key_lookup[temp_key] = data
         return outcome
+
+    def _special_handle_lot_and_batch_numbers(self, record):
+        # if the record doesn't have a temp primary key AKA its not a new record, return
+        if not isinstance(record['lot_num_id'], str) or"temp-" not in record['lot_num_id']:
+            return record, True
+
+        # Get last row of Lot_And_Batch_Numbers table
+        stm = select(db.Lot_And_Batch_Numbers).order_by(db.Lot_And_Batch_Numbers.lot_num_id.desc()).limit(1)
+
+        # Execute the query
+        raw_data, outcome = self._execute_query(stm)
+
+        if len(raw_data) != 0:
+            last_batch_lot_number = raw_data[0][0].to_dict()
+        else:
+            last_batch_lot_number = {
+                'sec_number': 0,
+                'year': 0
+            }
+
+        year = int(str(datetime.datetime.now().year)[-2:])
+        month = datetime.datetime.now().month
+        new_sec_number = last_batch_lot_number['sec_number'] + 1
+
+        if last_batch_lot_number['year'] != year:
+            new_sec_number = 1
+
+        record['sec_number'] = new_sec_number
+        record['year'] = year
+        record['month'] = month
+
+        return record, outcome
 
     def process_deletes(self):
         deletes = self.request.json['payload']['delete']
@@ -835,15 +875,33 @@ class CustomRequest:
 
     def _execute_query(self, stm):
         record_id = None
+
+        # get type of stm, (select, update, delete, insert)
+        stm_type = str(stm).split(" ")[0].lower()
+        print()
         # Execute the query
         try:
             stream = self.session.execute(stm)
-            if stream.is_insert:
+            print(stm_type)
+            if stm_type == 'insert':
                 record_id = stream.inserted_primary_key[0]
-        except Exception:
+            if stm_type == 'update':
+                raw_data = stream.all()
+                record_id = raw_data[0][0].get_id()
+                print(raw_data)
+                print(record_id)
+            if stream == 'select':
+                raw_data = stream.all()
+                if len(raw_data) > 0:
+                    record_id = raw_data
+            raise Exception("Invalid Query Type")
+        except Exception as e:
             error = error_message()
-            # print("Error: ", error)
-            # print(stm)
+            print()
+            print("Error: ", error)
+            print(stm)
+            print(e)
+            print()
             self.custom_response.insert_flash_message(error)
             self.custom_response.set_status_code(400)
             return None, False
@@ -1034,42 +1092,6 @@ def special_handle_sales_orders(record):
 
     # Get last row of Sales_Orders table
     stm = select(db.Sales_Orders).order_by(db.Sales_Orders.so_id.desc()).limit(1)
-
-    # Connect to the database
-    try:
-        session = get_session()
-    except Exception:
-        return record, False
-
-    # Execute the query
-    try:
-        raw_data = session.execute(stm).all()
-    except Exception:
-        session.close()
-        return record, False
-
-    last_sale_order = raw_data[0][0].to_dict()
-
-    year = int(str(datetime.datetime.now().year)[-2:])
-    month = datetime.datetime.now().month
-    new_sec_number = last_sale_order['sec_number'] + 1
-
-    if last_sale_order['year'] != year:
-        new_sec_number = 1
-
-    record['sec_number'] = new_sec_number
-    record['year'] = year
-    record['month'] = month
-
-    return record, True
-
-def special_handle_lot_and_batch_numbers(record):
-    # if the record doesn't have a temp primary key AKA its not a new record, return
-    if not isinstance(record['lot_num_id'], str) or"temp-" not in record['lot_num_id']:
-        return record, True
-
-    # Get last row of Lot_And_Batch_Numbers table
-    stm = select(db.Lot_And_Batch_Numbers).order_by(db.Lot_And_Batch_Numbers.lot_num_id.desc()).limit(1)
 
     # Connect to the database
     try:

@@ -7,7 +7,7 @@
         </div>
         </template>
       <template #cell(certs)="row">
-        <CertBadge :data="row.item.product[0]"></CertBadge>
+        <CertBadge :data="row.item.product[0]" size="3em"></CertBadge>
       </template>
       <template #cell(unit_order_qty)="row">
         <div>{{ row.item.unit_order_qty.toLocaleString() }} units</div>
@@ -16,7 +16,7 @@
         <div>{{ row.item.bid_price_per_unit.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) }}</div>
       </template>
       <template #cell(lot_num_assigned)="row">
-        <h4 class="d-flex justify-content-center"><b-badge v-if="!row.value" variant="warning" class="p-2" v-b-tooltip.hover title="Lot Number Assignment Incomplete">
+        <h4 class="d-flex justify-content-center"><b-badge v-if="!row.value" variant="warning" class="p-2" v-b-tooltip.hover title="Batch & Lot Number Assignment Incomplete">
           <b-icon icon="exclamation-triangle-fill"></b-icon>
         </b-badge></h4>
       </template>
@@ -57,6 +57,7 @@ export default {
   },
   data: function () {
     return {
+      isMd: false,
       fields: [
         { key: 'lot_num_assigned', label: '' },
         { key: 'product_name', label: 'Product' },
