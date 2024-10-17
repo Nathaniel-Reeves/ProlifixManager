@@ -202,7 +202,7 @@ class Manufacturing_Process(Base):
         Returns:
             Dict: Columns as Keys
         """
-        return {
+        out = {
             'process_spec_id': self.process_spec_id,
             'product_id': self.product_id,
             'current_default_process': self.current_default_process,
@@ -245,6 +245,7 @@ class Manufacturing_Process(Base):
             "timestamp_fetched": datetime.datetime.now().isoformat(),
             'num_process_components': self.num_process_components
         }
+        return handle_exclude(out, exclude)
 
     def get_id(self):
         """Get Row Id"""
@@ -273,13 +274,13 @@ class Formula_Master(Base):
         """Return a string representation of Object"""
         return f'<Formula_Master id:{self.formula_id} product_id:{self.product_id}>'
 
-    def to_dict(self):
+    def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation
 
         Returns:
             Dict: Columns as Keys
         """
-        return {
+        out = {
             'formula_id': self.formula_id,
             'product_id': self.product_id,
             'formulation_version': self.formulation_version,
@@ -288,6 +289,7 @@ class Formula_Master(Base):
             "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_fetched": datetime.datetime.now().isoformat()
         }
+        return handle_exclude(out, exclude)
 
     def get_id(self):
         """Get Row Id"""
@@ -323,13 +325,13 @@ class Formula_Detail(Base):
         """Return a string representation of Object"""
         return f'<Formula_Detail id:{self.formula_ingredient_id} formula_id:{self.formula_id}>'
 
-    def to_dict(self):
+    def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation
 
         Returns:
             Dict: Columns as Keys
         """
-        return {
+        out = {
             'formula_ingredient_id': self.formula_ingredient_id,
             'formula_id': self.formula_id,
             'percent': self.percent,
@@ -345,6 +347,7 @@ class Formula_Detail(Base):
             'num_brands': self.num_brands,
             'num_ingredients': self.num_ingredients
         }
+        return handle_exclude(out, exclude)
 
     def get_id(self):
         """Get Row Id"""
@@ -373,13 +376,13 @@ class Ingredient_Brands_Join(Base):
         """Return a string representation of Object"""
         return f'<Ingredient_Brands_Join id:{self._id} formula_ingredient_id:{self.formula_ingredient_id} brand_id:{self.brand_id}>'
 
-    def to_dict(self):
+    def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation
 
         Returns:
             Dict: Columns as Keys
         """
-        return {
+        out = {
             '_id': self._id,
             'formula_ingredient_id': self.formula_ingredient_id,
             'brand_id': self.brand_id,
@@ -388,6 +391,7 @@ class Ingredient_Brands_Join(Base):
             "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_fetched": datetime.datetime.now().isoformat()
         }
+        return handle_exclude(out, exclude)
 
     def get_id(self):
         """Get Row Id"""
@@ -416,13 +420,13 @@ class Ingredients_Join(Base):
         """Return a string representation of Object"""
         return f'<Ingredients_Join id:{self._id} formula_ingredient_id:{self.formula_ingredient_id} ingredient_id:{self.ingredient_id}>'
 
-    def to_dict(self):
+    def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation
 
         Returns:
             Dict: Columns as Keys
         """
-        return {
+        out = {
             '_id': self._id,
             'formula_ingredient_id': self.formula_ingredient_id,
             'ingredient_id': self.ingredient_id,
@@ -431,6 +435,7 @@ class Ingredients_Join(Base):
             "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_fetched": datetime.datetime.now().isoformat()
         }
+        return handle_exclude(out, exclude)
 
     def get_id(self):
         """Get Row Id"""
@@ -462,13 +467,13 @@ class Process_Components(Base):
         """Return a string representation of Object"""
         return f'<Process_Components id:{self.process_component_id} process_spec_id:{self.process_spec_id}>'
 
-    def to_dict(self):
+    def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation
 
         Returns:
             Dict: Columns as Keys
         """
-        return {
+        out = {
             'process_component_id': self.process_component_id,
             'process_spec_id': self.process_spec_id,
             'specific_component_required': self.specific_component_required,
@@ -480,6 +485,7 @@ class Process_Components(Base):
             'num_brands': self.num_brands,
             'num_components': self.num_components
         }
+        return handle_exclude(out, exclude)
 
     def get_id(self):
         """Get Row Id"""
@@ -508,13 +514,13 @@ class Components_Join(Base):
         """Return a string representation of Object"""
         return f'<Components_Join id:{self._id} process_component_id:{self.process_component_id} component_id:{self.component_id}>'
 
-    def to_dict(self):
+    def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation
 
         Returns:
             Dict: Columns as Keys
         """
-        return {
+        out = {
             '_id': self._id,
             'process_component_id': self.process_component_id,
             'component_id': self.component_id,
@@ -523,6 +529,7 @@ class Components_Join(Base):
             "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_fetched": datetime.datetime.now().isoformat()
         }
+        return handle_exclude(out, exclude)
 
     def get_id(self):
         """Get Row Id"""
@@ -551,13 +558,13 @@ class Component_Brands_Join(Base):
         """Return a string representation of Object"""
         return f'<Component_Brands_Join id:{self._id} process_component_id:{self.process_component_id} brand_id:{self.brand_id}>'
 
-    def to_dict(self):
+    def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation
 
         Returns:
             Dict: Columns as Keys
         """
-        return {
+        out = {
             '_id': self._id,
             'process_component_id': self.process_component_id,
             'brand_id': self.brand_id,
@@ -566,6 +573,7 @@ class Component_Brands_Join(Base):
             "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_fetched": datetime.datetime.now().isoformat()
         }
+        return handle_exclude(out, exclude)
 
     def get_id(self):
         """Get Row Id"""
@@ -607,13 +615,13 @@ class Manufacturing_Process_Edges(Base):
         """Return a string representation of Object"""
         return f'<Manufacturing_Process_Edge source:{self.source} target:{self.target} product_id:{self.product_id}>'
 
-    def to_dict(self):
+    def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation
 
         Returns:
             Dict: Columns as Keys
         """
-        return {
+        out = {
             "id": self.id,
             "source": self.source,
             "target": self.target,
@@ -625,6 +633,7 @@ class Manufacturing_Process_Edges(Base):
             "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_fetched": datetime.datetime.now().isoformat()
         }
+        return handle_exclude(out, exclude)
 
     def get_id(self):
         """Get Row Id"""
@@ -683,13 +692,13 @@ class Product_Variant(Base):
         """Return a string representation of Object"""
         return f'<Product_Variant id:{self.variant_id} product_id:{self.product_id}>'
 
-    def to_dict(self):
+    def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation
 
         Returns:
             Dict: Columns as Keys
         """
-        return {
+        out = {
             'variant_id': self.variant_id,
             'product_id': self.product_id,
             'variant_title': self.variant_title,
@@ -715,6 +724,7 @@ class Product_Variant(Base):
             "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_fetched": datetime.datetime.now().isoformat()
         }
+        return handle_exclude(out, exclude)
 
     def get_id(self):
         """Get Row Id"""

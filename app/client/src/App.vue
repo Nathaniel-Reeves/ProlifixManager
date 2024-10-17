@@ -35,6 +35,7 @@
               <b-dropdown-item to="/orders/po">Purchases</b-dropdown-item>
               <b-dropdown-item to="/orders/so">Sales</b-dropdown-item>
             </b-nav-item-dropdown>
+            <b-nav-item to="/lotnumbers" text="Lot Numbers" active-class>Lot Numbers</b-nav-item>
             <b-nav-item to="/policies" text="Policies" active-class>Policies</b-nav-item>
             <!-- <b-nav-item to="/barcodereader" active-class>barcodereader</b-nav-item> -->
           </b-navbar-nav>

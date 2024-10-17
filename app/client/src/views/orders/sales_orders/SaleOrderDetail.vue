@@ -540,10 +540,12 @@ export default {
         })
 
         if (resp.status === 201) {
-          this.$router.push({ path: `/orders/so/${this.id}` })
-        } else {
-          this.loaded = true
+          this.getSale()
+          this.req = new CustomRequest(this.$cookies.get('session'))
+          this.assign_lot_numbers_mode = false
+          this.batches = []
         }
+        this.loaded = true
       })
     },
     validateBatchesAndProductionRuns: function () {
@@ -649,8 +651,8 @@ export default {
           let soDetailId = null
           for (let i = 0; i < this.order.sale_order_detail.length; i++) {
             if (
-              this.order.sale_order_detail[i].product_id === production.product_id &&
-              this.order.sale_order_detail[i].formula_id === production.formula_id &&
+              this.order.sale_order_detail[i].product_id === batch.product_id &&
+              this.order.sale_order_detail[i].formula_id === batch.formula_id &&
               this.order.sale_order_detail[i].variant_id === production.variant_id
             ) {
               orderIndex = i
@@ -660,7 +662,10 @@ export default {
 
           if (orderIndex !== null) {
             soDetailId = this.order.sale_order_detail[orderIndex].so_detail_id
+          } else {
+            throw new Error('Could not find Sale Order Detail ID')
           }
+
           if (index === 0) {
             const lotAndBatch = {
               lot_num_id: lotAndBatchId,

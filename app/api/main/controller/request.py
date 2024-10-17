@@ -278,7 +278,7 @@ class CustomRequest:
                     record.pop('date_entered')
                 if 'date_modified' in record.keys():
                     record.pop('date_modified')
-                stm = update(table).values(record).where(getattr(table, pk_col) == record[pk_col]).returning(getattr(table, pk_col))
+                stm = update(table).values(record).where(getattr(table, pk_col) == record[pk_col])
             elif isinstance(record[pk_col], str) and "temp-" in record[pk_col]:
                 temp_key = record.pop(pk_col)
                 stm = insert(table).values(record)
@@ -301,7 +301,7 @@ class CustomRequest:
             self.custom_response.set_status_code(400)
             return False
 
-        new_id, outcome = self._execute_query(stm)
+        new_id, _, outcome = self._execute_query(stm)
         if new_id and temp_key:
             data = { 'table_name': table_name, 'new_id' : new_id, 'pk' : pk_col, 'temp_key': temp_key }
             self.temp_key_lookup[temp_key] = data
@@ -316,10 +316,10 @@ class CustomRequest:
         stm = select(db.Lot_And_Batch_Numbers).order_by(db.Lot_And_Batch_Numbers.lot_num_id.desc()).limit(1)
 
         # Execute the query
-        raw_data, outcome = self._execute_query(stm)
+        _, data, outcome = self._execute_query(stm)
 
-        if len(raw_data) != 0:
-            last_batch_lot_number = raw_data[0][0].to_dict()
+        if len(data) != 0:
+            last_batch_lot_number = data[0][0].to_dict()
         else:
             last_batch_lot_number = {
                 'sec_number': 0,
@@ -405,7 +405,7 @@ class CustomRequest:
             self.custom_response.set_status_code(400)
             return False
 
-        id, outcome = self._execute_query(stm)
+        id, data, outcome = self._execute_query(stm)
         return outcome
 
     def validate_request_data(self):
@@ -874,39 +874,26 @@ class CustomRequest:
             return False
 
     def _execute_query(self, stm):
-        record_id = None
+        new_id = None
+        data = None
 
         # get type of stm, (select, update, delete, insert)
         stm_type = str(stm).split(" ")[0].lower()
-        print()
         # Execute the query
         try:
             stream = self.session.execute(stm)
-            print(stm_type)
             if stm_type == 'insert':
-                record_id = stream.inserted_primary_key[0]
-            if stm_type == 'update':
-                raw_data = stream.all()
-                record_id = raw_data[0][0].get_id()
-                print(raw_data)
-                print(record_id)
-            if stream == 'select':
-                raw_data = stream.all()
-                if len(raw_data) > 0:
-                    record_id = raw_data
-            raise Exception("Invalid Query Type")
+                new_id = stream.inserted_primary_key[0]
+            if stm_type == 'select':
+                data = stream.all()
         except Exception as e:
             error = error_message()
-            print()
-            print("Error: ", error)
-            print(stm)
             print(e)
-            print()
             self.custom_response.insert_flash_message(error)
             self.custom_response.set_status_code(400)
-            return None, False
+            return None, None, False
 
-        return record_id, True
+        return new_id, data, True
 
 def check_organization_levenshtein(request):
     custom_response = CustomResponse()

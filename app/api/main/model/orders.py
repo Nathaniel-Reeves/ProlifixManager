@@ -311,7 +311,7 @@ class Lot_And_Batch_Numbers(Base):
     # Common Methods
     def __repr__(self):
         """Return a string representation of Object"""
-        return f'<Lot_And_Batch_Numbers Lot#:{self.prefix} {self.year}{self.month}{self.sec_number} {self.suffix} Product_id:{self.product_id} >'
+        return f'<Lot_And_Batch_Numbers Lot#:{self.prefix} {self.year}{self.month}{self.sec_number} {self.suffix} >'
 
     def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation
@@ -381,7 +381,7 @@ class Purchase_Orders(Base):
     # Common Methods
     def __repr__(self):
         """Return a string representation of Object"""
-        return f'<Purchase_Orders PO#:{self.prefix} {self.year}{self.month}{self.sec_number} >'
+        return f'<Purchase_Orders PO#:{self.prefix} {self.year}{self.month}{self.sec_number} {self.suffix}>'
 
     def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation

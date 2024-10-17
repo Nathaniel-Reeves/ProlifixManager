@@ -39,7 +39,8 @@ def handle_get_sales():
     valid_populate = [
         'sales_orders_payments',
         'sale_order_detail',
-        'client'
+        'client',
+        'lot_and_batch_numbers'
     ]
     populate = check_type(
         valid_populate,

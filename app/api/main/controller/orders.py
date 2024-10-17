@@ -59,6 +59,7 @@ def get_sales_orders(
         sales_orders_payments = {'sales_orders_payments': []}
         sale_order_detail = {'sale_order_detail': []}
         client = {'client': []}
+        lot_and_batch_numbers = {'lot_and_batch_numbers': []}
 
 
         if 'sales_orders_payments' in populate:
@@ -79,7 +80,13 @@ def get_sales_orders(
             client = {'client':resp.get_data()}
             custom_response.insert_flash_messages(r.get_flash_messages())
 
-        custom_response.insert_data({ **sales_order, **sales_orders_payments, **sale_order_detail, **client })
+        if 'lot_and_batch_numbers' in populate:
+            r = CustomResponse()
+            resp = get_lot_and_batch_numbers(r, [], [pk], [], [], [], False, doc)
+            lot_and_batch_numbers = {'lot_and_batch_numbers':resp.get_data()}
+            custom_response.insert_flash_messages(r.get_flash_messages())
+
+        custom_response.insert_data({ **sales_order, **sales_orders_payments, **sale_order_detail, **client, **lot_and_batch_numbers })
 
     return custom_response
 
@@ -169,6 +176,7 @@ def get_sale_order_detail(
         product = {'product': []}
         variant = {'variant': []}
         formula = {'formula': []}
+        lot_and_batch_numbers = {'lot_and_batch_numbers': []}
 
         if 'sale_order' in populate:
             r = CustomResponse()
@@ -194,7 +202,83 @@ def get_sale_order_detail(
             formula = {'formula':resp.get_data()}
             custom_response.insert_flash_messages(r.get_flash_messages())
 
-        custom_response.insert_data({ **sale_order_detail, **sale_order, **product, **variant, **formula })
+        if 'lot_and_batch_numbers' in populate:
+            r = CustomResponse()
+            resp = get_lot_and_batch_numbers(r, [], [], [sale_order_detail['so_detail_id']], [], [], False, doc)
+            lot_and_batch_numbers = {'lot_and_batch_numbers':resp.get_data()}
+            custom_response.insert_flash_messages(r.get_flash_messages())
+
+        custom_response.insert_data({ **sale_order_detail, **sale_order, **product, **variant, **formula, **lot_and_batch_numbers })
+
+    return custom_response
+
+def get_lot_and_batch_numbers(
+        custom_response,
+        lot_num_ids,
+        so_ids,
+        so_detail_ids,
+        client_ids,
+        product_ids,
+        desc,
+        doc
+    ):
+
+    # build the query
+    stm = select(
+        db.Lot_And_Batch_Numbers,
+        db.Sale_Order_Detail,
+        db.Sales_Orders,
+        db.Product_Master,
+        db.Product_Variant,
+        db.Formula_Master,
+        db.Organization_Names
+    )
+    stm = stm.join(db.Sale_Order_Detail, db.Lot_And_Batch_Numbers.so_detail_id == db.Sale_Order_Detail.so_detail_id, isouter=True)
+    stm = stm.join(db.Sales_Orders, db.Sale_Order_Detail.so_id == db.Sales_Orders.so_id, isouter=True)
+    stm = stm.join(db.Product_Master, db.Sale_Order_Detail.product_id == db.Product_Master.product_id, isouter=True)
+    stm = stm.join(db.Product_Variant, db.Sale_Order_Detail.variant_id == db.Product_Variant.variant_id, isouter=True)
+    stm = stm.join(db.Formula_Master, db.Sale_Order_Detail.formula_id == db.Formula_Master.formula_id, isouter=True)
+    stm = stm.join(db.Organization_Names, db.Sales_Orders.organization_id == db.Organization_Names.organization_id, isouter=True)
+    stm = stm.where(db.Organization_Names.primary_name == True)
+    stm = stm.order_by(db.Lot_And_Batch_Numbers.lot_num_id.asc())
+    exclude = []
+
+    if desc:
+        stm = stm.order_by(db.Lot_And_Batch_Numbers.lot_num_id.desc())
+
+    if not doc:
+        exclude.append('doc')
+
+    if lot_num_ids:
+        stm = stm.where(db.Lot_And_Batch_Numbers.lot_num_id.in_(lot_num_ids))
+
+    if so_ids:
+        stm = stm.where(db.Sale_Order_Detail.so_id.in_(so_ids))
+
+    if so_detail_ids:
+        stm = stm.where(db.Lot_And_Batch_Numbers.so_detail_id.in_(so_detail_ids))
+
+    if client_ids:
+        stm = stm.where(db.Organization_Names.organization_id.in_(client_ids))
+
+    if product_ids:
+        stm = stm.where(db.Product_Master.product_id.in_(product_ids))
+
+    # execute the query
+    custom_response, raw_data, success = execute_query(custom_response, stm)
+
+    # Process and Package the data
+    for row in raw_data:
+        pk = row[0].get_id()
+        lot_and_batch_number = row[0].to_dict(exclude=exclude)
+        sale_order_detail = row[1].to_dict(exclude=exclude)
+        sales_order = row[2].to_dict(exclude=exclude)
+        product = row[3].to_dict(exclude=exclude)
+        variant = row[4].to_dict(exclude=exclude)
+        formula = row[5].to_dict(exclude=exclude)
+        client_name = row[6].to_dict(exclude=exclude)
+
+        custom_response.insert_data({ **lot_and_batch_number, 'sale_order_detail': sale_order_detail, 'sales_order': sales_order, 'product': product, 'variant': variant, 'formula': formula, 'client_name': client_name })
 
     return custom_response
 

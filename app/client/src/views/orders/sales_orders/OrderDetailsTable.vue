@@ -1,11 +1,19 @@
 <template>
   <div>
-    <b-table striped hover :items="orderDetails" :fields="fields" show-empty small no-border-collapse outlined sort-icon-left sort-null-last>
+    <b-table striped hover :items="orderDetails" :fields="fieldsComputed" show-empty small no-border-collapse outlined sort-icon-left sort-null-last>
+      <template #cell(actions)="row">
+        <div class="d-flex flex-row flex-nowrap">
+          <b-button @click="row.toggleDetails()" size="sm" class="btn-light" style="border-width: 2px; border-color:#999999" v-b-tooltip.hover title="Peek Order Details">
+            <b-icon v-show="row.detailsShowing" icon="chevron-up"></b-icon>
+            <b-icon v-show="!row.detailsShowing" icon="chevron-down"></b-icon>
+          </b-button>
+        </div>
+      </template>
       <template #cell(product_name)="row">
         <div>
           <router-link class="text-info" v-show="!isMd" :to="'/catalogue/products/'+row.item.product_id" target="_blank">{{ row.item.product[0].product_name }} V{{ row.item.formula[0].formulation_version }} {{ row.item.variant[0].variant_title }}</router-link>
         </div>
-        </template>
+      </template>
       <template #cell(certs)="row">
         <CertBadge :data="row.item.product[0]" size="3em"></CertBadge>
       </template>
@@ -31,6 +39,16 @@
           {{ (Math.ceil((row.item.variant[0].total_milliliters_per_unit * row.item.unit_order_qty) / 1000) + (Math.ceil((row.item.variant[0].total_milliliters_per_unit * row.item.unit_order_qty) / 1000) * (row.item.percent_overage / 100))).toLocaleString() }} L
         </div>
       </template>
+      <template #row-details="row">
+        <div v-show="row.item.lot_and_batch_numbers.length === 0">
+          <div class="d-flex justify-content-center">
+            <b>Lot and Batch Assignment is Incomplete!</b>
+          </div>
+        </div>
+        <div v-show="row.item.lot_and_batch_numbers.length !== 0">
+          <LotAndBatchNumberTable :lot-and-batch-numbers="row.item.lot_and_batch_numbers" />
+        </div>
+      </template>
     </b-table>
   </div>
 </template>
@@ -43,16 +61,23 @@
 
 <script>
 import CertBadge from '@/components/CertBadge.vue'
+import LotAndBatchNumberTable from '@/components/LotAndBatchNumberTable.vue'
 
 export default {
   name: 'OrderDetailsTable',
   components: {
-    CertBadge
+    CertBadge,
+    LotAndBatchNumberTable
   },
   props: {
     orderDetails: {
       type: Array,
       required: true
+    },
+    excludeCol: {
+      type: Array,
+      required: false,
+      default: () => []
     }
   },
   data: function () {
@@ -65,8 +90,14 @@ export default {
         { key: 'unit_order_qty', label: 'Qty' },
         { key: 'bid_price_per_unit', label: '$ per Unit' },
         { key: 'special_instructions', label: 'Special Instructions' },
-        { key: 'bulk', label: 'Bulk Qty' }
+        { key: 'bulk', label: 'Bulk Qty' },
+        { key: 'actions', label: 'Actions' }
       ]
+    }
+  },
+  computed: {
+    fieldsComputed: function () {
+      return this.fields.filter(field => !this.excludeCol.includes(field.key))
     }
   }
 }

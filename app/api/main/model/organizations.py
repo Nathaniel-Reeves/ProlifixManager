@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import List, Optional
 
+from .handle_exclude import handle_exclude
+
 from sqlalchemy import Enum, ForeignKey, Column
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.ext.mutable import MutableDict
@@ -51,13 +53,13 @@ class Organizations(Base):
         """Return a string representation of Object"""
         return f'<Organization {self.organization_id, self.website_url}>'
 
-    def to_dict(self):
+    def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation
 
         Returns:
             Dict: Columns as Keys
         """
-        return {
+        out = {
             'organization_id': self.organization_id,
             'website_url': self.website_url,
             'vetted': self.vetted,
@@ -75,6 +77,7 @@ class Organizations(Base):
             "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_fetched": datetime.datetime.now().isoformat()
         }
+        return handle_exclude(out, exclude)
 
     def get_id(self):
         """Get Row Id"""
@@ -107,13 +110,13 @@ class Organization_Names(Base):
         """Return a string representation of Object"""
         return f'<Organization_Name {self.name_id}, {self.organization_id}, {self.organization_name}>'
 
-    def to_dict(self):
+    def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation
 
         Returns:
             Dict: Columns as Keys
         """
-        return {
+        out = {
             'name_id': self.name_id,
             'organization_id': self.organization_id,
             'organization_name': self.organization_name,
@@ -123,6 +126,7 @@ class Organization_Names(Base):
             "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_fetched": datetime.datetime.now().isoformat()
         }
+        return handle_exclude(out, exclude)
 
     def get_id(self):
         """Get Row Id"""
@@ -168,13 +172,13 @@ class People(Base):
         """Return a string representation of Object"""
         return f'<Person {self.person_id}, {self.first_name}, {self.last_name}>'
 
-    def to_dict(self):
+    def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation
 
         Returns:
             Dict: Columns as Keys
         """
-        return {
+        out = {
             'person_id': self.person_id,
             'organization_id': self.organization_id,
             'first_name': self.first_name,
@@ -194,6 +198,7 @@ class People(Base):
             "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_fetched": datetime.datetime.now().isoformat()
         }
+        return handle_exclude(out, exclude)
 
     def get_id(self):
         """Get Row Id"""
@@ -239,13 +244,13 @@ class Users(Base):
         """Return a string representation of Object"""
         return f'<User {self.user_id}, {self.username}>'
 
-    def to_dict(self):
+    def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation
 
         Returns:
             Dict: Columns as Keys
         """
-        return {
+        out = {
             'user_id': self.user_id,
             'person_id': self.person_id,
             'username': self.username,
@@ -257,6 +262,7 @@ class Users(Base):
             "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_fetched": datetime.datetime.now().isoformat()
         }
+        return handle_exclude(out, exclude)
 
     def get_id(self):
         """Get Row Id"""
@@ -322,13 +328,13 @@ class Facilities(Base):
         """Return a string representation of Object"""
         return f'<Facility {self.facility_id}, {self.building_name}, {self.country}, {self.governing_district}, {self.city_town}>'
 
-    def to_dict(self):
+    def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation
 
         Returns:
             Dict: Columns as Keys
         """
-        return {
+        out = {
             'facility_id': self.facility_id,
             'organization_id': self.organization_id,
             'building_type': self.building_type,
@@ -358,6 +364,7 @@ class Facilities(Base):
             "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_fetched": datetime.datetime.now().isoformat()
         }
+        return handle_exclude(out, exclude)
 
     def get_id(self):
         """Get Row Id"""

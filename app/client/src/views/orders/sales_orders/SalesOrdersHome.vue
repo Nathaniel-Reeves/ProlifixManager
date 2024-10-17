@@ -66,7 +66,7 @@
               </div>
             </template>
             <template #cell(pk)="row">
-              {{  formatSONumber(row.item) }}
+              {{ formatSONumber(row.item) }}
             </template>
             <template #cell(year)="row">
               {{ row.item?.year ? row.item.year.toString().padStart(2, '0') : '' }}
@@ -101,10 +101,11 @@
                   <h3>Sale: {{ formatSONumber(row.item) }} Details</h3>
                   <div>
                     <h4>Order Items</h4>
-                    <OrderDetailsTable :order-details="row.item.sale_order_detail" />
+                    <OrderDetailsTable :order-details="row.item.sale_order_detail" :exclude-col="['bulk','bid_price_per_unit','actions']"/>
                   </div>
                   <div>
-                    <h4>Order Payments</h4>
+                    <h4>Production Summary</h4>
+                    <LotAndBatchNumberTable :lot-and-batch-numbers="row.item.lot_and_batch_numbers" :exclude-col="['actions']"/>
                   </div>
                 </div>
               </b-card>
@@ -132,11 +133,13 @@
 
 <script>
 import OrderDetailsTable from './OrderDetailsTable.vue'
+import LotAndBatchNumberTable from '@/components/LotAndBatchNumberTable.vue'
 
 export default {
   name: 'SalesOrdersHome',
   components: {
-    OrderDetailsTable
+    OrderDetailsTable,
+    LotAndBatchNumberTable
   },
   data: function () {
     return {
@@ -283,7 +286,7 @@ export default {
         return
       }
 
-      const fetchRequest = this.$root.getOrigin() + '/api/v1/orders/sales?populate=sale_order_detail&so_id=' + id
+      const fetchRequest = this.$root.getOrigin() + '/api/v1/orders/sales?populate=sale_order_detail&populate=lot_and_batch_numbers&so_id=' + id
       // eslint-disable-next-line
       console.log(
         'GET ' + fetchRequest
@@ -298,6 +301,7 @@ export default {
         if (response.status === 200) {
           response.json().then(data => {
             this.orders[index].sale_order_detail = data.data[0].sale_order_detail
+            this.orders[index].lot_and_batch_numbers = data.data[0].lot_and_batch_numbers
             // eslint-disable-next-line
             console.log(data.data[0].sale_order_detail)
           })

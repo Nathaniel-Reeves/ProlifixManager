@@ -138,6 +138,11 @@ const routes = [
     ]
   },
   {
+    path: '/lotnumbers',
+    name: 'LotNumbersHome',
+    component: () => import(/* webpackChunkName: "lot_numbers" */ '../views/lot_numbers/LotNumbersHome.vue')
+  },
+  {
     path: '/policies',
     name: 'policies',
     component: () => import(/* webpackChunkName: "policies" */ '../views/policies/PoliciesHome.vue')
