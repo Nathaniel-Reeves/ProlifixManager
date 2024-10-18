@@ -243,7 +243,7 @@ def get_lot_and_batch_numbers(
     stm = stm.order_by(db.Lot_And_Batch_Numbers.lot_num_id.asc())
     exclude = []
 
-    if desc:
+    if not desc:
         stm = stm.order_by(db.Lot_And_Batch_Numbers.lot_num_id.desc())
 
     if not doc:

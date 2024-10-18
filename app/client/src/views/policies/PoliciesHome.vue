@@ -46,7 +46,7 @@
       <b-row class="mx-2" cols="1" cols-lg="2">
         <b-col class="p-1 d-flex justify-content-end" lg="3" v-if="!isMd">
           <b-card class="position-fixed mr-2" style="width: 20%;">
-            <b-card-title @click="chapter_key=''" style="cursor: pointer;"><h1>{{ data.title}}</h1></b-card-title>
+            <b-card-title @click="changeChapter('')" style="cursor: pointer;"><h1>{{ data.title }}</h1></b-card-title>
             <b-card-sub-title v-show="data?.subtitle">{{ data.subtitle }}</b-card-sub-title>
             <b-card-body class="pl-0" style="width: 100%;">
               <div class="mx-2 mb-3 mt-0">
@@ -213,7 +213,7 @@
                         Last Edit: {{ new Date(author.date_edited).toLocaleDateString('en-US') }}
                       </b-popover>
                     </div>
-                    <div v-if="data.chapters[chapter_key].authors.length === 0" class="mr-1 mb-1">
+                    <div v-if="!data.authors" class="mr-1 mb-1">
                       <b-card-text>No Authors</b-card-text>
                     </div>
                   </b-container>

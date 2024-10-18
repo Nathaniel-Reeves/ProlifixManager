@@ -194,6 +194,47 @@ export default {
         }
       })
     },
+    getData: function (path) {
+      const fetchRequest = this.getOrigin() + path
+      console.log(
+        'GET ' + fetchRequest
+      )
+      return fetch(fetchRequest, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      }).then(response => {
+        let data = {}
+        if (response.status === 200) {
+          data = response.json().then(data => {
+            data.status = response.status
+            // eslint-disable-next-line
+            console.log(data)
+            return data
+          })
+        } else if (response.status === 401) {
+          this.$router.push({
+            name: 'login'
+          })
+        } else if (response.status === 404) {
+          this.$router.push({
+            name: 'NotFound'
+          })
+        } else {
+          // eslint-disable-next-line
+          console.log('Looks like there was a problem. Status Code:' + response.status)
+          // eslint-disable-next-line
+          console.log(response)
+        }
+        return data
+      }).catch(error => {
+        // eslint-disable-next-line
+        console.log(error)
+        return error
+      })
+    },
     createToast: function (flashMessage) {
       this.$bvToast.toast(flashMessage.message, {
         title: flashMessage.title,

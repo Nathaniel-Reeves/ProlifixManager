@@ -1,5 +1,5 @@
 '''
-Handle Orders Endpoints
+Handle Production Endpoints
 '''
 import json
 from flask import (
@@ -14,19 +14,25 @@ from .response import CustomResponse
 
 import datetime
 
-bp = Blueprint('orders', __name__, url_prefix='/orders')
+bp = Blueprint('production', __name__, url_prefix='/production')
 
-@bp.route('/sales', methods=['GET'])
+@bp.route('/lotnumbers', methods=['GET'])
 @check_authenticated(authentication_required=True)
-def handle_get_sales():
+def handle_get_lot_and_batch_numbers():
     """
-    GET api/orders/sales Endpoint
+    GET api/production/lotnumbers Endpoint
     """
 
     # Clean Request
+    lot_num_ids = list(only_integers(request.args.getlist('lot_num_id')))
+
     so_ids = list(only_integers(request.args.getlist('so_id')))
 
+    so_detail_ids = list(only_integers(request.args.getlist('so_detail_id')))
+
     client_ids = list(only_integers(request.args.getlist('client_id')))
+
+    product_ids = list(only_integers(request.args.getlist('product_id')))
 
     year_to_date = False
     yeartodate = request.args.get('year_to_date')
@@ -35,33 +41,26 @@ def handle_get_sales():
 
     years = list(only_integers(request.args.getlist('year')))
 
-    populate_request = request.args.getlist('populate')
-    valid_populate = [
-        'sales_orders_payments',
-        'sale_order_detail',
-        'client',
-        'lot_and_batch_numbers'
-    ]
-    populate = check_type(
-        valid_populate,
-        populate_request,
-        empty_means_all=False
-    )
-
     doc = False
     document = request.args.get('doc')
     if document == "true":
         doc = True
 
-    # Get Sales Orders from the database
+    desc = False
+    desending = request.args.get('desc')
+    if desending == "true":
+        desc = True
+
+    # Get Lot and Batch Numbers from the database
     custom_response = CustomResponse()
-    custom_response = ord.get_sales_orders(
+    custom_response = ord.get_lot_and_batch_numbers(
         custom_response,
+        lot_num_ids,
         so_ids,
+        so_detail_ids,
         client_ids,
-        year_to_date,
-        years,
-        populate,
+        product_ids,
+        desc,
         doc
     )
 

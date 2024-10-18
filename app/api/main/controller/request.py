@@ -216,7 +216,7 @@ class CustomRequest:
 
                     # Special Handling
                     if table == 'Sales_Orders':
-                        record, flag = special_handle_sales_orders(record)
+                        record, flag = self._special_handle_sales_orders(record)
 
                     if table == 'Lot_And_Batch_Numbers':
                         record, flag = self._special_handle_lot_and_batch_numbers(record)
@@ -306,6 +306,38 @@ class CustomRequest:
             data = { 'table_name': table_name, 'new_id' : new_id, 'pk' : pk_col, 'temp_key': temp_key }
             self.temp_key_lookup[temp_key] = data
         return outcome
+
+    def _special_handle_sales_orders(self, record):
+        # if the record doesn't have a temp primary key AKA its not a new record, return
+        if not isinstance(record['so_id'], str) or"temp-" not in record['so_id']:
+            return record, True
+
+        # Get last row of Sales_Orders table
+        stm = select(db.Sales_Orders).order_by(db.Sales_Orders.so_id.desc()).limit(1)
+
+        # Execute the query
+        _, data, outcome = self._execute_query(stm)
+
+        if len(data) != 0:
+            last_sale_order = data[0][0].to_dict()
+        else:
+            last_sale_order = {
+                'sec_number': 0,
+                'year': 0
+            }
+
+        year = int(str(datetime.datetime.now().year)[-2:])
+        month = datetime.datetime.now().month
+        new_sec_number = last_sale_order['sec_number'] + 1
+
+        if last_sale_order['year'] != year:
+            new_sec_number = 1
+
+        record['sec_number'] = new_sec_number
+        record['year'] = year
+        record['month'] = month
+
+        return record, outcome
 
     def _special_handle_lot_and_batch_numbers(self, record):
         # if the record doesn't have a temp primary key AKA its not a new record, return
@@ -1071,39 +1103,3 @@ def check_component_levenshtein(request):
     session.close()
     custom_response.set_status_code(200)
     return custom_response
-
-def special_handle_sales_orders(record):
-    # if the record doesn't have a temp primary key AKA its not a new record, return
-    if not isinstance(record['so_id'], str) or"temp-" not in record['so_id']:
-        return record, True
-
-    # Get last row of Sales_Orders table
-    stm = select(db.Sales_Orders).order_by(db.Sales_Orders.so_id.desc()).limit(1)
-
-    # Connect to the database
-    try:
-        session = get_session()
-    except Exception:
-        return record, False
-
-    # Execute the query
-    try:
-        raw_data = session.execute(stm).all()
-    except Exception:
-        session.close()
-        return record, False
-
-    last_sale_order = raw_data[0][0].to_dict()
-
-    year = int(str(datetime.datetime.now().year)[-2:])
-    month = datetime.datetime.now().month
-    new_sec_number = last_sale_order['sec_number'] + 1
-
-    if last_sale_order['year'] != year:
-        new_sec_number = 1
-
-    record['sec_number'] = new_sec_number
-    record['year'] = year
-    record['month'] = month
-
-    return record, True

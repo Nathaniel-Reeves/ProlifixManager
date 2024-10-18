@@ -107,10 +107,16 @@ export default {
     },
     handleVisible: function (isVisible) {
       this.isMd = isVisible
+    },
+    getLotAndBatchNumbers: async function () {
+      const fetchRequest = '/api/v1/production/lotnumbers'
+      const resp = await this.$root.getData(fetchRequest)
+      this.lot_and_batch_numbers = resp.data
+      this.loaded = true
     }
   },
   created: function () {
-    this.loaded = true
+    this.getLotAndBatchNumbers()
   }
 }
 </script>

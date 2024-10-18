@@ -126,6 +126,9 @@ def create_app():
     from view.orders import bp as orders_bp
     api_blueprint.register_blueprint(orders_bp)
 
+    from view.production import bp as production_bp
+    api_blueprint.register_blueprint(production_bp)
+
     from view.catalogue import bp_cat as catalogue_bp
     api_blueprint.register_blueprint(catalogue_bp)
 
