@@ -120,7 +120,15 @@ const routes = [
       {
         path: 'po',
         name: 'PurchaseOrdersHome',
-        component: () => import(/* webpackChunkName: "purchase_orders" */ '../views/orders/purchase_orders/PurchaseOrdersHome.vue')
+        children: [
+          { path: '', component: () => import(/* webpackChunkName: "purchase_orders" */ '../views/orders/purchase_orders/PurchaseOrdersHome.vue') },
+          // { path: ':id', component: () => import(/* webpackChunkName: "purchase_orders" */ '../views/orders/purchase_orders/SaleOrderDetail.vue') },
+          {
+            path: 'create',
+            name: 'NewPurchaseOrder',
+            component: () => import(/* webpackChunkName: "purchase_orders" */ '../views/orders/purchase_orders/NewPurchaseOrder.vue')
+          }
+        ]
       },
       {
         path: 'so',

@@ -41,7 +41,8 @@ def handle_get_organizations():
         'people',
         'components',
         'products',
-        'organization_names'
+        'organization_names',
+        'supplies'
     ]
     populate = check_type(
         valid_populate,

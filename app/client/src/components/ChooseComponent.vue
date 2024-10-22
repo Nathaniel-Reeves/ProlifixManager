@@ -21,7 +21,7 @@
             <div style="display:flex; flex-direction: row; align-items: center; min-height: 60px;">
               <b-button v-on:click.stop class="mr-2" variant="light" :to="'/catalogue/components/'+component_id" target="_blank"><b-icon icon="box"></b-icon></b-button>
               <div style="min-width: 200px;">{{ component_primary_name }}</div>
-              <CertBadge v-if="!noCerts" :data="{
+              <CertBadge :data="{
                 'certified_fda': certified_fda,
                 'certified_gluten_free': certified_gluten_free,
                 'certified_gmp': certified_gmp,
@@ -95,6 +95,10 @@ export default {
     vSelect
   },
   props: {
+    widthRatio: {
+      type: String,
+      default: '80'
+    },
     components: {
       type: Array,
       required: true

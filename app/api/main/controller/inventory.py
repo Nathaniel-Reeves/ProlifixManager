@@ -4,7 +4,7 @@ Handle Inventory Data
 from sqlalchemy import select
 from sqlalchemy.orm import defer
 
-from view.response import CustomResponse
+from view.response import CustomResponse, FlashMessage
 import model as db
 from .execute import execute_query
 
@@ -99,6 +99,7 @@ def get_components(
         purchase_order_detail = {'purchase_order_detail':[]}
         inventory = {'inventory':[]}
         brand = {'brand':[]}
+        suppliers = {'suppliers':[]}
 
         if 'component_names' in populate:
             remove_names = []
@@ -131,7 +132,13 @@ def get_components(
             brand = {'brand':resp.get_data()}
             custom_response.insert_flash_messages(r.get_flash_messages())
 
-        custom_response.insert_data({**component, **component_names, **purchase_order_detail, **inventory, **brand})
+        if 'suppliers' in populate:
+            r = CustomResponse()
+            resp = get_component_suppliers( r, [pk], [])
+            suppliers = {'suppliers':resp.get_data()}
+            custom_response.insert_flash_messages(r.get_flash_messages())
+
+        custom_response.insert_data({**component, **component_names, **purchase_order_detail, **inventory, **brand, **suppliers})
 
     return custom_response
 
@@ -180,3 +187,68 @@ def get_inventory(
         doc
     ):
     raise NotImplementedError
+
+def get_component_suppliers(
+        custom_response,
+        component_ids,
+        organization_ids
+    ):
+    if not component_ids and not organization_ids:
+        message = FlashMessage(title='error', message='No component or organization ids provided.')
+        custom_response.insert_flash_message(message)
+        custom_response.set_status_code(400)
+        return custom_response
+
+    if component_ids and organization_ids:
+        message = FlashMessage(title='error', message='Cannot provide both component and organization ids.')
+        custom_response.insert_flash_message(message)
+        custom_response.set_status_code(400)
+        return custom_response
+
+    # Build the query
+    tables = [db.Component_Supplier_Join]
+
+    if component_ids:
+        tables.append(db.Organization_Names)
+
+    if organization_ids:
+        tables.append(db.Components)
+        tables.append(db.Component_Names)
+
+    stm = select(*tables)
+
+    if component_ids:
+        stm = stm.where(db.Component_Supplier_Join.component_id.in_(component_ids))
+        stm = stm.join(db.Organization_Names, db.Component_Supplier_Join.organization_id == db.Organization_Names.organization_id, isouter=True)
+        stm = stm.where(db.Organization_Names.primary_name == True)
+
+    if organization_ids:
+        stm = stm.where(db.Component_Supplier_Join.organization_id.in_(organization_ids))
+        stm = stm.join(db.Components, db.Component_Supplier_Join.component_id == db.Components.component_id, isouter=True)
+        stm = stm.join(db.Component_Names, db.Component_Supplier_Join.component_id == db.Component_Names.component_id, isouter=True)
+        stm = stm.where(db.Component_Names.primary_name == True)
+
+    # Execute the query
+    custom_response, raw_data, success = execute_query(custom_response, stm)
+    if not success:
+        return custom_response
+
+    if len(raw_data) == 0:
+        message = FlashMessage(title='error', message='No data found.')
+        custom_response.insert_flash_message(message)
+        custom_response.set_status_code(404)
+        return custom_response
+
+    # Process and Package the data
+    for row in raw_data:
+
+        if component_ids:
+            custom_response.insert_data(row[1].to_dict())
+
+        if organization_ids:
+            component = row[1].to_dict()
+            component['component_primary_name'] = row[2].to_dict()['component_name']
+            component['component_name'] = row[2].to_dict()['component_name']
+            custom_response.insert_data(component)
+
+    return custom_response

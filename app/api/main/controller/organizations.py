@@ -8,7 +8,7 @@ import model as db
 from .execute import execute_query
 
 from .orders import get_sales_orders, get_purchase_orders
-from .inventory import get_components
+from .inventory import get_component_suppliers, get_components
 from .products import get_products
 
 
@@ -72,6 +72,7 @@ def get_organizations(
         people = {'people': []}
         components = {'components': []}
         products = {'products': []}
+        supplies = {'supplies': []}
 
         # Populate
         if ('organization_names' in populate):
@@ -122,6 +123,16 @@ def get_organizations(
             custom_response.insert_flash_messages(r.get_flash_messages())
             components = {'components': components_data}
 
+        if 'supplies' in populate:
+            r = CustomResponse()
+            resp = get_component_suppliers(r, [], [pk])
+            if r.get_status_code() != 200:
+                custom_response.set_status_code(r.get_status_code())
+            else:
+                supplies_data = resp.get_data()
+                supplies = {'supplies': supplies_data }
+            custom_response.insert_flash_messages(r.get_flash_messages())
+
         if ('products' in populate):
             r = CustomResponse()
             resp = get_products(r, [], [], [pk], [], doc)
@@ -129,7 +140,7 @@ def get_organizations(
             custom_response.insert_flash_messages(r.get_flash_messages())
             products = {'products': products_data}
 
-        custom_response.insert_data({**organization, **organization_names, **facilities, **sales_orders, **purchase_orders, **people, **components, **products})
+        custom_response.insert_data({**organization, **organization_names, **facilities, **sales_orders, **purchase_orders, **people, **components, **products, **supplies})
 
     return custom_response
 

@@ -411,3 +411,47 @@ class Inventory_Log_Edges(Base):
     def get_id_name(self):
         """Get Primary ID Column Name"""
         return "(source, target)"
+
+class Component_Supplier_Join(Base):
+    """Component Supplier Join ORM Model"""
+    __tablename__ = 'Component_Supplier_Join'
+    __table_args__ = {'schema': 'Inventory'}
+
+    # Primary Key
+    _id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+
+    # Relationships
+    component_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'))
+    organization_id: Mapped[int] = mapped_column(ForeignKey('Organizations.Organizations.organization_id'))
+
+    # Table Columns
+    timestamp_entered: Mapped[datetime.datetime] = mapped_column()
+    timestamp_modified: Mapped[datetime.datetime] = mapped_column()
+
+    # Common Methods
+    def __repr__(self):
+        """Return a string representation of Object"""
+        return f'<Inventory.Component_Supplier_Join component_id:{self.component_id} organization_id:{self.organization_id}>'
+
+    def to_dict(self):
+        """Converts Data to Dictionary representation
+
+        Returns:
+            Dict: Columns as Keys
+        """
+        return {
+            "_id": self._id,
+            "component_id": self.component_id,
+            "organization_id": self.organization_id,
+            "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
+            "timestamp_fetched": datetime.datetime.now().isoformat()
+        }
+
+    def get_id(self):
+        """Get Row Id"""
+        return self._id
+
+    def get_id_name(self):
+        """Get Primary ID Column Name"""
+        return "_id"
