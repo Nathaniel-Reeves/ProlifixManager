@@ -218,6 +218,9 @@ class CustomRequest:
                     if table == 'Sales_Orders':
                         record, flag = self._special_handle_sales_orders(record)
 
+                    if table == 'Purchase_Orders':
+                        record, flag = self._special_handle_purchase_orders(record)
+
                     if table == 'Lot_And_Batch_Numbers':
                         record, flag = self._special_handle_lot_and_batch_numbers(record)
 
@@ -306,6 +309,38 @@ class CustomRequest:
             data = { 'table_name': table_name, 'new_id' : new_id, 'pk' : pk_col, 'temp_key': temp_key }
             self.temp_key_lookup[temp_key] = data
         return outcome
+
+    def _special_handle_purchase_orders(self, record):
+        # if the record doesn't have a temp primary key AKA its not a new record, return
+        if not isinstance(record['po_id'], str) or "temp-" not in record['po_id']:
+            return record, True
+
+        # Get last row of Purchase_Orders table
+        stm = select(db.Purchase_Orders).order_by(db.Purchase_Orders.po_id.desc()).limit(1)
+
+        # Execute the query
+        _, data, outcome = self._execute_query(stm)
+
+        if len(data) != 0:
+            last_sale_order = data[0][0].to_dict()
+        else:
+            last_sale_order = {
+                'sec_number': 0,
+                'year': 0
+            }
+
+        year = int(str(datetime.datetime.now().year)[-2:])
+        month = datetime.datetime.now().month
+        new_sec_number = last_sale_order['sec_number'] + 1
+
+        if last_sale_order['year'] != year:
+            new_sec_number = 1
+
+        record['sec_number'] = new_sec_number
+        record['year'] = year
+        record['month'] = month
+
+        return record, outcome
 
     def _special_handle_sales_orders(self, record):
         # if the record doesn't have a temp primary key AKA its not a new record, return

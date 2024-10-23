@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import List
 
+from .handle_exclude import handle_exclude
+
 from sqlalchemy import Enum, ForeignKey, Column, ForeignKeyConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.exc import SQLAlchemyError
@@ -67,17 +69,13 @@ class Components(Base):
         """Return a string representation of Object"""
         return f'<Inventory.Component component_id:{self.component_id} {self.component_type} brand:{self.brand_id}>'
 
-    def to_dict(self):
+    def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation
 
         Returns:
             Dict: Columns as Keys
         """
-        try:
-            doc =self.doc
-        except SQLAlchemyError:
-            doc = {}
-        return {
+        out = {
             "component_id": self.component_id,
             "component_type": self.component_type,
             "certified_fda": self.certified_fda,
@@ -96,11 +94,12 @@ class Components(Base):
             "primary_name_id": self.primary_name_id,
             "is_label": self.is_label,
             "brand_id": self.brand_id,
-            "doc": doc,
+            "doc": self.doc,
             "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_fetched": datetime.datetime.now().isoformat()
         }
+        return handle_exclude(out, exclude)
 
     def get_id(self):
         """Get Row Id"""

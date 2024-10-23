@@ -43,15 +43,23 @@
             <p>Select the supplier before moving forward with order details.</p>
           </div>
           <div class="m-3">
-            <b-button block variant="outline-success" @click="setSupplier()" :disabled="!selected_supplier_buffer?.organization_id">Continue</b-button>
+            <b-button block variant="outline-success" @click="setSupplier();setClient()" :disabled="!selected_supplier_buffer?.organization_id">Continue</b-button>
           </div>
         </b-form>
       </div>
     </div>
     <div class="card my-2" v-else style="width:100%;">
+      <div
+        v-b-visible="handleVisible"
+        class="position-fixed d-block d-lg-none"
+        style="z-index: 20000; height: 1px;"
+      ></div>
       <div class="card-body">
-        <h2>
+        <h2 v-if="!client_purchase">
           New <router-link class="text-info" :to="'/organizations/'+selected_supplier.organization_id" target="_blank">{{ selected_supplier.organization_primary_name }}</router-link> Order
+        </h2>
+        <h2 v-else>
+          New <router-link class="text-info" :to="'/organizations/'+selected_client.organization_id" target="_blank">{{ selected_client.organization_primary_name }}</router-link> Dropshipping From <router-link class="text-info" :to="'/organizations/'+selected_supplier.organization_id" target="_blank">{{ selected_supplier.organization_primary_name }}</router-link>
         </h2>
         <b-form>
           <div>
@@ -61,7 +69,7 @@
             <div v-else>
               <b-container class="my-3" fluid>
                 <b-row class="mb-2">
-                  <b-col md="2">
+                  <b-col md="1">
                     <span>Order Number: </span>
                   </b-col>
                   <b-col md="4">
@@ -73,9 +81,18 @@
                       <div id="supplier_so-live-feedback" class="invalid-feedback">This is a required field.</div>
                     </div>
                   </b-col>
+                  <b-col md="1">
+                    <span>Tracking: </span>
+                  </b-col>
+                  <b-col md="4">
+                    <div class="input-group">
+                      <b-form-input v-model="order_buffer.tracking"
+                      ></b-form-input>
+                    </div>
+                  </b-col>
                 </b-row>
                 <b-row class="mb-2">
-                  <b-col md="2">
+                  <b-col md="1">
                     <span>Date Ordered: </span>
                   </b-col>
                   <b-col md="4">
@@ -83,11 +100,24 @@
                       id="order_date"
                       v-model="order_buffer.order_date"
                       :max="new Date()"
+                      :class="[(order_buffer.order_date !== null ? '' : 'is-invalid')]"
+                    ></b-form-datepicker>
+                    <div id="order_date-live-feedback" class="invalid-feedback">This is a required field.</div>
+                  </b-col>
+                  <b-col md="1">
+                    <span>ETA: </span>
+                  </b-col>
+                  <b-col md="4">
+                    <b-form-datepicker
+                      id="eta"
+                      v-model="order_buffer.eta_date"
+                      :min="order_buffer.order_date"
                     ></b-form-datepicker>
                   </b-col>
                 </b-row>
               </b-container>
               <b-table stacked="sm" :items="selected_components" :fields="[
+                { key: 'action', label: '', thStyle: { width: '2%' } },
                 { key: 'component_name', label: 'Component', thStyle: { width: '20%' } },
                 { key: 'cert', label: '', thStyle: { width: '20%' } },
                 { key: 'order_units', label: 'Units', thStyle: { width: '8%' } },
@@ -95,8 +125,13 @@
                 { key: 'order_qty', label: 'Qty', thStyle: { width: '12%' } },
                 { key: 'details', label: 'Details', thStyle: { width: '20%' } }
               ]" class="px-2">
+                <template #cell(action)="row">
+                  <b-button size="sm" @click="removeComponent(row.index)" variant="outline-danger" v-b-tooltip.hover title="Remove Component">
+                    <b-icon icon="trash"></b-icon>
+                  </b-button>
+                </template>
                 <template #cell(component_name)="row">
-                  <ChooseComponent :components="components" :selected="row.item.value" @comp="(c) => row.item = updateComponent(row.item, c, row.index)" :disable-after-entry="false" :comp-req="true" :no-certs="true"></ChooseComponent>
+                  <ChooseComponent :components="components" :selected="row.item" @comp="(c) => row.item = updateComponent(row.item, c, row.index)" :disable-after-entry="false" :comp-req="true" :no-certs="true"></ChooseComponent>
                 </template>
                 <template #cell(cert)="row">
                   <CertBadge :data="row.item"></CertBadge>
@@ -118,7 +153,8 @@
                     </div>
                     <b-form-input v-model="row.item.price_per" type="number"
                       aria-describedby="price_per-live-feedback"
-                      :class="[(row.item.price_per >= 0 && row.item.price_per !== null ? '' : 'is-invalid')]"
+                      :disabled="client_purchase"
+                      :class="[(client_purchase || (row.item.price_per >= 0 && row.item.price_per !== null) ? '' : 'is-invalid')]"
                     ></b-form-input>
                     <div class="input-group-append">
                       <span class="input-group-text">per {{ row.item.order_units?.text ? row.item.order_units.text : '?' }}</span>
@@ -159,7 +195,9 @@
                         </b-card-title>
                         <v-select v-show="!document.document_type" v-model="document.document_type" required label="text" :reduce="doc => doc.value" placeholder="Select Document Type"
                           :options="[
-                            { value: 'purchase_order', text: 'Purchase Order' },
+                            { value: 'sale', text: 'Sale' },
+                            { value: 'tracking', text: 'Tracking' },
+                            { value: 'receipt', text: 'Receipt' },
                             { value: 'email', text: 'Email' },
                             { value: 'invoice', text: 'Invoice' },
                             { value: 'other', text: 'Other' }
@@ -181,7 +219,7 @@
                 </b-card-group>
               </div>
               <div class="mt-3">
-                <b-button :disabled="!(selected_components.length > 0 && selected_components[0].length > 0)" class="mr-2" variant="outline-success" @click="saveOrder()">Save</b-button>
+                <b-button :disabled="!(selected_components.length > 0)" class="mr-2" variant="outline-success" @click="saveOrder()">Save</b-button>
                 <b-button variant="outline-danger" to="/orders/po">Cancel</b-button>
               </div>
             </div>
@@ -234,6 +272,7 @@ export default {
   },
   data: function () {
     return {
+      isMd: false,
       suppliers: [],
       force_loaded: true,
       selected_supplier_buffer: null,
@@ -244,8 +283,9 @@ export default {
       documents: [],
       order_buffer: {
         order_date: new Date(),
-        target_completion_date: new Date(new Date().setMonth(new Date().getMonth() + 3)),
-        supplier_so: ''
+        supplier_so: '',
+        eta_date: null,
+        tracking: ''
       },
       req: new CustomRequest(this.$cookies.get('session')),
       del_url_previews: [],
@@ -265,6 +305,9 @@ export default {
     }
   },
   methods: {
+    handleVisible: function (isVisible) {
+      this.isMd = isVisible
+    },
     getFile: function (document) {
       if (document.file_hash) {
         const url = this.$root.getOrigin() + '/api/v1/uploads/' + document.file_pointer
@@ -308,23 +351,73 @@ export default {
       }
       this.documents.push(document)
     },
-    // validateOrder: function () {
-    //   this.$bvToast.hide()
+    validateOrder: function () {
+      this.$bvToast.hide()
 
-    //   const errorToast = {
-    //     title: 'Invalid Order',
-    //     message: '',
-    //     variant: 'warning',
-    //     visible: true,
-    //     no_close_button: false,
-    //     no_auto_hide: true,
-    //     auto_hide_delay: false
-    //   }
-    //   const createToast = this.$root.createToast
-    //   let valid = true
+      const errorToast = {
+        title: 'Invalid Order',
+        message: '',
+        variant: 'warning',
+        visible: true,
+        no_close_button: false,
+        no_auto_hide: true,
+        auto_hide_delay: false
+      }
+      const createToast = this.$root.createToast
+      let valid = true
 
-    //   return valid
-    // },
+      if (this.order_buffer.supplier_so.length === 0) {
+        errorToast.message = 'Supplier SO is a required field.'
+        createToast(errorToast)
+        valid = false
+      }
+
+      if (this.order_buffer.order_date === null) {
+        errorToast.message = 'Order Date is a required field.'
+        createToast(errorToast)
+        valid = false
+      }
+
+      for (let i = 0; i < this.selected_components.length; i++) {
+        const product = this.selected_components[i]
+        if (product.component_id === null) {
+          errorToast.message = 'Component is a required field.'
+          createToast(errorToast)
+          valid = false
+        }
+        if (product.order_units === null) {
+          errorToast.message = 'Order Units is a required field.'
+          createToast(errorToast)
+          valid = false
+        }
+        if (!this.client_purchase && (product.price_per === null || product.price_per <= 0)) {
+          errorToast.message = 'Price Per is a required field and must be greater than 0.'
+          createToast(errorToast)
+          valid = false
+        }
+        if (product.order_qty === null || product.order_qty <= 0) {
+          errorToast.message = 'Order Quantity is a required field and must be greater than 0.'
+          createToast(errorToast)
+          valid = false
+        }
+      }
+
+      // must upload at least one document
+      let hasDocument = false
+      for (let i = 0; i < this.documents.length; i++) {
+        if (this.documents[i].file_pointer) {
+          hasDocument = true
+          break
+        }
+      }
+      if (!hasDocument) {
+        errorToast.message = 'At least one document must be uploaded.'
+        createToast(errorToast)
+        valid = false
+      }
+
+      return valid
+    },
     saveOrder: function () {
       this.force_loaded = false
       if (!this.validateOrder()) {
@@ -333,42 +426,63 @@ export default {
       }
 
       // Prepare request
-      const saleOrderId = genTempKey()
-      let theoreticalPOAmount = 0
+      const purchaseOrderId = genTempKey()
 
       for (let i = 0; i < this.selected_components.length; i++) {
-        const product = this.selected_components[i]
-        for (let j = 0; j < product.selected_variants.length; j++) {
-          const saleOrderDetail = {
-            so_detail_id: genTempKey(),
-            so_id: saleOrderId,
-            product_id: product.product_id,
-            formula_id: product.formula_id,
-            variant_id: product.selected_variants[j].variant_id,
-            unit_order_qty: product.selected_variants[j].qty,
-            percent_overage: product.selected_variants[j].percent_overage,
-            special_instructions: product.selected_variants[j].special_instructions,
-            bid_price_per_unit: product.selected_variants[j].bid_price_per_unit,
-            timestamp_fetched: new Date().toISOString()
-          }
-          this.req.upsertRecord('Sale_Order_Detail', saleOrderDetail)
-          theoreticalPOAmount += product.selected_variants[j].bid_price_per_unit * product.selected_variants[j].qty
+        const component = this.selected_components[i]
+
+        let kilosOrderQty = null
+        let unitsOrderQty = null
+        let litersOrderQty = null
+        let bidPricePerUnit = null
+        let bidPricePerKilo = null
+        let bidPricePerLiter = null
+
+        if (component.order_units.value === 'kilograms') {
+          kilosOrderQty = component.order_qty
+          bidPricePerKilo = component.price_per
+        } else if (component.order_units.value === 'pounds') {
+          kilosOrderQty = Math.round(component.order_qty * 2.205, 4)
+          bidPricePerKilo = Math.round(component.price_per * 2.205, 4)
+        } else if (component.order_units.value === 'liters') {
+          litersOrderQty = component.order_qty
+          bidPricePerLiter = component.price_per
+        } else if (component.order_units.value === 'units') {
+          unitsOrderQty = component.order_qty
+          bidPricePerUnit = component.price_per
         }
+
+        const purchaseOrderDetail = {
+          po_id: purchaseOrderId,
+          po_detail_id: genTempKey(),
+          timestamp_fetched: new Date().toISOString(),
+          component_id: component.component_id,
+          order_units: component.order_units.value,
+          order_qty: component.order_qty,
+          price_per: component.price_per,
+          details: component.details,
+          kilos_order_qty: kilosOrderQty,
+          units_order_qty: unitsOrderQty,
+          liters_order_qty: litersOrderQty,
+          bid_price_per_unit: bidPricePerUnit,
+          bid_price_per_kilo: bidPricePerKilo,
+          bid_price_per_liter: bidPricePerLiter
+        }
+        this.req.upsertRecord('Purchase_Order_Detail', purchaseOrderDetail)
       }
 
-      const saleOrder = {
-        so_id: saleOrderId,
+      const purchaseOrder = {
+        po_id: purchaseOrderId,
         organization_id: this.selected_supplier.organization_id,
         supplier_so_num: this.order_buffer.supplier_so,
         order_date: new Date(this.order_buffer.order_date).toISOString().split('T')[0],
-        target_completion_date: new Date(this.order_buffer.target_completion_date).toISOString().split('T')[0],
+        eta_date: this.order_buffer.eta_date ? new Date(this.order_buffer.eta_date).toISOString().split('T')[0] : null,
         timestamp_fetched: new Date().toISOString(),
-        theoretical_po_amount: theoreticalPOAmount,
         doc: {
-          sale_order_files: this.documents
+          purchase_order_files: this.documents
         }
       }
-      this.req.upsertRecord('Sales_Orders', saleOrder)
+      this.req.upsertRecord('Purchase_Orders', purchaseOrder)
 
       this.req.sendRequest(this.$root.getOrigin()).then(resp => {
         const createToast = this.$root.createToast
@@ -378,8 +492,8 @@ export default {
 
         if (resp.status === 201) {
           Object.values(resp.data[0].temp_key_lookup).forEach(item => {
-            if (item.table_name === 'Sales_Orders') {
-              this.$router.push({ path: `/orders/so/${item.new_id}` })
+            if (item.table_name === 'Purchase_Orders') {
+              this.$router.push({ path: `/orders/po/${item.new_id}` })
             }
           })
         }
@@ -389,11 +503,14 @@ export default {
     },
     updateComponent: function (component, c, index) {
       const update = {
-        component,
+        ...component,
         ...c
       }
       this.selected_components.splice(index, 1, update)
       return update
+    },
+    removeComponent: function (index) {
+      this.selected_components.splice(index, 1)
     },
     addComponent: function () {
       this.selected_components.push({
@@ -465,6 +582,13 @@ export default {
       const fetchRequest = '/api/v1/organizations?org-type=client'
       const resp = await this.$root.getData(fetchRequest)
       this.clients = resp.data
+    },
+    setClient: function () {
+      if (!this.client_purchase) {
+        return
+      }
+      this.selected_client = this.selected_client_buffer
+      this.client_selected = true
     }
   },
   created: function () {

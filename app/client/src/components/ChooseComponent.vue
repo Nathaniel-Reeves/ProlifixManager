@@ -156,6 +156,11 @@ export default {
   },
   mounted () {
     this.observer = new IntersectionObserver(this.infiniteScroll)
+
+    this.selected_component = this.selected !== null ? this.selected : null
+    if (this.selected !== null && this.selected.component_name) {
+      this.selected_component.component_primary_name = this.selected.component_name
+    }
   },
   computed: {
     components_loaded: function () {

@@ -246,7 +246,7 @@ def get_component_suppliers(
             custom_response.insert_data(row[1].to_dict())
 
         if organization_ids:
-            component = row[1].to_dict()
+            component = row[1].to_dict(exclude=['doc'])
             component['component_primary_name'] = row[2].to_dict()['component_name']
             component['component_name'] = row[2].to_dict()['component_name']
             custom_response.insert_data(component)

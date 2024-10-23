@@ -427,20 +427,31 @@ class Purchase_Order_Detail(Base):
     component_id: Mapped[int] = mapped_column(ForeignKey('Inventory.Components.component_id'), nullable=False)
 
     # Table Columns
-    unit_order_qty: Mapped[int] = mapped_column(default=None)
+    units_order_qty: Mapped[int] = mapped_column(default=None)
     kilos_order_qty: Mapped[float] = mapped_column(default=None)
-    special_instructions: Mapped[str] = mapped_column(default=None)
+    liters_order_qty: Mapped[float] = mapped_column(default=None)
+    details: Mapped[str] = mapped_column(default=None)
     bid_price_per_unit: Mapped[float] = mapped_column(default=None)
     bid_price_per_kilo: Mapped[float] = mapped_column(default=None)
+    bid_price_per_liter: Mapped[float] = mapped_column(default=None)
     timestamp_entered: Mapped[datetime.datetime] = mapped_column()
     timestamp_modified: Mapped[datetime.datetime] = mapped_column()
+    OrderUnitTypes = ("pounds", "liters", "units", "kilograms")
+    order_units: Mapped[int] = mapped_column(Enum(
+        *OrderUnitTypes,
+        name="OrderUnitTypes",
+        create_constraint=True,
+        validate_strings=True,
+    ))
+    order_qty: Mapped[float] = mapped_column(default=None)
+    price_per: Mapped[float] = mapped_column(default=None)
 
     doc = Column(MutableDict.as_mutable(JSON))
 
     # Common Methods
     def __repr__(self):
         """Return a string representation of Object"""
-        return f'<Purchase_Order_Detail PO#:{self.prefix} {self.year}{self.month}{self.sec_number} >'
+        return f'<Purchase_Order_Detail po_detail_id:{self.po_detail_id} >'
 
     def to_dict(self, exclude=[]):
         """Converts Data to Dictionary representation
@@ -452,15 +463,20 @@ class Purchase_Order_Detail(Base):
             'po_detail_id': self.po_detail_id,
             'po_id': self.po_id,
             'component_id': self.component_id,
-            'unit_order_qty': self.unit_order_qty,
+            'units_order_qty': self.units_order_qty,
             'kilos_order_qty': self.kilos_order_qty,
-            'special_instructions': self.special_instructions,
+            'liters_order_qty': self.liters_order_qty,
+            'details': self.details,
             'bid_price_per_unit': self.bid_price_per_unit,
             'bid_price_per_kilo': self.bid_price_per_kilo,
+            'bid_price_per_liter': self.bid_price_per_liter,
             'doc': self.doc,
             "timestamp_entered": (self.timestamp_entered - datetime.timedelta(hours=6)).isoformat(),
             "timestamp_modified": (self.timestamp_modified - datetime.timedelta(hours=6)).isoformat(),
-            "timestamp_fetched": datetime.datetime.now().isoformat()
+            "timestamp_fetched": datetime.datetime.now().isoformat(),
+            "order_units": self.order_units,
+            "order_qty": self.order_qty,
+            "price_per": self.price_per
         }
         return handle_exclude(out, exclude)
 

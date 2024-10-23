@@ -546,7 +546,7 @@ export default {
     },
     updateVariant: function (variant, v, index, vindex) {
       const update = {
-        variant,
+        ...variant,
         ...v
       }
       if (update.variant_type === 'powder') {
